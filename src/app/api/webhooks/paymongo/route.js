@@ -59,7 +59,7 @@ export async function POST(request) {
     }
 
     try {
-      await setClientPlanTier(clientId, plan);
+      await setClientPlanTier(clientId, plan, event.data.id);
     } catch {
       // Log internally (not to console in production)
       // In production: use a structured logger (Datadog, Sentry, etc.)

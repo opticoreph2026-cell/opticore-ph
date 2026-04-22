@@ -57,8 +57,12 @@ async function sync() {
     // 5. Drop old tables
     const tableNames = sql.match(/CREATE TABLE "([^"]+)"/g)?.map(m => m.match(/"([^"]+)"/)[1]) || [];
     if (tableNames.length > 0) {
-      console.log(`⚡ Dropping ${tableNames.length} existing tables...`);
-      await client.batch(tableNames.map(t => ({ sql: `DROP TABLE IF EXISTS "${t}"` })), "write");
+      console.log(`⚡ Performing clean wipe of ${tableNames.length} tables...`);
+      await client.execute("PRAGMA foreign_keys = OFF");
+      for (const table of tableNames) {
+        await client.execute(`DROP TABLE IF EXISTS "${table}"`);
+      }
+      await client.execute("PRAGMA foreign_keys = ON");
     }
 
     // 6. Create new tables

@@ -21,6 +21,8 @@ model Client {
   consentGiven            Boolean  @default(true)
   onboardingComplete      Boolean  @default(false)
   emailAlertsEnabled      Boolean  @default(true)
+  planExpiry              DateTime?
+  subscriptionId          String?
 
   scanCount               Int      @default(0)
   lastScanReset           DateTime @default(now())

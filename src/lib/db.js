@@ -102,10 +102,17 @@ export async function listAllClients(options = {}) {
   });
 }
 
-export async function setClientPlanTier(id, tier) {
+export async function setClientPlanTier(id, tier, subscriptionId = null) {
+  const expiry = new Date();
+  expiry.setDate(expiry.getDate() + 30); // 30-day monthly renewal
+
   return db.client.update({
     where: { id },
-    data: { planTier: tier },
+    data: { 
+      planTier: tier,
+      planExpiry: expiry,
+      subscriptionId: subscriptionId
+    },
   });
 }
 
