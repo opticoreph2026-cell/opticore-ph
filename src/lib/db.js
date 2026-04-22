@@ -97,6 +97,7 @@ export async function getClientById(id) {
 
 export async function listAllClients(options = {}) {
   return db.client.findMany({
+    where: { role: 'client' },
     orderBy: { createdAt: 'desc' },
     take: options.maxRecords || 100,
   });
@@ -504,10 +505,10 @@ export async function deleteProvider(id) {
 // Admin stats
 export async function getAdminKPIs() {
   const [totalClients, starter, pro, business, totalReports, activeAlerts] = await Promise.all([
-    db.client.count(),
-    db.client.count({ where: { planTier: 'starter' } }),
-    db.client.count({ where: { planTier: 'pro' } }),
-    db.client.count({ where: { planTier: 'business' } }),
+    db.client.count({ where: { role: 'client' } }),
+    db.client.count({ where: { role: 'client', planTier: 'starter' } }),
+    db.client.count({ where: { role: 'client', planTier: 'pro' } }),
+    db.client.count({ where: { role: 'client', planTier: 'business' } }),
     db.aIReport.count(),
     db.alert.count({ where: { isRead: false } }),
   ]);
