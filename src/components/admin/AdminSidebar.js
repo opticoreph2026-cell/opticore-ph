@@ -31,11 +31,8 @@ export default function AdminSidebar() {
       {/* Logo Section */}
       <div className="px-6 py-8">
         <Link href="/" className="group flex items-center gap-3">
-          <div className="relative">
-            <div className="absolute -inset-1 bg-brand-500/20 blur-md rounded-xl opacity-0 group-hover:opacity-100 transition-opacity" />
-            <div className="relative w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500/20 to-brand-600/10 border border-brand-500/30 flex items-center justify-center shadow-lg">
-              <Zap className="w-5 h-5 text-brand-400" />
-            </div>
+          <div className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center border border-white/10 overflow-hidden">
+            <img src="/logo.png" alt="Logo" className="w-7 h-7 object-contain" />
           </div>
           <div>
             <span className="font-bold text-base tracking-tight text-white block">OptiCore <span className="text-brand-400">PH</span></span>

@@ -92,18 +92,18 @@ export default function DashboardSidebar({ user }) {
       />
 
       {/* ── Logo ── */}
-      <div className="px-5 pt-5 pb-4 relative shrink-0">
-        <Link href="/" className="flex items-center gap-2.5 group">
-          <Logo className="w-9 h-9" />
-          <div className="flex items-baseline gap-0.5">
-            <span className="shimmer-text font-bold text-base tracking-tight">OptiCore</span>
-            <span className="text-white/25 text-xs font-semibold ml-0.5">PH</span>
+      <div className="px-6 py-8 border-b border-white/[0.04]">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center border border-white/10 overflow-hidden">
+            <img src="/logo.png" alt="Logo" className="w-7 h-7 object-contain" />
           </div>
-        </Link>
-        <div
-          className="h-px w-full mt-4"
-          style={{ background: 'linear-gradient(90deg, rgba(245,158,11,0.18), transparent)' }}
-        />
+          <div>
+            <h1 className="text-sm font-black text-white uppercase tracking-tighter">
+              OptiCore<span className="text-brand-500">PH</span>
+            </h1>
+            <p className="text-[9px] font-bold text-brand-400 uppercase tracking-widest">Enterprise</p>
+          </div>
+        </div>
       </div>
 
       {/* ── Grouped Navigation ── */}

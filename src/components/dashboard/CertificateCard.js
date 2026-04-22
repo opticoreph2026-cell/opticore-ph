@@ -157,8 +157,8 @@ export default function CertificateCard({ user }) {
             {/* Header */}
             <div className="flex justify-between items-start mb-12 border-b border-white/10 pb-8">
                <div className="flex items-center gap-3">
-                 <div className="w-12 h-12 bg-brand-500 text-black rounded-lg flex items-center justify-center shadow-[0_0_20px_rgba(245,158,11,0.3)]">
-                   <ShieldCheck className="w-7 h-7" />
+                 <div className="w-12 h-12 bg-white/5 rounded-lg flex items-center justify-center border border-white/10 overflow-hidden">
+                   <img src="/logo.png" alt="OptiCore Logo" className="w-9 h-9 object-contain" />
                  </div>
                  <div>
                    <h2 className="text-xl font-black text-white tracking-widest uppercase">OptiCore</h2>
