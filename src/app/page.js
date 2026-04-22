@@ -156,12 +156,12 @@ export default function LandingPage() {
               <Link href="/pricing" className="text-sm font-black uppercase tracking-widest px-8 py-4 rounded-xl text-black bg-white hover:bg-gray-200 transition-all shadow-[0_0_30px_rgba(255,255,255,0.2)] flex items-center gap-2">
                 Get Started Free <ChevronRight className="w-4 h-4" />
               </Link>
-              <button 
-                onClick={() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' })}
+              <Link 
+                href="#how-it-works"
                 className="text-sm font-black uppercase tracking-widest px-8 py-4 rounded-xl text-white bg-white/5 hover:bg-white/10 transition-all border border-white/10"
               >
                 How it Works
-              </button>
+              </Link>
             </div>
 
             {/* Animated Metrics */}

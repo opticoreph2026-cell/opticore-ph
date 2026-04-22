@@ -5,6 +5,10 @@
 @tailwind utilities;
 
 /* ── Design Tokens ───────────────────────────────────────────────────────── */
+html {
+  scroll-behavior: smooth;
+}
+
 :root {
   --font-display: 'Instrument Serif', serif;
   --font-body:    var(--font-outfit, 'Outfit', system-ui, sans-serif);
