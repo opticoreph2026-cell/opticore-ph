@@ -1,0 +1,322 @@
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Design Tokens ───────────────────────────────────────────────────────── */
+:root {
+  --font-display: 'Instrument Serif', serif;
+  --font-body:    var(--font-outfit, 'Outfit', system-ui, sans-serif);
+  --font-mono:    'JetBrains Mono', ui-monospace, monospace;
+  --amber:        #f59e0b;
+  --amber-dim:    rgba(245, 158, 11, 0.10);
+  --amber-glow:   rgba(245, 158, 11, 0.22);
+  --surface-950:  #0a0a0f;
+  --surface-900:  #111118;
+  --surface-800:  #1a1a24;
+  --border:       rgba(255,255,255,0.07);
+
+  /* Glass system */
+  --glass-bg:     rgba(20, 20, 30, 0.40);
+  --glass-border: rgba(255, 255, 255, 0.09);
+  --glass-blur:   24px;
+  --card-radius:  18px;
+  --bento-gap:    14px;
+}
+
+/* ── Base ────────────────────────────────────────────────────────────────── */
+html { scroll-behavior: smooth; height: 100%; }
+
+body {
+  background-color: #0a0a0f;
+  color: #e8e6e3;
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100%;
+}
+
+/* ── Selection ───────────────────────────────────────────────────────────── */
+::selection {
+  background: rgba(245, 158, 11, 0.28);
+  color: #fff;
+}
+
+/* ── Scrollbar ───────────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(245,158,11,0.45); }
+
+/* ── Fine noise texture (materiality) ───────────────────────────────────── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.02'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.35;
+}
+
+/* ── Utilities ───────────────────────────────────────────────────────────── */
+@layer utilities {
+
+  /* Fonts */
+  .text-display { font-family: var(--font-display); }
+  .font-mono    { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+  .text-mono    { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+
+  /* ── Glass materials ─── */
+  .glass {
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+    border: 1px solid var(--glass-border);
+  }
+
+  .glass-amber {
+    background: rgba(245, 158, 11, 0.07);
+    backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+    border: 1px solid rgba(245, 158, 11, 0.18);
+  }
+
+  .glass-deep {
+    background: rgba(10, 10, 15, 0.88);
+    backdrop-filter: blur(28px) saturate(160%);
+    -webkit-backdrop-filter: blur(28px) saturate(160%);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  /* ── Bento Card ─── 
+    NOTE: We do NOT set overflow here — overflow is controlled per-card.
+    Cards that need clipping add 'overflow-hidden' directly.
+    Cards containing dropdowns/search must NOT have overflow-hidden.
+  */
+  .bento-card {
+    border-radius: var(--card-radius);
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+    border: 1px solid var(--glass-border);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.25s ease;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.10),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.15),
+      0 4px 24px rgba(0, 0, 0, 0.35);
+    position: relative;
+    isolation: isolate; /* Creates new stacking context without overflow:hidden */
+  }
+
+  /* Decorative gloss shimmer on bento cards */
+  .bento-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(
+      135deg,
+      rgba(255,255,255,0.055) 0%,
+      rgba(255,255,255,0.015) 30%,
+      transparent 60%
+    );
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .bento-card > * { position: relative; z-index: 1; }
+
+  .bento-card:hover {
+    border-color: rgba(245, 158, 11, 0.20);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.14),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.2),
+      0 8px 40px rgba(0, 0, 0, 0.45),
+      0 0 0 1px rgba(245, 158, 11, 0.08);
+    transform: translateY(-2px);
+  }
+
+  /* Explicit clip variant for bento cards that need overflow hidden 
+     (charts, heatmaps, etc. that don't have dropdowns) */
+  .bento-card-clip {
+    border-radius: var(--card-radius);
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+    border: 1px solid var(--glass-border);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.25s ease;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.10),
+      0 4px 24px rgba(0, 0, 0, 0.35);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* ── Glow blobs ─── */
+  .glow-blob-amber {
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(245,158,11,0.15) 0%, transparent 70%);
+    filter: blur(60px);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .glow-blob-blue {
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(96,165,250,0.08) 0%, transparent 70%);
+    filter: blur(80px);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── Text ─── */
+  .shimmer-text {
+    background: linear-gradient(90deg, #f59e0b 0%, #fde68a 40%, #f59e0b 55%, #d97706 100%);
+    background-size: 250% auto;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shimmer 4s linear infinite;
+  }
+
+  .gradient-text {
+    background: linear-gradient(135deg, #f59e0b 0%, #fde68a 50%, #f59e0b 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-size: 200% auto;
+  }
+
+  .amber-border { border: 1px solid rgba(245, 158, 11, 0.2); }
+
+  /* ── Shadows ─── */
+  .shadow-amber-glow     { box-shadow: 0 0 24px rgba(245,158,11,0.2); }
+  .shadow-amber-glow-btn { box-shadow: 0 4px 24px rgba(245,158,11,0.35), 0 1px 3px rgba(0,0,0,0.5); }
+
+  /* ── Stagger delays ─── */
+  .animate-delay-75  { animation-delay: 75ms; }
+  .animate-delay-100 { animation-delay: 100ms; }
+  .animate-delay-150 { animation-delay: 150ms; }
+  .animate-delay-200 { animation-delay: 200ms; }
+  .animate-delay-300 { animation-delay: 300ms; }
+  .animate-delay-400 { animation-delay: 400ms; }
+  .animate-delay-500 { animation-delay: 500ms; }
+  .animate-delay-600 { animation-delay: 600ms; }
+
+  /* ── Page entrance animations ─── */
+  .animate-fade-up {
+    animation: fadeUp 0.45s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  }
+  .animate-fade-in {
+    animation: fadeIn 0.3s ease both;
+  }
+  .animate-slide-up {
+    animation: slideUp 0.35s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  }
+  .animate-fade-down {
+    animation: fadeDown 0.25s ease both;
+  }
+}
+
+/* ── Keyframes ───────────────────────────────────────────────────────────── */
+@keyframes shimmer {
+  0%   { background-position: 0% center; }
+  100% { background-position: 250% center; }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(24px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes fadeDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse-ring {
+  0%   { transform: scale(1); opacity: 0.7; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+
+/* ── Component Library ───────────────────────────────────────────────────── */
+@layer components {
+
+  /* ── Primary button ─── */
+  .btn-primary {
+    @apply relative inline-flex items-center justify-center gap-2 px-6 py-3
+           rounded-xl font-bold text-sm
+           transition-all duration-200
+           focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 focus:ring-offset-surface-900;
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    color: #0a0a0f;
+    box-shadow: 0 4px 20px rgba(245,158,11,0.35), 0 1px 3px rgba(0,0,0,0.4);
+  }
+  .btn-primary:hover {
+    box-shadow: 0 6px 32px rgba(245,158,11,0.5), 0 2px 8px rgba(0,0,0,0.4);
+    transform: translateY(-1px);
+    filter: brightness(1.07);
+  }
+  .btn-primary:active { transform: translateY(0); filter: brightness(0.96); }
+
+  /* ── Ghost button ─── */
+  .btn-ghost {
+    @apply relative inline-flex items-center justify-center gap-2 px-6 py-3
+           rounded-xl font-semibold text-sm text-text-primary
+           border border-white/10 hover:border-brand-500/40
+           hover:bg-brand-500/5 active:bg-brand-500/10
+           transition-all duration-200
+           focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 focus:ring-offset-surface-900;
+  }
+
+  /* ── Form input ─── */
+  .input-field {
+    @apply w-full px-4 py-3 rounded-xl border text-text-primary placeholder-text-muted text-sm
+           focus:outline-none focus:ring-0
+           transition-all duration-200;
+    background: rgba(12, 12, 18, 0.75);
+    border-color: rgba(255,255,255,0.08);
+  }
+  .input-field:focus {
+    border-color: rgba(245,158,11,0.5);
+    box-shadow: 0 0 0 3px rgba(245,158,11,0.10);
+    background: rgba(16, 16, 24, 0.85);
+  }
+
+  /* ── Standard card ─── */
+  .card {
+    @apply rounded-2xl border p-6;
+    background: rgba(20, 20, 30, 0.55);
+    border-color: rgba(255,255,255,0.07);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.05),
+      0 2px 16px rgba(0,0,0,0.28);
+    transition: border-color 0.2s ease;
+  }
+  .card:hover { border-color: rgba(245,158,11,0.14); }
+
+  /* ── Stat badges ─── */
+  .stat-badge { @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold; }
+  .stat-badge-green  { @apply bg-emerald-500/10 text-emerald-400 border border-emerald-500/20; }
+  .stat-badge-red    { @apply bg-red-500/10 text-red-400 border border-red-500/20; }
+  .stat-badge-amber  { @apply bg-brand-500/10 text-brand-400 border border-brand-500/20; }
+  .stat-badge-blue   { @apply bg-blue-500/10 text-blue-400 border border-blue-500/20; }
+
+  /* ── Section label ─── */
+  .section-label {
+    @apply text-[10px] font-black uppercase tracking-[0.18em] text-brand-500;
+  }
+}

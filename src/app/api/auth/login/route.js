@@ -1,0 +1,88 @@
+/**
+ * POST /api/auth/login
+ * Rate-limited login endpoint with bcrypt + legacy SHA-256 support.
+ * On successful SHA-256 login, silently upgrades the hash to bcrypt.
+ */
+
+import { NextResponse }  from 'next/server';
+import { getClientByEmail, updateClientPasswordById } from '@/lib/db';
+import { signToken, setAuthCookie, verifyPassword, hashPassword } from '@/lib/auth';
+import { checkRateLimit, getClientIp } from '@/lib/ratelimit';
+
+export async function POST(request) {
+  // ── Rate limiting ────────────────────────────────────────────────────────
+  const ip = getClientIp(request);
+  const rl = checkRateLimit(`login:${ip}`);
+  if (!rl.success) {
+    return NextResponse.json(
+      { error: `Too many login attempts. Try again in ${Math.ceil(rl.retryAfterMs / 60000)} minutes.` },
+      {
+        status: 429,
+        headers: { 'Retry-After': String(Math.ceil(rl.retryAfterMs / 1000)) },
+      }
+    );
+  }
+
+  // ── Parse body ────────────────────────────────────────────────────────────
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: 'Invalid request body.' }, { status: 400 });
+  }
+
+  const { email, password } = body ?? {};
+  if (!email || !password) {
+    return NextResponse.json({ error: 'Email and password are required.' }, { status: 400 });
+  }
+
+  if (typeof email !== 'string' || typeof password !== 'string') {
+    return NextResponse.json({ error: 'Invalid input.' }, { status: 400 });
+  }
+
+  // ── Fetch client from the database ────────────────────────────────────────
+  let client;
+  try {
+    client = await getClientByEmail(email.trim().toLowerCase());
+  } catch {
+    return NextResponse.json({ error: 'Service temporarily unavailable.' }, { status: 503 });
+  }
+
+  if (!client) {
+    // Generic error to prevent email enumeration
+    return NextResponse.json({ error: 'Invalid email or password.' }, { status: 401 });
+  }
+
+  // ── Verify password ───────────────────────────────────────────────────────
+  const storedHash = client.passwordHash ?? '';
+  const { valid, needsRehash } = await verifyPassword(password, storedHash);
+
+  if (!valid) {
+    return NextResponse.json({ error: 'Invalid email or password.' }, { status: 401 });
+  }
+
+  // ── Silently upgrade legacy SHA-256 → bcrypt ──────────────────────────────
+  if (needsRehash) {
+    try {
+      const newHash = await hashPassword(password);
+      await updateClientPasswordById(client.id, newHash);
+    } catch {
+      // Non-fatal — log in production; do not block login
+    }
+  }
+
+  // ── Issue JWT ─────────────────────────────────────────────────────────────
+  const role  = client.role ?? 'client';
+  const token = await signToken({
+    sub:                client.id,
+    email:              client.email,
+    name:               client.name,
+    role,
+    plan:               client.planTier ?? 'starter',
+    onboarding_complete: client.onboardingComplete ?? false,
+  });
+
+  setAuthCookie(token);
+
+  return NextResponse.json({ success: true, role }, { status: 200 });
+}
