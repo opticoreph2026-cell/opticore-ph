@@ -2,6 +2,7 @@ import { getAdminKPIs, listAllClients } from '@/lib/db';
 import { Users, FileText, Bell, TrendingUp, Zap, DollarSign, ArrowRight } from 'lucide-react';
 import AdminKpiCharts from '@/components/admin/KpiCharts';
 import Link from 'next/link';
+import { clsx } from 'clsx';
 
 export const metadata = { title: 'Admin KPIs — OptiCore PH' };
 

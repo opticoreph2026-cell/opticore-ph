@@ -116,11 +116,17 @@ export default function PricingClient() {
   const [openFaq,     setOpenFaq]     = useState(0);
   const [loadingPlan, setLoadingPlan] = useState(null);
   const [isLoggedIn,  setIsLoggedIn]  = useState(false);
+  const [userRole,    setUserRole]    = useState(null);
   const [toastMsg,    setToastMsg]    = useState(null);
   const [toastType,   setToastType]   = useState('info');
 
   useEffect(() => {
-    fetch('/api/auth/me').then(r => { if (r.ok) setIsLoggedIn(true); }).catch(() => {});
+    fetch('/api/auth/me').then(r => r.json()).then(data => { 
+      if (data.user) {
+        setIsLoggedIn(true);
+        setUserRole(data.user.role);
+      }
+    }).catch(() => {});
   }, []);
 
   async function handleCheckout(priceId) {
@@ -276,7 +282,10 @@ export default function PricingClient() {
                     {/* CTA */}
                     <div className="mt-7">
                       {plan.priceId === 'free' ? (
-                        <Link href={plan.href} className="btn-ghost w-full text-center">
+                        <Link 
+                          href={!isLoggedIn ? plan.href : (userRole === 'admin' ? '/admin' : '/dashboard')} 
+                          className="btn-ghost w-full text-center"
+                        >
                           {plan.cta}
                         </Link>
                       ) : plan.priceId === 'biz' ? (
