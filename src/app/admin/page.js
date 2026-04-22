@@ -1,6 +1,6 @@
 import { 
   Users, FileText, Bell, TrendingUp, Zap, DollarSign, ArrowRight, 
-  CreditCard, ShieldCheck, History, Edit2, ShieldAlert 
+  CreditCard, ShieldCheck, History, Edit2, ShieldAlert, Cpu 
 } from 'lucide-react';
 import AdminKpiCharts from '@/components/admin/KpiCharts';
 import Link from 'next/link';
