@@ -22,6 +22,11 @@ const UTILITY_PROVIDERS = [
   { id: 'maynilad', name: 'Maynilad Water Services', shortName: 'Maynilad', region: 'NCR-West', type: 'water', baseRate: 38.50, benchmarkAvg: 28 },
   { id: 'cebu-water', name: 'Cebu Water', shortName: 'MCWD', region: 'Region VII', type: 'water', baseRate: 32.00, benchmarkAvg: 22 },
   { id: 'davao-water', name: 'Davao City Water District', shortName: 'DCWD', region: 'Region XI', type: 'water', baseRate: 30.00, benchmarkAvg: 24 },
+  { id: 'leyeco-1', name: 'Leyte I Electric Cooperative', shortName: 'LEYECO I', region: 'Region VIII', type: 'electricity', baseRate: 12.50, benchmarkAvg: 250 },
+  { id: 'leyeco-2', name: 'Leyte II Electric Cooperative', shortName: 'LEYECO II', region: 'Region VIII', type: 'electricity', baseRate: 12.20, benchmarkAvg: 260 },
+  { id: 'leyeco-3', name: 'Leyte III Electric Cooperative', shortName: 'LEYECO III', region: 'Region VIII', type: 'electricity', baseRate: 12.80, benchmarkAvg: 240 },
+  { id: 'leyeco-4', name: 'Leyte IV Electric Cooperative', shortName: 'LEYECO IV', region: 'Region VIII', type: 'electricity', baseRate: 12.40, benchmarkAvg: 245 },
+  { id: 'leyeco-5', name: 'Leyte V Electric Cooperative', shortName: 'LEYECO V', region: 'Region VIII', type: 'electricity', baseRate: 12.60, benchmarkAvg: 255 },
 ];
 
 const FALLBACK_APPLIANCES = [
