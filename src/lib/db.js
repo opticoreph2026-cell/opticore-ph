@@ -151,6 +151,20 @@ export async function logTransaction(data) {
 }
 
 
+export async function recordLogin(id) {
+  return db.client.update({
+    where: { id },
+    data: { lastLoginAt: new Date() },
+  });
+}
+
+export async function incrementTokenUsage(id, tokens) {
+  return db.client.update({
+    where: { id },
+    data: { totalTokensUsed: { increment: tokens } },
+  });
+}
+
 export async function setOnboardingComplete(id) {
   return db.client.update({
     where: { id },

@@ -73,6 +73,12 @@ export async function POST(request) {
 
   // ── Issue JWT ─────────────────────────────────────────────────────────────
   const role  = client.role ?? 'client';
+  
+  try {
+    const { recordLogin } = await import('@/lib/db');
+    await recordLogin(client.id);
+  } catch (e) {}
+
   const token = await signToken({
     sub:                client.id,
     email:              client.email,

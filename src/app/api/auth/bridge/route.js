@@ -33,6 +33,10 @@ export async function GET(request) {
       return NextResponse.redirect(new URL('/login?error=AccountNotFound', request.url));
     }
 
+    // Record login timestamp
+    const { recordLogin } = await import('@/lib/db');
+    await recordLogin(client.id);
+
     // ─── LOGIN & REDIRECT ──────────────────────────────────────────────────────
     // Immediately sign the internal Optics Core Token using jose Web Crypto API
     const token = await signToken({

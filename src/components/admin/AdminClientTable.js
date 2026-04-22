@@ -43,6 +43,9 @@ export default function AdminClientTable({ clients }) {
           <tr className="bg-white/[0.02] text-[10px] font-black text-text-faint uppercase tracking-widest border-b border-white/[0.04]">
             <th className="px-6 py-4">Client</th>
             <th className="px-6 py-4">Current Plan</th>
+            <th className="px-6 py-4">Last Active</th>
+            <th className="px-6 py-4 text-center">Scans</th>
+            <th className="px-6 py-4 text-center">Tokens</th>
             <th className="px-6 py-4 text-right">Actions</th>
           </tr>
         </thead>
@@ -69,12 +72,6 @@ export default function AdminClientTable({ clients }) {
                       <option value="business">Business</option>
                     </select>
                     {loading && <Loader2 className="w-3 h-3 animate-spin text-brand-400" />}
-                    <button 
-                      onClick={() => setEditingId(null)}
-                      className="text-[10px] text-text-faint hover:text-red-400"
-                    >
-                      Cancel
-                    </button>
                   </div>
                 ) : (
                   <span className={clsx(
@@ -86,6 +83,15 @@ export default function AdminClientTable({ clients }) {
                     {c.planTier}
                   </span>
                 )}
+              </td>
+              <td className="px-6 py-4 text-[11px] text-text-muted">
+                {c.lastLoginAt ? new Date(c.lastLoginAt).toLocaleDateString() : 'Never'}
+              </td>
+              <td className="px-6 py-4 text-center font-mono font-bold text-blue-400 text-xs">
+                {c.scanCount || 0}
+              </td>
+              <td className="px-6 py-4 text-center font-mono text-text-faint text-xs">
+                {(c.totalTokensUsed || 0).toLocaleString()}
               </td>
               <td className="px-6 py-4 text-right">
                 <button 

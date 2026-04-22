@@ -25,6 +25,8 @@ model Client {
   subscriptionId          String?
 
   scanCount               Int      @default(0)
+  totalTokensUsed         Int      @default(0)
+  lastLoginAt             DateTime?
   lastScanReset           DateTime @default(now())
   
   readings    UtilityReading[]

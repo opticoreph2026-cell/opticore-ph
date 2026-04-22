@@ -82,7 +82,15 @@ export async function POST(request) {
 
     const response = await result.response;
     const text = response.text();
+    const usage = response.usageMetadata; // Extract token usage
     
+    // Track usage in background
+    const { incrementTokenUsage, incrementScanCount } = await import('@/lib/db');
+    if (usage?.totalTokenCount) {
+      await incrementTokenUsage(client.id, usage.totalTokenCount);
+    }
+    await incrementScanCount(client.id);
+
     // Hardened JSON extraction: pull only the first '{' to the last '}'
     let jsonStr = text.replace(/```json/gi, '').replace(/```/g, '').trim();
     const startIndex = jsonStr.indexOf('{');
