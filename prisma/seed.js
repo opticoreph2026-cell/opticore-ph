@@ -12,12 +12,16 @@ const process = require('process');
 
 // ─── UTILITY PROVIDER REGISTRY (EmbeddedResource for seeding) ───────────────
 const UTILITY_PROVIDERS = [
-  { id: 'meralco', name: 'Manila Electric Company', shortName: 'Meralco', region: 'NCR', type: 'ELECTRIC', baseRate: 11.50, benchmarkAvg: 350 },
-  { id: 'veco', name: 'Visayan Electric Company', shortName: 'VECO', region: 'Region VII', type: 'ELECTRIC', baseRate: 10.80, benchmarkAvg: 320 },
-  { id: 'davao-light', name: 'Davao Light and Power Company', shortName: 'DLPC', region: 'Region XI', type: 'ELECTRIC', baseRate: 10.20, benchmarkAvg: 300 },
-  { id: 'beneco', name: 'Benguet Electric Cooperative', shortName: 'BENECO', region: 'CAR', type: 'ELECTRIC', baseRate: 12.10, benchmarkAvg: 280 },
-  { id: 'manila-water', name: 'Manila Water Company', shortName: 'Manila Water', region: 'NCR-East', type: 'WATER', baseRate: 35.00, benchmarkAvg: 25 },
-  { id: 'maynilad', name: 'Maynilad Water Services', shortName: 'Maynilad', region: 'NCR-West', type: 'WATER', baseRate: 38.50, benchmarkAvg: 28 },
+  { id: 'meralco', name: 'Manila Electric Company', shortName: 'Meralco', region: 'NCR', type: 'electricity', baseRate: 11.50, benchmarkAvg: 350 },
+  { id: 'veco', name: 'Visayan Electric Company', shortName: 'VECO', region: 'Region VII', type: 'electricity', baseRate: 10.80, benchmarkAvg: 320 },
+  { id: 'davao-light', name: 'Davao Light and Power Company', shortName: 'DLPC', region: 'Region XI', type: 'electricity', baseRate: 10.20, benchmarkAvg: 300 },
+  { id: 'beneco', name: 'Benguet Electric Cooperative', shortName: 'BENECO', region: 'CAR', type: 'electricity', baseRate: 12.10, benchmarkAvg: 280 },
+  { id: 'subic-enerzone', name: 'Subic EnerZone', shortName: 'SEZ', region: 'Region III', type: 'electricity', baseRate: 10.50, benchmarkAvg: 310 },
+  { id: 'cotabato-light', name: 'Cotabato Light', shortName: 'CLPC', region: 'Region XII', type: 'electricity', baseRate: 10.90, benchmarkAvg: 290 },
+  { id: 'manila-water', name: 'Manila Water Company', shortName: 'Manila Water', region: 'NCR-East', type: 'water', baseRate: 35.00, benchmarkAvg: 25 },
+  { id: 'maynilad', name: 'Maynilad Water Services', shortName: 'Maynilad', region: 'NCR-West', type: 'water', baseRate: 38.50, benchmarkAvg: 28 },
+  { id: 'cebu-water', name: 'Cebu Water', shortName: 'MCWD', region: 'Region VII', type: 'water', baseRate: 32.00, benchmarkAvg: 22 },
+  { id: 'davao-water', name: 'Davao City Water District', shortName: 'DCWD', region: 'Region XI', type: 'water', baseRate: 30.00, benchmarkAvg: 24 },
 ];
 
 const FALLBACK_APPLIANCES = [
