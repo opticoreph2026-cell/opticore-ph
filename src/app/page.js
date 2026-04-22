@@ -153,12 +153,15 @@ export default function LandingPage() {
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
-              <Link href="/signup" className="text-sm font-black uppercase tracking-widest px-8 py-4 rounded-xl text-black bg-white hover:bg-gray-200 transition-all shadow-[0_0_30px_rgba(255,255,255,0.2)] flex items-center gap-2">
-                Deploy Server <ChevronRight className="w-4 h-4" />
+              <Link href="/pricing" className="text-sm font-black uppercase tracking-widest px-8 py-4 rounded-xl text-black bg-white hover:bg-gray-200 transition-all shadow-[0_0_30px_rgba(255,255,255,0.2)] flex items-center gap-2">
+                Get Started Free <ChevronRight className="w-4 h-4" />
               </Link>
-              <Link href="/#how-it-works" className="text-sm font-black uppercase tracking-widest px-8 py-4 rounded-xl text-white bg-white/5 hover:bg-white/10 transition-all border border-white/10">
-                View Architecture
-              </Link>
+              <button 
+                onClick={() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' })}
+                className="text-sm font-black uppercase tracking-widest px-8 py-4 rounded-xl text-white bg-white/5 hover:bg-white/10 transition-all border border-white/10"
+              >
+                How it Works
+              </button>
             </div>
 
             {/* Animated Metrics */}
@@ -177,6 +180,33 @@ export default function LandingPage() {
                     {unit && <span className="text-sm text-text-muted">{unit}</span>}
                   </p>
                   <p className="text-[9px] font-black text-text-muted uppercase tracking-[0.2em]">{label}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── How it Works ─────────────────────────────────────────── */}
+        <section id="how-it-works" className="py-24 px-4 bg-surface-950/50 relative">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-16">
+              <p className="text-[10px] font-black uppercase tracking-[0.3em] text-brand-400 mb-4">The Protocol</p>
+              <h2 className="text-4xl font-bold text-white tracking-tight">How it <span className="text-brand-400">Works</span></h2>
+            </div>
+            
+            <div className="grid md:grid-cols-4 gap-8">
+              {HOW_IT_WORKS.map((step) => (
+                <div key={step.step} className="relative group">
+                  <div className="mb-6 relative">
+                    <span className="text-6xl font-black text-white/[0.03] absolute -top-8 -left-4 group-hover:text-brand-400/10 transition-colors">
+                      {step.step}
+                    </span>
+                    <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center relative z-10 group-hover:border-brand-500/50 transition-all">
+                      <step.icon className="w-6 h-6 text-brand-400" />
+                    </div>
+                  </div>
+                  <h3 className="text-lg font-bold text-white mb-3">{step.title}</h3>
+                  <p className="text-xs text-text-muted leading-relaxed">{step.desc}</p>
                 </div>
               ))}
             </div>

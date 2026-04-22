@@ -48,21 +48,24 @@ export async function POST(request) {
       : '- unbundledCharges: null (Skip deep unbundled breakdown for this tier).';
 
     const prompt = `
-      You are an expert utility bill auditor for the Philippines. 
-      Analyze this bill from any Philippine Electric Cooperative (EC), Distribution Utility (DU), or Water District (WD).
+      You are an expert utility bill auditor for the Philippines (Meralco, VECO, Davao Light, etc.). 
+      Analyze this bill with extreme precision.
       
       Extract the following data in strict JSON format:
-      - providerName: (String) Name of the utility company/cooperative. Must be highly accurate (e.g., "BENECO", "Meralco", "Davao Light").
-      - type: (String) "ELECTRIC" or "WATER".
-      - kwhUsed: (Number) Total kWh consumed (if Electric).
-      - m3Used: (Number) Total m³ consumed (if Water).
-      - billingPeriod: (String) Date range.
+      - providerName: (String) Name of the utility company/cooperative.
+      - type: (String) "ELECTRIC".
+      - kwhUsed: (Number) Total kWh consumed.
+      - billingPeriod: (String) The date range (e.g., "Oct 20 - Nov 19").
       - totalAmount: (Number) Total amount due in ₱.
-      - effectiveRate: (Number) Calculate exactly: totalAmount / kwhUsed (or m3Used). Round to 4 decimals.
-      - billingDate: (String) Due date or bill date.
+      - effectiveRate: (Number) Exactly: totalAmount / kwhUsed.
+      - billingDate: (String) The specific reading date or statement date in YYYY-MM-DD format. Ensure this is NOT null.
       ${deepAnalysisInstruction}
+      
+      ADVISORY LOGIC:
+      - anomalies: (Array of Strings) Identify any unusual metrics (e.g., "High System Loss (>10%)", "Unexpected 20% spike vs average", "High Generation Charge").
+      - solutions: (Array of Strings) Provide actionable, Philippine-specific advice for each anomaly (e.g., "Check for grounding leaks in old wiring", "Shift laundry to morning hours", "Clean AC filters to reduce drag").
 
-      Return ONLY the raw JSON object. Do not wrap in markdown backticks. Do not include any explanations. If a field is missing, return null. Ensure all numerical values are actual numbers.
+      Return ONLY raw JSON. No markdown. If a value is missing, infer it from the data if possible, otherwise return null.
     `;
 
     // Extract mime type dynamically (e.g. data:image/png;base64,... or data:application/pdf;base64,...)

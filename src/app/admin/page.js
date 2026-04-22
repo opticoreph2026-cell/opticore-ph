@@ -5,19 +5,20 @@ import {
 import AdminKpiCharts from '@/components/admin/KpiCharts';
 import Link from 'next/link';
 import { clsx } from 'clsx';
-import { getAdminKPIs, listAllClients, listAllTransactions } from '@/lib/db';
+import { getAdminKPIs, listAllClients, listAllTransactions, getSystemTelemetry } from '@/lib/db';
 
 import AdminClientTable from '@/components/admin/AdminClientTable';
 
 export const metadata = { title: 'Admin Overview — OptiCore PH' };
 
 export default async function AdminDashboard() {
-  let kpis = null, recentClients = [], transactions = [];
+  let kpis = null, recentClients = [], transactions = [], telemetry = null;
   try {
-    [kpis, recentClients, transactions] = await Promise.all([
+    [kpis, recentClients, transactions, telemetry] = await Promise.all([
       getAdminKPIs(),
       listAllClients({ maxRecords: 10 }),
       listAllTransactions({ maxRecords: 10 }),
+      getSystemTelemetry(),
     ]);
   } catch (error) {
     console.error('[Admin DB Error]:', error);
@@ -117,6 +118,45 @@ export default async function AdminDashboard() {
 
         {/* ── Sidebar Analytics ── */}
         <div className="space-y-8">
+          {/* System Pulse */}
+          <section className="bento-card p-6">
+            <div className="flex items-center gap-3 mb-6">
+              <Cpu className="w-5 h-5 text-brand-400" />
+              <h2 className="font-bold text-text-primary text-sm uppercase tracking-wider">System Pulse</h2>
+            </div>
+            
+            <div className="space-y-6">
+              <div>
+                <div className="flex justify-between text-[10px] font-bold text-text-faint uppercase mb-2">
+                  <span>Gemini Token Load (TPM)</span>
+                  <span className="text-brand-400">
+                    {((telemetry?.totalTokens / (telemetry?.geminiLimit || 1)) * 100).toFixed(2)}%
+                  </span>
+                </div>
+                <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-brand-500 transition-all duration-1000"
+                    style={{ width: `${Math.min(100, (telemetry?.totalTokens / (telemetry?.geminiLimit || 1)) * 100)}%` }}
+                  />
+                </div>
+                <p className="text-[10px] text-text-muted mt-2">
+                  {telemetry?.totalTokens?.toLocaleString()} / 1M Limit
+                </p>
+              </div>
+
+              <div className="pt-4 border-t border-white/5 grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-[9px] font-black text-text-faint uppercase tracking-widest mb-1">Google Logins</p>
+                  <p className="text-xl font-bold text-text-primary">{telemetry?.googleLogins || 0}</p>
+                </div>
+                <div>
+                  <p className="text-[9px] font-black text-text-faint uppercase tracking-widest mb-1">Total AI Scans</p>
+                  <p className="text-xl font-bold text-text-primary">{telemetry?.totalScans || 0}</p>
+                </div>
+              </div>
+            </div>
+          </section>
+
           <section className="bento-card p-6">
             <div className="flex items-center gap-3 mb-6">
               <TrendingUp className="w-5 h-5 text-brand-400" />

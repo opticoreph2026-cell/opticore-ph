@@ -19,6 +19,7 @@ export default function LandingCalculator() {
     m3Used:          15,
   });
   const [result, setResult] = useState(null);
+  const [error,  setError]  = useState('');
 
   useEffect(() => {
     async function fetchProviders() {
@@ -41,6 +42,12 @@ export default function LandingCalculator() {
 
   // Estimate bill from selected provider rates or fallback averages
   const calculate = () => {
+    if (!form.electricProvider || !form.waterProvider) {
+      setError('Please select your utility providers first.');
+      return;
+    }
+    setError('');
+
     const ep = electricProviders.find(p => p.id === form.electricProvider);
     const wp = waterProviders.find(p => p.id === form.waterProvider);
 
@@ -83,6 +90,11 @@ export default function LandingCalculator() {
         <div className="flex justify-center py-8"><Spinner /></div>
       ) : (
         <div className="space-y-5">
+          {error && (
+            <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-xs text-center animate-fade-in">
+              {error}
+            </div>
+          )}
           {/* Provider selects */}
           <div className="grid sm:grid-cols-2 gap-4">
             <div>

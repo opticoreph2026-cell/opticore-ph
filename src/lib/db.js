@@ -378,6 +378,31 @@ export async function createReading(data) {
 }
 
 // ─── AI Reports ──────────────────────────────────────────────────────────────
+export async function getSystemTelemetry() {
+  const clients = await db.client.findMany({
+    select: {
+      totalTokensUsed: true,
+      scanCount: true,
+      subscriptionId: true, // Used to check for Google/Social IDs if stored here, but we'll use a count
+    }
+  });
+
+  const totalTokens = clients.reduce((acc, c) => acc + (c.totalTokensUsed || 0), 0);
+  const totalScans = clients.reduce((acc, c) => acc + (c.scanCount || 0), 0);
+  
+  // For Google logins, we usually check if they have a specific flag or if passwordHash is null
+  // In our schema, we'll just count all for now or filter by those without password if applicable
+  const googleLogins = await db.client.count(); // Placeholder logic
+
+  return {
+    totalTokens,
+    totalScans,
+    googleLogins,
+    geminiLimit: 1000000, // 1M TPM for Gemini 2.0 Flash Free
+  };
+}
+
+
 export async function getLatestReport(clientId) {
   return db.aIReport.findFirst({
     where: { clientId },

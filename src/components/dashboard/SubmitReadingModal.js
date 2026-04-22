@@ -276,18 +276,18 @@ export default function SubmitReadingModal({ isOpen, onClose, user, appliances =
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center justify-between gap-2">
-                        <h3 className="text-sm font-bold text-white">Electricity Bill Scan</h3>
+                        <h3 className="text-sm font-bold text-white">Scan Electricity Bill</h3>
                         {user?.planTier === 'starter' && (
                           <span
                             className="text-[9px] font-black tracking-wider px-2 py-0.5 rounded-full shrink-0"
                             style={{ background: 'rgba(245,158,11,0.12)', color: '#f59e0b', border: '1px solid rgba(245,158,11,0.22)' }}
                           >
-                            {Math.max(0, 3 - (user?.scanCount || 0))} FREE LEFT
+                            AI SCAN
                           </span>
                         )}
                       </div>
                       <p className="text-[11px] text-white/40 mt-1 leading-relaxed">
-                        Auto-extract kWh and bill totals from a photo or PDF of your electricity bill. Water must be entered manually.
+                        Uses Gemini Vision AI to extract unbundled charges and detect consumption anomalies.
                       </p>
                     </div>
                   </button>
@@ -297,20 +297,20 @@ export default function SubmitReadingModal({ isOpen, onClose, user, appliances =
                 <button
                   onClick={() => setStep('manual')}
                   className="w-full flex items-center gap-4 p-5 rounded-xl text-left group transition-all duration-200"
-                  style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}
-                  onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'}
-                  onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.03)'}
+                  style={{ background: 'rgba(96,165,250,0.03)', border: '1px solid rgba(96,165,250,0.15)' }}
+                  onMouseEnter={e => e.currentTarget.style.background = 'rgba(96,165,250,0.06)'}
+                  onMouseLeave={e => e.currentTarget.style.background = 'rgba(96,165,250,0.03)'}
                 >
                   <div
                     className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
-                    style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}
+                    style={{ background: 'rgba(96,165,250,0.05)', border: '1px solid rgba(96,165,250,0.12)' }}
                   >
-                    <Keyboard className="w-5 h-5 text-white/40" />
+                    <Keyboard className="w-5 h-5 text-blue-400" />
                   </div>
                   <div>
-                    <h3 className="text-sm font-bold text-white">Manual Entry</h3>
+                    <h3 className="text-sm font-bold text-white">Water & Manual Entry</h3>
                     <p className="text-[11px] text-white/40 mt-1 leading-relaxed">
-                      Type in your kWh usage and bill amount directly.
+                      Optimized for water bills and manual meter logs. Uses deterministic engineering math.
                     </p>
                   </div>
                 </button>
