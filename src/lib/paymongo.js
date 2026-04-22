@@ -32,13 +32,13 @@ export async function createCheckoutSession({ clientId, email, plan, successUrl,
   // Fix: prices MUST match /pricing page exactly (₱199 / ₱999)
   // PayMongo amounts are in centavos: ₱199 = 19900, ₱999 = 99900
   const PRICES = {
-    pro:      19900,  // ₱199.00/month
-    business: 99900,  // ₱999.00/month
+    pro:      49900,   // ₱499.00/month
+    business: 249900,  // ₱2,499.00/month
   };
 
   const DESCRIPTIONS = {
-    pro:      'OptiCore PH — Pro Plan (₱199/month)',
-    business: 'OptiCore PH — Business Plan (₱999/month)',
+    pro:      'OptiCore PH — Pro Plan (₱499/month)',
+    business: 'OptiCore PH — Business Plan (₱2,499/month)',
   };
 
   const amount = PRICES[plan];
