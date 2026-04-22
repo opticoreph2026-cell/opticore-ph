@@ -62,7 +62,11 @@ function makeClient() {
   }
   
   // In Prisma 7, we pass the config object to the PrismaLibSql factory
-  const adapter = new PrismaLibSql({ url: resolvedUrl });
+  // We MUST include the authToken for Turso/Cloud connections
+  const adapter = new PrismaLibSql({ 
+    url: resolvedUrl,
+    authToken: authToken 
+  });
   
   return new PrismaClient({
     adapter,

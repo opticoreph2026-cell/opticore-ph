@@ -21,12 +21,20 @@ module.exports = {
     // This tells Prisma to use the local file for CLI commands
     // Prioritize Cloud (Turso) over Local for CLI alignment
     url: (function() {
-      const raw = env.TURSO_DATABASE_URL || env.DATABASE_URL || "file:./dev.db";
+      let raw = env.TURSO_DATABASE_URL || env.DATABASE_URL || "file:./dev.db";
+      
+      // If it's a file path, resolve it to an absolute path for Windows compatibility
       if (raw.startsWith('file:') && !raw.startsWith('file:///') && !raw.startsWith('file://')) {
         const filePath = raw.replace(/^file:/, '');
         const absPath = path.isAbsolute(filePath) ? filePath : path.resolve(__dirname, filePath);
         return `file:${absPath.replace(/\\/g, '/')}`;
       }
+      
+      // For Turso, we ensure it uses the libsql protocol if it's a remote URL
+      if (raw.startsWith('https://')) {
+        raw = raw.replace('https://', 'libsql://');
+      }
+      
       return raw;
     })(),
   },

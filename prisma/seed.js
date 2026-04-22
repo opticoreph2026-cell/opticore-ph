@@ -44,7 +44,8 @@ function loadEnv() {
 }
 loadEnv();
 
-const rawUrl = process.env.DATABASE_URL || 'file:./dev.db';
+const rawUrl = process.env.TURSO_DATABASE_URL || process.env.DATABASE_URL || 'file:./dev.db';
+const authToken = process.env.TURSO_AUTH_TOKEN;
 
 function resolveDbUrl(url) {
   if (url && url.startsWith('file:') && !url.startsWith('file:///') && !url.startsWith('file://')) {
@@ -67,7 +68,10 @@ console.log(`[Seed] Initializing with DB URL: ${dbUrl}`);
 process.env.DATABASE_URL = dbUrl;
 
 // In Prisma 7, we pass the config object to the PrismaLibSql factory
-const adapter = new PrismaLibSql({ url: dbUrl });
+const adapter = new PrismaLibSql({ 
+  url: dbUrl,
+  authToken: authToken 
+});
 const prisma = new PrismaClient({ adapter });
 
 const INPUT_FILE = path.join(process.cwd(), 'final_catalog.json');
