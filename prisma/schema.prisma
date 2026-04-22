@@ -34,6 +34,7 @@ model Client {
   properties  Property[]
   dailyReadings DailyMeterReading[]
   lpgReadings LPGReading[]
+  transactions Transaction[]
   
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -227,3 +228,19 @@ model LPGReading {
   
   createdAt      DateTime @default(now())
 }
+
+model Transaction {
+  id              String   @id @default(uuid())
+  clientId        String
+  client          Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  
+  amount          Float    @default(0)
+  currency        String   @default("PHP")
+  planTier        String   // starter, pro, business
+  type            String   @default("payment") // payment, manual_override
+  referenceId     String?  // PayMongo session ID or Admin Note
+  status          String   @default("completed")
+  
+  createdAt       DateTime @default(now())
+}
+

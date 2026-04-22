@@ -1,152 +1,145 @@
-import { getAdminKPIs, listAllClients } from '@/lib/db';
-import { Users, FileText, Bell, TrendingUp, Zap, DollarSign, ArrowRight } from 'lucide-react';
+import { 
+  Users, FileText, Bell, TrendingUp, Zap, DollarSign, ArrowRight, 
+  CreditCard, ShieldCheck, History, Edit2, ShieldAlert 
+} from 'lucide-react';
 import AdminKpiCharts from '@/components/admin/KpiCharts';
 import Link from 'next/link';
 import { clsx } from 'clsx';
+import { getAdminKPIs, listAllClients, listAllTransactions } from '@/lib/db';
 
-export const metadata = { title: 'Admin KPIs — OptiCore PH' };
+import AdminClientTable from '@/components/admin/AdminClientTable';
+
+export const metadata = { title: 'Admin Overview — OptiCore PH' };
 
 export default async function AdminDashboard() {
-  let kpis = null, recentClients = [];
+  let kpis = null, recentClients = [], transactions = [];
   try {
-    [kpis, recentClients] = await Promise.all([
+    [kpis, recentClients, transactions] = await Promise.all([
       getAdminKPIs(),
-      listAllClients({ maxRecords: 5 }),
+      listAllClients({ maxRecords: 10 }),
+      listAllTransactions({ maxRecords: 10 }),
     ]);
-  } catch { /* degrade */ }
+  } catch (error) {
+    console.error('[Admin DB Error]:', error);
+  }
 
-  const stats = kpis ?? {
-    totalClients: 0, proClients: 0, businessClients: 0,
-    activeAlerts: 0, totalReports: 0, mrr: 0,
-    planCounts: { starter: 0, pro: 0, business: 0 },
-  };
+  const statCards = [
+    { label: 'Total Customers', value: kpis?.totalClients ?? 0, icon: Users, color: 'text-blue-400', bg: 'bg-blue-500/10' },
+    { label: 'Pro Subscriptions', value: kpis?.proClients ?? 0, icon: Zap, color: 'text-amber-400', bg: 'bg-amber-500/10' },
+    { label: 'Business Tier', value: kpis?.businessClients ?? 0, icon: ShieldCheck, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
+    { label: 'Monthly Revenue', value: `₱${(kpis?.mrr ?? 0).toLocaleString()}`, icon: DollarSign, color: 'text-brand-400', bg: 'bg-brand-500/10' },
+  ];
 
   return (
     <div className="space-y-8 animate-fade-up max-w-7xl pb-10">
-      {/* Header Area */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-white tracking-tight">System <span className="text-brand-400">Intelligence</span></h1>
-          <p className="text-white/50 text-sm mt-1.5 font-medium">Real-time platform performance and user analytics.</p>
-        </div>
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
-          <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-          <span className="text-[10px] text-emerald-400 font-bold uppercase tracking-wider">Live System Status</span>
-        </div>
-      </div>
-
-      {/* KPI Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5">
-        {[
-          { label: 'Total Clients',   value: stats.totalClients,   icon: Users,     color: 'text-blue-400',   bg: 'from-blue-500/20 to-transparent' },
-          { label: 'Est. MRR (PHP)',  value: `₱${stats.mrr.toLocaleString()}`, icon: DollarSign, color: 'text-emerald-400', bg: 'from-emerald-500/20 to-transparent' },
-          { label: 'Pro Members',     value: stats.proClients,     icon: TrendingUp, color: 'text-purple-400',  bg: 'from-purple-500/20 to-transparent' },
-          { label: 'Enterprise',      value: stats.businessClients, icon: Zap,       color: 'text-amber-400',   bg: 'from-amber-500/20 to-transparent' },
-          { label: 'Active Alerts',   value: stats.activeAlerts,   icon: Bell,      color: 'text-red-400',     bg: 'from-red-500/20 to-transparent' },
-        ].map(({ label, value, icon: Icon, color, bg }) => (
-          <div key={label} className="group relative bg-white/[0.03] border border-white/[0.08] rounded-2xl p-5 hover:bg-white/[0.05] transition-all duration-300">
-            <div className={`absolute inset-0 bg-gradient-to-br ${bg} opacity-30 rounded-2xl`} />
-            <div className="relative">
-              <div className="flex items-center justify-between mb-4">
-                <div className={`w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center border border-white/10 group-hover:scale-110 transition-transform`}>
-                  <Icon className={`w-5 h-5 ${color}`} />
-                </div>
-              </div>
-              <p className="text-[11px] font-bold text-white/40 uppercase tracking-widest mb-1">{label}</p>
-              <p className="text-3xl font-black text-white tracking-tighter">{value}</p>
+      {/* ── KPI Grid ── */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {statCards.map((s) => (
+          <div key={s.label} className="bento-card p-6 flex items-center gap-5">
+            <div className={`w-12 h-12 rounded-2xl ${s.bg} flex items-center justify-center shrink-0`}>
+              <s.icon className={`w-6 h-6 ${s.color}`} />
+            </div>
+            <div>
+              <p className="text-[10px] font-black text-text-faint uppercase tracking-widest mb-1">{s.label}</p>
+              <p className="text-2xl font-bold text-text-primary tracking-tight">{s.value}</p>
             </div>
           </div>
         ))}
       </div>
 
-      {/* Analytics Visualization */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-3">
-          <AdminKpiCharts planCounts={stats.planCounts} />
-        </div>
-      </div>
-
-      {/* Recent activity section */}
-      <div className="bg-white/[0.03] border border-white/[0.08] rounded-3xl overflow-hidden backdrop-blur-sm">
-        <div className="p-6 border-b border-white/[0.08] flex items-center justify-between bg-white/[0.01]">
-          <div>
-            <h2 className="text-lg font-bold text-white tracking-tight">Recent User Activity</h2>
-            <p className="text-white/40 text-xs mt-0.5">Latest registrations and provider configurations.</p>
-          </div>
-          <Link 
-            href="/admin/clients" 
-            className="flex items-center gap-2 text-xs font-bold text-brand-400 hover:text-brand-300 transition-colors bg-brand-500/10 px-4 py-2 rounded-full border border-brand-500/20 group"
-          >
-            Manage All Clients
-            <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
-          </Link>
-        </div>
-        
-        <div className="overflow-x-auto">
-          {recentClients.length > 0 ? (
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="bg-white/[0.02]">
-                  {['Client Identity', 'Account Tier', 'E-Infrastructure', 'Actions'].map(h => (
-                    <th key={h} className="px-6 py-4 text-[10px] font-black text-white/30 uppercase tracking-[0.2em]">{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-white/[0.05]">
-                {recentClients.map((c) => (
-                  <tr key={c.id} className="group hover:bg-white/[0.03] transition-colors">
-                    <td className="px-6 py-4">
-                      <div className="flex flex-col">
-                        <span className="text-sm font-bold text-white group-hover:text-brand-400 transition-colors">{c.name || 'Anonymous User'}</span>
-                        <span className="text-xs text-white/40">{c.email}</span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex">
-                        <span className={clsx(
-                          'px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider border',
-                          c.planTier === 'business' ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' :
-                          c.planTier === 'pro'      ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' :
-                          'bg-white/5 text-white/50 border-white/10'
-                        )}>
-                          {c.planTier || 'Starter'}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-2">
-                        <div className="flex -space-x-2">
-                          {[1, 2].map(i => (
-                            <div key={i} className={clsx(
-                              'w-6 h-6 rounded-full border-2 border-surface-950 flex items-center justify-center text-[8px] font-bold',
-                              i === 1 ? 'bg-blue-500 text-white' : 'bg-emerald-500 text-white'
-                            )}>
-                              {i === 1 ? 'E' : 'W'}
-                            </div>
-                          ))}
-                        </div>
-                        <span className="text-xs text-white/40 font-medium">
-                          {[c.electricityProviderId, c.waterProviderId].filter(Boolean).length} / 2 active
-                        </span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <Link href={`/admin/clients/${c.id}`} className="text-white/30 hover:text-white transition-colors">
-                        <ArrowRight className="w-4 h-4" />
-                      </Link>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          ) : (
-            <div className="py-20 flex flex-col items-center justify-center text-center">
-              <div className="w-16 h-16 rounded-3xl bg-white/5 flex items-center justify-center mb-4">
-                <Users className="w-8 h-8 text-white/10" />
+      <div className="grid lg:grid-cols-3 gap-8">
+        {/* ── Main Activity ── */}
+        <div className="lg:col-span-2 space-y-8">
+          {/* User Management */}
+          <section className="bento-card overflow-hidden">
+            <div className="px-6 py-5 border-b border-white/[0.04] flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Users className="w-5 h-5 text-blue-400" />
+                <h2 className="font-bold text-text-primary">User Management</h2>
               </div>
-              <p className="text-white/30 font-medium">No user records detected in Turso Cloud.</p>
+              <span className="text-[10px] font-bold text-text-faint bg-white/5 px-2 py-1 rounded uppercase tracking-tighter">
+                Latest {recentClients.length}
+              </span>
             </div>
-          )}
+            
+            <AdminClientTable clients={recentClients} />
+          </section>
+
+          {/* Financial Inventory */}
+          <section className="bento-card overflow-hidden">
+            <div className="px-6 py-5 border-b border-white/[0.04] flex items-center gap-3">
+              <History className="w-5 h-5 text-brand-400" />
+              <h2 className="font-bold text-text-primary">Financial Inventory</h2>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-sm">
+                <thead>
+                  <tr className="bg-white/[0.02] text-[10px] font-black text-text-faint uppercase tracking-widest border-b border-white/[0.04]">
+                    <th className="px-6 py-4">Transaction</th>
+                    <th className="px-6 py-4">Amount</th>
+                    <th className="px-6 py-4">Method</th>
+                    <th className="px-6 py-4 text-right">Date</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-white/[0.04]">
+                  {transactions.map((t) => (
+                    <tr key={t.id} className="hover:bg-white/[0.01]">
+                      <td className="px-6 py-4">
+                        <div className="flex flex-col">
+                          <span className="font-bold text-text-primary capitalize">{t.planTier} Tier</span>
+                          <span className="text-[11px] text-text-faint">{t.client?.email}</span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className="font-mono font-bold text-text-primary">₱{t.amount}</span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className={clsx(
+                          "px-2 py-0.5 rounded text-[9px] font-black uppercase",
+                          t.type === 'manual_override' ? "bg-purple-500/10 text-purple-400" : "bg-blue-500/10 text-blue-400"
+                        )}>
+                          {t.type === 'manual_override' ? 'Admin Gift' : 'PayMongo'}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-right text-text-faint text-[11px]">
+                        {new Date(t.createdAt).toLocaleDateString()}
+                      </td>
+                    </tr>
+                  ))}
+                  {transactions.length === 0 && (
+                    <tr><td colSpan="4" className="px-6 py-10 text-center text-text-faint italic">No transactions recorded yet.</td></tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+
+        {/* ── Sidebar Analytics ── */}
+        <div className="space-y-8">
+          <section className="bento-card p-6">
+            <div className="flex items-center gap-3 mb-6">
+              <TrendingUp className="w-5 h-5 text-brand-400" />
+              <h2 className="font-bold text-text-primary text-sm uppercase tracking-wider">Revenue Pulse</h2>
+            </div>
+            <AdminKpiCharts planCounts={kpis?.planCounts} />
+          </section>
+
+          <section className="bento-card p-6">
+            <div className="flex items-center gap-3 mb-6">
+              <Bell className="w-5 h-5 text-red-400" />
+              <h2 className="font-bold text-text-primary text-sm uppercase tracking-wider">System Alerts</h2>
+            </div>
+            <div className="space-y-4">
+              <div className="p-4 rounded-xl bg-red-500/5 border border-red-500/10 flex gap-3">
+                <ShieldAlert className="w-5 h-5 text-red-400 shrink-0" />
+                <div>
+                  <p className="text-xs font-bold text-red-300 mb-1">Production Shield Active</p>
+                  <p className="text-[10px] text-red-400/70 leading-relaxed">External database sync is restricted to authorized agents.</p>
+                </div>
+              </div>
+            </div>
+          </section>
         </div>
       </div>
     </div>

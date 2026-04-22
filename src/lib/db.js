@@ -103,11 +103,11 @@ export async function listAllClients(options = {}) {
   });
 }
 
-export async function setClientPlanTier(id, tier, subscriptionId = null) {
+export async function setClientPlanTier(id, tier, subscriptionId = null, logType = 'payment') {
   const expiry = new Date();
   expiry.setDate(expiry.getDate() + 30); // 30-day monthly renewal
 
-  return db.client.update({
+  const client = await db.client.update({
     where: { id },
     data: { 
       planTier: tier,
@@ -115,7 +115,41 @@ export async function setClientPlanTier(id, tier, subscriptionId = null) {
       subscriptionId: subscriptionId
     },
   });
+
+  // Log the transaction
+  await logTransaction({
+    clientId: id,
+    planTier: tier,
+    type: logType,
+    referenceId: subscriptionId || (logType === 'manual_override' ? 'Admin Override' : null),
+    amount: tier === 'pro' ? 499 : (tier === 'business' ? 2499 : 0)
+  });
+
+  return client;
 }
+
+// ─── Transactions ────────────────────────────────────────────────────────────
+export async function listAllTransactions(options = {}) {
+  return db.transaction.findMany({
+    include: { client: { select: { name: true, email: true } } },
+    orderBy: { createdAt: 'desc' },
+    take: options.maxRecords || 100,
+  });
+}
+
+export async function logTransaction(data) {
+  return db.transaction.create({
+    data: {
+      clientId:    data.clientId,
+      planTier:    data.planTier,
+      type:        data.type || 'payment',
+      amount:      data.amount || 0,
+      referenceId: data.referenceId,
+      status:      'completed'
+    }
+  });
+}
+
 
 export async function setOnboardingComplete(id) {
   return db.client.update({
