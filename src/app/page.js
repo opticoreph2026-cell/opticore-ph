@@ -342,7 +342,7 @@ export default function LandingPage() {
                 <p className="text-sm text-text-muted mb-6">Full autonomous analytics</p>
                 <div className="flex items-end gap-1 mb-8">
                   <span className="text-xl text-text-faint mb-1">₱</span>
-                  <span className="text-5xl font-black text-white">199</span>
+                  <span className="text-5xl font-black text-white">499</span>
                   <span className="text-sm text-text-faint mb-2">/mo</span>
                 </div>
                 <ul className="space-y-4 mb-10 flex-1">
@@ -371,7 +371,7 @@ export default function LandingPage() {
                     </li>
                   ))}
                 </ul>
-                <Link href="mailto:admin@opticore.ph?subject=Business Tier Inquiry — OptiCore PH" className="text-sm font-black uppercase tracking-widest text-center px-4 py-3 rounded-xl border border-white/10 text-white hover:bg-white/5 transition-all">Contact Sales</Link>
+                <Link href="mailto:opticoreph2026@gmail.com?subject=Business Tier Inquiry — OptiCore PH" className="text-sm font-black uppercase tracking-widest text-center px-4 py-3 rounded-xl border border-white/10 text-white hover:bg-white/5 transition-all">Contact Sales</Link>
               </div>
             </div>
           </div>
