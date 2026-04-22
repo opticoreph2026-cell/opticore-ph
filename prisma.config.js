@@ -2,18 +2,21 @@
 const fs = require('fs');
 const path = require('path');
 
-// Manual .env parsing
+// Manual .env parsing (optional for local dev)
 const envPath = path.join(__dirname, '.env');
-const envContent = fs.readFileSync(envPath, 'utf8');
-const env = {};
-envContent.split('\n').forEach(line => {
-  const match = line.match(/^\s*([^#=]+)\s*=\s*(.*)$/);
-  if (match) {
-    let val = match[2].trim();
-    if (val.startsWith('"') && val.endsWith('"')) val = val.slice(1, -1);
-    env[match[1].trim()] = val;
-  }
-});
+const env = { ...process.env }; // Start with existing process.env
+
+if (fs.existsSync(envPath)) {
+  const envContent = fs.readFileSync(envPath, 'utf8');
+  envContent.split('\n').forEach(line => {
+    const match = line.match(/^\s*([^#=]+)\s*=\s*(.*)$/);
+    if (match) {
+      let val = match[2].trim();
+      if (val.startsWith('"') && val.endsWith('"')) val = val.slice(1, -1);
+      env[match[1].trim()] = val;
+    }
+  });
+}
 
 module.exports = {
   schema: "prisma/schema.prisma",
