@@ -4,8 +4,8 @@ import { db } from '@/lib/db';
 export const authOptions = {
   providers: [
     GoogleProvider({
-      clientId:     process.env.GMAIL_CLIENT_ID || '',
-      clientSecret: process.env.GMAIL_CLIENT_SECRET || '',
+      clientId:     process.env.GOOGLE_CLIENT_ID || process.env.GMAIL_CLIENT_ID || '',
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || process.env.GMAIL_CLIENT_SECRET || '',
     }),
   ],
   callbacks: {

@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useState, Suspense } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Zap, Eye, EyeOff, CircleAlert, ArrowRight } from 'lucide-react';
@@ -17,6 +17,16 @@ function LoginForm() {
   const [showPw,  setShowPw]  = useState(false);
   const [loading, setLoading] = useState(false);
   const [error,   setError]   = useState('');
+
+  // Handle URL errors (e.g. from NextAuth)
+  useEffect(() => {
+    const errCode = searchParams.get('error');
+    if (errCode === 'OAuthSignIn') setError('Could not sign in with Google. Please try again.');
+    else if (errCode === 'OAuthCallback') setError('Authentication failed. Please try again.');
+    else if (errCode === 'SessionExpired') setError('Your session has expired. Please sign in again.');
+    else if (errCode === 'AccountNotFound') setError('No OptiCore account found with that email.');
+    else if (errCode === 'SyncError') setError('Database synchronization failed. Please try again later.');
+  }, [searchParams]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
