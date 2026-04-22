@@ -21,11 +21,16 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2.5 group">
-            <Logo className="w-9 h-9" />
-            <span className="font-semibold text-sm tracking-wide">
-              <span className="shimmer-text">OptiCore</span>
-              <span className="text-text-secondary ml-0.5">PH</span>
-            </span>
+            <div className="relative">
+              <div className="absolute -inset-1 bg-brand-500/20 rounded-lg blur opacity-0 group-hover:opacity-100 transition duration-500" />
+              <img src="/logo.png" alt="OptiCore" className="relative w-8 h-8 object-contain" />
+            </div>
+            <div className="flex flex-col">
+              <span className="text-lg font-black text-white tracking-tighter leading-none group-hover:text-brand-400 transition-colors">
+                OPTICORE<span className="text-brand-500">PH</span>
+              </span>
+              <span className="text-[8px] font-black text-text-faint uppercase tracking-[0.2em] mt-0.5">Nationwide Protocol</span>
+            </div>
           </Link>
 
           {/* Desktop nav */}

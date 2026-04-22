@@ -22,8 +22,7 @@ export const metadata = {
   keywords: 'utility bill optimizer Philippines, Meralco savings, VECO savings, electricity bill reduction PH, water bill optimizer',
   authors: [{ name: 'OptiCore PH' }],
   icons: {
-    icon: '/favicon.ico',
-    apple: '/apple-touch-icon.png',
+    icon: '/favicon.png',
   },
   openGraph: {
     title: 'OptiCore PH — AI Utility Optimizer',
