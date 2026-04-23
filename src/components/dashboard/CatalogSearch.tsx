@@ -80,7 +80,8 @@ export default function CatalogSearch({ onSelect }) {
             </span>
           </div>
           
-          <ul className="divide-y divide-white/5 max-h-[300px] overflow-y-auto thin-scrollbar pb-16">
+          <ul className="divide-y divide-white/5 max-h-[350px] overflow-y-auto thin-scrollbar pb-2">
+
             {results.map(({ item }) => (
               <li 
                 key={item.id}

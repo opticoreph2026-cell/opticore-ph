@@ -105,10 +105,11 @@ export default function ForecastWidget({ plan }) {
       <div className="space-y-4 flex-1">
         <div>
           <p className="text-[10px] text-text-muted uppercase tracking-widest mb-1">Expected Next Month</p>
-          <div className="flex items-baseline gap-2">
-            <span className="text-2xl font-mono font-bold text-text-primary">₱{data.predictedBill.toLocaleString()}</span>
-            <span className="text-sm font-mono text-text-secondary">({data.predictedKwh} kWh)</span>
+          <div className="flex items-baseline gap-x-2 gap-y-1 flex-wrap">
+            <span className="text-xl md:text-2xl font-mono font-bold text-text-primary">₱{data.predictedBill.toLocaleString()}</span>
+            <span className="text-[11px] font-mono text-text-secondary">({data.predictedKwh} kWh)</span>
           </div>
+
         </div>
 
         <div className="p-3 rounded-xl bg-surface-700/50 border border-white/5">

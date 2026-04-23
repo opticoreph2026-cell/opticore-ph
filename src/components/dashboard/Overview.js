@@ -263,7 +263,7 @@ export default function DashboardOverview({ user, readings, alerts, appliances =
           <GhostLoadChart plan={user?.planTier || 'starter'} />
         </div>
 
-        <div className="col-span-12 lg:col-span-6 bento-card p-5 group h-full">
+        <div className="col-span-12 lg:col-span-6 bento-card p-5 group h-full !overflow-visible z-10 focus-within:z-50">
           <div className="flex flex-col gap-4 h-full">
             <div>
               <p className="section-label mb-0.5">Asset Matchmaker</p>
@@ -275,7 +275,7 @@ export default function DashboardOverview({ user, readings, alerts, appliances =
                 Import manufacturer-grade wattage and EER profiles directly into your appliance footprint.
               </p>
             </div>
-            <div className="relative flex-1 rounded-xl border border-white/[0.05] bg-surface-900/40" style={{ minHeight: '52px' }}>
+            <div className="relative flex-1 rounded-xl border border-white/[0.05] bg-surface-900/40" style={{ minHeight: '60px' }}>
               <CatalogSearch onSelect={handleLinkAppliance} />
               {isLinking && (
                <div className="absolute inset-0 bg-surface-950/80 backdrop-blur-sm flex items-center justify-center z-[60] rounded-xl">
@@ -287,6 +287,7 @@ export default function DashboardOverview({ user, readings, alerts, appliances =
             </div>
           </div>
         </div>
+
 
         {/* AI Intelligence + Alerts (Text Heavy row) — 6+6 */}
         <div className="col-span-12 lg:col-span-6 bento-card p-5 flex flex-col h-full">
@@ -566,10 +567,11 @@ function KpiCard({ icon: Icon, iconColor, iconBg, iconBorderColor, label, value,
       </div>
 
       <p className="text-[9px] font-black text-text-faint uppercase tracking-[0.2em] mb-1">{label}</p>
-      <div className="flex items-baseline gap-1">
-        <p className="text-3xl font-black text-text-primary tracking-tight leading-none">{value}</p>
-        {unit && <span className="text-[10px] font-bold text-text-faint uppercase ml-0.5">{unit}</span>}
+      <div className="flex items-baseline gap-1.5 flex-wrap">
+        <p className="text-2xl md:text-3xl font-black text-text-primary tracking-tight leading-none truncate max-w-full">{value}</p>
+        {unit && <span className="text-[10px] font-bold text-text-faint uppercase">{unit}</span>}
       </div>
+
 
       {delta !== null && delta !== undefined && (
         <p className={`text-[10px] mt-2 font-bold flex items-center gap-1 ${parseFloat(delta) > 0 ? 'text-red-400' : 'text-emerald-400'}`}>

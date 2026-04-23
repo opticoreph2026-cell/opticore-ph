@@ -82,20 +82,22 @@ export default function DashboardSidebar({ user }) {
         WebkitBackdropFilter: 'blur(32px) saturate(180%)',
         border: '1px solid rgba(255,255,255,0.09)',
         boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.12), 0 24px 64px rgba(0,0,0,0.55)',
-        overflow: 'hidden', /* clips the ambient glow blob only */
+        /* Removed overflow: hidden to prevent dropdown clipping */
       }}
     >
-      {/* Ambient amber top glow */}
-      <div
-        className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-28 rounded-full pointer-events-none"
-        style={{ background: 'rgba(245,158,11,0.07)', filter: 'blur(32px)' }}
-      />
+      {/* Background Glow Container (Clipped) */}
+      <div className="absolute inset-0 rounded-[inherit] overflow-hidden pointer-events-none z-0">
+        <div
+          className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-28 rounded-full"
+          style={{ background: 'rgba(245,158,11,0.07)', filter: 'blur(32px)' }}
+        />
+      </div>
 
       {/* ── Logo ── */}
-      <div className="px-6 py-8 border-b border-white/[0.04]">
+      <div className="px-6 py-8 border-b border-white/[0.04] relative z-10">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center border border-white/10 overflow-hidden">
-            <img src="/logo.png" alt="Logo" className="w-7 h-7 object-contain" />
+             <Logo className="w-7 h-7" />
           </div>
           <div>
             <h1 className="text-sm font-black text-white uppercase tracking-tighter">
@@ -105,6 +107,7 @@ export default function DashboardSidebar({ user }) {
           </div>
         </div>
       </div>
+
 
       {/* ── Grouped Navigation ── */}
       <nav className="flex-1 overflow-y-auto px-3 py-2 min-h-0 space-y-4">

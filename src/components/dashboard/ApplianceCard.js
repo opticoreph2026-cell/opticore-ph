@@ -47,14 +47,15 @@ export default function ApplianceCard({ appliance, onEdit, onDelete, rate = 12 }
               </div>
             )}
           </div>
-          <div className="min-w-0 flex-1">
-            <h3 className="font-semibold text-text-primary text-sm truncate" title={f.name || `${f.brand} ${f.model}`}>
+          <div className="min-w-0 flex-1 pr-8">
+            <h3 className="font-semibold text-text-primary text-sm truncate w-full" title={f.name || `${f.brand} ${f.model}`}>
               {f.name || `${f.brand} ${f.model}`}
             </h3>
-            <p className="text-[10px] text-text-muted uppercase tracking-wider font-medium opacity-60 truncate">
+            <p className="text-[10px] text-text-muted uppercase tracking-wider font-medium opacity-60 truncate w-full">
               {f.category?.replace('_', ' ')} {f.year ? `• ${f.year}` : ''}
             </p>
           </div>
+
         </div>
         <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-all shrink-0">
           <button 
