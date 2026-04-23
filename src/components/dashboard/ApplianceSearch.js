@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import Fuse from 'fuse.js';
 import { Search, Info, Loader2 } from 'lucide-react';
+import { clsx } from 'clsx';
+
 
 export default function ApplianceSearch({ onSelect }) {
   const [query, setQuery] = useState('');
@@ -58,23 +60,37 @@ export default function ApplianceSearch({ onSelect }) {
   };
 
   return (
-    <div className="relative w-full">
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted pointer-events-none" />
+    <div className="relative w-full z-30">
+      <div className={clsx(
+        "flex items-center bg-[#16161f] border rounded-xl px-4 py-3.5 transition-all duration-300 shadow-sm",
+        showDropdown ? "border-brand-500/50 ring-1 ring-brand-500/20" : "border-white/10"
+      )}>
+        <Search className={clsx(
+          "w-5 h-5 mr-3 transition-colors pointer-events-none",
+          showDropdown ? "text-brand-400" : "text-text-muted"
+        )} />
         <input
           type="text"
-          className="input-field pl-10"
-          placeholder="Search brand or model (e.g., 'Samsung Inverter')..."
+          className="bg-transparent border-none outline-none w-full text-sm text-text-primary placeholder:text-text-muted/50 font-medium"
+          placeholder="Search brand or model (e.g. 'Samsung Inverter')..."
           value={query}
           onChange={handleSearch}
           disabled={loading}
           onFocus={() => { if (results.length > 0) setShowDropdown(true); }}
           onBlur={() => setTimeout(() => setShowDropdown(false), 200)}
         />
+        {loading && <Loader2 className="w-4 h-4 text-brand-400 animate-spin" />}
       </div>
 
+
       {showDropdown && (
-        <div className="absolute left-0 right-0 z-[150] mt-2 bg-surface-800 border border-brand-500/30 rounded-xl shadow-[0_20px_60px_rgba(0,0,0,0.9)] overflow-hidden animate-fade-up backdrop-blur-2xl ring-1 ring-white/10">
+        <div className="absolute left-0 right-0 z-[200] mt-2 bg-[#1a1a24] border border-brand-500/30 rounded-xl shadow-[0_30px_70px_rgba(0,0,0,0.95)] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 backdrop-blur-2xl ring-1 ring-white/10">
+          <div className="p-3 border-b border-white/5 bg-white/[0.03]">
+            <span className="text-[10px] uppercase tracking-widest text-[#f59e0b] font-bold px-2">
+              Registry Intelligence Matches
+            </span>
+          </div>
+
 
           {results.length > 0 ? (
             <ul className="max-h-60 overflow-y-auto py-1 thin-scrollbar">
