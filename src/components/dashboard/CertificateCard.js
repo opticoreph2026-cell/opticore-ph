@@ -115,26 +115,44 @@ export default function CertificateCard({ user }) {
       <div className="flex justify-end relative z-50 print:hidden" ref={menuRef}>
         <button 
           onClick={() => setShowDownloadMenu(!showDownloadMenu)}
-          className="btn-primary flex items-center gap-2"
+          className={`
+            flex items-center gap-2.5 px-6 py-2.5 rounded-xl border transition-all duration-300
+            ${showDownloadMenu 
+              ? 'bg-brand-500 text-surface-950 border-brand-500 shadow-[0_0_20px_rgba(245,158,11,0.3)]' 
+              : 'bg-white/5 text-text-primary border-white/10 hover:bg-white/10 hover:border-white/20'
+            }
+            font-bold text-xs uppercase tracking-widest
+          `}
         >
-          <Download className="w-4 h-4" /> Download Certificate <ChevronDown className="w-4 h-4" />
+          <Download className={`w-4 h-4 ${showDownloadMenu ? 'text-surface-950' : 'text-brand-400'}`} />
+          <span>Download Certificate</span>
+          <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${showDownloadMenu ? 'rotate-180' : ''}`} />
         </button>
 
         {showDownloadMenu && (
-          <div className="absolute top-full right-0 mt-2 w-48 bento-card p-2 z-50 flex flex-col gap-1 animate-fade-up origin-top-right">
+          <div className="absolute top-full right-0 mt-3 w-56 bg-surface-900 border border-white/10 rounded-2xl p-2 z-[60] flex flex-col gap-1 animate-in fade-in slide-in-from-top-2 duration-300 shadow-[0_20px_50px_rgba(0,0,0,0.7)] ring-1 ring-white/5">
+            <div className="px-3 py-2 mb-1 border-b border-white/5">
+              <span className="text-[9px] uppercase tracking-[0.2em] text-text-muted font-black">Select Format</span>
+            </div>
             <button
               onClick={handleDownloadImage}
-              className="flex items-center gap-2 px-3 py-2 text-sm text-white hover:bg-brand-500/10 rounded-lg transition-colors text-left"
+              className="flex items-center justify-between group px-4 py-3 text-sm text-white hover:bg-brand-500/10 rounded-xl transition-all text-left"
             >
-              <ImageIcon className="w-4 h-4 text-brand-400" />
-              As Image (PNG)
+              <div className="flex items-center gap-3">
+                <ImageIcon className="w-4 h-4 text-brand-400" />
+                <span className="font-semibold">Image (PNG)</span>
+              </div>
+              <span className="text-[10px] bg-white/5 px-2 py-0.5 rounded text-text-muted opacity-0 group-hover:opacity-100 transition-opacity">High Res</span>
             </button>
             <button
               onClick={handleDownloadPDF}
-              className="flex items-center gap-2 px-3 py-2 text-sm text-white hover:bg-blue-500/10 rounded-lg transition-colors text-left"
+              className="flex items-center justify-between group px-4 py-3 text-sm text-white hover:bg-blue-500/10 rounded-xl transition-all text-left"
             >
-              <FileText className="w-4 h-4 text-blue-400" />
-              As Document (PDF)
+              <div className="flex items-center gap-3">
+                <FileText className="w-4 h-4 text-blue-400" />
+                <span className="font-semibold">Document (PDF)</span>
+              </div>
+              <span className="text-[10px] bg-white/5 px-2 py-0.5 rounded text-text-muted opacity-0 group-hover:opacity-100 transition-opacity">Standard</span>
             </button>
           </div>
         )}
