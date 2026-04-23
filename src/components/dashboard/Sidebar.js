@@ -4,17 +4,17 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { clsx } from 'clsx';
 import {
-  LayoutDashboard, Users, Zap, CreditCard, BarChart3, HelpCircle, Settings
+  LayoutDashboard, Users, Zap, CreditCard, BarChart3, HelpCircle, Settings, Bell
 } from 'lucide-react';
 import Logo from '@/components/ui/Logo';
 
 const navItems = [
   { href: '/dashboard',            label: 'Dashboard',     icon: LayoutDashboard },
-  { href: '/dashboard/appliances', label: 'Customers',     icon: Users },
-  { href: '/dashboard/usage',      label: 'Utility Usage', icon: Zap },
-  { href: '/dashboard/billing',    label: 'Billing',       icon: CreditCard },
-  { href: '/dashboard/analytics',  label: 'Analytics',     icon: BarChart3 },
-  { href: '/dashboard/support',    label: 'Support',       icon: HelpCircle },
+  { href: '/dashboard/appliances', label: 'Inventory',     icon: Users },
+  { href: '/dashboard/certification', label: 'Certificates',  icon: Zap },
+  { href: '/dashboard/roi-simulator', label: 'ROI Simulator', icon: CreditCard },
+  { href: '/dashboard/reports',    label: 'Reports',       icon: BarChart3 },
+  { href: '/dashboard/alerts',     label: 'Alerts',        icon: Bell },
   { href: '/dashboard/settings',   label: 'Settings',      icon: Settings },
 ];
 

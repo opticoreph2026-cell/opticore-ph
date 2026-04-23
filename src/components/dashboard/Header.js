@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { Bell, Search, Menu, Search as SearchIcon } from 'lucide-react';
 import { clsx } from 'clsx';
 
@@ -39,11 +40,13 @@ export default function DashboardHeader({ user, onMenuClick }) {
             <span className="absolute top-3.5 right-3.5 w-2 h-2 bg-rose-500 rounded-full border-2 border-surface-950" />
           </button>
           
-          <div className="w-12 h-12 rounded-2xl overflow-hidden border-2 border-white/10 cursor-pointer hover:border-cyan-500/30 transition-all">
-            <img 
+          <div className="w-12 h-12 rounded-2xl overflow-hidden border-2 border-white/10 cursor-pointer hover:border-cyan-500/30 transition-all relative">
+            <Image 
               src={user?.avatar ?? "https://i.pravatar.cc/150?u=sarah"} 
               alt="Avatar" 
-              className="w-full h-full object-cover"
+              fill
+              className="object-cover"
+              unoptimized
             />
           </div>
 
