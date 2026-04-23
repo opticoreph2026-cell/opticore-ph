@@ -101,8 +101,3 @@ module.exports = {
   },
   plugins: [],
 };
-
-    },
-  },
-  plugins: [],
-};
