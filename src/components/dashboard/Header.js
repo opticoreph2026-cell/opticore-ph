@@ -2,7 +2,9 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import Image from 'next/image';
+import { motion } from 'framer-motion';
 import { Bell, Search, Menu, Search as SearchIcon, LogOut, User, Settings, ChevronDown } from 'lucide-react';
 import { clsx } from 'clsx';
 

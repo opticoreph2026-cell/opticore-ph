@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Award, ShieldCheck, Download, Sparkles, CheckCircle2, Image as ImageIcon, FileText, ChevronDown } from 'lucide-react';
 import { toPng } from 'html-to-image';
+import Image from 'next/image';
 import jsPDF from 'jspdf';
 
 export default function CertificateCard({ user }) {
@@ -179,15 +180,15 @@ export default function CertificateCard({ user }) {
           
           {/* Watermark Logo */}
           <div className="absolute inset-0 flex items-center justify-center opacity-[0.015] pointer-events-none select-none">
-            <img src="/logo.png" alt="" className="w-[450px] h-[450px] object-contain grayscale brightness-200" />
+            <Image src="/logo.png" alt="" width={450} height={450} className="object-contain grayscale brightness-200" />
           </div>
 
           <div className="relative z-10 flex flex-col min-h-[650px]">
             {/* Header */}
             <div className="flex flex-col sm:flex-row justify-between items-center gap-8 mb-16 border-b border-white/5 pb-10">
                <div className="flex items-center gap-5">
-                 <div className="w-16 h-16 bg-white/[0.03] rounded-3xl flex items-center justify-center border border-white/5 shadow-inner-glow-white overflow-hidden p-3">
-                   <img src="/logo.png" alt="OptiCore" className="w-full h-full object-contain" />
+                 <div className="w-16 h-16 bg-white/[0.03] rounded-3xl flex items-center justify-center border border-white/5 shadow-inner-glow-white overflow-hidden p-3 relative">
+                   <Image src="/logo.png" alt="OptiCore" fill className="object-contain" />
                  </div>
                  <div className="text-center sm:text-left">
                    <h2 className="text-display text-2xl font-black text-white tracking-[0.2em] uppercase leading-none">OptiCore</h2>
