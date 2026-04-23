@@ -141,13 +141,18 @@ export default function AppliancesManager({ effectiveRate = 11.5 }) {
     <div className="space-y-10">
       
       {!isFormOpen && (
-        <div className="flex justify-between items-center mb-6">
-          <div className="flex items-center gap-2">
-            <Calculator className="w-5 h-5 text-brand-400" />
-            <h2 className="text-lg font-semibold text-text-primary">Inventory Profiling</h2>
+        <div className="flex justify-between items-center mb-8">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-2xl bg-brand-500/10 border border-brand-500/20 flex items-center justify-center">
+              <Calculator className="w-6 h-6 text-brand-400" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-text-primary tracking-tight">Inventory Profiling</h2>
+              <p className="text-xs text-text-muted">Manage your property's appliance footprint</p>
+            </div>
           </div>
-          <button onClick={() => setIsFormOpen(true)} className="btn-primary text-xs px-4 py-2 flex items-center gap-2">
-            <Plus className="w-4 h-4" /> Add Appliance
+          <button onClick={() => setIsFormOpen(true)} className="btn-primary text-xs px-6 py-2.5 flex items-center gap-2 shadow-lg shadow-brand-500/20">
+            <Plus className="w-4 h-4" /> Add Asset
           </button>
         </div>
       )}

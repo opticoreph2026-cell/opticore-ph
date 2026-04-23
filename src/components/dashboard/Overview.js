@@ -145,19 +145,19 @@ export default function DashboardOverview({ user, readings, alerts, appliances =
       {/* ── Page Header ───────────────────────────────────────────── */}
       <motion.div variants={itemVariants} className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-2">
         <div>
-          <p className="section-label mb-1">Command Center</p>
+          <p className="section-label mb-1">Energy Intelligence</p>
           <h1 className="text-2xl font-bold text-text-primary tracking-tight">
-            Good day, <span className="shimmer-text">{user?.name?.split(' ')[0] ?? 'Guest'}</span> 👋
+            Welcome back, <span className="shimmer-text">{user?.name?.split(' ')[0] ?? 'User'}</span>
           </h1>
-          <p className="text-xs text-text-muted mt-1 font-medium">
-            Utility usage overview — {new Date().toLocaleDateString('en-PH', { month: 'long', year: 'numeric' })}
+          <p className="text-[11px] text-text-muted mt-0.5 font-medium opacity-80">
+            Monitoring {new Date().toLocaleDateString('en-PH', { month: 'long', year: 'numeric' })} consumption metrics.
           </p>
         </div>
         <button
           onClick={() => setIsModalOpen(true)}
           className="btn-primary inline-flex items-center gap-2 text-sm shrink-0"
         >
-          <Plus className="w-4 h-4" /> Submit Monthly Reading
+          <Plus className="w-4 h-4" /> Log Bill Data
         </button>
       </motion.div>
 
@@ -187,8 +187,8 @@ export default function DashboardOverview({ user, readings, alerts, appliances =
           delta={kwhDelta} deltaLabel="vs last month"
         />
         <KpiCard
-          icon={Droplets} iconColor="text-blue-400" iconBg="bg-blue-500/15" iconBorderColor="border-blue-500/25"
-          label="Water Usage" value={latest.m3Used ?? '—'} unit="m³"
+          icon={Droplets} iconColor="text-blue-400" iconBg="bg-blue-500/10" iconBorderColor="border-blue-500/20"
+          label="Water" value={latest.m3Used ?? '—'} unit="m³"
         />
         <KpiCard
           icon={TrendingDown} iconColor="text-emerald-400" iconBg="bg-emerald-500/15" iconBorderColor="border-emerald-500/25"
@@ -228,19 +228,51 @@ export default function DashboardOverview({ user, readings, alerts, appliances =
                     <stop offset="95%" stopColor="#60a5fa" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.035)" />
-                <XAxis dataKey="month" tick={{ fill: '#4a4858', fontSize: 10, fontWeight: 600 }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fill: '#4a4858', fontSize: 10 }} axisLine={false} tickLine={false} width={32} />
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.02)" vertical={false} />
+                <XAxis 
+                  dataKey="month" 
+                  tick={{ fill: '#64748b', fontSize: 10, fontWeight: 500 }} 
+                  axisLine={false} 
+                  tickLine={false}
+                  dy={10}
+                />
+                <YAxis 
+                  tick={{ fill: '#64748b', fontSize: 10 }} 
+                  axisLine={false} 
+                  tickLine={false} 
+                  width={32}
+                  dx={-5}
+                />
                 <Tooltip
+                  cursor={{ stroke: 'rgba(245,158,11,0.2)', strokeWidth: 2 }}
                   contentStyle={{
-                    background: 'rgba(14,14,20,0.95)',
-                    border: '1px solid rgba(245,158,11,0.2)',
-                    borderRadius: 12, fontSize: 12, color: '#f1f0ef',
-                    backdropFilter: 'blur(12px)',
+                    background: '#111118',
+                    border: '1px solid rgba(255,255,255,0.08)',
+                    borderRadius: 16, fontSize: 12, color: '#f1f0ef',
+                    boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
+                    padding: '12px 16px'
                   }}
                 />
-                <Area type="monotone" dataKey="kWh" stroke="#f59e0b" strokeWidth={2.5} fill="url(#kwhGrad)" name="kWh" dot={false} />
-                <Area type="monotone" dataKey="m3"  stroke="#60a5fa" strokeWidth={2.5} fill="url(#m3Grad)"  name="m³" dot={false} />
+                <Area 
+                  type="monotone" 
+                  dataKey="kWh" 
+                  stroke="#f59e0b" 
+                  strokeWidth={3} 
+                  fill="url(#kwhGrad)" 
+                  name="Power (kWh)" 
+                  dot={{ r: 4, fill: '#f59e0b', strokeWidth: 2, stroke: '#0a0a0f' }} 
+                  activeDot={{ r: 6, fill: '#f59e0b', strokeWidth: 2, stroke: '#fff' }}
+                />
+                <Area 
+                  type="monotone" 
+                  dataKey="m3"  
+                  stroke="#60a5fa" 
+                  strokeWidth={3} 
+                  fill="url(#m3Grad)"  
+                  name="Water (m³)" 
+                  dot={{ r: 4, fill: '#60a5fa', strokeWidth: 2, stroke: '#0a0a0f' }} 
+                  activeDot={{ r: 6, fill: '#60a5fa', strokeWidth: 2, stroke: '#fff' }}
+                />
               </AreaChart>
             </ResponsiveContainer>
           ) : (
@@ -553,33 +585,38 @@ export default function DashboardOverview({ user, readings, alerts, appliances =
 /* ── KPI Card ────────────────────────────────────────────────────────── */
 function KpiCard({ icon: Icon, iconColor, iconBg, iconBorderColor, label, value, unit, delta, deltaLabel, badge }) {
   return (
-    <div className="bento-card p-5 group cursor-default">
-      {/* Top row: icon + badge */}
-      <div className="flex items-start justify-between mb-4">
-        <div className={`w-9 h-9 rounded-xl ${iconBg} border ${iconBorderColor} flex items-center justify-center transition-transform duration-300 group-hover:scale-110`}>
-          <Icon className={`w-4 h-4 ${iconColor}`} />
+    <motion.div 
+      whileHover={{ y: -4, scale: 1.01 }}
+      className="bento-card p-4 sm:p-5 group cursor-default transition-shadow hover:shadow-[0_20px_40px_rgba(0,0,0,0.4)]"
+    >
+      <div className="flex items-center gap-4">
+        <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-2xl ${iconBg} border ${iconBorderColor} flex items-center justify-center transition-all duration-300 group-hover:rotate-6 shadow-sm`}>
+          <Icon className={`w-5 h-5 sm:w-6 sm:h-6 ${iconColor}`} />
         </div>
+        <div className="min-w-0 flex-1">
+          <p className="text-[9px] font-black text-text-faint uppercase tracking-[0.25em] mb-1 truncate">{label}</p>
+          <div className="flex items-baseline gap-1.5 flex-wrap">
+            <p className="text-xl sm:text-2xl font-black text-text-primary tracking-tight leading-none truncate">{value}</p>
+            {unit && <span className="text-[10px] font-bold text-text-faint uppercase opacity-60">{unit}</span>}
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-4 flex items-center justify-between">
+        {delta !== null && delta !== undefined ? (
+          <div className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold ${parseFloat(delta) > 0 ? 'bg-red-500/10 text-red-400' : 'bg-emerald-500/10 text-emerald-400'}`}>
+            {parseFloat(delta) > 0 ? '▲' : '▼'} {Math.abs(delta)}%
+            <span className="text-text-muted/60 ml-1 font-medium lowercase tracking-normal italic">mo/mo</span>
+          </div>
+        ) : <div className="h-4" />}
+        
         {badge && (
-          <span className="text-[8px] font-black uppercase tracking-[0.15em] text-red-400 bg-red-500/10 border border-red-500/20 px-1.5 py-0.5 rounded-md">
+          <span className="text-[8px] font-black uppercase tracking-[0.15em] text-red-400 bg-red-500/10 border border-red-500/20 px-2 py-0.5 rounded-md">
             {badge}
           </span>
         )}
       </div>
-
-      <p className="text-[9px] font-black text-text-faint uppercase tracking-[0.2em] mb-1">{label}</p>
-      <div className="flex items-baseline gap-1.5 flex-wrap">
-        <p className="text-2xl md:text-3xl font-black text-text-primary tracking-tight leading-none truncate max-w-full">{value}</p>
-        {unit && <span className="text-[10px] font-bold text-text-faint uppercase">{unit}</span>}
-      </div>
-
-
-      {delta !== null && delta !== undefined && (
-        <p className={`text-[10px] mt-2 font-bold flex items-center gap-1 ${parseFloat(delta) > 0 ? 'text-red-400' : 'text-emerald-400'}`}>
-          {parseFloat(delta) > 0 ? '▲' : '▼'}
-          {Math.abs(delta)}% <span className="text-text-faint font-medium">{deltaLabel}</span>
-        </p>
-      )}
-    </div>
+    </motion.div>
   );
 }
 
