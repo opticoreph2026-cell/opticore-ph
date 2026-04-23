@@ -36,7 +36,8 @@ export default function CatalogSearch({ onSelect }) {
   // 2. Initialize Fuzzy Search (Fuse.js)
   const fuse = useMemo(() => {
     return new Fuse(catalog, {
-      threshold: 0.4, // More generous matching
+      keys: ['brand', 'modelNumber', 'category'],
+      threshold: 0.4,
       distance: 100,
     });
 
