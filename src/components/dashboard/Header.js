@@ -3,9 +3,10 @@
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Bell, Search, User, LogOut, Settings, CreditCard, ChevronDown, Zap, Menu } from 'lucide-react';
+import { Bell, Search, User, LogOut, Settings, CreditCard, ChevronDown, Zap, Menu, Building2 } from 'lucide-react';
 import { clsx } from 'clsx';
 import Logo from '@/components/ui/Logo';
+import PropertySwitcher from './PropertySwitcher';
 
 /**
  * DashboardHeader - Facebook-style top navigation for OptiCore.
@@ -136,19 +137,27 @@ export default function DashboardHeader({ user, onMenuClick }) {
           </button>
 
           {showProfileMenu && (
-            <div className="absolute top-full right-0 mt-3 w-56 bg-surface-900 border border-white/10 rounded-2xl p-2 shadow-[0_30px_60px_rgba(0,0,0,0.9)] z-[70] animate-in fade-in slide-in-from-top-2 duration-200 ring-1 ring-white/5">
+            <div className="absolute top-full right-0 mt-3 w-64 bg-surface-900 border border-white/10 rounded-2xl p-2 shadow-[0_30px_60px_rgba(0,0,0,0.9)] z-[70] animate-in fade-in slide-in-from-top-2 duration-200 ring-1 ring-white/5">
               <div className="px-4 py-3 mb-2 border-b border-white/5 flex flex-col gap-0.5">
                 <p className="text-sm font-bold text-white truncate">{user?.name}</p>
                 <p className="text-[10px] text-text-muted truncate">{user?.email}</p>
               </div>
+
+              {/* Property Management Section */}
+              <div className="px-2 py-2">
+                <p className="text-[9px] font-black text-white/30 uppercase tracking-[0.2em] px-2 mb-2">Switch Property</p>
+                <PropertySwitcher />
+              </div>
+
+              <div className="h-px bg-white/5 my-2 mx-2" />
 
               <Link 
                 href="/dashboard/settings" 
                 className="flex items-center gap-3 px-4 py-2.5 text-xs font-bold text-text-primary hover:bg-white/5 rounded-xl transition-all"
                 onClick={() => setShowProfileMenu(false)}
               >
-                <User className="w-4 h-4 text-brand-400" />
-                Profile Settings
+                <Settings className="w-4 h-4 text-brand-400" />
+                Account Settings
               </Link>
               <Link 
                 href="/dashboard/settings?tab=billing" 

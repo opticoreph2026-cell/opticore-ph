@@ -202,379 +202,314 @@ export default function DashboardOverview({ user, readings, alerts, appliances =
       </motion.div>
 
       {/* ── Main Bento Grid ───────────────────────────────────────── */}
-      <motion.div variants={itemVariants} className="grid grid-cols-12 gap-3.5">
+      <motion.div variants={itemVariants} className="grid grid-cols-12 gap-4 lg:gap-6">
 
-        {/* Usage Chart — 8 cols */}
-        <div className="col-span-12 lg:col-span-8 bento-card p-5">
-          <div className="flex items-center justify-between mb-5">
+        {/* Row 1: Usage Trends & Intelligence (The "Meat") */}
+        <div className="col-span-12 lg:col-span-8 bento-card p-6 flex flex-col min-h-[400px]">
+          <div className="flex items-center justify-between mb-8">
             <div>
-              <p className="section-label mb-0.5">History</p>
-              <h2 className="font-bold text-text-primary text-base">Usage Trends</h2>
+              <p className="section-label mb-1">Consumption History</p>
+              <h2 className="font-bold text-text-primary text-xl">Usage Intelligence Trends</h2>
             </div>
-            <span className="text-[10px] font-bold uppercase tracking-widest text-text-faint bg-white/[0.04] px-2.5 py-1 rounded-lg border border-white/[0.06]">
-              Last 6 months
-            </span>
+            <div className="flex items-center gap-2">
+               <span className="text-[10px] font-black uppercase tracking-[0.15em] text-brand-500/80 bg-brand-500/5 px-3 py-1.5 rounded-full border border-brand-500/10">
+                 Real-time Engine
+               </span>
+            </div>
           </div>
-          {chartData.length > 0 ? (
-            <ResponsiveContainer width="100%" height={200}>
-              <AreaChart data={chartData} margin={{ top: 5, right: 4, left: 0, bottom: 0 }}>
-                <defs>
-                  <linearGradient id="kwhGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%"  stopColor="#f59e0b" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="#f59e0b" stopOpacity={0} />
-                  </linearGradient>
-                  <linearGradient id="m3Grad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%"  stopColor="#60a5fa" stopOpacity={0.22} />
-                    <stop offset="95%" stopColor="#60a5fa" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.02)" vertical={false} />
-                <XAxis 
-                  dataKey="month" 
-                  tick={{ fill: '#64748b', fontSize: 10, fontWeight: 500 }} 
-                  axisLine={false} 
-                  tickLine={false}
-                  dy={10}
-                />
-                <YAxis 
-                  tick={{ fill: '#64748b', fontSize: 10 }} 
-                  axisLine={false} 
-                  tickLine={false} 
-                  width={32}
-                  dx={-5}
-                />
-                <Tooltip
-                  cursor={{ stroke: 'rgba(245,158,11,0.2)', strokeWidth: 2 }}
-                  contentStyle={{
-                    background: '#111118',
-                    border: '1px solid rgba(255,255,255,0.08)',
-                    borderRadius: 16, fontSize: 12, color: '#f1f0ef',
-                    boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
-                    padding: '12px 16px'
-                  }}
-                />
-                <Area 
-                  type="monotone" 
-                  dataKey="kWh" 
-                  stroke="#f59e0b" 
-                  strokeWidth={3} 
-                  fill="url(#kwhGrad)" 
-                  name="Power (kWh)" 
-                  dot={{ r: 4, fill: '#f59e0b', strokeWidth: 2, stroke: '#0a0a0f' }} 
-                  activeDot={{ r: 6, fill: '#f59e0b', strokeWidth: 2, stroke: '#fff' }}
-                />
-                <Area 
-                  type="monotone" 
-                  dataKey="m3"  
-                  stroke="#60a5fa" 
-                  strokeWidth={3} 
-                  fill="url(#m3Grad)"  
-                  name="Water (m³)" 
-                  dot={{ r: 4, fill: '#60a5fa', strokeWidth: 2, stroke: '#0a0a0f' }} 
-                  activeDot={{ r: 6, fill: '#60a5fa', strokeWidth: 2, stroke: '#fff' }}
-                />
-              </AreaChart>
-            </ResponsiveContainer>
-          ) : (
-            <EmptyState icon={FileText} message="No readings yet. Submit your first month to see trends." />
-          )}
-        </div>
-
-        {/* Daily Tracker — 4 cols */}
-        <div className="col-span-12 lg:col-span-4">
-          <DailyTracker />
-        </div>
-
-        {/* Heatmap — full width */}
-        <div className="col-span-12">
-          <UsageHeatmap readings={readings} plan={user?.planTier || 'starter'} />
-        </div>
-
-        {/* Ghost Load + Asset Matchmaker — 6+6 */}
-        <div className="col-span-12 lg:col-span-6">
-          <GhostLoadChart plan={user?.planTier || 'starter'} />
-        </div>
-
-        <div className="col-span-12 lg:col-span-6 bento-card p-5 group h-full !overflow-visible z-10 focus-within:z-50">
-          <div className="flex flex-col gap-4 h-full">
-            <div>
-              <p className="section-label mb-0.5">Asset Matchmaker</p>
-              <h2 className="font-bold text-text-primary group-hover:text-brand-300 transition-colors flex items-center gap-2">
-                <Cpu className="w-4 h-4 text-brand-400" />
-                Engineering Database Search
-              </h2>
-              <p className="text-[11px] text-text-muted leading-relaxed mt-1 max-w-sm">
-                Import manufacturer-grade wattage and EER profiles directly into your appliance footprint.
-              </p>
-            </div>
-            <div className="relative flex-1 rounded-xl border border-white/[0.05] bg-surface-900/40" style={{ minHeight: '60px' }}>
-              <CatalogSearch onSelect={handleLinkAppliance} />
-              {isLinking && (
-               <div className="absolute inset-0 bg-surface-950/80 backdrop-blur-sm flex items-center justify-center z-[60] rounded-xl">
-                  <span className="text-[10px] font-black text-brand-400 uppercase tracking-[0.2em] animate-pulse">
-                    Linking Profile…
-                  </span>
-                </div>
-              )}
-            </div>
+          <div className="flex-1 min-h-[280px]">
+            {chartData.length > 0 ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="kwhGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%"  stopColor="#f59e0b" stopOpacity={0.35} />
+                      <stop offset="95%" stopColor="#f59e0b" stopOpacity={0} />
+                    </linearGradient>
+                    <linearGradient id="m3Grad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%"  stopColor="#60a5fa" stopOpacity={0.25} />
+                      <stop offset="95%" stopColor="#60a5fa" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" vertical={false} />
+                  <XAxis 
+                    dataKey="month" 
+                    tick={{ fill: 'rgba(255,255,255,0.3)', fontSize: 11, fontWeight: 600 }} 
+                    axisLine={false} 
+                    tickLine={false}
+                    dy={12}
+                  />
+                  <YAxis 
+                    tick={{ fill: 'rgba(255,255,255,0.3)', fontSize: 11 }} 
+                    axisLine={false} 
+                    tickLine={false} 
+                    width={40}
+                  />
+                  <Tooltip
+                    cursor={{ stroke: 'rgba(245,158,11,0.3)', strokeWidth: 2 }}
+                    contentStyle={{
+                      background: 'rgba(10,10,15,0.95)',
+                      backdropFilter: 'blur(12px)',
+                      border: '1px solid rgba(255,255,255,0.1)',
+                      borderRadius: 20, fontSize: 12, color: '#fff',
+                      boxShadow: '0 20px 40px rgba(0,0,0,0.6)',
+                      padding: '16px'
+                    }}
+                  />
+                  <Area 
+                    type="monotone" 
+                    dataKey="kWh" 
+                    stroke="#f59e0b" 
+                    strokeWidth={4} 
+                    fill="url(#kwhGrad)" 
+                    name="Power (kWh)" 
+                    dot={{ r: 5, fill: '#f59e0b', strokeWidth: 2, stroke: '#0a0a0f' }} 
+                    activeDot={{ r: 8, fill: '#f59e0b', strokeWidth: 3, stroke: '#fff', boxShadow: '0 0 20px rgba(245,158,11,0.5)' }}
+                  />
+                  <Area 
+                    type="monotone" 
+                    dataKey="m3"  
+                    stroke="#60a5fa" 
+                    strokeWidth={3} 
+                    fill="url(#m3Grad)"  
+                    name="Water (m³)" 
+                    dot={{ r: 5, fill: '#60a5fa', strokeWidth: 2, stroke: '#0a0a0f' }} 
+                    activeDot={{ r: 8, fill: '#60a5fa', strokeWidth: 3, stroke: '#fff' }}
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            ) : (
+              <EmptyState icon={FileText} message="No readings yet. Submit your first month to see trends." />
+            )}
           </div>
         </div>
 
-
-        {/* AI Intelligence + Alerts (Text Heavy row) — 6+6 */}
-        <div className="col-span-12 lg:col-span-6 bento-card p-5 flex flex-col h-full">
-          <div className="flex items-start justify-between mb-4">
+        {/* Intelligence Engine — 4 cols */}
+        <div className="col-span-12 lg:col-span-4 bento-card p-6 flex flex-col h-full bg-gradient-to-br from-brand-500/[0.03] to-transparent">
+          <div className="flex items-start justify-between mb-6">
             <div>
-              <p className="section-label mb-0.5">AI Engine</p>
-              <h2 className="font-bold text-text-primary flex items-center gap-2">
-                <FileText className="w-4 h-4 text-brand-400" />
-                Intelligence Analysis
+              <p className="section-label mb-1">OptiCore AI</p>
+              <h2 className="font-bold text-text-primary text-lg flex items-center gap-2">
+                <Cpu className="w-5 h-5 text-brand-400" />
+                Attribution Analysis
               </h2>
             </div>
             {readings.length > 0 && (
               <button
                 onClick={handleGenerateReport}
                 disabled={isGenerating}
-                className="text-[9px] uppercase tracking-[0.18em] font-black text-brand-400 hover:text-brand-300 disabled:opacity-40 transition-colors bg-brand-500/10 hover:bg-brand-500/15 border border-brand-500/20 px-2.5 py-1.5 rounded-lg shrink-0"
+                className="w-10 h-10 rounded-xl bg-brand-500/10 border border-brand-500/20 flex items-center justify-center text-brand-400 hover:bg-brand-500/20 transition-all disabled:opacity-40"
               >
-                {isGenerating ? '⚡ Analyzing…' : '↻ Refresh'}
+                <Activity className={`w-4 h-4 ${isGenerating ? 'animate-pulse' : ''}`} />
               </button>
             )}
           </div>
 
-          {alerts.some(a => a.severity === 'critical') && (
-            <div className="mb-4 p-3 rounded-xl text-[11px] text-red-300 flex items-center gap-2 font-semibold"
-              style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.18)' }}
-            >
-              <TriangleAlert className="w-3.5 h-3.5 shrink-0" /> Critical leakage pattern detected this month.
-            </div>
-          )}
-
-          <div className="flex-1 flex flex-col justify-center">
+          <div className="flex-1 flex flex-col">
             {readings.length > 0 ? (
-              <div className="space-y-3">
-                <div className="p-4 rounded-xl italic text-sm text-text-secondary leading-relaxed relative"
-                  style={{ background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.05)' }}
-                >
-                  <span className="absolute -top-1 left-2 text-4xl text-brand-500/15 font-serif leading-none select-none">"</span>
-                  {activeReport?.summary || 'No active analysis. Click "Refresh Scan" to run the Attribution Engine.'}
+              <div className="space-y-4">
+                <div className="p-5 rounded-2xl bg-white/[0.02] border border-white/[0.05] relative min-h-[140px] flex items-center">
+                  <span className="absolute -top-1 left-3 text-5xl text-brand-500/10 font-serif select-none leading-none">"</span>
+                  <p className="text-sm text-text-secondary leading-relaxed italic z-10">
+                    {activeReport?.summary || 'Attribution engine idle. Refresh to analyze current footprint.'}
+                  </p>
                 </div>
+                
                 {reportData && (
-                  <div className="flex flex-wrap gap-2">
+                  <div className="grid grid-cols-1 gap-2.5">
                     {reportData.electric && (
-                      <span className={`px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-wider border flex items-center gap-1.5
-                        ${reportData.electric.severity === 'CRITICAL' ? 'bg-red-500/10 border-red-500/25 text-red-400' :
-                          reportData.electric.severity === 'LEAKING' ? 'bg-orange-500/10 border-orange-500/25 text-orange-400' :
-                          'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'}`}>
-                        <Zap className="w-2.5 h-2.5" /> Power: {reportData.electric.discrepancy.percentage}% Delta
-                      </span>
+                      <div className={`p-3 rounded-xl border flex items-center justify-between gap-3
+                        ${reportData.electric.severity === 'CRITICAL' ? 'bg-red-500/5 border-red-500/10 text-red-400' : 'bg-emerald-500/5 border-emerald-500/10 text-emerald-400'}`}>
+                        <div className="flex items-center gap-2">
+                          <Zap className="w-3.5 h-3.5" />
+                          <span className="text-[10px] font-bold uppercase tracking-wider">Electric Efficiency</span>
+                        </div>
+                        <span className="text-xs font-black">{reportData.electric.discrepancy.percentage}%</span>
+                      </div>
                     )}
                     {reportData.water && (
-                      <span className={`px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-wider border flex items-center gap-1.5
-                        ${reportData.water.severity === 'CRITICAL' ? 'bg-red-500/10 border-red-500/25 text-red-400' :
-                          reportData.water.severity === 'LEAKING' ? 'bg-orange-500/10 border-orange-500/25 text-orange-400' :
-                          'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'}`}>
-                        <Droplets className="w-2.5 h-2.5" /> Water: {reportData.water.discrepancy.percentage}% Delta
-                      </span>
+                      <div className={`p-3 rounded-xl border flex items-center justify-between gap-3
+                        ${reportData.water.severity === 'CRITICAL' ? 'bg-red-500/5 border-red-500/10 text-red-400' : 'bg-blue-500/5 border-blue-500/10 text-blue-400'}`}>
+                        <div className="flex items-center gap-2">
+                          <Droplets className="w-3.5 h-3.5" />
+                          <span className="text-[10px] font-bold uppercase tracking-wider">Hydraulic Guard</span>
+                        </div>
+                        <span className="text-xs font-black">{reportData.water.discrepancy.percentage}%</span>
+                      </div>
                     )}
                   </div>
                 )}
               </div>
             ) : (
-              <EmptyState icon={FileText} message="Submit your first reading to unlock AI-driven attribution analysis." />
+              <EmptyState icon={Cpu} message="AI Insights lock until first bill data is parsed." />
             )}
           </div>
+          
+          <Link href="/dashboard/appliances" className="mt-6 py-3 rounded-xl bg-white/[0.03] border border-white/5 text-[10px] font-black uppercase tracking-[0.2em] text-center text-text-muted hover:text-brand-400 hover:border-brand-500/20 transition-all">
+            Audit Footprint
+          </Link>
         </div>
 
-        <div className="col-span-12 lg:col-span-6 bento-card p-5 h-full flex flex-col">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <p className="section-label mb-0.5">Notifications</p>
-              <h2 className="font-bold text-text-primary flex items-center gap-2">
-                <Bell className="w-4 h-4 text-orange-400" />
-                Recent Alerts
-              </h2>
-            </div>
-            <Link href="/dashboard/alerts"
-              className="text-[9px] uppercase tracking-[0.18em] font-black text-brand-400 hover:text-brand-300 bg-brand-500/10 hover:bg-brand-500/15 border border-brand-500/20 px-2.5 py-1.5 rounded-lg transition-colors shrink-0"
-            >
-              View All
-            </Link>
-          </div>
-          <div className="flex-1 flex flex-col justify-center">
-            {alerts.length > 0 ? (
-              <ul className="space-y-2">
-                {alerts.slice(0, 4).map((a) => (
-                  <li key={a.id} className="flex items-start gap-3 p-3 rounded-xl transition-colors"
-                    style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)' }}
-                  >
-                    <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 mt-0.5
-                      ${a.severity === 'critical' ? 'bg-red-500/15 border border-red-500/25' :
-                        a.severity === 'warning'  ? 'bg-orange-500/15 border border-orange-500/25' :
-                        'bg-brand-500/15 border border-brand-500/25'}`}
-                    >
-                      <TriangleAlert className={`w-3.5 h-3.5
-                        ${a.severity === 'critical' ? 'text-red-400' :
-                          a.severity === 'warning'  ? 'text-orange-400' : 'text-brand-400'}`}
-                      />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="text-xs font-semibold text-text-secondary leading-snug">{a.message ?? 'Alert'}</p>
-                      <p className="text-[9px] text-text-faint mt-0.5">
-                        {a.createdAt ? format(new Date(a.createdAt), 'MMM d, h:mm a') : ''}
-                      </p>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <EmptyState icon={Bell} message="No active alerts. Your usage looks healthy!" />
-            )}
-          </div>
+        {/* Row 2: Secondary Insights (Full Width Breakdown) */}
+        <div className="col-span-12 lg:col-span-3">
+          <DailyTracker />
         </div>
 
-        {/* ── Gated Pro Features: Water & LPG Tracking (6+6 row) ── */}
-        <div className="col-span-12 lg:col-span-6 bento-card p-5 relative overflow-hidden flex flex-col justify-center border-blue-500/20"
-          style={{ background: 'linear-gradient(135deg, rgba(59,130,246,0.05) 0%, rgba(10,10,15,0.8) 100%)', minHeight: '180px' }}
-        >
+        <div className="col-span-12 lg:col-span-9">
+          <UsageHeatmap readings={readings} plan={user?.planTier || 'starter'} />
+        </div>
+
+        {/* Row 3: Pro Modules & Database (Balanced Grid) */}
+        <div className="col-span-12 lg:col-span-4 bento-card p-6 border-blue-500/20 relative overflow-hidden group">
           {user?.planTier === 'starter' && <LockedFeatureOverlay featureName="Water Leak Detector" />}
-          <div className={user?.planTier === 'starter' ? 'blur-md opacity-40 select-none flex-1 flex flex-col justify-center' : 'flex-1 flex flex-col justify-center'}>
-            <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 rounded-xl bg-blue-500/15 border border-blue-500/30 flex items-center justify-center shadow-[0_0_15px_rgba(59,130,246,0.2)]">
-                <Droplets className="w-5 h-5 text-blue-400" />
+          <div className={`flex flex-col h-full ${user?.planTier === 'starter' ? 'blur-md opacity-40 select-none' : ''}`}>
+            <div className="flex items-center gap-4 mb-6">
+              <div className="w-12 h-12 rounded-2xl bg-blue-500/15 border border-blue-500/30 flex items-center justify-center shadow-lg shadow-blue-500/10">
+                <Droplets className="w-6 h-6 text-blue-400" />
               </div>
               <div>
-                <h3 className="font-bold text-white text-base">Water Leak Guard</h3>
-                <p className="text-[10px] text-blue-200/70 leading-snug max-w-[220px] mt-1">
-                  How it works: Simply log your standard monthly water bill. AI automatically analyzes the jump to spot hidden leaks.
-                </p>
+                <h3 className="font-bold text-white text-lg">Hydraulic Guard</h3>
+                <p className="text-[10px] text-blue-300/60 uppercase font-black tracking-widest">Active Monitoring</p>
               </div>
             </div>
-            <div className="p-3 bg-blue-950/20 rounded-xl border border-blue-500/10 mt-2">
-              <p className="text-sm font-medium text-blue-100/80 mb-2">Current Status</p>
-              <div className="text-2xl font-black text-white flex items-baseline gap-2">
-                {waterAnalysis ? (
-                  waterAnalysis.hasLeak ? (
-                    <>Leak Detected <span className="text-xs text-red-400 font-bold uppercase tracking-wider">+{waterAnalysis.jump}% Dev</span></>
-                  ) : (
-                    <>Healthy <span className="text-xs text-emerald-400 font-bold uppercase tracking-wider">{waterAnalysis.jump}% Dev</span></>
-                  )
-                ) : (
-                  <>Calibrating... <span className="text-xs text-blue-400 font-bold uppercase tracking-wider">Need more data</span></>
-                )}
+            <div className="p-5 bg-blue-950/20 rounded-2xl border border-blue-500/10 flex-1 flex flex-col justify-center">
+              <p className="text-[10px] font-bold text-blue-400 uppercase tracking-widest mb-2">Detection Status</p>
+              <p className="text-2xl font-black text-white">
+                {waterAnalysis?.hasLeak ? 'Leak Detected' : 'Flow Normal'}
+              </p>
+              <div className="mt-3 flex items-center gap-2">
+                <div className="h-1.5 flex-1 bg-blue-500/10 rounded-full overflow-hidden">
+                  <div className="h-full bg-blue-500" style={{ width: waterAnalysis ? '100%' : '20%' }} />
+                </div>
+                <span className="text-[10px] font-bold text-blue-300">{waterAnalysis?.jump ?? 0}% Dev</span>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="col-span-12 lg:col-span-6 bento-card p-5 relative overflow-hidden flex flex-col justify-center border-red-500/20"
-           style={{ background: 'linear-gradient(135deg, rgba(239,68,68,0.05) 0%, rgba(10,10,15,0.8) 100%)', minHeight: '180px' }}
-        >
+        <div className="col-span-12 lg:col-span-4 bento-card p-6 border-red-500/20 relative overflow-hidden group">
           {user?.planTier === 'starter' && <LockedFeatureOverlay featureName="LPG Depletion Predictor" />}
-          <div className={user?.planTier === 'starter' ? 'blur-md opacity-40 select-none flex-1 flex flex-col justify-center' : 'flex-1 flex flex-col justify-center'}>
-            <div className="flex items-center justify-between gap-3 mb-3">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-red-500/15 border border-red-500/30 flex items-center justify-center shadow-[0_0_15px_rgba(239,68,68,0.2)]">
-                  <TrendingDown className="w-5 h-5 text-red-400" />
+          <div className={`flex flex-col h-full ${user?.planTier === 'starter' ? 'blur-md opacity-40 select-none' : ''}`}>
+            <div className="flex items-center justify-between gap-4 mb-6">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-2xl bg-red-500/15 border border-red-500/30 flex items-center justify-center shadow-lg shadow-red-500/10">
+                  <TrendingDown className="w-6 h-6 text-red-400" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-white text-base">LPG Tank Predictor</h3>
-                  <p className="text-xs text-red-200/50">Smart burn-rate chronometer</p>
+                  <h3 className="font-bold text-white text-lg">LPG Predictor</h3>
+                  <p className="text-[10px] text-red-300/60 uppercase font-black tracking-widest">Thermodynamic Scan</p>
                 </div>
               </div>
-              <button
-                onClick={() => setIsLpgModalOpen(true)}
-                className="text-[9px] uppercase tracking-[0.18em] font-black text-red-400 hover:text-red-300 bg-red-500/10 hover:bg-red-500/15 border border-red-500/20 px-2.5 py-1.5 rounded-lg transition-colors shrink-0"
-              >
-                Log New Tank
+              <button onClick={() => setIsLpgModalOpen(true)} className="p-2 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500/20 transition-all">
+                <Plus className="w-4 h-4" />
               </button>
             </div>
             
-            {lpgStatus ? (
-              lpgStatus.status === 'insufficient_data' ? (
-                <div className="p-3 bg-red-950/20 rounded-xl border border-red-500/10 mt-2 text-xs text-red-200">
-                  {lpgStatus.message}
-                </div>
-              ) : lpgStatus.status === 'empty' ? (
-                <div className="p-3 bg-red-950/20 rounded-xl border border-red-500/10 mt-2 text-sm text-red-400 font-bold">
-                  Tank is fully depleted. Log a replacement.
-                </div>
+            <div className="p-5 bg-red-950/20 rounded-2xl border border-red-500/10 flex-1 flex flex-col justify-center">
+              {lpgStatus ? (
+                <>
+                  <div className="flex justify-between items-baseline mb-2">
+                    <p className="text-[10px] font-bold text-red-400 uppercase tracking-widest">Fuel Reserve</p>
+                    <p className="text-lg font-black text-white">{lpgStatus.daysLeft ?? 0} Days</p>
+                  </div>
+                  <div className="w-full bg-red-500/10 rounded-full h-2">
+                    <div className="h-full bg-red-500 rounded-full transition-all duration-1000" style={{ width: `${lpgStatus.percentLeft ?? 0}%` }} />
+                  </div>
+                  <p className="text-[9px] text-red-300/40 mt-3 uppercase tracking-tighter">Projected Empty: {lpgStatus.estimatedDate}</p>
+                </>
               ) : (
-                <div className="p-3 bg-red-950/20 rounded-xl border border-red-500/10 mt-2">
-                  <div className="flex justify-between items-end mb-2">
-                    <p className="text-[10px] uppercase tracking-widest font-bold text-red-200/60">Estimated Empty Date</p>
-                    <p className={`text-xs font-bold ${lpgStatus.status === 'critical' ? 'text-red-500' : lpgStatus.status === 'warning' ? 'text-orange-400' : 'text-emerald-400'}`}>
-                      {lpgStatus.status === 'critical' ? 'CRITICAL (0 Days)' : `${lpgStatus.daysLeft} Days Left`}
-                    </p>
+                <p className="text-xs text-text-muted text-center italic">Awaiting Tank Calibration</p>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <div className="col-span-12 lg:col-span-4 bento-card p-6 group !overflow-visible z-10 focus-within:z-50 border-brand-500/20">
+           <div className="flex flex-col h-full gap-5">
+            <div>
+              <p className="section-label mb-1">Catalog Sync</p>
+              <h2 className="font-bold text-text-primary text-lg flex items-center gap-2">
+                <Cpu className="w-5 h-5 text-brand-400" />
+                Asset Matchmaker
+              </h2>
+            </div>
+            <div className="relative flex-1 bg-surface-900/50 rounded-2xl border border-white/[0.05] p-1">
+              <CatalogSearch onSelect={handleLinkAppliance} />
+              {isLinking && (
+                <div className="absolute inset-0 bg-surface-950/90 backdrop-blur-md flex items-center justify-center z-[60] rounded-2xl">
+                  <Activity className="w-5 h-5 text-brand-400 animate-spin" />
+                </div>
+              )}
+            </div>
+            <p className="text-[10px] text-text-muted text-center italic px-4">
+              Match your model for 99.8% wattage precision.
+            </p>
+          </div>
+        </div>
+
+        {/* Row 4: Specialized Data (Full & Split) */}
+        <div className="col-span-12 lg:col-span-7">
+          <GhostLoadChart plan={user?.planTier || 'starter'} />
+        </div>
+
+        <div className="col-span-12 lg:col-span-5 bento-card p-6 flex flex-col">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <p className="section-label mb-1">Security & Health</p>
+              <h2 className="font-bold text-text-primary text-lg flex items-center gap-2">
+                <Bell className="w-5 h-5 text-orange-400" />
+                Recent Alerts
+              </h2>
+            </div>
+            <Link href="/dashboard/alerts" className="text-[10px] font-black uppercase tracking-widest text-text-muted hover:text-brand-400 transition-colors">
+              View Feed
+            </Link>
+          </div>
+          <div className="flex-1 space-y-3">
+            {alerts.length > 0 ? (
+              alerts.slice(0, 3).map((a) => (
+                <div key={a.id} className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.04] flex items-start gap-4 hover:bg-white/[0.04] transition-all cursor-default">
+                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0
+                    ${a.severity === 'critical' ? 'bg-red-500/10 text-red-400' : 'bg-brand-500/10 text-brand-400'}`}>
+                    <TriangleAlert className="w-5 h-5" />
                   </div>
-                  <div className="w-full bg-surface-900 rounded-full h-2.5 outline outline-1 outline-white/5">
-                    <div className={`h-2.5 rounded-full transition-all duration-1000 ${
-                      lpgStatus.status === 'critical' ? 'bg-red-600' : 
-                      lpgStatus.status === 'warning' ? 'bg-gradient-to-r from-orange-400 to-red-500' : 
-                      'bg-gradient-to-r from-emerald-400 to-orange-400'
-                    }`} style={{ width: `${lpgStatus.percentLeft}%` }}></div>
-                  </div>
-                  <div className="flex justify-between items-center mt-2.5 opacity-60">
-                     <p className="text-[9px] uppercase tracking-wider font-bold text-red-200/50">Current: {lpgStatus.currentTank.tankSizeKg}kg Tank</p>
-                     <p className="text-[9px] uppercase tracking-wider font-bold text-red-200/50">Projected: {lpgStatus.estimatedDate}</p>
+                  <div>
+                    <p className="text-xs font-bold text-text-primary mb-1">{a.message}</p>
+                    <p className="text-[10px] text-text-muted font-medium italic">{format(new Date(a.createdAt), 'MMM d, h:mm a')}</p>
                   </div>
                 </div>
-              )
+              ))
             ) : (
-              <div className="p-3 bg-red-950/20 rounded-xl border border-red-500/10 mt-2 text-xs text-red-200/50">
-                 System Uncalibrated. 
-              </div>
+              <EmptyState icon={Bell} message="All systems nominal. No active anomalies." />
             )}
           </div>
         </div>
 
-        {/* Forecast — Full Layout */}
+        {/* Row 5: Projections & Inventory (Full Width Finish) */}
         <div className="col-span-12">
           <ForecastWidget plan={user?.planTier || 'starter'} />
         </div>
 
-        {/* Appliance summary */}
-        {appliances.length === 0 ? (
-          <div className="col-span-12 bento-card p-5 border-brand-500/15"
-            style={{ background: 'linear-gradient(135deg, rgba(245,158,11,0.06) 0%, rgba(10,10,15,0.6) 100%)' }}
-          >
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0"
-                  style={{ background: 'rgba(245,158,11,0.15)', border: '1px solid rgba(245,158,11,0.25)' }}
-                >
-                  <Cpu className="w-6 h-6 text-brand-400" />
+        <div className="col-span-12 bento-card p-6">
+           <div className="flex items-center justify-between gap-6">
+              <div className="flex items-center gap-5">
+                <div className="w-14 h-14 rounded-3xl bg-brand-500/10 border border-brand-500/20 flex items-center justify-center shadow-xl shadow-brand-500/5">
+                  <Zap className="w-7 h-7 text-brand-400" />
                 </div>
                 <div>
-                  <h3 className="text-text-primary font-bold">Build your appliance profile</h3>
-                  <p className="text-sm text-text-muted">Add your appliances to unlock AI-powered savings tips and phantom load detection.</p>
-                </div>
-              </div>
-              <Link href="/dashboard/appliances" className="btn-primary shrink-0 text-sm">
-                Add Appliances
-              </Link>
-            </div>
-          </div>
-        ) : (
-          <div className="col-span-12 bento-card p-5">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-brand-500/10 border border-brand-500/20 flex items-center justify-center">
-                  <Cpu className="w-4 h-4 text-brand-400" />
-                </div>
-                <div>
-                  <h2 className="font-bold text-text-primary">Appliance Footprint</h2>
-                  <p className="text-xs text-text-muted">
-                    <strong className="text-text-primary">{appliances.length}</strong> {appliances.length === 1 ? 'appliance' : 'appliances'} profiled — AI uses this data for cross-referenced anomaly detection.
+                  <h2 className="text-lg font-bold text-text-primary">Appliance Footprint Analysis</h2>
+                  <p className="text-xs text-text-muted max-w-2xl mt-1">
+                    You have <strong className="text-brand-400">{appliances.length}</strong> active assets in your engineering profile. 
+                    Adding more devices increases the precision of your phantom load detection and savings attribution.
                   </p>
                 </div>
               </div>
-              <Link href="/dashboard/appliances" className="text-[9px] uppercase tracking-[0.18em] font-black text-brand-400 hover:text-brand-300 bg-brand-500/10 hover:bg-brand-500/15 border border-brand-500/20 px-2.5 py-1.5 rounded-lg transition-colors">
-                Manage
+              <Link href="/dashboard/appliances" className="btn-primary px-8 text-xs uppercase tracking-widest font-black shrink-0">
+                Manage Assets
               </Link>
-            </div>
-          </div>
-        )}
+           </div>
+        </div>
+
       </motion.div>
 
       <Toast message={toastMsg} type={toastType} onClose={() => setToastMsg(null)} />
