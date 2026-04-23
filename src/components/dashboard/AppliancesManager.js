@@ -166,7 +166,7 @@ export default function AppliancesManager({ effectiveRate = 11.5 }) {
           </div>
           
           {!isEditing && (
-             <div className="mb-6 z-20 relative">
+             <div className="mb-6 z-50 relative">
                <label className="block text-[10px] uppercase font-bold tracking-wider text-text-muted mb-2">Pre-fill From OptiCore AI Database (Optional)</label>
                <ApplianceSearch onSelect={handleSelectTemplate} />
              </div>

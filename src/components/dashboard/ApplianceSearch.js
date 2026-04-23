@@ -60,11 +60,12 @@ export default function ApplianceSearch({ onSelect }) {
   };
 
   return (
-    <div className="relative w-full z-30">
+    <div className="relative w-full z-50">
       <div className={clsx(
-        "flex items-center bg-[#16161f] border rounded-xl px-4 py-3.5 transition-all duration-300 shadow-sm",
-        showDropdown ? "border-brand-500/50 ring-1 ring-brand-500/20" : "border-white/10"
+        "flex items-center bg-[#111118] border rounded-xl px-4 py-3.5 transition-all duration-300 shadow-[0_4px_20px_rgba(0,0,0,0.4)]",
+        showDropdown ? "border-brand-500/60 ring-1 ring-brand-500/30" : "border-white/10"
       )}>
+
         <Search className={clsx(
           "w-5 h-5 mr-3 transition-colors pointer-events-none",
           showDropdown ? "text-brand-400" : "text-text-muted"
@@ -84,7 +85,8 @@ export default function ApplianceSearch({ onSelect }) {
 
 
       {showDropdown && (
-        <div className="absolute left-0 right-0 z-[200] mt-2 bg-[#1a1a24] border border-brand-500/30 rounded-xl shadow-[0_30px_70px_rgba(0,0,0,0.95)] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 backdrop-blur-2xl ring-1 ring-white/10">
+        <div className="absolute left-0 right-0 z-[500] mt-2 bg-[#1a1a24] border border-brand-500/40 rounded-xl shadow-[0_30px_70px_rgba(0,0,0,0.98)] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 backdrop-blur-3xl ring-1 ring-white/10">
+
           <div className="p-3 border-b border-white/5 bg-white/[0.03]">
             <span className="text-[10px] uppercase tracking-widest text-[#f59e0b] font-bold px-2">
               Registry Intelligence Matches
