@@ -166,13 +166,14 @@ export default function AppliancesManager({ effectiveRate = 11.5 }) {
           </div>
           
           {!isEditing && (
-             <div className="mb-6 z-50 relative">
+             <div className="mb-6 !z-[100] relative">
                <label className="block text-[10px] uppercase font-bold tracking-wider text-text-muted mb-2">Pre-fill From OptiCore AI Database (Optional)</label>
                <ApplianceSearch onSelect={handleSelectTemplate} />
              </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4 relative z-0">
+
             {error && <p className="text-sm text-red-400 bg-red-500/10 p-3 rounded-lg border border-red-500/20">{error}</p>}
             
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">

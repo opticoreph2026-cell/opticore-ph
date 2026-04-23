@@ -85,7 +85,8 @@ export default function ApplianceSearch({ onSelect }) {
 
 
       {showDropdown && (
-        <div className="absolute left-0 right-0 z-[500] mt-2 bg-[#1a1a24] border border-brand-500/40 rounded-xl shadow-[0_30px_70px_rgba(0,0,0,0.98)] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 backdrop-blur-3xl ring-1 ring-white/10">
+        <div className="absolute left-0 right-0 z-[500] mt-2 bg-[#1a1a24] border border-brand-500/40 rounded-xl shadow-[0_30px_70px_rgba(0,0,0,0.98)] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 ring-1 ring-white/10">
+
 
           <div className="p-3 border-b border-white/5 bg-white/[0.03]">
             <span className="text-[10px] uppercase tracking-widest text-[#f59e0b] font-bold px-2">
