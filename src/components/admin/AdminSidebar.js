@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { clsx } from 'clsx';
 import { motion } from 'framer-motion';
@@ -31,8 +32,8 @@ export default function AdminSidebar() {
       {/* Logo Section */}
       <div className="px-6 py-8">
         <Link href="/" className="group flex items-center gap-3">
-          <div className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center border border-white/10 overflow-hidden">
-            <img src="/logo.png" alt="Logo" className="w-7 h-7 object-contain" />
+          <div className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center border border-white/10 overflow-hidden relative">
+            <Image src="/logo.png" alt="Logo" width={28} height={28} className="object-contain" />
           </div>
           <div>
             <span className="font-bold text-base tracking-tight text-white block">OptiCore <span className="text-brand-400">PH</span></span>

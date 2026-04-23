@@ -332,12 +332,14 @@ export default function AdminProvidersPage() {
               {form.logoUrl && (
                 <div className="lg:col-span-2 flex items-center gap-3 p-3 rounded-lg bg-surface-700/50 border border-white/[0.04]">
                   <p className="text-[10px] font-bold text-text-muted uppercase tracking-widest">Preview:</p>
-                  <div className="w-10 h-10 rounded-lg bg-white/5 border border-white/10 overflow-hidden flex items-center justify-center">
-                    <img
+                  <div className="w-10 h-10 rounded-lg bg-white/5 border border-white/10 overflow-hidden flex items-center justify-center relative">
+                    <Image
                       src={form.logoUrl}
                       alt="Logo preview"
-                      className="w-full h-full object-contain p-0.5"
-                      onError={(e) => { e.target.style.display = 'none'; }}
+                      fill
+                      className="object-contain p-0.5"
+                      unoptimized
+                      onError={(e) => { e.currentTarget.style.display = 'none'; }}
                     />
                   </div>
                   <p className="text-xs text-text-muted truncate">{form.name || 'Provider Name'}</p>

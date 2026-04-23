@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Fuse from 'fuse.js';
-import { Search, Info, Loader2 } from 'lucide-react';
+import { Search, Info, Loader2, Zap } from 'lucide-react';
 import { clsx } from 'clsx';
 
 
