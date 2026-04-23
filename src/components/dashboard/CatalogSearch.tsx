@@ -36,10 +36,10 @@ export default function CatalogSearch({ onSelect }) {
   // 2. Initialize Fuzzy Search (Fuse.js)
   const fuse = useMemo(() => {
     return new Fuse(catalog, {
-      keys: ['brand', 'modelNumber', 'category'],
-      threshold: 0.35,
+      threshold: 0.4, // More generous matching
       distance: 100,
     });
+
   }, [catalog]);
 
   // 3. Perform Search
@@ -49,7 +49,8 @@ export default function CatalogSearch({ onSelect }) {
   }, [fuse, query]);
 
   return (
-    <div className="relative w-full z-[100]">
+    <div className="relative w-full z-[150]">
+
       {/* ── Search Input ─────────────────────────────────────────────────── */}
       <div className={clsx(
         "flex items-center bg-surface-800 border rounded-lg px-4 py-3 transition-all duration-300",
@@ -73,7 +74,8 @@ export default function CatalogSearch({ onSelect }) {
 
       {/* ── Results Dropdown ──────────────────────────────────────────────── */}
       {results.length > 0 && isFocused && (
-        <div className="absolute top-full left-0 w-full mt-2 bg-[#1a1a24] border border-amber-500/30 rounded-xl shadow-[0_20px_50px_rgba(0,0,0,0.8)] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 z-[110] backdrop-blur-xl">
+        <div className="absolute top-full left-0 w-full mt-2 bg-[#1a1a24] border border-amber-500/30 rounded-xl shadow-[0_20px_50px_rgba(0,0,0,0.8)] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 z-[200] backdrop-blur-2xl ring-1 ring-white/10">
+
           <div className="p-3 border-b border-white/5 bg-white/[0.03]">
             <span className="text-[10px] uppercase tracking-widest text-[#f59e0b] font-bold px-2">
               Engineering Catalog Matches

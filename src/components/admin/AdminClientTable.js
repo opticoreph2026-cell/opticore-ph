@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { Edit2, ShieldAlert, Loader2, CheckCircle2 } from 'lucide-react';
+import { Edit2, Loader2, Search, ChevronDown, User, Shield, CreditCard, Clock, ExternalLink, Mail, Trash2, Edit3, Image as ImageIcon } from 'lucide-react';
+import Image from 'next/image';
 import { clsx } from 'clsx';
 import { useRouter } from 'next/navigation';
 
@@ -53,9 +54,21 @@ export default function AdminClientTable({ clients }) {
           {clients.map((c) => (
             <tr key={c.id} className="hover:bg-white/[0.01] transition-colors group">
               <td className="px-6 py-4">
-                <div className="flex flex-col">
-                  <span className="font-bold text-text-primary">{c.name || 'Anonymous'}</span>
-                  <span className="text-[11px] text-text-faint">{c.email}</span>
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-xl bg-surface-800 border border-white/5 flex items-center justify-center overflow-hidden shrink-0">
+                    <div className="relative w-full h-full">
+                      <Image
+                        src={`https://ui-avatars.com/api/?name=${encodeURIComponent(c.name || 'Anonymous')}&background=f59e0b&color=0a0a0f&bold=true`}
+                        alt={c.name || 'Client'}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="font-bold text-text-primary">{c.name || 'Anonymous'}</span>
+                    <span className="text-[11px] text-text-faint">{c.email}</span>
+                  </div>
                 </div>
               </td>
               <td className="px-6 py-4">

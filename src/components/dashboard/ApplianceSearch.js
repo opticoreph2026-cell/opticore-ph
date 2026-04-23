@@ -20,8 +20,10 @@ export default function ApplianceSearch({ onSelect }) {
         setDbData(catalog);
         setFuseInstance(new Fuse(catalog, {
           keys: ['brand', 'modelNumber', 'category'],
-          threshold: 0.3,
+          threshold: 0.4, // More generous matching
+          distance: 100,
         }));
+
       })
       .catch(console.error)
       .finally(() => setLoading(false));
@@ -72,7 +74,8 @@ export default function ApplianceSearch({ onSelect }) {
       </div>
 
       {showDropdown && (
-        <div className="absolute z-[100] w-full mt-2 bg-surface-800 border border-brand-500/30 rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.8)] overflow-hidden animate-fade-up backdrop-blur-xl">
+        <div className="absolute left-0 right-0 z-[150] mt-2 bg-surface-800 border border-brand-500/30 rounded-xl shadow-[0_20px_60px_rgba(0,0,0,0.9)] overflow-hidden animate-fade-up backdrop-blur-2xl ring-1 ring-white/10">
+
           {results.length > 0 ? (
             <ul className="max-h-60 overflow-y-auto py-1 thin-scrollbar">
               {results.map((item, idx) => (

@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Menu, X } from 'lucide-react';
 import Image from 'next/image';
-import Logo from '@/components/ui/Logo';
 
 const NAV_LINKS = [
   { href: '/#how-it-works', label: 'How It Works', match: '/' },

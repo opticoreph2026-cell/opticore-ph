@@ -2,6 +2,8 @@
 
 import { useState, useMemo } from 'react';
 import { Search, Activity, ExternalLink, X, Info, Zap, Thermometer, Tag, BatteryCharging, ChevronRight } from 'lucide-react';
+import Fuse from 'fuse.js';
+
 
 interface Appliance {
   id: string;
@@ -21,13 +23,28 @@ export default function ApplianceCatalogClient({ initialCatalog }: { initialCata
   const [selectedAppliance, setSelectedAppliance] = useState<Appliance | null>(null);
 
   // Zero-latency local client-side search physics
-  const filteredCatalog = useMemo(() => {
-    return initialCatalog.filter(device => {
-      const matchesSearch = (device.brand.toLowerCase() + " " + device.modelNumber.toLowerCase()).includes(search.toLowerCase());
-      const matchesCategory = selectedCategory === "ALL" || device.category === selectedCategory;
-      return matchesSearch && matchesCategory;
+  const fuse = useMemo(() => {
+    return new Fuse(initialCatalog, {
+      keys: ['brand', 'modelNumber', 'category'],
+      threshold: 0.4,
+      distance: 100,
     });
-  }, [search, selectedCategory, initialCatalog]);
+  }, [initialCatalog]);
+
+  const filteredCatalog = useMemo(() => {
+    let base = initialCatalog;
+    
+    if (search.trim()) {
+      base = fuse.search(search).map(r => r.item);
+    }
+
+    if (selectedCategory !== "ALL") {
+      base = base.filter(device => device.category === selectedCategory);
+    }
+
+    return base;
+  }, [search, selectedCategory, initialCatalog, fuse]);
+
 
   return (
     <div className="space-y-8">

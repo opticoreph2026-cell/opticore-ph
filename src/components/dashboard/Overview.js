@@ -4,7 +4,7 @@ import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid,
   Tooltip, ResponsiveContainer
 } from 'recharts';
-import { Zap, Droplets, TrendingDown, Bell, FileText, TriangleAlert, Cpu, Plus } from 'lucide-react';
+import { Zap, Droplets, TrendingDown, Bell, FileText, TriangleAlert, Cpu, Plus, Activity } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import Link from 'next/link';
 import { useState } from 'react';
