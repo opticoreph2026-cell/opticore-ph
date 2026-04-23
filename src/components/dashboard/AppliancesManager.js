@@ -138,7 +138,7 @@ export default function AppliancesManager({ effectiveRate = 11.5 }) {
   if (loading) return <div className="py-20 flex justify-center"><Spinner /></div>;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-10">
       
       {!isFormOpen && (
         <div className="flex justify-between items-center mb-6">
@@ -153,21 +153,26 @@ export default function AppliancesManager({ effectiveRate = 11.5 }) {
       )}
 
       {isFormOpen && (
-        <div className="bento-card flex flex-col relative group mb-8 animate-fade-up !overflow-visible" style={{ boxShadow: '0 1px 0 rgba(255,255,255,0.05) inset, 0 16px 40px rgba(0,0,0,0.4), inset 0 0 40px rgba(245,158,11,0.02)' }}>
+        <div className="bento-card p-6 md:p-8 flex flex-col relative group mb-10 animate-fade-up !overflow-visible" style={{ boxShadow: '0 1px 0 rgba(255,255,255,0.05) inset, 0 16px 40px rgba(0,0,0,0.4), inset 0 0 40px rgba(245,158,11,0.02)' }}>
+
           <div className="absolute inset-x-0 -top-px h-px bg-gradient-to-r from-transparent via-brand-500/10 to-transparent"></div>
-          <div className="flex items-center justify-between mb-4 pb-4 border-b border-white/[0.04]">
-            <h3 className="font-semibold text-text-primary flex items-center gap-2">
-              <Plus className="w-4 h-4 text-brand-400" />
-              {isEditing ? 'Edit Appliance Profiling' : 'New Appliance Profiling'}
-            </h3>
-            <button onClick={resetForm} className="p-1 rounded-lg hover:bg-white/10 text-text-muted hover:text-text-primary transition-colors">
-              <X className="w-5 h-5" />
+          <div className="flex items-center justify-between mb-8 pb-6 border-b border-white/[0.04]">
+            <div className="flex flex-col gap-1">
+              <h3 className="font-bold text-text-primary text-xl flex items-center gap-2.5">
+                <Plus className="w-5 h-5 text-brand-400" />
+                {isEditing ? 'Edit Appliance Profile' : 'New Appliance Profiling'}
+              </h3>
+              <p className="text-xs text-text-muted">Fill in the technical details below to update your energy inventory.</p>
+            </div>
+            <button onClick={resetForm} className="p-2 rounded-xl hover:bg-white/10 text-text-muted hover:text-text-primary transition-all">
+              <X className="w-6 h-6" />
             </button>
           </div>
+
           
           {!isEditing && (
-             <div className="mb-6 !z-[100] relative">
-               <label className="block text-[10px] uppercase font-bold tracking-wider text-text-muted mb-2">Pre-fill From OptiCore AI Database (Optional)</label>
+             <div className="mb-10 !z-[100] relative bg-white/[0.02] p-6 rounded-2xl border border-white/5">
+               <label className="block text-[11px] uppercase font-black tracking-[0.2em] text-brand-500 mb-4">Registry Intelligence (Auto-Fill)</label>
                <ApplianceSearch onSelect={handleSelectTemplate} />
              </div>
           )}
@@ -178,11 +183,11 @@ export default function AppliancesManager({ effectiveRate = 11.5 }) {
             
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
               <div className="lg:col-span-2">
-                <label className="block text-xs font-semibold text-text-secondary mb-1.5">Appliance Name / Nickname*</label>
+                <label className="block text-xs font-semibold text-text-secondary mb-3">Appliance Name / Nickname*</label>
                 <input required className="input-field" value={form.name} onChange={e => setForm({...form, name: e.target.value})} placeholder="e.g. Master's Bedroom Aircon" />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-text-secondary mb-1.5">Quantity (Units)*</label>
+                <label className="block text-xs font-semibold text-text-secondary mb-3">Quantity (Units)*</label>
                 <input 
                   required 
                   type="number" 
@@ -196,7 +201,7 @@ export default function AppliancesManager({ effectiveRate = 11.5 }) {
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-text-secondary mb-1.5">Category*</label>
+                <label className="block text-xs font-semibold text-text-secondary mb-3">Category*</label>
                 <select className="input-field py-3 text-sm" value={form.category} onChange={e => setForm({...form, category: e.target.value})}>
                   <option value="aircon">Air Conditioner</option>
                   <option value="refrigerator">Refrigerator</option>
@@ -215,22 +220,22 @@ export default function AppliancesManager({ effectiveRate = 11.5 }) {
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-semibold text-text-secondary mb-1.5">Brand</label>
+                <label className="block text-xs font-semibold text-text-secondary mb-3">Brand</label>
                 <input className="input-field" value={form.brand} onChange={e => setForm({...form, brand: e.target.value})} placeholder="e.g. Samsung" />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-text-secondary mb-1.5">Model</label>
+                <label className="block text-xs font-semibold text-text-secondary mb-3">Model</label>
                 <input className="input-field" value={form.model} onChange={e => setForm({...form, model: e.target.value})} placeholder="e.g. RT38" />
               </div>
                <div>
-                <label className="block text-xs font-semibold text-text-secondary mb-1.5">Year</label>
+                <label className="block text-xs font-semibold text-text-secondary mb-3">Year</label>
                 <input type="number" min="1900" max={new Date().getFullYear() + 1} className="input-field" value={form.year} onChange={e => setForm({...form, year: e.target.value})} placeholder="e.g. 2021" />
               </div>
             </div>
 
             <div className="grid sm:grid-cols-3 gap-4 border-t border-white/[0.06] pt-4 mt-2">
               <div>
-                <label className="block text-xs font-semibold text-text-secondary mb-1.5">Wattage (Per Unit)</label>
+                <label className="block text-xs font-semibold text-text-secondary mb-3">Wattage (Per Unit)</label>
                 <input type="number" min="0" className="input-field" value={form.wattage} onChange={e => setForm({...form, wattage: e.target.value})} placeholder="e.g. 750" />
               </div>
               <div>

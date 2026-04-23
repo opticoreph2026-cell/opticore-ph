@@ -32,7 +32,8 @@ export default function ApplianceCard({ appliance, onEdit, onDelete, rate = 12 }
     : null;
 
   return (
-    <div className="bento-card flex flex-col relative group gap-4 transition-all duration-300 hover:-translate-y-1" style={{ boxShadow: '0 1px 0 rgba(255,255,255,0.04) inset, 0 8px 32px rgba(0,0,0,0.3)', background: 'linear-gradient(135deg, rgba(30, 30, 42, 0.7) 0%, rgba(20, 20, 30, 0.5) 100%)' }}>
+    <div className="bento-card p-6 flex flex-col relative group gap-5 transition-all duration-300 hover:-translate-y-1" style={{ boxShadow: '0 1px 0 rgba(255,255,255,0.04) inset, 0 8px 32px rgba(0,0,0,0.3)', background: 'linear-gradient(135deg, rgba(30, 30, 42, 0.7) 0%, rgba(20, 20, 30, 0.5) 100%)' }}>
+
       <div className="absolute inset-0 bg-amber-glow opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none rounded-[inherit]"></div>
       <div className="absolute inset-x-0 -top-px h-px bg-gradient-to-r from-transparent via-brand-500/0 group-hover:via-brand-500/20 to-transparent transition-all duration-500"></div>
       <div className="flex items-start justify-between gap-2 relative z-10">
@@ -48,6 +49,7 @@ export default function ApplianceCard({ appliance, onEdit, onDelete, rate = 12 }
             )}
           </div>
           <div className="min-w-0 flex-1 pr-8">
+
             <h3 className="font-semibold text-text-primary text-sm truncate w-full" title={f.name || `${f.brand} ${f.model}`}>
               {f.name || `${f.brand} ${f.model}`}
             </h3>
