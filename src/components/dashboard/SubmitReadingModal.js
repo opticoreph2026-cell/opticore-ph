@@ -148,37 +148,38 @@ export default function SubmitReadingModal({ isOpen, onClose, user, appliances =
   }
 
   const inputStyle = {
-    background:  'rgba(12, 12, 18, 0.75)',
-    border:      '1px solid rgba(255,255,255,0.08)',
-    borderRadius: '12px',
+    background:  'rgba(255, 255, 255, 0.02)',
+    border:      '1px solid rgba(255,255,255,0.05)',
+    borderRadius: '16px',
   };
-  const inputClass = 'w-full px-4 py-3 text-sm text-white placeholder-white/25 outline-none transition-all focus:ring-1 focus:ring-brand-500/50';
+  const inputClass = 'w-full px-5 py-4 text-sm text-white placeholder-slate-600 outline-none transition-all duration-300 focus:ring-4 focus:ring-cyan-500/10 focus:border-cyan-500/40 font-medium shadow-inner-glow-white';
 
   return (
     /* Level 1 — fixed overlay with scroll */
-    <div className="fixed inset-0 z-[60] overflow-y-auto">
+    <div className="fixed inset-0 z-[100] overflow-y-auto">
 
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-black/65 backdrop-blur-md animate-fade-in"
+        className="fixed inset-0 bg-slate-950/60 backdrop-blur-2xl animate-fade-in"
         onClick={() => !loading && onClose(false)}
       />
 
       {/* Level 2 — centering wrapper */}
-      <div className="relative min-h-full flex items-center justify-center p-4 py-8">
+      <div className="relative min-h-full flex items-center justify-center p-6 sm:p-12">
 
         {/* Level 3 — modal panel */}
         <div
-          className="relative w-full max-w-lg rounded-2xl shadow-2xl animate-slide-up overflow-hidden"
+          className="relative w-full max-w-xl rounded-[40px] shadow-glass-lg animate-fade-up overflow-hidden border border-white/10 bg-slate-900/95"
           style={{
-            background:    'rgba(16, 16, 24, 0.92)',
-            backdropFilter: 'blur(32px) saturate(180%)',
-            WebkitBackdropFilter: 'blur(32px) saturate(180%)',
-            border: '1px solid rgba(255,255,255,0.10)',
-            boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.12), 0 32px 80px rgba(0,0,0,0.7)',
+            backdropFilter: 'blur(40px) saturate(180%)',
+            WebkitBackdropFilter: 'blur(40px) saturate(180%)',
           }}
           onClick={(e) => e.stopPropagation()}
         >
+          {/* Ambient Glows */}
+          <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/10 rounded-full blur-[80px] pointer-events-none" />
+          <div className="absolute bottom-0 left-0 w-64 h-64 bg-purple-500/10 rounded-full blur-[80px] pointer-events-none" />
+
           {/* Hidden file input */}
           <input
             id="bill-upload"
@@ -189,105 +190,80 @@ export default function SubmitReadingModal({ isOpen, onClose, user, appliances =
           />
 
           {/* Header */}
-          <div
-            className="flex items-center justify-between px-6 py-4 shrink-0"
-            style={{ borderBottom: '1px solid rgba(255,255,255,0.07)' }}
-          >
-            <div className="flex items-center gap-3">
+          <div className="relative flex items-center justify-between px-10 py-8 border-b border-white/5 z-10">
+            <div className="flex items-center gap-5">
               {step !== 'choose' && step !== 'processing' && (
                 <button
                   onClick={handleBack}
-                  className="text-white/40 hover:text-brand-400 transition-colors p-1 rounded-lg hover:bg-white/[0.05]"
+                  className="w-10 h-10 rounded-2xl bg-white/[0.03] border border-white/5 flex items-center justify-center text-slate-500 hover:text-white transition-all hover:bg-white/[0.08]"
                 >
-                  <ArrowLeft className="w-4 h-4" />
+                  <ArrowLeft className="w-5 h-5" />
                 </button>
               )}
               <div>
-                <p className="text-[9px] font-black uppercase tracking-[0.2em] text-brand-500 mb-0.5">
-                  {step === 'choose' ? 'Bill Submission' : step === 'manual' ? 'Verify Data' : 'AI Engine'}
+                <p className="text-[10px] font-black uppercase tracking-[0.3em] text-cyan-400 mb-1.5">
+                  {step === 'choose' ? 'Utility Intelligence' : step === 'manual' ? 'Data Verification' : 'AI Neural Scan'}
                 </p>
-                <h2 className="text-base font-bold text-white leading-none">
-                  {step === 'choose' ? 'Submit Monthly Reading' :
-                   step === 'manual' ? 'Confirm Extracted Values' :
-                   'Analyzing Bill…'}
+                <h2 className="text-display text-2xl font-bold text-white leading-tight">
+                  {step === 'choose' ? 'Submit Reading' :
+                   step === 'manual' ? 'Verify Metrics' :
+                   'Processing Bill…'}
                 </h2>
               </div>
             </div>
             <button
               onClick={() => !loading && onClose(false)}
               disabled={loading}
-              className="text-white/30 hover:text-white transition-colors p-1.5 rounded-lg hover:bg-white/[0.05] disabled:opacity-40"
+              className="w-10 h-10 rounded-2xl bg-white/[0.03] border border-white/5 flex items-center justify-center text-slate-500 hover:text-white transition-all hover:bg-white/[0.08] disabled:opacity-20"
             >
               <X className="w-5 h-5" />
             </button>
           </div>
 
           {/* Body */}
-          <div className="p-6">
+          <div className="relative p-10 z-10">
             {error && (
-              <div
-                className="flex items-start gap-3 p-3.5 rounded-xl text-sm text-red-300 mb-5"
-                style={{ background: 'rgba(239,68,68,0.09)', border: '1px solid rgba(239,68,68,0.2)' }}
-              >
-                <TriangleAlert className="w-4 h-4 mt-0.5 shrink-0 text-red-400" />
+              <div className="flex items-start gap-4 p-5 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-sm font-medium mb-8 animate-shake">
+                <TriangleAlert className="w-5 h-5 shrink-0" />
                 <p>{error}</p>
               </div>
             )}
 
             {/* ── Step: Choose method ── */}
             {step === 'choose' && (
-              <div className="space-y-3">
-                <p className="text-sm text-white/40 mb-5 leading-relaxed">
-                  Choose how to submit your monthly utility reading.
+              <div className="space-y-4">
+                <p className="text-sm text-slate-400 mb-8 leading-relaxed font-medium">
+                  Select your preferred method for monthly reading verification. AI neural scanning is available for electricity bills.
                 </p>
 
                 {/* AI Scan option */}
                 {appliances.length === 0 ? (
-                  <div
-                    className="w-full flex items-center gap-4 p-5 rounded-xl text-left opacity-50 cursor-not-allowed"
-                    style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}
-                  >
-                    <div
-                      className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
-                      style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}
-                    >
-                      <Lock className="w-5 h-5 text-white/30" />
+                  <div className="w-full flex items-center gap-6 p-8 rounded-3xl bg-white/[0.02] border border-white/5 opacity-40 grayscale">
+                    <div className="w-16 h-16 rounded-2xl bg-white/[0.03] border border-white/5 flex items-center justify-center shrink-0">
+                      <Lock className="w-6 h-6 text-slate-500" />
                     </div>
                     <div>
-                      <h3 className="text-sm font-bold text-white/60">Electricity Bill Scan <span className="text-brand-500/60">(Locked)</span></h3>
-                      <p className="text-[11px] text-white/30 mt-0.5 leading-relaxed">
-                        Register at least one appliance in Inventory Profiling first.
+                      <h3 className="text-base font-bold text-slate-300">Electricity Neural Scan <span className="text-xs uppercase tracking-widest text-slate-500 ml-2">(Locked)</span></h3>
+                      <p className="text-xs text-slate-600 mt-1.5 leading-relaxed">
+                        Populate your hardware registry to unlock AI verification.
                       </p>
                     </div>
                   </div>
                 ) : (
                   <button
                     onClick={() => document.getElementById('bill-upload').click()}
-                    className="w-full flex items-center gap-4 p-5 rounded-xl text-left group transition-all duration-200"
-                    style={{ background: 'rgba(245,158,11,0.06)', border: '1px solid rgba(245,158,11,0.22)' }}
-                    onMouseEnter={e => e.currentTarget.style.background = 'rgba(245,158,11,0.10)'}
-                    onMouseLeave={e => e.currentTarget.style.background = 'rgba(245,158,11,0.06)'}
+                    className="w-full flex items-center gap-6 p-8 rounded-3xl text-left group transition-all duration-500 hover:-translate-y-1 hover:shadow-glass-cyan bg-white/[0.03] border border-white/5 hover:border-cyan-500/30"
                   >
-                    <div
-                      className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
-                      style={{ background: 'rgba(245,158,11,0.15)', border: '1px solid rgba(245,158,11,0.3)' }}
-                    >
-                      <FileUp className="w-5 h-5 text-brand-400" />
+                    <div className="w-16 h-16 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center shrink-0 shadow-inner-glow-white">
+                      <FileUp className="w-6 h-6 text-cyan-400 group-hover:scale-110 transition-transform duration-500" />
                     </div>
                     <div className="flex-1">
-                      <div className="flex items-center justify-between gap-2">
-                        <h3 className="text-sm font-bold text-white">Scan Electricity Bill</h3>
-                        {user?.planTier === 'starter' && (
-                          <span
-                            className="text-[9px] font-black tracking-wider px-2 py-0.5 rounded-full shrink-0"
-                            style={{ background: 'rgba(245,158,11,0.12)', color: '#f59e0b', border: '1px solid rgba(245,158,11,0.22)' }}
-                          >
-                            AI SCAN
-                          </span>
-                        )}
+                      <div className="flex items-center justify-between gap-3">
+                        <h3 className="text-base font-bold text-white group-hover:text-cyan-400 transition-colors">Neural Bill Scan</h3>
+                        <span className="text-[9px] font-black tracking-[0.2em] bg-cyan-500 text-slate-950 px-2.5 py-1 rounded-full uppercase">Neural</span>
                       </div>
-                      <p className="text-[11px] text-white/40 mt-1 leading-relaxed">
-                        Uses Gemini Vision AI to extract unbundled charges and detect consumption anomalies.
+                      <p className="text-xs text-slate-500 mt-2 leading-relaxed">
+                        Extract unbundled charges and detect consumption anomalies using Gemini Vision AI.
                       </p>
                     </div>
                   </button>
@@ -296,21 +272,15 @@ export default function SubmitReadingModal({ isOpen, onClose, user, appliances =
                 {/* Manual Entry */}
                 <button
                   onClick={() => setStep('manual')}
-                  className="w-full flex items-center gap-4 p-5 rounded-xl text-left group transition-all duration-200"
-                  style={{ background: 'rgba(96,165,250,0.03)', border: '1px solid rgba(96,165,250,0.15)' }}
-                  onMouseEnter={e => e.currentTarget.style.background = 'rgba(96,165,250,0.06)'}
-                  onMouseLeave={e => e.currentTarget.style.background = 'rgba(96,165,250,0.03)'}
+                  className="w-full flex items-center gap-6 p-8 rounded-3xl text-left group transition-all duration-500 hover:-translate-y-1 hover:shadow-glass-lg bg-white/[0.03] border border-white/5 hover:border-white/20"
                 >
-                  <div
-                    className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
-                    style={{ background: 'rgba(96,165,250,0.05)', border: '1px solid rgba(96,165,250,0.12)' }}
-                  >
-                    <Keyboard className="w-5 h-5 text-blue-400" />
+                  <div className="w-16 h-16 rounded-2xl bg-white/[0.03] border border-white/5 flex items-center justify-center shrink-0">
+                    <Keyboard className="w-6 h-6 text-slate-400 group-hover:scale-110 transition-transform duration-500" />
                   </div>
                   <div>
-                    <h3 className="text-sm font-bold text-white">Water & Manual Entry</h3>
-                    <p className="text-[11px] text-white/40 mt-1 leading-relaxed">
-                      Optimized for water bills and manual meter logs. Uses deterministic engineering math.
+                    <h3 className="text-base font-bold text-white">Manual Reporting</h3>
+                    <p className="text-xs text-slate-500 mt-2 leading-relaxed">
+                      Optimized for water utility bills and manual hardware meter logs.
                     </p>
                   </div>
                 </button>
@@ -319,10 +289,10 @@ export default function SubmitReadingModal({ isOpen, onClose, user, appliances =
 
             {/* ── Step: Manual form ── */}
             {step === 'manual' && (
-              <form onSubmit={handleManualSubmit} className="space-y-4">
+              <form onSubmit={handleManualSubmit} className="space-y-6">
                 <div>
-                  <label className="block text-[10px] font-black uppercase tracking-[0.15em] text-white/35 mb-2">
-                    Reading Date
+                  <label className="block text-[10px] font-black uppercase tracking-[0.25em] text-slate-500 mb-3">
+                    Verification Period
                   </label>
                   <input
                     type="date"
@@ -330,59 +300,52 @@ export default function SubmitReadingModal({ isOpen, onClose, user, appliances =
                     value={formData.readingDate}
                     onChange={e => setFormData({ ...formData, readingDate: e.target.value })}
                     className={inputClass}
-                    style={inputStyle}
                   />
                 </div>
 
-                <div
-                  className="p-4 rounded-xl space-y-3"
-                  style={{ background: 'rgba(245,158,11,0.04)', border: '1px solid rgba(245,158,11,0.12)' }}
-                >
-                  <p className="text-[9px] font-black uppercase tracking-[0.2em] text-brand-500 flex items-center gap-2">
-                    ⚡ Electric
+                <div className="p-8 rounded-[32px] space-y-5 bg-cyan-500/[0.02] border border-cyan-500/10 shadow-inner-glow-white">
+                  <p className="text-[10px] font-black uppercase tracking-[0.3em] text-cyan-400 flex items-center gap-3">
+                    <span className="w-2 h-2 rounded-full bg-cyan-500 animate-pulse" /> Electrical Payload
                   </p>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-2 gap-6">
                     <div>
-                      <label className="block text-[10px] text-white/30 font-bold mb-1.5">Usage (kWh)</label>
-                      <input type="number" step="0.1" placeholder="e.g. 250" required
+                      <label className="block text-[10px] text-slate-500 font-black uppercase tracking-widest mb-2.5">Consumption (kWh)</label>
+                      <input type="number" step="0.1" placeholder="0.0" required
                         value={formData.kwhUsed}
                         onChange={e => setFormData({ ...formData, kwhUsed: e.target.value })}
-                        className={inputClass} style={inputStyle}
+                        className={inputClass}
                       />
                     </div>
                     <div>
-                      <label className="block text-[10px] text-white/30 font-bold mb-1.5">Amount (₱)</label>
-                      <input type="number" step="0.01" placeholder="e.g. 2800" required
+                      <label className="block text-[10px] text-slate-500 font-black uppercase tracking-widest mb-2.5">Gross Amount (₱)</label>
+                      <input type="number" step="0.01" placeholder="0.00" required
                         value={formData.billAmountElectric}
                         onChange={e => setFormData({ ...formData, billAmountElectric: e.target.value })}
-                        className={inputClass} style={inputStyle}
+                        className={inputClass}
                       />
                     </div>
                   </div>
                 </div>
 
-                <div
-                  className="p-4 rounded-xl space-y-3"
-                  style={{ background: 'rgba(96,165,250,0.04)', border: '1px solid rgba(96,165,250,0.12)' }}
-                >
-                  <p className="text-[9px] font-black uppercase tracking-[0.2em] text-blue-400 flex items-center gap-2">
-                    💧 Water
+                <div className="p-8 rounded-[32px] space-y-5 bg-blue-500/[0.02] border border-blue-500/10 shadow-inner-glow-white">
+                  <p className="text-[10px] font-black uppercase tracking-[0.3em] text-blue-400 flex items-center gap-3">
+                    <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" /> Water Resource
                   </p>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-2 gap-6">
                     <div>
-                      <label className="block text-[10px] text-white/30 font-bold mb-1.5">Usage (m³)</label>
-                      <input type="number" step="0.1" placeholder="e.g. 15"
+                      <label className="block text-[10px] text-slate-500 font-black uppercase tracking-widest mb-2.5">Volume (m³)</label>
+                      <input type="number" step="0.1" placeholder="0.0"
                         value={formData.m3Used}
                         onChange={e => setFormData({ ...formData, m3Used: e.target.value })}
-                        className={inputClass} style={inputStyle}
+                        className={inputClass}
                       />
                     </div>
                     <div>
-                      <label className="block text-[10px] text-white/30 font-bold mb-1.5">Amount (₱)</label>
-                      <input type="number" step="0.01" placeholder="e.g. 800"
+                      <label className="block text-[10px] text-slate-500 font-black uppercase tracking-widest mb-2.5">Gross Amount (₱)</label>
+                      <input type="number" step="0.01" placeholder="0.00"
                         value={formData.billAmountWater}
                         onChange={e => setFormData({ ...formData, billAmountWater: e.target.value })}
-                        className={inputClass} style={inputStyle}
+                        className={inputClass}
                       />
                     </div>
                   </div>
@@ -390,36 +353,25 @@ export default function SubmitReadingModal({ isOpen, onClose, user, appliances =
 
                 <button
                   type="submit"
-                  className="w-full btn-primary mt-2"
-                  style={{ width: '100%' }}
+                  className="btn-primary w-full py-5 rounded-[24px] text-xs uppercase tracking-[0.3em]"
                 >
-                  Generate AI Intelligence Report
+                  Confirm & Sync Intelligence
                 </button>
               </form>
             )}
 
             {/* ── Step: Processing ── */}
             {step === 'processing' && (
-              <div className="flex flex-col items-center justify-center py-12 text-center space-y-5">
+              <div className="flex flex-col items-center justify-center py-20 text-center space-y-8 animate-fade-up">
                 <div className="relative">
-                  <div
-                    className="w-20 h-20 rounded-full flex items-center justify-center"
-                    style={{ background: 'rgba(245,158,11,0.10)', border: '2px solid rgba(245,158,11,0.25)' }}
-                  >
-                    <Loader className="w-9 h-9 text-brand-400 animate-spin" />
+                  <div className="w-24 h-24 rounded-[32px] bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center relative z-10 shadow-inner-glow-white">
+                    <Loader className="w-10 h-10 text-cyan-400 animate-spin" />
                   </div>
-                  {/* Pulse ring */}
-                  <div
-                    className="absolute inset-0 rounded-full"
-                    style={{
-                      border: '2px solid rgba(245,158,11,0.3)',
-                      animation: 'pulse-ring 1.5s cubic-bezier(0.4,0,0.6,1) infinite',
-                    }}
-                  />
+                  <div className="absolute inset-[-15px] rounded-[40px] border border-cyan-500/20 animate-pulse" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-black text-white uppercase tracking-widest">Analyzing</h3>
-                  <p className="text-sm text-brand-400 font-mono animate-pulse mt-1">{statusText}</p>
+                  <h3 className="text-display text-2xl font-black text-white uppercase tracking-[0.2em]">Analyzing</h3>
+                  <p className="text-xs text-cyan-400 font-bold tracking-[0.2em] mt-3 animate-pulse">{statusText}</p>
                 </div>
               </div>
             )}
@@ -429,3 +381,4 @@ export default function SubmitReadingModal({ isOpen, onClose, user, appliances =
     </div>
   );
 }
+

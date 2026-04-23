@@ -32,78 +32,75 @@ export default function ApplianceCard({ appliance, onEdit, onDelete, rate = 12 }
     : null;
 
   return (
-    <div className="bento-card p-6 flex flex-col relative group gap-5 transition-all duration-300 hover:-translate-y-1" style={{ boxShadow: '0 1px 0 rgba(255,255,255,0.04) inset, 0 8px 32px rgba(0,0,0,0.3)', background: 'linear-gradient(135deg, rgba(30, 30, 42, 0.7) 0%, rgba(20, 20, 30, 0.5) 100%)' }}>
+    <div className="bento-card p-6 flex flex-col relative group gap-6 transition-all duration-500 hover:-translate-y-1.5 shadow-glass-sm hover:shadow-glass-lg !bg-white/[0.01] hover:!bg-white/[0.03]">
 
-      <div className="absolute inset-0 bg-amber-glow opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none rounded-[inherit]"></div>
-      <div className="absolute inset-x-0 -top-px h-px bg-gradient-to-r from-transparent via-brand-500/0 group-hover:via-brand-500/20 to-transparent transition-all duration-500"></div>
-      <div className="flex items-start justify-between gap-2 relative z-10">
-        <div className="flex items-center gap-3 min-w-0 flex-1">
+      <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/[0.02] to-purple-500/[0.02] opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none rounded-[inherit]"></div>
+      
+      <div className="flex items-start justify-between gap-4 relative z-10">
+        <div className="flex items-center gap-4 min-w-0 flex-1">
           <div className="relative group/icon shrink-0">
-            <div className="w-10 h-10 rounded-xl bg-brand-500/10 border border-brand-500/20 flex items-center justify-center text-xl shadow-lg shadow-brand-500/5">
+            <div className="w-12 h-12 rounded-2xl bg-white/[0.03] border border-white/5 flex items-center justify-center text-2xl shadow-inner-glow-white transition-transform group-hover/icon:scale-110 duration-500">
               {CATEGORY_ICONS[f.category] || CATEGORY_ICONS.other}
             </div>
             {quantity > 1 && (
-              <div className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-brand-500 text-[10px] font-bold text-surface-950 flex items-center justify-center border-2 border-surface-900 animate-fade-down ring-1 ring-brand-500/50">
+              <div className="absolute -top-1.5 -right-1.5 w-6 h-6 rounded-full bg-cyan-500 text-[10px] font-black text-slate-950 flex items-center justify-center border-2 border-slate-900 shadow-xl shadow-cyan-500/20">
                 {quantity}
               </div>
             )}
           </div>
-          <div className="min-w-0 flex-1 pr-8">
-
-            <h3 className="font-semibold text-text-primary text-sm truncate w-full" title={f.name || `${f.brand} ${f.model}`}>
+          <div className="min-w-0 flex-1">
+            <h3 className="text-display font-bold text-white text-base truncate w-full" title={f.name || `${f.brand} ${f.model}`}>
               {f.name || `${f.brand} ${f.model}`}
             </h3>
-            <p className="text-[10px] text-text-muted uppercase tracking-wider font-medium opacity-60 truncate w-full">
-              {f.category?.replace('_', ' ')} {f.year ? `• ${f.year}` : ''}
+            <p className="text-[10px] text-slate-500 uppercase font-black tracking-widest mt-0.5 flex items-center gap-1.5">
+              <span className="text-cyan-400/50">#</span> {f.category?.replace('_', ' ')} {f.year ? `• ${f.year}` : ''}
             </p>
           </div>
-
         </div>
-        <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-all shrink-0">
+
+        <div className="flex gap-1.5 opacity-0 group-hover:opacity-100 transition-all duration-300">
           <button 
             onClick={() => onEdit(appliance)} 
-            className="p-1.5 rounded-lg text-text-muted hover:text-brand-400 hover:bg-brand-500/10 transition-colors"
-            title="Edit profiling"
+            className="w-8 h-8 rounded-xl bg-white/5 border border-white/5 flex items-center justify-center text-slate-400 hover:text-cyan-400 hover:bg-cyan-500/10 transition-all"
           >
-            <Edit className="w-4 h-4" />
+            <Edit className="w-3.5 h-3.5" />
           </button>
           <button 
             onClick={() => onDelete(appliance.id)} 
-            className="p-1.5 rounded-lg text-text-muted hover:text-red-400 hover:bg-red-500/10 transition-colors"
-            title="Delete appliance"
+            className="w-8 h-8 rounded-xl bg-white/5 border border-white/5 flex items-center justify-center text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition-all"
           >
-            <Trash className="w-4 h-4" />
+            <Trash className="w-3.5 h-3.5" />
           </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-2 mt-auto">
-        <div className="bg-surface-950/50 rounded-lg p-2.5 border border-white/[0.04]">
-          <p className="text-[9px] uppercase tracking-widest font-bold text-text-muted flex items-center gap-1.5 mb-1">
-            <Zap className="w-2.5 h-2.5 text-brand-400" /> 
+      <div className="grid grid-cols-2 gap-3 mt-auto relative z-10">
+        <div className="bg-white/[0.02] rounded-2xl p-3 border border-white/5 shadow-inner-glow-white">
+          <p className="text-[9px] uppercase font-black tracking-[0.2em] text-slate-500 flex items-center gap-2 mb-1.5">
+            <Zap className="w-3 h-3 text-cyan-400" /> 
             Rating
           </p>
-          <p className="text-xs font-mono font-semibold text-text-primary">
+          <p className="text-sm font-mono font-bold text-white tracking-tight">
             {f.wattage ? `${f.wattage}W` : '—'}
           </p>
         </div>
-        <div className="bg-surface-950/50 rounded-lg p-2.5 border border-white/[0.04]">
-          <p className="text-[9px] uppercase tracking-widest font-bold text-text-muted flex items-center gap-1.5 mb-1">
-            <Clock className="w-2.5 h-2.5 text-blue-400" /> 
+        <div className="bg-white/[0.02] rounded-2xl p-3 border border-white/5 shadow-inner-glow-white">
+          <p className="text-[9px] uppercase font-black tracking-[0.2em] text-slate-500 flex items-center gap-2 mb-1.5">
+            <Clock className="w-3 h-3 text-purple-400" /> 
             Daily Use
           </p>
-          <p className="text-xs font-mono font-semibold text-text-primary">
+          <p className="text-sm font-mono font-bold text-white tracking-tight">
             {f.hoursPerDay ? `${f.hoursPerDay}h` : '—'}
           </p>
         </div>
       </div>
 
-      <div className="flex items-center justify-between pt-3 border-t border-white/[0.04] gap-2">
+      <div className="flex items-center justify-between pt-5 border-t border-white/[0.04] gap-4 relative z-10">
         <div className="flex items-center gap-2 min-w-0 flex-1">
-          <span className={`text-[9px] uppercase font-bold px-2 py-0.5 rounded-full border truncate ${
+          <span className={`text-[9px] uppercase font-black tracking-widest px-3 py-1 rounded-full border truncate ${
             f.energyRating?.includes('inverter') ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 
-            f.energyRating?.includes('star') && !f.energyRating.startsWith('1') ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' :
-            'bg-surface-800 text-text-muted border-white/[0.06]'
+            f.energyRating?.includes('star') && !f.energyRating.startsWith('1') ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20' :
+            'bg-white/[0.02] text-slate-500 border-white/5'
           }`}>
             {f.energyRating?.replace('-', ' ') || 'Untested'}
           </span>
@@ -111,12 +108,9 @@ export default function ApplianceCard({ appliance, onEdit, onDelete, rate = 12 }
         
         {estimatedMonthlyKwh && (
           <div className="text-right shrink-0">
-            <div className="flex items-center justify-end gap-1.5">
-              <span className="text-[10px] text-text-muted">Total:</span>
-              <p className="text-sm font-bold text-brand-400 font-mono tracking-tight">{estimatedMonthlyKwh} kWh</p>
-            </div>
+            <p className="text-lg font-bold text-white font-mono tracking-tight leading-none mb-1">{estimatedMonthlyKwh} <span className="text-[10px] text-slate-500">kWh</span></p>
             {estimatedMonthlyCost !== null && (
-               <p className="text-[10px] text-text-muted font-mono truncate">≈ ₱{Number(estimatedMonthlyCost).toLocaleString()}</p>
+               <p className="text-[10px] text-cyan-400/70 font-black uppercase tracking-wider">≈ ₱{Number(estimatedMonthlyCost).toLocaleString()}</p>
             )}
           </div>
         )}

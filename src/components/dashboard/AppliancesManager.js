@@ -138,76 +138,72 @@ export default function AppliancesManager({ effectiveRate = 11.5 }) {
   if (loading) return <div className="py-20 flex justify-center"><Spinner /></div>;
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-12">
       
       {!isFormOpen && (
-        <div className="flex justify-between items-center mb-8">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-brand-500/10 border border-brand-500/20 flex items-center justify-center">
-              <Calculator className="w-6 h-6 text-brand-400" />
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-8">
+          <div className="flex items-center gap-5">
+            <div className="w-14 h-14 rounded-3xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center shadow-xl shadow-cyan-500/5">
+              <Calculator className="w-7 h-7 text-cyan-400" />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-text-primary tracking-tight">Inventory Profiling</h2>
-              <p className="text-xs text-text-muted">Manage your property's appliance footprint</p>
+              <h2 className="text-display text-2xl font-bold text-white tracking-tight">Inventory Profiling</h2>
+              <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mt-0.5">Manage your property's appliance footprint</p>
             </div>
           </div>
-          <button onClick={() => setIsFormOpen(true)} className="btn-primary text-xs px-6 py-2.5 flex items-center gap-2 shadow-lg shadow-brand-500/20">
-            <Plus className="w-4 h-4" /> Add Asset
+          <button onClick={() => setIsFormOpen(true)} className="btn-primary min-w-[160px] group">
+            <Plus className="w-4 h-4 transition-transform group-hover:rotate-90" /> Add Asset
           </button>
         </div>
       )}
 
       {isFormOpen && (
-        <div className="bento-card p-6 md:p-8 flex flex-col relative group mb-10 animate-fade-up !overflow-visible" style={{ boxShadow: '0 1px 0 rgba(255,255,255,0.05) inset, 0 16px 40px rgba(0,0,0,0.4), inset 0 0 40px rgba(245,158,11,0.02)' }}>
-
-          <div className="absolute inset-x-0 -top-px h-px bg-gradient-to-r from-transparent via-brand-500/10 to-transparent"></div>
-          <div className="flex items-center justify-between mb-8 pb-6 border-b border-white/[0.04]">
-            <div className="flex flex-col gap-1">
-              <h3 className="font-bold text-text-primary text-xl flex items-center gap-2.5">
-                <Plus className="w-5 h-5 text-brand-400" />
+        <div className="bento-card p-8 md:p-10 flex flex-col relative group mb-12 animate-fade-up !overflow-visible shadow-glass-lg">
+          <div className="flex items-center justify-between mb-10 pb-8 border-b border-white/[0.04]">
+            <div className="flex flex-col gap-1.5">
+              <h3 className="text-display text-2xl font-bold text-white flex items-center gap-3">
+                <Plus className="w-6 h-6 text-cyan-400" />
                 {isEditing ? 'Edit Appliance Profile' : 'New Appliance Profiling'}
               </h3>
-              <p className="text-xs text-text-muted">Fill in the technical details below to update your energy inventory.</p>
+              <p className="text-sm text-slate-500 font-medium">Fill in the technical details below to update your energy inventory.</p>
             </div>
-            <button onClick={resetForm} className="p-2 rounded-xl hover:bg-white/10 text-text-muted hover:text-text-primary transition-all">
+            <button onClick={resetForm} className="w-12 h-12 rounded-2xl bg-white/[0.03] border border-white/5 flex items-center justify-center text-slate-500 hover:text-white transition-all">
               <X className="w-6 h-6" />
             </button>
           </div>
 
-          
           {!isEditing && (
-             <div className="mb-10 !z-[100] relative bg-white/[0.02] p-6 rounded-2xl border border-white/5">
-               <label className="block text-[11px] uppercase font-black tracking-[0.2em] text-brand-500 mb-4">Registry Intelligence (Auto-Fill)</label>
+             <div className="mb-12 !z-[100] relative bg-white/[0.02] p-8 rounded-3xl border border-white/5 shadow-inner-glow-amber">
+               <label className="block text-[10px] uppercase font-black tracking-[0.25em] text-cyan-400 mb-5">Registry Intelligence (Auto-Fill)</label>
                <ApplianceSearch onSelect={handleSelectTemplate} />
              </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-4 relative z-0">
-
-            {error && <p className="text-sm text-red-400 bg-red-500/10 p-3 rounded-lg border border-red-500/20">{error}</p>}
+          <form onSubmit={handleSubmit} className="space-y-6 relative z-0">
+            {error && <p className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-sm font-medium">{error}</p>}
             
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
               <div className="lg:col-span-2">
-                <label className="block text-xs font-semibold text-text-secondary mb-3">Appliance Name / Nickname*</label>
+                <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-3">Appliance Name / Nickname*</label>
                 <input required className="input-field" value={form.name} onChange={e => setForm({...form, name: e.target.value})} placeholder="e.g. Master's Bedroom Aircon" />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-text-secondary mb-3">Quantity (Units)*</label>
+                <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-3">Quantity (Units)*</label>
                 <input 
                   required 
                   type="number" 
                   min="1" 
-                  className="input-field border-brand-500/30 text-brand-400 font-bold" 
+                  className="input-field !border-cyan-500/30 text-cyan-400 font-bold" 
                   value={form.quantity} 
                   onChange={e => setForm({...form, quantity: e.target.value})} 
                 />
               </div>
             </div>
 
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
               <div>
-                <label className="block text-xs font-semibold text-text-secondary mb-3">Category*</label>
-                <select className="input-field py-3 text-sm" value={form.category} onChange={e => setForm({...form, category: e.target.value})}>
+                <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-3">Category*</label>
+                <select className="input-field" value={form.category} onChange={e => setForm({...form, category: e.target.value})}>
                   <option value="aircon">Air Conditioner</option>
                   <option value="refrigerator">Refrigerator</option>
                   <option value="washing_machine">Washing Machine</option>
@@ -225,31 +221,31 @@ export default function AppliancesManager({ effectiveRate = 11.5 }) {
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-semibold text-text-secondary mb-3">Brand</label>
+                <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-3">Brand</label>
                 <input className="input-field" value={form.brand} onChange={e => setForm({...form, brand: e.target.value})} placeholder="e.g. Samsung" />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-text-secondary mb-3">Model</label>
+                <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-3">Model</label>
                 <input className="input-field" value={form.model} onChange={e => setForm({...form, model: e.target.value})} placeholder="e.g. RT38" />
               </div>
                <div>
-                <label className="block text-xs font-semibold text-text-secondary mb-3">Year</label>
-                <input type="number" min="1900" max={new Date().getFullYear() + 1} className="input-field" value={form.year} onChange={e => setForm({...form, year: e.target.value})} placeholder="e.g. 2021" />
+                <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-3">Year</label>
+                <input type="number" min="1900" className="input-field" value={form.year} onChange={e => setForm({...form, year: e.target.value})} placeholder="e.g. 2021" />
               </div>
             </div>
 
-            <div className="grid sm:grid-cols-3 gap-4 border-t border-white/[0.06] pt-4 mt-2">
+            <div className="grid sm:grid-cols-3 gap-6 pt-6 border-t border-white/[0.04]">
               <div>
-                <label className="block text-xs font-semibold text-text-secondary mb-3">Wattage (Per Unit)</label>
+                <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-3">Wattage (Per Unit)</label>
                 <input type="number" min="0" className="input-field" value={form.wattage} onChange={e => setForm({...form, wattage: e.target.value})} placeholder="e.g. 750" />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-text-secondary mb-1.5">Daily Usage (Hours)</label>
+                <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-3">Daily Usage (Hours)</label>
                 <input type="number" min="0" max="24" step="0.5" className="input-field" value={form.hours_per_day} onChange={e => setForm({...form, hours_per_day: e.target.value})} placeholder="e.g. 8" />
               </div>
                <div>
-                <label className="block text-xs font-semibold text-text-secondary mb-1.5">Energy Rating</label>
-                <select className="input-field py-3 text-sm" value={form.energy_rating} onChange={e => setForm({...form, energy_rating: e.target.value})}>
+                <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-3">Energy Rating</label>
+                <select className="input-field" value={form.energy_rating} onChange={e => setForm({...form, energy_rating: e.target.value})}>
                   <option value="not-rated">Not Rated</option>
                   <option value="inverter">Inverter (High Efficiency)</option>
                   <option value="5-star">5 Star (Excellent)</option>
@@ -261,10 +257,10 @@ export default function AppliancesManager({ effectiveRate = 11.5 }) {
               </div>
             </div>
 
-            <div className="pt-4 flex justify-end gap-3 border-t border-white/[0.04]">
-              <button type="button" onClick={resetForm} className="btn-ghost text-xs px-5 py-2.5">Cancel</button>
-              <button type="submit" disabled={saving} className="btn-primary text-xs px-8 py-2.5 flex items-center gap-2 shadow-lg shadow-brand-500/20">
-                {saving ? <Spinner size="sm" /> : <><Save className="w-4 h-4" /> {isEditing ? 'Update Profile' : 'Save Appliance'}</>}
+            <div className="pt-8 flex justify-end gap-4 border-t border-white/[0.04]">
+              <button type="button" onClick={resetForm} className="px-6 py-3 rounded-2xl font-bold text-sm text-slate-400 hover:text-white transition-all">Cancel</button>
+              <button type="submit" disabled={saving} className="btn-primary min-w-[180px]">
+                {saving ? 'Processing...' : <><Save className="w-4 h-4" /> {isEditing ? 'Update Profile' : 'Save Appliance'}</>}
               </button>
             </div>
           </form>
@@ -272,55 +268,29 @@ export default function AppliancesManager({ effectiveRate = 11.5 }) {
       )}
 
       {appliances.length > 0 ? (
-        <>
-          {/* Inline delete confirmation — replaces native confirm() */}
-          {deleteConfirmId && (
-            <div className="flex items-center justify-between p-4 rounded-xl bg-red-500/10 border border-red-500/20 mb-2 animate-fade-up">
-              <div className="flex items-center gap-3">
-                <AlertTriangle className="w-4 h-4 text-red-400 shrink-0" />
-                <p className="text-sm text-red-300">Are you sure you want to delete this appliance? This cannot be undone.</p>
-              </div>
-              <div className="flex gap-2 ml-4 shrink-0">
-                <button
-                  onClick={() => setDeleteConfirmId(null)}
-                  className="btn-ghost text-xs px-3 py-1.5"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={() => confirmDelete(deleteConfirmId)}
-                  className="px-3 py-1.5 rounded-lg bg-red-500/20 border border-red-500/30 text-red-400 text-xs font-bold hover:bg-red-500/30 transition-colors"
-                >
-                  Delete
-                </button>
-              </div>
-            </div>
-          )}
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {appliances.map(a => (
-              <ApplianceCard
-                key={a.id}
-                appliance={a}
-                onEdit={handleEdit}
-                onDelete={handleDelete}
-                rate={effectiveRate} /* Fix: was hardcoded rate={12} */
-              />
-            ))}
-          </div>
-        </>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {appliances.map(a => (
+            <ApplianceCard
+              key={a.id}
+              appliance={a}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+              rate={effectiveRate}
+            />
+          ))}
+        </div>
       ) : (
         !isFormOpen && (
-          <div className="bento-card relative overflow-hidden group text-center py-24" style={{ boxShadow: 'inset 0 0 40px rgba(245,158,11,0.01)' }}>
-            <div className="absolute inset-0 bg-brand-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
-            <div className="w-16 h-16 rounded-full bg-surface-800 flex items-center justify-center mx-auto mb-6 text-text-muted">
-              <Plus className="w-8 h-8 opacity-20" />
+          <div className="bento-card py-24 text-center group cursor-pointer hover:bg-white/[0.01]" onClick={() => setIsFormOpen(true)}>
+            <div className="w-20 h-20 rounded-[32px] bg-white/[0.03] border border-white/5 flex items-center justify-center mx-auto mb-8 text-slate-600 group-hover:text-cyan-400 group-hover:scale-110 transition-all duration-500">
+              <Plus className="w-10 h-10" />
             </div>
-            <h3 className="text-text-primary font-semibold text-xl mb-2">Build Your Energy Inventory</h3>
-            <p className="text-sm text-text-muted max-w-sm mx-auto mb-8 leading-relaxed">
+            <h3 className="text-display text-2xl font-bold text-white mb-3">Build Your Energy Inventory</h3>
+            <p className="text-sm text-slate-500 max-w-sm mx-auto mb-10 leading-relaxed font-medium">
               Log your appliances with their quantities and wattage to generate precise, AI-powered cost estimations.
             </p>
-            <button onClick={() => setIsFormOpen(true)} className="btn-primary px-8 py-3 rounded-xl flex items-center gap-2 mx-auto">
-             <Plus className="w-5 h-5 shadow-lg" /> Add Your First Appliance
+            <button className="btn-primary px-10">
+             Add Your First Appliance
             </button>
           </div>
         )

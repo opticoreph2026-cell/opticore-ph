@@ -111,130 +111,147 @@ export default function CertificateCard({ user }) {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-end relative z-50 print:hidden" ref={menuRef}>
-        <button 
-          onClick={() => setShowDownloadMenu(!showDownloadMenu)}
-          className={`
-            flex items-center gap-2.5 px-6 py-2.5 rounded-xl border transition-all duration-300
-            ${showDownloadMenu 
-              ? 'bg-brand-500 text-surface-950 border-brand-500 shadow-[0_0_20px_rgba(245,158,11,0.3)]' 
-              : 'bg-white/5 text-text-primary border-white/10 hover:bg-white/10 hover:border-white/20'
-            }
-            font-bold text-xs uppercase tracking-widest
-          `}
-        >
-          <Download className={`w-4 h-4 ${showDownloadMenu ? 'text-surface-950' : 'text-brand-400'}`} />
-          <span>Download Certificate</span>
-          <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${showDownloadMenu ? 'rotate-180' : ''}`} />
-        </button>
+    <div className="space-y-8 animate-fade-up">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6" ref={menuRef}>
+        <div>
+          <h2 className="text-display text-2xl font-bold text-white flex items-center gap-3">
+            <Award className="w-6 h-6 text-cyan-400" />
+            Performance Certification
+          </h2>
+          <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mt-1">Algorithmic Grading & Verification</p>
+        </div>
 
-        {showDownloadMenu && (
-          <div className="absolute top-full right-0 mt-3 w-56 bg-surface-900 border border-white/10 rounded-2xl p-2 z-[60] flex flex-col gap-1 animate-in fade-in slide-in-from-top-2 duration-300 shadow-[0_20px_50px_rgba(0,0,0,0.7)] ring-1 ring-white/5">
-            <div className="px-3 py-2 mb-1 border-b border-white/5">
-              <span className="text-[9px] uppercase tracking-[0.2em] text-text-muted font-black">Select Format</span>
+        <div className="relative w-full sm:w-auto">
+          <button 
+            onClick={() => setShowDownloadMenu(!showDownloadMenu)}
+            className={`
+              flex items-center justify-center gap-3 px-8 py-3.5 rounded-2xl border transition-all duration-300 w-full sm:w-auto
+              ${showDownloadMenu 
+                ? 'bg-cyan-500 text-slate-950 border-cyan-500 shadow-glass-cyan' 
+                : 'bg-white/[0.03] text-white border-white/5 hover:bg-white/[0.08] hover:border-white/10'
+              }
+              font-black text-[10px] uppercase tracking-[0.2em]
+            `}
+          >
+            <Download className={`w-4 h-4 ${showDownloadMenu ? 'text-slate-950' : 'text-cyan-400'}`} />
+            <span>Download Certificate</span>
+            <ChevronDown className={`w-4 h-4 transition-transform duration-500 ${showDownloadMenu ? 'rotate-180' : ''}`} />
+          </button>
+
+          {showDownloadMenu && (
+            <div className="absolute top-full right-0 mt-4 w-64 bg-slate-900 border border-white/10 rounded-3xl p-2.5 z-[100] flex flex-col gap-1.5 animate-in fade-in slide-in-from-top-4 duration-500 shadow-glass-lg ring-1 ring-white/5">
+              <div className="px-4 py-3 mb-1 border-b border-white/5">
+                <span className="text-[9px] uppercase tracking-[0.25em] text-slate-500 font-black">Output Format</span>
+              </div>
+              <button
+                onClick={handleDownloadImage}
+                className="flex items-center justify-between group px-5 py-4 text-sm text-white hover:bg-cyan-500/10 rounded-2xl transition-all text-left"
+              >
+                <div className="flex items-center gap-4">
+                  <ImageIcon className="w-4 h-4 text-cyan-400" />
+                  <span className="font-bold">Image (PNG)</span>
+                </div>
+                <span className="text-[9px] font-black uppercase bg-cyan-500/10 text-cyan-400 px-2 py-0.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">Ultra</span>
+              </button>
+              <button
+                onClick={handleDownloadPDF}
+                className="flex items-center justify-between group px-5 py-4 text-sm text-white hover:bg-purple-500/10 rounded-2xl transition-all text-left"
+              >
+                <div className="flex items-center gap-4">
+                  <FileText className="w-4 h-4 text-purple-400" />
+                  <span className="font-bold">Document (PDF)</span>
+                </div>
+                <span className="text-[9px] font-black uppercase bg-purple-500/10 text-purple-400 px-2 py-0.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">PDF/A</span>
+              </button>
             </div>
-            <button
-              onClick={handleDownloadImage}
-              className="flex items-center justify-between group px-4 py-3 text-sm text-white hover:bg-brand-500/10 rounded-xl transition-all text-left"
-            >
-              <div className="flex items-center gap-3">
-                <ImageIcon className="w-4 h-4 text-brand-400" />
-                <span className="font-semibold">Image (PNG)</span>
-              </div>
-              <span className="text-[10px] bg-white/5 px-2 py-0.5 rounded text-text-muted opacity-0 group-hover:opacity-100 transition-opacity">High Res</span>
-            </button>
-            <button
-              onClick={handleDownloadPDF}
-              className="flex items-center justify-between group px-4 py-3 text-sm text-white hover:bg-blue-500/10 rounded-xl transition-all text-left"
-            >
-              <div className="flex items-center gap-3">
-                <FileText className="w-4 h-4 text-blue-400" />
-                <span className="font-semibold">Document (PDF)</span>
-              </div>
-              <span className="text-[10px] bg-white/5 px-2 py-0.5 rounded text-text-muted opacity-0 group-hover:opacity-100 transition-opacity">Standard</span>
-            </button>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
       {/* ── Certificate Wrapper ── */}
-      <div className="bento-card p-1 md:p-2 bg-gradient-to-br from-brand-500/20 via-surface-900 to-blue-500/10">
-        <div className="relative bg-surface-950 border border-white/5 rounded-2xl p-8 md:p-12 overflow-hidden" id="printable-certificate">
+      <div className="bento-card p-1.5 md:p-2.5 bg-gradient-to-br from-cyan-500/10 via-slate-900/40 to-purple-500/10 shadow-glass-lg">
+        <div className="relative bg-slate-950 border border-white/5 rounded-3xl p-10 md:p-16 overflow-hidden" id="printable-certificate">
           
-          {/* Certificate Background Elements */}
-          <div className="absolute top-0 right-0 w-96 h-96 bg-brand-500/5 rounded-full blur-[100px] pointer-events-none" />
-          <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-500/5 rounded-full blur-[100px] pointer-events-none" />
+          {/* Background Textures */}
+          <div className="absolute inset-0 bg-grid-pattern opacity-[0.03]" />
+          <div className="absolute top-[-20%] right-[-10%] w-[60%] h-[60%] rounded-full bg-cyan-500/[0.03] blur-[120px] pointer-events-none" />
+          <div className="absolute bottom-[-20%] left-[-10%] w-[60%] h-[60%] rounded-full bg-purple-500/[0.03] blur-[120px] pointer-events-none" />
           
-          {/* Watermark */}
-          <div className="absolute inset-0 flex items-center justify-center opacity-[0.02] pointer-events-none select-none">
-            <Award className="w-[400px] h-[400px]" />
+          {/* Watermark Logo */}
+          <div className="absolute inset-0 flex items-center justify-center opacity-[0.015] pointer-events-none select-none">
+            <img src="/logo.png" alt="" className="w-[450px] h-[450px] object-contain grayscale brightness-200" />
           </div>
 
-          <div className="relative z-10 flex flex-col min-h-[600px]">
+          <div className="relative z-10 flex flex-col min-h-[650px]">
             {/* Header */}
-            <div className="flex justify-between items-start mb-12 border-b border-white/10 pb-8">
-               <div className="flex items-center gap-3">
-                 <div className="w-12 h-12 bg-white/5 rounded-lg flex items-center justify-center border border-white/10 overflow-hidden">
-                   <img src="/logo.png" alt="OptiCore Logo" className="w-9 h-9 object-contain" />
+            <div className="flex flex-col sm:flex-row justify-between items-center gap-8 mb-16 border-b border-white/5 pb-10">
+               <div className="flex items-center gap-5">
+                 <div className="w-16 h-16 bg-white/[0.03] rounded-3xl flex items-center justify-center border border-white/5 shadow-inner-glow-white overflow-hidden p-3">
+                   <img src="/logo.png" alt="OptiCore" className="w-full h-full object-contain" />
                  </div>
-                 <div>
-                   <h2 className="text-xl font-black text-white tracking-widest uppercase">OptiCore</h2>
-                   <p className="text-[10px] text-brand-400 font-bold tracking-[0.2em] uppercase">Energy Performance</p>
+                 <div className="text-center sm:text-left">
+                   <h2 className="text-display text-2xl font-black text-white tracking-[0.2em] uppercase leading-none">OptiCore</h2>
+                   <p className="text-[10px] text-cyan-400 font-black tracking-[0.3em] uppercase mt-2">Intelligence Systems</p>
                  </div>
                </div>
-               <div className="text-right">
-                 <p className="text-[10px] uppercase tracking-widest text-text-faint font-bold mb-1">Certificate ID</p>
-                 <p className="text-xs text-white font-mono bg-white/5 px-2 py-1 rounded border border-white/10">{cert.certId}</p>
+               <div className="text-center sm:text-right">
+                 <p className="text-[9px] font-black uppercase tracking-[0.25em] text-slate-500 mb-2">Verification ID</p>
+                 <p className="text-xs text-white font-mono font-bold bg-white/[0.03] px-4 py-1.5 rounded-xl border border-white/5 tracking-wider">{cert.certId}</p>
                </div>
             </div>
 
-            {/* Title */}
-            <div className="text-center mb-12">
-               <h1 className="text-3xl md:text-5xl font-serif text-white mb-4">Official Rating Certificate</h1>
-               <p className="text-sm text-text-muted max-w-md mx-auto">This property has been mathematically audited for electrical stability, hardware efficiency, and utility preservation.</p>
+            {/* Title Body */}
+            <div className="text-center mb-16">
+               <p className="text-[11px] font-black text-cyan-400 uppercase tracking-[0.4em] mb-6">CERTIFICATE OF PERFORMANCE</p>
+               <h1 className="text-display text-4xl md:text-6xl font-black text-white mb-6 leading-tight">Energy Audit Verification</h1>
+               <p className="text-sm text-slate-400 max-w-lg mx-auto leading-relaxed font-medium">This property has been mathematically audited using proprietary thermodynamic and statistical engines for electrical stability and utility preservation.</p>
             </div>
 
-            {/* Score Section */}
-            <div className="flex flex-col md:flex-row items-center justify-center gap-12 mb-16">
-              {/* The Grade Badge */}
+            {/* Grade Hub */}
+            <div className="flex flex-col md:flex-row items-center justify-center gap-16 mb-20">
               <div className="relative">
-                <div className="w-40 h-40 rounded-full border-4 border-surface-800 flex items-center justify-center relative z-10 bg-surface-900 shadow-2xl">
-                  <div className={`absolute inset-0 rounded-full opacity-20 blur-xl ${cert.score >= 80 ? 'bg-emerald-500' : 'bg-brand-500'}`} />
+                <div className="w-48 h-48 rounded-[48px] border border-white/5 flex items-center justify-center relative z-10 bg-slate-900 shadow-glass-lg shadow-inner-glow-white">
+                  <div className={`absolute inset-0 rounded-[48px] opacity-10 blur-2xl ${cert.score >= 80 ? 'bg-emerald-500' : 'bg-cyan-500'}`} />
                   <div className="text-center">
-                    <p className={`text-5xl font-black ${cert.color}`}>{cert.tier}</p>
-                    <p className="text-[10px] uppercase tracking-widest text-text-faint mt-1 font-bold">Grade</p>
+                    <p className={`text-display text-6xl font-black ${cert.color}`}>{cert.tier}</p>
+                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 mt-2">Efficiency Rating</p>
                   </div>
                 </div>
-                {/* Score Ribbon */}
-                <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 whitespace-nowrap bg-brand-500 text-black px-4 py-1.5 rounded-full font-black text-[11px] uppercase tracking-widest shadow-lg z-20">
-                  {cert.score} / 100
+                <div className="absolute -bottom-5 left-1/2 -translate-x-1/2 whitespace-nowrap bg-white text-slate-950 px-6 py-2 rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] shadow-glass-lg z-20">
+                  {cert.score} / 100 PTS
                 </div>
               </div>
 
-              {/* Property Details */}
-              <div className="flex-1 w-full max-w-sm space-y-4 min-w-0">
-                 <div className="min-w-0">
-                   <p className="text-[10px] uppercase tracking-widest text-text-faint mb-1 font-bold">Property Owner</p>
-                   <p className="text-lg font-bold text-white border-b border-white/10 pb-1 truncate">{user.name || user.email}</p>
-                 </div>
+              <div className="flex-1 w-full max-w-sm space-y-6">
                  <div>
-                   <p className="text-[10px] uppercase tracking-widest text-text-faint mb-1 font-bold">Issue Date</p>
-                   <p className="text-sm font-bold text-white border-b border-white/10 pb-1">{cert.issueDate}</p>
+                   <p className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-500 mb-1.5">Property Holder</p>
+                   <p className="text-display text-2xl font-bold text-white border-b border-white/5 pb-2 truncate">{user.name || user.email}</p>
+                 </div>
+                 <div className="grid grid-cols-2 gap-6">
+                   <div>
+                     <p className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-500 mb-1.5">Issuance Date</p>
+                     <p className="text-base font-bold text-white">{cert.issueDate}</p>
+                   </div>
+                   <div>
+                     <p className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-500 mb-1.5">Status</p>
+                     <p className="text-base font-bold text-emerald-400 flex items-center gap-2">
+                       <ShieldCheck className="w-4 h-4" /> Verified
+                     </p>
+                   </div>
                  </div>
               </div>
             </div>
 
-            {/* Breakdown */}
-            <div className="grid md:grid-cols-3 gap-4 mt-auto">
+            {/* Matrix Breakdown */}
+            <div className="grid md:grid-cols-3 gap-6 mt-auto">
               {cert.details.map((detail, i) => (
-                <div key={i} className="bg-white/[0.02] border border-white/10 rounded-xl p-5">
-                  <div className="flex justify-between items-start mb-3">
-                    <CheckCircle2 className="w-5 h-5 text-brand-400" />
-                    <span className="text-xs font-black text-white bg-white/10 px-2 py-0.5 rounded">{detail.value} pts</span>
+                <div key={i} className="bg-white/[0.02] border border-white/5 rounded-2xl p-6 shadow-inner-glow-white">
+                  <div className="flex justify-between items-start mb-4">
+                    <CheckCircle2 className="w-5 h-5 text-cyan-400" />
+                    <span className="text-[10px] font-black text-white bg-white/[0.05] px-3 py-1 rounded-full">{detail.value} PTS</span>
                   </div>
-                  <h4 className="text-sm font-bold text-white mb-1">{detail.label}</h4>
-                  <p className="text-xs text-text-muted leading-relaxed">{detail.desc}</p>
+                  <h4 className="text-display text-sm font-bold text-white mb-2 uppercase tracking-wide">{detail.label}</h4>
+                  <p className="text-[11px] text-slate-500 leading-relaxed font-medium">{detail.desc}</p>
                 </div>
               ))}
             </div>
@@ -243,37 +260,17 @@ export default function CertificateCard({ user }) {
         </div>
       </div>
       
-      {/* Print styles block directly in JSX to ensure it prints beautifully */}
       <style dangerouslySetInnerHTML={{__html: `
         @media print {
-          @page {
-            margin: 0;
-          }
-          * {
-            -webkit-backdrop-filter: none !important;
-            backdrop-filter: none !important;
-            transform: none !important;
-            filter: none !important;
-          }
-          body {
-            margin: 0;
-            padding: 0;
-          }
+          @page { margin: 0; size: A4 portrait; }
+          * { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; transform: none !important; filter: none !important; }
+          body { margin: 0; padding: 0; background: #000 !important; }
           body * { visibility: hidden; }
           #printable-certificate, #printable-certificate * { visibility: visible; }
           #printable-certificate { 
-            position: fixed; 
-            left: 0; 
-            top: 0; 
-            width: 100%;
-            height: 100%;
-            background: #000 !important;
-            -webkit-print-color-adjust: exact;
-            print-color-adjust: exact;
-            margin: 0 !important;
-            padding: 2rem !important;
-            box-sizing: border-box !important;
-            z-index: 99999 !important;
+            position: fixed; left: 0; top: 0; width: 100%; height: 100%; 
+            background: #050508 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact;
+            margin: 0 !important; padding: 40px !important; box-sizing: border-box !important; z-index: 99999 !important;
           }
         }
       `}} />
