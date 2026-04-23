@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Menu, X } from 'lucide-react';
+import Image from 'next/image';
 import Logo from '@/components/ui/Logo';
 
 const NAV_LINKS = [
@@ -21,9 +22,15 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2.5 group">
-            <div className="relative">
+            <div className="relative w-8 h-8">
               <div className="absolute -inset-1 bg-brand-500/20 rounded-lg blur opacity-0 group-hover:opacity-100 transition duration-500" />
-              <img src="/logo.png" alt="OptiCore" className="relative w-8 h-8 object-contain" />
+              <Image 
+                src="/logo.png" 
+                alt="OptiCore" 
+                fill
+                className="relative object-contain" 
+                priority
+              />
             </div>
             <div className="flex flex-col">
               <span className="text-lg font-black text-white tracking-tighter leading-none group-hover:text-brand-400 transition-colors">
