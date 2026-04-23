@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { clsx } from 'clsx';
 import {
-  LayoutDashboard, Users, Zap, CreditCard, BarChart3, HelpCircle, Settings, Bell
+  LayoutDashboard, Users, Zap, CreditCard, BarChart3, HelpCircle, Settings, Bell, LogOut
 } from 'lucide-react';
 import Logo from '@/components/ui/Logo';
 
@@ -92,17 +92,29 @@ export default function DashboardSidebar({ user, isOpen, onClose }) {
           })}
         </nav>
 
-        {/* User Footer (Simplified as per image) */}
-        <div className="p-6 mt-auto">
+        {/* User Footer & Logout */}
+        <div className="p-6 mt-auto space-y-3">
           <div className="p-4 rounded-3xl bg-white/[0.03] border border-white/5 flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-purple-600 flex items-center justify-center text-xs font-black text-surface-950">
               {user?.name?.charAt(0) ?? 'U'}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-bold text-white truncate">{user?.name ?? 'Sarah'}</p>
+              <p className="text-sm font-bold text-white truncate">{user?.name ?? 'User'}</p>
               <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Admin</p>
             </div>
           </div>
+          
+          <button 
+            onClick={async () => {
+              await fetch('/api/auth/logout', { method: 'POST' });
+              router.push('/login');
+              router.refresh();
+            }}
+            className="w-full flex items-center gap-3 px-6 py-4 rounded-2xl text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 transition-all group border border-transparent hover:border-rose-500/20"
+          >
+            <LogOut className="w-5 h-5 transition-transform group-hover:-translate-x-1" />
+            <span className="text-sm font-bold tracking-tight">Logout</span>
+          </button>
         </div>
       </aside>
     </>

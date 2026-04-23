@@ -30,17 +30,26 @@ export default function DashboardOverview({ user, readings = [], alerts = [], ap
   const latest = readings[0] || {};
   const previous = readings[1] || {};
   
-  const kwhDelta = latest.kwhUsed
-    ? ((latest.kwhUsed - (previous.kwhUsed ?? latest.kwhUsed)) / (previous.kwhUsed || 1) * 100).toFixed(1)
-    : '0.0';
+  // Safe Delta Calculations
+  const kwhDelta = useMemo(() => {
+    if (!latest.kwhUsed || !previous.kwhUsed) return '0.0';
+    return ((latest.kwhUsed - previous.kwhUsed) / previous.kwhUsed * 100).toFixed(1);
+  }, [latest, previous]);
 
   const totalBill = (latest.billAmountElectric ?? 0) + (latest.billAmountWater ?? 0);
-  const billDelta = totalBill && (previous.billAmountElectric + previous.billAmountWater)
-    ? ((totalBill - (previous.billAmountElectric + previous.billAmountWater)) / (previous.billAmountElectric + previous.billAmountWater) * 100).toFixed(1)
-    : '0.0';
+  const prevTotalBill = (previous.billAmountElectric ?? 0) + (previous.billAmountWater ?? 0);
+  
+  const billDelta = useMemo(() => {
+    if (!totalBill || !prevTotalBill) return '0.0';
+    return ((totalBill - prevTotalBill) / prevTotalBill * 100).toFixed(1);
+  }, [totalBill, prevTotalBill]);
 
-  // Chart Data Preparation
+  // Chart Data Preparation with empty state guard
   const chartData = useMemo(() => {
+    if (!readings || readings.length === 0) {
+      // Return skeleton data for 6 months if empty
+      return ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'].map(m => ({ name: m, value: 0, water: 0, bill: 0 }));
+    }
     return [...readings]
       .reverse()
       .slice(-12)
@@ -67,32 +76,54 @@ export default function DashboardOverview({ user, readings = [], alerts = [], ap
   ];
 
   return (
-    <div className="p-4 sm:p-8 space-y-8 max-w-[1600px] mx-auto animate-in">
+    <div className="p-4 sm:p-12 space-y-10 max-w-[1600px] mx-auto animate-in fade-in duration-700">
       
+      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
+        <div>
+          <h1 className="text-3xl font-black text-white tracking-tight flex items-center gap-3">
+            Welcome back, {user?.name?.split(' ')[0] ?? 'User'}! <span className="animate-bounce-slow">👋</span>
+          </h1>
+          <p className="text-slate-500 font-medium mt-1">Here's what's happening with your assets today.</p>
+        </div>
+        
+        <div className="flex items-center gap-3">
+          <div className="px-4 py-2 rounded-2xl bg-white/[0.03] border border-white/5 flex items-center gap-3">
+            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="text-[10px] font-black text-emerald-400 uppercase tracking-widest">System Online</span>
+          </div>
+          <button 
+            onClick={() => setIsModalOpen(true)}
+            className="btn-primary py-2.5 px-6 flex items-center gap-2 text-sm shadow-lg shadow-cyan-500/20"
+          >
+            <Plus className="w-4 h-4" /> Log Reading
+          </button>
+        </div>
+      </div>
+
       <GridStatusBanner />
 
       {/* ── Row 1: KPI Stats ────────────────────────────────────────── */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
         <KpiCard 
-          label="Active Assets"
+          label="Managed Assets"
           value={appliances.length.toLocaleString()}
-          delta="+12%"
+          delta="+2 New"
           isPositive={true}
           icon={Users}
           color="cyan"
           sparklineData={chartData.slice(-6)}
         />
         <KpiCard 
-          label="Active Utilities"
-          value="14,562"
-          delta="98% Uptime"
+          label="Power Factor"
+          value="0.94"
+          delta="Optimal"
           isPositive={true}
           icon={Zap}
           color="purple"
           sparklineData={chartData.slice(-6)}
         />
         <KpiCard 
-          label="Current Bill"
+          label="Monthly Forecast"
           value={`₱${totalBill.toLocaleString()}`}
           delta={`${billDelta}%`}
           isPositive={parseFloat(billDelta) < 0}
@@ -101,11 +132,11 @@ export default function DashboardOverview({ user, readings = [], alerts = [], ap
           sparklineData={chartData.slice(-6)}
         />
         <KpiCard 
-          label="Active Alerts"
-          value={alerts.length.toString()}
-          delta="12 High"
-          isPositive={false}
-          icon={Bell}
+          label="System Health"
+          value="98.2%"
+          delta="Stable"
+          isPositive={true}
+          icon={Activity}
           color="rose"
           sparklineData={chartData.slice(-6)}
         />
