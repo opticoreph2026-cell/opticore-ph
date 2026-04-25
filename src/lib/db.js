@@ -1,4 +1,11 @@
 import 'server-only';
+
+// PRISMA 7 FIX: Inject a dummy URL at the absolute top of the file
+// This satisfies the internal parser before PrismaClient is even initialized.
+if (!process.env.DATABASE_URL) {
+  process.env.DATABASE_URL = 'file:./dev.db';
+}
+
 import { PrismaClient } from '@prisma/client';
 import { PrismaLibSql } from '@prisma/adapter-libsql';
 import { createClient } from '@libsql/client';
@@ -6,11 +13,10 @@ import { createClient } from '@libsql/client';
 /**
  * OptiCore PH - Database Engine
  * 
- * Final Stabilized Version.
- * Handles both remote Turso (via adapter) and local SQLite (via native engine).
+ * Final Stabilized Version (Prisma 7 compatible).
  */
 
-const rawUrl = (process.env.TURSO_DATABASE_URL || process.env.DATABASE_URL || '').trim();
+const rawUrl = (process.env.TURSO_DATABASE_URL || '').trim();
 const rawToken = (process.env.TURSO_AUTH_TOKEN || '').trim();
 
 function sanitize(val) {
@@ -18,33 +24,33 @@ function sanitize(val) {
   return val.replace(/['"]/g, '').split('?')[0].trim();
 }
 
-const dbUrl = sanitize(rawUrl) || 'file:./dev.db';
+const dbUrl = sanitize(rawUrl);
 const authToken = sanitize(rawToken);
 
 function makePrisma() {
-  // AGGRESSIVE INJECTION: Prisma 7 internal parser still needs a valid URL dummy
-  process.env.DATABASE_URL = 'file:./dev.db';
-
   try {
-    // 1. Remote connection (Turso)
-    if (dbUrl.startsWith('libsql://') || dbUrl.startsWith('https://')) {
+    // 1. Remote connection (Turso) - Use Adapter
+    if (dbUrl && (dbUrl.startsWith('libsql://') || dbUrl.startsWith('https://'))) {
       const client = createClient({ url: dbUrl, authToken: authToken || undefined });
       const adapter = new PrismaLibSql(client);
       return new PrismaClient({ adapter });
     }
 
-    // 2. Local connection (Development/Build)
-    // We inject the URL into process.env so the native Prisma engine can find it
-    process.env.DATABASE_URL = dbUrl;
+    // 2. Local connection (Development/Build) - Use Native Engine
+    // We ensure the URL is set for the native engine
+    if (!process.env.DATABASE_URL || process.env.DATABASE_URL === 'file:./dev.db') {
+        process.env.DATABASE_URL = sanitize(process.env.DATABASE_URL) || 'file:./dev.db';
+    }
     return new PrismaClient();
   } catch (error) {
     console.error('[OptiCore DB] CRITICAL INITIALIZATION ERROR:', error);
+    // Fallback to basic client to prevent total crash
     return new PrismaClient();
   }
 }
 
 // Singleton Pattern
-const GLOBAL_DB_KEY = 'opticore_prisma_v7_final_v2';
+const GLOBAL_DB_KEY = 'opticore_prisma_v7_final_v3';
 const globalForPrisma = globalThis;
 
 if (!globalForPrisma[GLOBAL_DB_KEY]) {
