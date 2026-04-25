@@ -163,7 +163,6 @@ export async function POST(request) {
     }
 
     // 6. Call Gemini 2.5 Flash with multimodal input
-    console.log('[OptiCore AI] Sending bill to Gemini for analysis...');
     const startTime = Date.now();
 
     let response;
@@ -191,7 +190,6 @@ export async function POST(request) {
     }
 
     const elapsed = Date.now() - startTime;
-    console.log(`[OptiCore AI] Gemini responded in ${elapsed}ms`);
 
     // 7. Extract and parse the response
     const rawText = response.text?.trim();

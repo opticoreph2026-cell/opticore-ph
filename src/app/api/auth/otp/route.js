@@ -10,7 +10,7 @@ import {
   updateClientPasswordById,
 } from '@/lib/db';
 import { sendOTPEmail, sendWelcomeEmail } from '@/lib/email';
-import { signToken, hashPassword } from '@/lib/auth';
+import { signAccessToken, signRefreshToken, setAuthCookies, hashPassword } from '@/lib/auth';
 
 /**
  * GET /api/auth/otp
@@ -110,27 +110,25 @@ export async function POST(request) {
       void sendWelcomeEmail({ name: client.name || name, email: client.email }).catch(() => {});
     }
 
-    // 5. Issue Final Auth Cookie (opticore_auth)
-    const token = await signToken({
+    // 5. Issue Final Auth Cookies (Access & Refresh)
+    const payload = {
       sub: client.id,
       email: client.email,
       name: client.name,
       role: client.role || 'client',
       onboarding_complete: client.onboardingComplete ?? false,
-    });
+    };
+
+    const accessToken  = await signAccessToken(payload);
+    const refreshToken = await signRefreshToken(payload);
 
     const response = NextResponse.json({
       success: true,
       redirect: !client.onboardingComplete ? '/onboarding' : (client.role === 'admin' ? '/admin' : '/dashboard')
     });
 
-    response.cookies.set('opticore_auth', token, {
-      httpOnly: true,
-      secure:   process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge:   60 * 60 * 24, // 24 hours
-      path:     '/',
-    });
+    // Set cookies using our library helper
+    await setAuthCookies(client, accessToken, refreshToken);
 
     return response;
 

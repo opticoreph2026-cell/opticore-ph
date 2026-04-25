@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Check, TriangleAlert, ArrowRight, Eye, EyeOff } from 'lucide-react';
 import Spinner from '@/components/ui/Spinner';
 import { signIn } from 'next-auth/react';

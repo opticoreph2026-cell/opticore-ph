@@ -42,21 +42,7 @@ if (typeof resolvedUrl === 'string' && resolvedUrl !== 'undefined') {
   process.env.TURSO_DATABASE_URL = resolvedUrl;
 }
 
-// Debug logging (development only)
-if (process.env.NODE_ENV === 'development') {
-  console.log(`[OptiCore DB] EXPLICIT ENV SET: ${process.env.DATABASE_URL}`);
-}
-
-// Debug logging (development only)
-if (process.env.NODE_ENV === 'development') {
-  console.log(`[OptiCore DB] Initializing connection to: ${resolvedUrl}`);
-}
-
 function makeClient() {
-  if (process.env.NODE_ENV === 'development') {
-    console.log(`[OptiCore DB] [makeClient] Initializing with URL string: "${resolvedUrl}"`);
-  }
-
   if (!resolvedUrl || resolvedUrl === 'undefined') {
     throw new Error('[OptiCore DB] DATABASE_URL is undefined or invalid.');
   }

@@ -4,7 +4,7 @@
  * Requires password confirmation for non-Google accounts.
  */
 import { NextResponse } from 'next/server';
-import { getCurrentUser, clearAuthCookie, verifyPassword } from '@/lib/auth';
+import { getCurrentUser, clearAuthCookies, verifyPassword } from '@/lib/auth';
 import { getClientById, deleteClient } from '@/lib/db';
 
 export async function DELETE(request) {
@@ -42,7 +42,7 @@ export async function DELETE(request) {
 
     // Delete the account — Prisma cascade handles all related records
     await deleteClient(client.id);
-    await clearAuthCookie();
+    await clearAuthCookies();
 
     return NextResponse.json({ success: true });
   } catch (error) {
