@@ -185,12 +185,14 @@ export default function AppliancesManager({ effectiveRate = 11.5 }) {
             
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
               <div className="lg:col-span-2">
-                <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-3">Appliance Name / Nickname*</label>
-                <input required className="input-field" value={form.name} onChange={e => setForm({...form, name: e.target.value})} placeholder="e.g. Master's Bedroom Aircon" />
+                <label htmlFor="applianceName" className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-3">Appliance Name / Nickname*</label>
+                <input id="applianceName" name="name" required className="input-field" value={form.name} onChange={e => setForm({...form, name: e.target.value})} placeholder="e.g. Master's Bedroom Aircon" />
               </div>
               <div>
-                <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-3">Quantity (Units)*</label>
+                <label htmlFor="applianceQuantity" className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-3">Quantity (Units)*</label>
                 <input 
+                  id="applianceQuantity"
+                  name="quantity"
                   required 
                   type="number" 
                   min="1" 
@@ -203,8 +205,8 @@ export default function AppliancesManager({ effectiveRate = 11.5 }) {
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
               <div>
-                <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-3">Category*</label>
-                <select className="input-field" value={form.category} onChange={e => setForm({...form, category: e.target.value})}>
+                <label htmlFor="category" className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-3">Category*</label>
+                <select id="category" name="category" className="input-field" value={form.category} onChange={e => setForm({...form, category: e.target.value})}>
                   <option value="aircon">Air Conditioner</option>
                   <option value="refrigerator">Refrigerator</option>
                   <option value="washing_machine">Washing Machine</option>
@@ -222,31 +224,31 @@ export default function AppliancesManager({ effectiveRate = 11.5 }) {
                 </select>
               </div>
               <div>
-                <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-3">Brand</label>
-                <input className="input-field" value={form.brand} onChange={e => setForm({...form, brand: e.target.value})} placeholder="e.g. Samsung" />
+                <label htmlFor="brand" className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-3">Brand</label>
+                <input id="brand" name="brand" className="input-field" value={form.brand} onChange={e => setForm({...form, brand: e.target.value})} placeholder="e.g. Samsung" />
               </div>
               <div>
-                <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-3">Model</label>
-                <input className="input-field" value={form.model} onChange={e => setForm({...form, model: e.target.value})} placeholder="e.g. RT38" />
+                <label htmlFor="model" className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-3">Model</label>
+                <input id="model" name="model" className="input-field" value={form.model} onChange={e => setForm({...form, model: e.target.value})} placeholder="e.g. RT38" />
               </div>
                <div>
-                <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-3">Year</label>
-                <input type="number" min="1900" className="input-field" value={form.year} onChange={e => setForm({...form, year: e.target.value})} placeholder="e.g. 2021" />
+                <label htmlFor="year" className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-3">Year</label>
+                <input id="year" name="year" type="number" min="1900" className="input-field" value={form.year} onChange={e => setForm({...form, year: e.target.value})} placeholder="e.g. 2021" />
               </div>
             </div>
 
             <div className="grid sm:grid-cols-3 gap-6 pt-6 border-t border-white/[0.04]">
               <div>
-                <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-3">Wattage (Per Unit)</label>
-                <input type="number" min="0" className="input-field" value={form.wattage} onChange={e => setForm({...form, wattage: e.target.value})} placeholder="e.g. 750" />
+                <label htmlFor="wattage" className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-3">Wattage (Per Unit)</label>
+                <input id="wattage" name="wattage" type="number" min="0" className="input-field" value={form.wattage} onChange={e => setForm({...form, wattage: e.target.value})} placeholder="e.g. 750" />
               </div>
               <div>
-                <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-3">Daily Usage (Hours)</label>
-                <input type="number" min="0" max="24" step="0.5" className="input-field" value={form.hours_per_day} onChange={e => setForm({...form, hours_per_day: e.target.value})} placeholder="e.g. 8" />
+                <label htmlFor="hoursPerDay" className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-3">Daily Usage (Hours)</label>
+                <input id="hoursPerDay" name="hours_per_day" type="number" min="0" max="24" step="0.5" className="input-field" value={form.hours_per_day} onChange={e => setForm({...form, hours_per_day: e.target.value})} placeholder="e.g. 8" />
               </div>
                <div>
-                <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-3">Energy Rating</label>
-                <select className="input-field" value={form.energy_rating} onChange={e => setForm({...form, energy_rating: e.target.value})}>
+                <label htmlFor="energyRating" className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-3">Energy Rating</label>
+                <select id="energyRating" name="energy_rating" className="input-field" value={form.energy_rating} onChange={e => setForm({...form, energy_rating: e.target.value})}>
                   <option value="not-rated">Not Rated</option>
                   <option value="inverter">Inverter (High Efficiency)</option>
                   <option value="5-star">5 Star (Excellent)</option>

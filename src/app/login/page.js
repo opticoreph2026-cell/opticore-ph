@@ -148,6 +148,7 @@ function LoginForm() {
                 </label>
                 <input
                   id="email"
+                  name="email"
                   type="email"
                   required
                   autoComplete="email"
@@ -173,6 +174,7 @@ function LoginForm() {
                 <div className="relative">
                   <input
                     id="password"
+                    name="password"
                     type={showPw ? 'text' : 'password'}
                     required
                     autoComplete="current-password"

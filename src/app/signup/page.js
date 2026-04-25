@@ -128,8 +128,10 @@ export default function SignupPage() {
                 )}
 
                 <div>
-                  <label className="block text-[10px] font-black text-text-muted uppercase tracking-[0.16em] mb-2">Full Name</label>
+                  <label htmlFor="name" className="block text-[10px] font-black text-text-muted uppercase tracking-[0.16em] mb-2">Full Name</label>
                   <input
+                    id="name"
+                    name="name"
                     required className="input-field capitalize"
                     placeholder="Juan Dela Cruz"
                     value={form.name}
@@ -138,8 +140,10 @@ export default function SignupPage() {
                 </div>
 
                 <div>
-                  <label className="block text-[10px] font-black text-text-muted uppercase tracking-[0.16em] mb-2">Email address</label>
+                  <label htmlFor="email" className="block text-[10px] font-black text-text-muted uppercase tracking-[0.16em] mb-2">Email address</label>
                   <input
+                    id="email"
+                    name="email"
                     required type="email" className="input-field"
                     placeholder="you@example.com"
                     value={form.email}
@@ -149,9 +153,12 @@ export default function SignupPage() {
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-[10px] font-black text-text-muted uppercase tracking-[0.16em] mb-2">Password</label>
+                  <div>
+                    <label htmlFor="password" className="block text-[10px] font-black text-text-muted uppercase tracking-[0.16em] mb-2">Password</label>
                     <div className="relative">
                       <input
+                        id="password"
+                        name="password"
                         required type={showPw ? 'text' : 'password'}
                         className="input-field pr-10"
                         placeholder="••••••••"
@@ -166,10 +173,13 @@ export default function SignupPage() {
                       </button>
                     </div>
                   </div>
+                  </div>
                   <div>
-                    <label className="block text-[10px] font-black text-text-muted uppercase tracking-[0.16em] mb-2">Confirm</label>
+                    <label htmlFor="confirm" className="block text-[10px] font-black text-text-muted uppercase tracking-[0.16em] mb-2">Confirm</label>
                     <div className="relative">
                       <input
+                        id="confirm"
+                        name="confirm"
                         required type={showCPw ? 'text' : 'password'}
                         className="input-field pr-10"
                         placeholder="••••••••"
@@ -189,6 +199,8 @@ export default function SignupPage() {
                 {/* Consent */}
                 <label className="flex items-start gap-3 cursor-pointer group pt-1">
                   <input
+                    id="consent"
+                    name="consent"
                     type="checkbox" required
                     className="mt-0.5 w-4 h-4 rounded border-white/10 bg-white/5 text-brand-500 focus:ring-brand-500/20 shrink-0"
                     checked={form.consent}

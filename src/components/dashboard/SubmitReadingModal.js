@@ -234,17 +234,17 @@ export default function SubmitReadingModal({ isOpen, onClose, user, appliances =
               >
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="col-span-full">
-                    <label className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-500 mb-3 block">Reporting Period</label>
-                    <input type="date" value={formData.readingDate} onChange={e => setFormData({ ...formData, readingDate: e.target.value })} className={inputClass} />
+                    <label htmlFor="readingDate" className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-500 mb-3 block">Reporting Period</label>
+                    <input id="readingDate" name="readingDate" type="date" value={formData.readingDate} onChange={e => setFormData({ ...formData, readingDate: e.target.value })} className={inputClass} />
                   </div>
                   
                   <div>
-                    <label className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-500 mb-3 block">Energy (kWh)</label>
-                    <input type="number" step="0.1" required value={formData.kwhUsed} onChange={e => setFormData({ ...formData, kwhUsed: e.target.value })} className={inputClass} placeholder="0.0" />
+                    <label htmlFor="kwhUsed" className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-500 mb-3 block">Energy (kWh)</label>
+                    <input id="kwhUsed" name="kwhUsed" type="number" step="0.1" required value={formData.kwhUsed} onChange={e => setFormData({ ...formData, kwhUsed: e.target.value })} className={inputClass} placeholder="0.0" />
                   </div>
                   <div>
-                    <label className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-500 mb-3 block">Gross Bill (₱)</label>
-                    <input type="number" step="0.01" required value={formData.billAmountElectric} onChange={e => setFormData({ ...formData, billAmountElectric: e.target.value })} className={inputClass} placeholder="0.00" />
+                    <label htmlFor="billAmountElectric" className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-500 mb-3 block">Gross Bill (₱)</label>
+                    <input id="billAmountElectric" name="billAmountElectric" type="number" step="0.01" required value={formData.billAmountElectric} onChange={e => setFormData({ ...formData, billAmountElectric: e.target.value })} className={inputClass} placeholder="0.00" />
                   </div>
 
                   <div className="pt-4 col-span-full">
@@ -261,12 +261,12 @@ export default function SubmitReadingModal({ isOpen, onClose, user, appliances =
                   </div>
 
                   <div>
-                    <label className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-500 mb-3 block">Volume (m³)</label>
-                    <input type="number" step="0.01" value={formData.m3Used} onChange={e => setFormData({ ...formData, m3Used: e.target.value })} className={inputClass} placeholder="0.00" />
+                    <label htmlFor="m3Used" className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-500 mb-3 block">Volume (m³)</label>
+                    <input id="m3Used" name="m3Used" type="number" step="0.01" value={formData.m3Used} onChange={e => setFormData({ ...formData, m3Used: e.target.value })} className={inputClass} placeholder="0.00" />
                   </div>
                   <div>
-                    <label className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-500 mb-3 block">Water Bill (₱)</label>
-                    <input type="number" step="0.01" value={formData.billAmountWater} onChange={e => setFormData({ ...formData, billAmountWater: e.target.value })} className={inputClass} placeholder="0.00" />
+                    <label htmlFor="billAmountWater" className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-500 mb-3 block">Water Bill (₱)</label>
+                    <input id="billAmountWater" name="billAmountWater" type="number" step="0.01" value={formData.billAmountWater} onChange={e => setFormData({ ...formData, billAmountWater: e.target.value })} className={inputClass} placeholder="0.00" />
                   </div>
                 </div>
 
