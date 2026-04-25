@@ -6,16 +6,13 @@ import { createClient } from '@libsql/client';
 /**
  * OptiCore PH - Database Engine
  * 
- * Deep Fix: Hardened initialization for Vercel/Turso environments.
- * This file handles the singleton pattern for Prisma and ensures
- * that LibSQL adapters are correctly configured even when 
- * environment variables are messy.
+ * Final Stabilized Version.
+ * Handles both remote Turso (via adapter) and local SQLite (via native engine).
  */
 
 const rawUrl = (process.env.TURSO_DATABASE_URL || process.env.DATABASE_URL || '').trim();
 const rawToken = (process.env.TURSO_AUTH_TOKEN || '').trim();
 
-// Sanitize URL
 function sanitize(val) {
   if (!val || val === 'undefined' || val === 'null') return null;
   return val.replace(/['"]/g, '').split('?')[0].trim();
@@ -26,26 +23,25 @@ const authToken = sanitize(rawToken);
 
 function makePrisma() {
   try {
-    // Remote connection (Turso)
+    // 1. Remote connection (Turso)
     if (dbUrl.startsWith('libsql://') || dbUrl.startsWith('https://')) {
-      const client = createClient({ url: dbUrl, authToken });
+      const client = createClient({ url: dbUrl, authToken: authToken || undefined });
       const adapter = new PrismaLibSql(client);
       return new PrismaClient({ adapter });
     }
 
-    // Local connection (Development/Build)
-    const client = createClient({ url: dbUrl });
-    const adapter = new PrismaLibSql(client);
-    return new PrismaClient({ adapter });
+    // 2. Local connection (Development/Build)
+    // We inject the URL into process.env so the native Prisma engine can find it
+    process.env.DATABASE_URL = dbUrl;
+    return new PrismaClient();
   } catch (error) {
     console.error('[OptiCore DB] CRITICAL INITIALIZATION ERROR:', error);
-    // Emergency fallback to default Prisma (uses binary)
     return new PrismaClient();
   }
 }
 
 // Singleton Pattern
-const GLOBAL_DB_KEY = 'opticore_prisma_v7_final';
+const GLOBAL_DB_KEY = 'opticore_prisma_v7_final_v2';
 const globalForPrisma = globalThis;
 
 if (!globalForPrisma[GLOBAL_DB_KEY]) {
@@ -602,5 +598,12 @@ export async function createDailyReading(data) {
       date:       data.date,
       kwhDelta:   data.kwhDelta != null ? Number(data.kwhDelta) : null,
     },
+  });
+}
+
+export async function listProvidersByType(type) {
+  return db.utilityProvider.findMany({
+    where: { type },
+    orderBy: { name: 'asc' }
   });
 }

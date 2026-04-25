@@ -14,6 +14,7 @@ export async function GET(request) {
     const providers = await listProviders(type);
     return NextResponse.json({ providers }, { status: 200 });
   } catch (error) {
+    console.error('[Providers API] Error:', error);
     return NextResponse.json({ error: 'Failed to fetch providers' }, { status: 500 });
   }
 }
