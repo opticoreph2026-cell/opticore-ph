@@ -9,6 +9,24 @@ import { verifyToken, signAccessToken, signRefreshToken, setAuthCookies } from '
 import { db } from '@/lib/db';
 
 export async function POST() {
+  return await handleRefresh();
+}
+
+export async function GET(request) {
+  const { searchParams } = new URL(request.url);
+  const callbackUrl = searchParams.get('callbackUrl') || '/dashboard';
+  
+  const res = await handleRefresh();
+  
+  if (res.status === 200) {
+    return NextResponse.redirect(new URL(callbackUrl, request.url));
+  }
+  
+  // If refresh fails, go to login
+  return NextResponse.redirect(new URL('/login?error=SessionExpired', request.url));
+}
+
+async function handleRefresh() {
   try {
     const cookieStore = await cookies();
     const refreshToken = cookieStore.get('opticore_refresh')?.value;
@@ -54,7 +72,7 @@ export async function POST() {
     const newRefreshToken = await signRefreshToken({ sub: client.id });
 
     // 5. Rotate Refresh Token: Delete old one to prevent reuse
-    await db.refreshToken.delete({ where: { token: refreshToken } });
+    await db.refreshToken.delete({ where: { token: refreshToken } }).catch(() => {});
     
     // 6. Set Cookies & Persist new refresh token
     await setAuthCookies(client, newAccessToken, newRefreshToken);
@@ -62,7 +80,7 @@ export async function POST() {
     return NextResponse.json({
       success: true,
       plan: client.planTier ?? 'starter',
-    });
+    }, { status: 200 });
 
   } catch (error) {
     console.error('[Auth Refresh Engine Error]:', error);
