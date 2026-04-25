@@ -2,15 +2,14 @@ import 'server-only';
 
 import { PrismaClient } from '@prisma/client';
 import { PrismaLibSQL } from '@prisma/adapter-libsql';
-import { createClient } from '@libsql/client';
 
 /**
  * OptiCore PH - Database Engine
  * 
- * Version: Prisma 6 Stable
+ * Version: Prisma 6 Stable + Config Adapter
  * 
- * This version uses the proven driver adapter pattern from Prisma 6.
- * It handles remote Turso connections via LibSQL and local SQLite via native engine.
+ * In this version, we pass the raw Turso config to PrismaLibSQL.
+ * This prevents the "undefined" URL error by letting the adapter manage the client lifecycle.
  */
 
 const rawUrl = (process.env.TURSO_DATABASE_URL || '').trim();
@@ -26,10 +25,14 @@ const authToken = sanitize(rawToken);
 
 function makePrisma() {
   try {
-    // 1. Remote connection (Turso) - Use Adapter
+    // 1. Remote connection (Turso) - Use Adapter Factory
     if (dbUrl && (dbUrl.startsWith('libsql://') || dbUrl.startsWith('https://'))) {
-      const client = createClient({ url: dbUrl, authToken: authToken || undefined });
-      const adapter = new PrismaLibSQL(client);
+      // Pass the CONFIG, not the CLIENT. 
+      // PrismaLibSQL will call createClient() internally using this config.
+      const adapter = new PrismaLibSQL({ 
+        url: dbUrl, 
+        authToken: authToken || undefined 
+      });
       
       // Satisfy Prisma 6 validator with a dummy environment variable
       process.env.DATABASE_URL = 'file:./dev.db';
@@ -49,7 +52,7 @@ function makePrisma() {
 }
 
 // Singleton Pattern
-const GLOBAL_DB_KEY = 'opticore_prisma_v6_stable';
+const GLOBAL_DB_KEY = 'opticore_prisma_v6_config_final';
 const globalForPrisma = globalThis;
 
 if (!globalForPrisma[GLOBAL_DB_KEY]) {
@@ -413,6 +416,13 @@ export async function markAlertRead(alertId, clientId) {
 
   return db.alert.update({
     where: { id: alertId },
+    data: { isRead: true },
+  });
+}
+
+export async function markAllAlertsRead(clientId) {
+  return db.alert.updateMany({
+    where: { clientId, isRead: false },
     data: { isRead: true },
   });
 }
