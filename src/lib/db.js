@@ -1,11 +1,5 @@
 import 'server-only';
 
-// PRISMA 7 FIX: Inject a dummy URL at the absolute top of the file
-// This satisfies the internal parser before PrismaClient is even initialized.
-if (!process.env.DATABASE_URL) {
-  process.env.DATABASE_URL = 'file:./dev.db';
-}
-
 import { PrismaClient } from '@prisma/client';
 import { PrismaLibSql } from '@prisma/adapter-libsql';
 import { createClient } from '@libsql/client';
@@ -14,6 +8,7 @@ import { createClient } from '@libsql/client';
  * OptiCore PH - Database Engine
  * 
  * Final Stabilized Version (Prisma 7 compatible).
+ * Uses explicit datasource override to bypass environment variable issues.
  */
 
 const rawUrl = (process.env.TURSO_DATABASE_URL || '').trim();
@@ -33,24 +28,35 @@ function makePrisma() {
     if (dbUrl && (dbUrl.startsWith('libsql://') || dbUrl.startsWith('https://'))) {
       const client = createClient({ url: dbUrl, authToken: authToken || undefined });
       const adapter = new PrismaLibSql(client);
-      return new PrismaClient({ adapter });
+      
+      // NUCLEAR FIX: Explicitly pass the datasource URL in the constructor 
+      // to prevent "undefined" errors from the internal parser.
+      return new PrismaClient({ 
+        adapter,
+        datasources: {
+          db: {
+            url: 'file:./dev.db' // Dummy string to satisfy Prisma validation
+          }
+        }
+      });
     }
 
     // 2. Local connection (Development/Build) - Use Native Engine
-    // We ensure the URL is set for the native engine
-    if (!process.env.DATABASE_URL || process.env.DATABASE_URL === 'file:./dev.db') {
-        process.env.DATABASE_URL = sanitize(process.env.DATABASE_URL) || 'file:./dev.db';
-    }
-    return new PrismaClient();
+    return new PrismaClient({
+      datasources: {
+        db: {
+          url: sanitize(process.env.DATABASE_URL) || 'file:./dev.db'
+        }
+      }
+    });
   } catch (error) {
     console.error('[OptiCore DB] CRITICAL INITIALIZATION ERROR:', error);
-    // Fallback to basic client to prevent total crash
     return new PrismaClient();
   }
 }
 
 // Singleton Pattern
-const GLOBAL_DB_KEY = 'opticore_prisma_v7_final_v3';
+const GLOBAL_DB_KEY = 'opticore_prisma_v7_final_v4';
 const globalForPrisma = globalThis;
 
 if (!globalForPrisma[GLOBAL_DB_KEY]) {
