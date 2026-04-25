@@ -37,7 +37,8 @@ export async function middleware(request) {
   }
 
   // 2. If no valid Access Token but we have a Refresh Token, try to trigger a refresh
-  if (!user && refreshToken) {
+  // Skip refresh redirect if we are already on login or signup to avoid loops
+  if (!user && refreshToken && pathname !== '/login' && pathname !== '/signup') {
     try {
       const { payload: refreshPayload } = await jwtVerify(refreshToken, getSecret(), {
         issuer: 'opticore-ph',
