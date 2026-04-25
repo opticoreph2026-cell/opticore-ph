@@ -2,6 +2,7 @@ import 'server-only';
 
 import { PrismaClient } from '@prisma/client';
 import { PrismaLibSQL } from '@prisma/adapter-libsql';
+import { createClient } from '@libsql/client';
 
 /**
  * OptiCore PH - Database Engine
@@ -27,12 +28,11 @@ function makePrisma() {
   try {
     // 1. Remote connection (Turso) - Use Adapter Factory
     if (dbUrl && (dbUrl.startsWith('libsql://') || dbUrl.startsWith('https://'))) {
-      // Pass the CONFIG, not the CLIENT. 
-      // PrismaLibSQL will call createClient() internally using this config.
-      const adapter = new PrismaLibSQL({ 
+      const client = createClient({ 
         url: dbUrl, 
         authToken: authToken || undefined 
       });
+      const adapter = new PrismaLibSQL(client);
       
       // Satisfy Prisma 6 validator with a dummy environment variable
       process.env.DATABASE_URL = 'file:./dev.db';
