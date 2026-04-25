@@ -57,7 +57,7 @@ export async function POST() {
       : null;
 
     // 3. AI Narrative Generation
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash-latest' });
+    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
     const prompt = `
       You are an expert Energy & Water Audit AI for OptiCore PH. 
       Analyze these actual engineering results for a Philippine household and provide a professional, unified intelligence summary.

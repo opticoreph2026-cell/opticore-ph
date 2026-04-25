@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Plus, X, ServerCrash, Save, Calculator, AlertTriangle } from 'lucide-react';
+import { Plus, X, ServerCrash, Save, Calculator, AlertTriangle, Trash2 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import ApplianceCard from './ApplianceCard';
 import ApplianceSearch from './ApplianceSearch';
 import Spinner from '@/components/ui/Spinner';
@@ -295,6 +296,48 @@ export default function AppliancesManager({ effectiveRate = 11.5 }) {
           </div>
         )
       )}
+      {/* Delete Confirmation Modal */}
+      <AnimatePresence>
+        {deleteConfirmId && (
+          <div className="fixed inset-0 z-[200] flex items-center justify-center p-6">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setDeleteConfirmId(null)}
+              className="absolute inset-0 bg-surface-1000/80 backdrop-blur-md"
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="relative w-full max-w-md bento-card p-8 bg-surface-950 border border-white/10 shadow-2xl"
+            >
+              <div className="w-16 h-16 rounded-2xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-400 mb-6">
+                <Trash2 className="w-8 h-8" />
+              </div>
+              <h3 className="text-display text-2xl font-bold text-white mb-3">Confirm Deletion</h3>
+              <p className="text-sm text-slate-400 leading-relaxed mb-8">
+                Are you sure you want to remove this asset? This action will permanently delete the appliance profile and its associated data logs.
+              </p>
+              <div className="flex gap-4">
+                <button 
+                  onClick={() => setDeleteConfirmId(null)}
+                  className="flex-1 px-6 py-3.5 rounded-2xl bg-white/[0.03] border border-white/5 text-slate-400 font-bold text-sm hover:text-white hover:bg-white/5 transition-all"
+                >
+                  Cancel
+                </button>
+                <button 
+                  onClick={() => confirmDelete(deleteConfirmId)}
+                  className="flex-1 px-6 py-3.5 rounded-2xl bg-rose-500 text-white font-bold text-sm hover:bg-rose-400 transition-all shadow-xl shadow-rose-500/20"
+                >
+                  Delete Asset
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

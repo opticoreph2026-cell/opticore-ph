@@ -12,3 +12,15 @@ OptiCore integrates with national energy grid data to provide real-time situatio
 - **Normal**: System operates within standard parameters.
 - **Yellow**: Tight power supply; potential for spot-market price volatility.
 - **Red**: Critical power deficiency; risk of rotating power outages and high surge penalties.
+
+## Deep Analysis & Debugging
+### Backend (Intelligence)
+- **Simulation Engine**: Implemented a time-aware simulation that mimics real-world Philippine grid peak behaviors for predictable testing.
+- **Data Model**: Returns structured `surgePenaltyPercent` to allow the frontend to calculate real-time cost impacts.
+
+### Frontend (Implementation)
+- **Visual Feedback**: Uses `AnimatePresence` and pulsing `lucide-react` icons to ensure alerts are impossible to miss.
+- **Persistence**: Fetches status on every dashboard mount to ensure the administrator is never viewing stale grid data.
+
+### Web Design
+- **Color Semantics**: Strict adherence to grid alert colors (Amber/Rose) ensure consistency with industry standards.
