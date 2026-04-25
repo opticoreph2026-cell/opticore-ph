@@ -7,6 +7,7 @@ import { signIn } from 'next-auth/react';
 import { Eye, EyeOff, CircleAlert, ArrowRight, Loader2 } from 'lucide-react';
 import Spinner from '@/components/ui/Spinner';
 import Logo from '@/components/ui/Logo';
+import Captcha from '@/components/ui/Captcha';
 
 // Google icon SVG (official brand mark)
 function GoogleIcon() {
@@ -30,6 +31,7 @@ function LoginForm() {
   const [loading,    setLoading]    = useState(false);
   const [googleLoad, setGoogleLoad] = useState(false);
   const [error,      setError]      = useState('');
+  const [captchaToken, setCaptchaToken] = useState(null);
 
   // Map URL error codes to messages
   useEffect(() => {
@@ -55,6 +57,10 @@ function LoginForm() {
 
   const handleEmailLogin = async (e) => {
     e.preventDefault();
+    if (!captchaToken) {
+      setError('Please verify that you are human.');
+      return;
+    }
     setError('');
     setLoading(true);
     try {
@@ -221,9 +227,11 @@ function LoginForm() {
                 </div>
               </div>
 
+              <Captcha onVerify={setCaptchaToken} />
+
               <button
                 type="submit"
-                disabled={loading || googleLoad}
+                disabled={loading || googleLoad || !captchaToken}
                 className="btn-primary w-full disabled:opacity-60 disabled:cursor-not-allowed mt-1 flex items-center justify-center gap-2"
               >
                 {loading ? <Spinner size="sm" /> : <>Sign in <ArrowRight className="w-4 h-4" /></>}

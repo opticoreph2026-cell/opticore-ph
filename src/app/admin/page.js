@@ -166,7 +166,7 @@ export default async function AdminDashboard() {
               <TrendingUp className="w-5 h-5 text-brand-400" />
               <h2 className="font-bold text-text-primary text-sm uppercase tracking-wider">Revenue Pulse</h2>
             </div>
-            <AdminKpiCharts planCounts={kpis?.planCounts} />
+            <AdminKpiCharts planCounts={kpis?.planCounts || {}} />
           </section>
 
           <section className="bento-card p-6">

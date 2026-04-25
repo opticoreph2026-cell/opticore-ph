@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { Check, TriangleAlert, ArrowRight, Eye, EyeOff, Sparkles, Loader2 } from 'lucide-react';
 import Spinner from '@/components/ui/Spinner';
 import Logo from '@/components/ui/Logo';
+import Captcha from '@/components/ui/Captcha';
 
 // Google icon SVG
 function GoogleIcon() {
@@ -30,6 +31,7 @@ function SignupForm() {
   const [googleLoad, setGoogleLoad] = useState(false);
   const [error,      setError]      = useState('');
   const [success,    setSuccess]    = useState(false);
+  const [captchaToken, setCaptchaToken] = useState(null);
   const router      = useRouter();
   const searchParams = useSearchParams();
   const planParam   = searchParams.get('plan'); // e.g. 'pro', 'business'
@@ -45,6 +47,10 @@ function SignupForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!captchaToken) {
+      setError('Please verify that you are human.');
+      return;
+    }
     setError('');
     if (form.password !== form.confirm) {
       setError('Passwords do not match.');
@@ -267,9 +273,11 @@ function SignupForm() {
                   </span>
                 </label>
 
+                <Captcha onVerify={setCaptchaToken} />
+
                 <button
                   type="submit"
-                  disabled={loading || googleLoad}
+                  disabled={loading || googleLoad || !captchaToken}
                   className="btn-primary w-full mt-1 flex items-center justify-center gap-2 disabled:opacity-60"
                 >
                   {loading ? <Spinner size="sm" /> : <>Create Account <ArrowRight className="w-4 h-4" /></>}
