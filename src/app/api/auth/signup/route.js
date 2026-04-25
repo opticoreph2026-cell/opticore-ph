@@ -17,6 +17,8 @@ import { getClientByEmail, createNewClientRecord } from '@/lib/db';
 import { hashPassword, signAccessToken, signRefreshToken, setAuthCookies } from '@/lib/auth';
 import { sendWelcomeEmail } from '@/lib/email';
 import { checkRateLimit, getClientIp } from '@/lib/ratelimit';
+import { createAdminNotification } from '@/lib/db';
+
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const MIN_PW   = 8;
@@ -126,12 +128,20 @@ export async function POST(request) {
 
   await setAuthCookies(client, accessToken, refreshToken);
 
-  // ── Send welcome email (non-blocking) ─────────────────────────────────────
+  // ── Send welcome email + admin notification (non-blocking) ───────────────
   sendWelcomeEmail({ name: name.trim(), email: email.trim().toLowerCase() })
-    .catch(() => {}); // swallow — already logged inside sendWelcomeEmail
+    .catch(() => {});
+
+  createAdminNotification({
+    type:    'new_user',
+    title:   `New user registered`,
+    message: `${toTitleCase(name.trim())} signed up with email/password`,
+    meta: { email: email.trim().toLowerCase(), name: toTitleCase(name.trim()), plan: 'starter' },
+  }).catch(() => {});
 
   return NextResponse.json(
     { success: true, redirect: '/onboarding' },
     { status: 201 }
   );
 }
+

@@ -13,7 +13,7 @@ import { analyzeWaterUsage } from '@/lib/algorithms/waterAnalyzer';
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'Dashboard — OptiCore PH' };
 
-export default async function DashboardPage() {
+export default async function DashboardPage({ searchParams }) {
   // 1. Session Guard
   const jwtUser = await getCurrentUser();
   if (!jwtUser) redirect('/login');
@@ -72,6 +72,7 @@ export default async function DashboardPage() {
         latestReport={latestReport || null}
         lpgStatus={lpgStatus}
         waterAnalysis={waterAnalysis}
+        searchParams={searchParams}
       />
     );
 

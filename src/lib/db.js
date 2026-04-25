@@ -628,3 +628,40 @@ export async function listProvidersByType(type) {
     orderBy: { name: 'asc' }
   });
 }
+
+// ─── Admin Notifications ─────────────────────────────────────────────────────
+
+export async function createAdminNotification(data) {
+  return db.adminNotification.create({
+    data: {
+      type:    data.type,
+      title:   data.title,
+      message: data.message,
+      meta:    data.meta ? JSON.stringify(data.meta) : null,
+      isRead:  false,
+    },
+  });
+}
+
+export async function getAdminNotifications(limit = 30) {
+  const rows = await db.adminNotification.findMany({
+    orderBy: { createdAt: 'desc' },
+    take: limit,
+  });
+  return rows.map(r => ({
+    ...r,
+    meta: r.meta ? (() => { try { return JSON.parse(r.meta); } catch { return {}; } })() : {},
+  }));
+}
+
+export async function countUnreadAdminNotifications() {
+  return db.adminNotification.count({ where: { isRead: false } });
+}
+
+export async function markAdminNotificationRead(id) {
+  return db.adminNotification.update({ where: { id }, data: { isRead: true } });
+}
+
+export async function markAllAdminNotificationsRead() {
+  return db.adminNotification.updateMany({ where: { isRead: false }, data: { isRead: true } });
+}

@@ -8,18 +8,21 @@ import { clsx } from 'clsx';
 import { getAdminKPIs, listAllClients, listAllTransactions, getSystemTelemetry } from '@/lib/db';
 
 import AdminClientTable from '@/components/admin/AdminClientTable';
+import AdminNotificationFeed from '@/components/admin/AdminNotificationFeed';
+import { getAdminNotifications } from '@/lib/db';
 
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'Admin Command — OptiCore PH' };
 
 export default async function AdminDashboard() {
-  let kpis = null, recentClients = [], transactions = [], telemetry = null;
+  let kpis = null, recentClients = [], transactions = [], telemetry = null, initialNotifications = [];
   try {
-    [kpis, recentClients, transactions, telemetry] = await Promise.all([
+    [kpis, recentClients, transactions, telemetry, initialNotifications] = await Promise.all([
       getAdminKPIs(),
       listAllClients({ maxRecords: 10 }),
       listAllTransactions({ maxRecords: 10 }),
       getSystemTelemetry(),
+      getAdminNotifications(5),
     ]);
   } catch (error) {
     console.error('[Admin DB Error]:', error);
@@ -167,19 +170,7 @@ export default async function AdminDashboard() {
           </section>
 
           <section className="bento-card p-6">
-            <div className="flex items-center gap-3 mb-6">
-              <Bell className="w-5 h-5 text-red-400" />
-              <h2 className="font-bold text-text-primary text-sm uppercase tracking-wider">System Alerts</h2>
-            </div>
-            <div className="space-y-4">
-              <div className="p-4 rounded-xl bg-red-500/5 border border-red-500/10 flex gap-3">
-                <ShieldAlert className="w-5 h-5 text-red-400 shrink-0" />
-                <div>
-                  <p className="text-xs font-bold text-red-300 mb-1">Production Shield Active</p>
-                  <p className="text-[10px] text-red-400/70 leading-relaxed">External database sync is restricted to authorized agents.</p>
-                </div>
-              </div>
-            </div>
+            <AdminNotificationFeed initialData={initialNotifications} />
           </section>
         </div>
       </div>

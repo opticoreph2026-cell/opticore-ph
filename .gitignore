@@ -33,3 +33,7 @@ Thumbs.db
 
 # Netlify
 .netlify/
+
+# Local Database
+*.db
+*.db-journal

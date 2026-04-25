@@ -146,8 +146,9 @@ export default function PricingClient() {
         }),
       });
       const data = await res.json();
-      if (data.url) window.location.href = data.url;
-      else { 
+      if (res.ok && data.url) {
+        window.location.href = data.url;
+      } else { 
         setToastMsg(data.error ?? 'Could not start checkout. Please try again.'); 
         setToastType('error'); 
       }

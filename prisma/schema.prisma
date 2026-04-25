@@ -260,3 +260,15 @@ model RefreshToken {
 
   @@index([clientId])
 }
+
+// ── Admin Notification System ────────────────────────────────────────────────
+
+model AdminNotification {
+  id        String   @id @default(uuid())
+  type      String   // new_user | payment | ai_scan | report | system | ai_forecast | acoustic | solar
+  title     String
+  message   String
+  meta      String?  // JSON blob: { clientId, clientName, email, plan, amount, ... }
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+}

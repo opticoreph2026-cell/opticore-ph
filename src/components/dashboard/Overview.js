@@ -12,7 +12,7 @@ import {
 } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import Link from 'next/link';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { clsx } from 'clsx';
@@ -41,10 +41,21 @@ const itemVariants = {
   },
 };
 
-export default function DashboardOverview({ user, readings = [], alerts = [], appliances = [] }) {
+export default function DashboardOverview({ user, readings = [], alerts = [], appliances = [], searchParams }) {
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [toastMsg, setToastMsg] = useState(null);
+  const [toastType, setToastType] = useState('success');
+
+  useEffect(() => {
+    if (searchParams?.upgraded === 'true') {
+      const planName = searchParams?.plan || 'Pro';
+      setToastMsg(`Successfully upgraded to ${planName} plan!`);
+      setToastType('success');
+      // Clean up URL without reload
+      window.history.replaceState({}, '', '/dashboard');
+    }
+  }, [searchParams]);
 
   const latest = readings[0] || {};
   const previous = readings[1] || {};
@@ -296,7 +307,7 @@ export default function DashboardOverview({ user, readings = [], alerts = [], ap
         appliances={appliances}
       />
 
-      <Toast message={toastMsg} onClose={() => setToastMsg(null)} />
+      <Toast message={toastMsg} type={toastType} onClose={() => setToastMsg(null)} />
     </motion.div>
   );
 }

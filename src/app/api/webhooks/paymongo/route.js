@@ -1,19 +1,10 @@
 /**
  * POST /api/webhooks/paymongo
- *
- * Receives PayMongo webhook events and upgrades client plans automatically.
- *
- * Supported events:
- *   - checkout_session.payment.paid  → upgrade plan_tier
- *
- * Setup in PayMongo Dashboard → Developers → Webhooks:
- *   URL:    https://yourdomain.com/api/webhooks/paymongo
- *   Events: checkout_session.payment.paid
+ * Receives PayMongo events, upgrades plan, fires admin notification.
  */
-
-import { NextResponse }        from 'next/server';
+import { NextResponse }           from 'next/server';
 import { verifyWebhookSignature } from '@/lib/paymongo';
-import { setClientPlanTier }   from '@/lib/db';
+import { setClientPlanTier, createAdminNotification, getClientById } from '@/lib/db';
 
 export async function POST(request) {
   const signature = request.headers.get('paymongo-signature');
@@ -21,10 +12,8 @@ export async function POST(request) {
     return NextResponse.json({ error: 'Missing signature.' }, { status: 401 });
   }
 
-  // Read raw body for signature verification
   const rawBody = await request.text();
 
-  // Verify HMAC signature
   let isValid = false;
   try {
     isValid = await verifyWebhookSignature(rawBody, signature);
@@ -36,7 +25,6 @@ export async function POST(request) {
     return NextResponse.json({ error: 'Invalid signature.' }, { status: 401 });
   }
 
-  // Parse the event
   let event;
   try {
     event = JSON.parse(rawBody);
@@ -46,28 +34,46 @@ export async function POST(request) {
 
   const eventType = event?.data?.attributes?.type;
 
-  // ── Handle payment success ────────────────────────────────────────────────
   if (eventType === 'checkout_session.payment.paid') {
     const session  = event.data?.attributes?.data;
     const metadata = session?.attributes?.metadata ?? {};
     const clientId = metadata.client_id;
     const plan     = metadata.plan;
+    const interval = metadata.interval || 'monthly';
 
     if (!clientId || !plan) {
-      // Gracefully ignore — PayMongo expects a 200 regardless
       return NextResponse.json({ received: true });
     }
 
     try {
       await setClientPlanTier(clientId, plan, event.data.id);
+
+      // Fetch client details for the notification
+      const client = await getClientById(clientId).catch(() => null);
+
+      const prices = { pro: { monthly: 499, yearly: 4790 }, business: { monthly: 2499, yearly: 23990 } };
+      const amount = prices[plan]?.[interval] ?? 0;
+
+      // Fire admin notification
+      await createAdminNotification({
+        type:    'payment',
+        title:   `${plan.charAt(0).toUpperCase() + plan.slice(1)} plan activated`,
+        message: `${client?.name || 'A user'} upgraded to ${plan} (${interval}) — ₱${amount.toLocaleString()}`,
+        meta: {
+          clientId,
+          email:    client?.email,
+          name:     client?.name,
+          plan,
+          interval,
+          amount,
+          sessionId: event.data.id,
+        },
+      }).catch(() => {}); // non-blocking
+
     } catch {
-      // Log internally (not to console in production)
-      // In production: use a structured logger (Datadog, Sentry, etc.)
       return NextResponse.json({ error: 'Failed to upgrade plan.' }, { status: 500 });
     }
   }
 
-  // Always return 200 to acknowledge receipt
   return NextResponse.json({ received: true }, { status: 200 });
 }
-

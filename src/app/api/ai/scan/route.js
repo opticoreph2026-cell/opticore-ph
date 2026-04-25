@@ -127,6 +127,15 @@ export async function POST(request) {
       await incrementClientScanQuota(client.id);
     }
 
+    // Fire admin notification (non-blocking)
+    const { createAdminNotification } = await import('@/lib/db');
+    createAdminNotification({
+      type:    'ai_scan',
+      title:   'AI Bill Scan',
+      message: `${client.name || client.email} scanned a ${rawData.providerName || 'Utility'} bill.`,
+      meta:    { clientId: client.id, email: client.email, provider: rawData.providerName, amount: rawData.totalAmount },
+    }).catch(() => {});
+
     return NextResponse.json({
       success: true,
       data: enrichedData

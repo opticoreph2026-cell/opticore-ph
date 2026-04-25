@@ -5,10 +5,10 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Bell, Menu, LogOut, User, ChevronDown, Shield, Search } from 'lucide-react';
+import { Menu, LogOut, User, ChevronDown, Shield, Search } from 'lucide-react';
 import { clsx } from 'clsx';
 import Logo from '@/components/ui/Logo';
-import NotificationPopover from '@/components/dashboard/NotificationPopover';
+import AdminNotificationBell from '@/components/admin/AdminNotificationBell';
 
 export default function AdminHeader({ user, onMenuClick }) {
   const router = useRouter();
@@ -64,7 +64,7 @@ export default function AdminHeader({ user, onMenuClick }) {
           <span className="text-[10px] font-black text-emerald-400 uppercase tracking-widest">System Online</span>
         </div>
 
-        <NotificationPopover />
+        <AdminNotificationBell />
 
         <div className="w-px h-6 bg-white/[0.08]" />
 

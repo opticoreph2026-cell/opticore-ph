@@ -1,5 +1,7 @@
 import GoogleProvider from 'next-auth/providers/google';
 import { db } from '@/lib/db';
+import { createAdminNotification } from '@/lib/db';
+
 
 export const authOptions = {
   providers: [
@@ -38,7 +40,6 @@ export const authOptions = {
                 name:               name || email.split('@')[0],
                 googleId:           googleId || null,
                 avatar:             avatar || null,
-                // Placeholder hash for Google-only users (no password set)
                 passwordHash:       `GOOGLE_OAUTH_USER_${Math.random().toString(36).substring(2, 12)}`,
                 onboardingComplete: false,
                 consentGiven:       true,
@@ -46,6 +47,15 @@ export const authOptions = {
                 applianceCount:     0,
               },
             });
+
+            // Notify admin (non-blocking)
+            createAdminNotification({
+              type:    'new_user',
+              title:   'New user via Google',
+              message: `${name || email} signed up using Google OAuth`,
+              meta:    { email: email.toLowerCase(), name: name || email, plan: 'starter' },
+            }).catch(() => {});
+
           } else {
             // Existing user — sync Google ID and avatar if changed
             await db.client.update({
