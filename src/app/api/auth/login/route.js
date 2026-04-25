@@ -44,7 +44,8 @@ export async function POST(request) {
   let client;
   try {
     client = await getClientByEmail(email.trim().toLowerCase());
-  } catch {
+  } catch (error) {
+    console.error('[Login API] Database lookup failed:', error);
     return NextResponse.json({ error: 'Service temporarily unavailable.' }, { status: 503 });
   }
 

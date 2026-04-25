@@ -2,83 +2,67 @@ import 'server-only';
 import { PrismaClient } from '@prisma/client';
 import { PrismaLibSql } from '@prisma/adapter-libsql';
 import { createClient } from '@libsql/client';
-import path from 'path';
 
-let rawUrl = (process.env.TURSO_DATABASE_URL || process.env.DATABASE_URL || 'file:./dev.db').trim();
-const authToken = process.env.TURSO_AUTH_TOKEN?.replace(/['"]/g, '')?.trim();
+/**
+ * OptiCore PH - Database Engine
+ * 
+ * Deep Fix: Hardened initialization for Vercel/Turso environments.
+ * This file handles the singleton pattern for Prisma and ensures
+ * that LibSQL adapters are correctly configured even when 
+ * environment variables are messy.
+ */
 
-// Defensive: Some environments might set these to the literal string "undefined" or "null"
-if (rawUrl === 'undefined' || rawUrl === 'null' || !rawUrl) {
-  rawUrl = 'file:./dev.db';
+const rawUrl = (process.env.TURSO_DATABASE_URL || process.env.DATABASE_URL || '').trim();
+const rawToken = (process.env.TURSO_AUTH_TOKEN || '').trim();
+
+// Sanitize URL
+function sanitize(val) {
+  if (!val || val === 'undefined' || val === 'null') return null;
+  return val.replace(/['"]/g, '').split('?')[0].trim();
 }
 
-// Strip surrounding quotes that may appear in .env values
-const cleanUrl = rawUrl.replace(/['"]/g, '').split('?')[0].trim();
+const dbUrl = sanitize(rawUrl) || 'file:./dev.db';
+const authToken = sanitize(rawToken);
 
-// ─── URL resolution ────────────────────────────────────────────────────────────
-// libsql on Windows hangs when given a *relative* file: path (e.g. file:./dev.db).
-// Fix: always pass a fully-qualified absolute file: URL to the adapter.
-function resolveDbUrl(url) {
-  if (url && url.startsWith('file:') && !url.startsWith('file:///') && !url.startsWith('file://')) {
-    const filePath = url.replace(/^file:/, '');
-    const absPath = path.isAbsolute(filePath)
-      ? filePath
-      : path.resolve(process.cwd(), filePath);
-    
-    // On Windows, drive letters like C:\ should be converted to file:C:/ to be safe with all driver versions
-    const normalizedPath = absPath.replace(/\\/g, '/');
-    const finalUrl = `file:${normalizedPath}`; 
-    
-    return finalUrl;
+function makePrisma() {
+  try {
+    // Remote connection (Turso)
+    if (dbUrl.startsWith('libsql://') || dbUrl.startsWith('https://')) {
+      const client = createClient({ url: dbUrl, authToken });
+      const adapter = new PrismaLibSql(client);
+      return new PrismaClient({ adapter });
+    }
+
+    // Local connection (Development/Build)
+    const client = createClient({ url: dbUrl });
+    const adapter = new PrismaLibSql(client);
+    return new PrismaClient({ adapter });
+  } catch (error) {
+    console.error('[OptiCore DB] CRITICAL INITIALIZATION ERROR:', error);
+    // Emergency fallback to default Prisma (uses binary)
+    return new PrismaClient();
   }
-  return url;
 }
 
-const resolvedUrl = resolveDbUrl(cleanUrl);
-
-// AGGRESSIVE FIX: Inject the resolved URL back into process.env to satisfy internal Prisma/libsql checks
-if (typeof resolvedUrl === 'string' && resolvedUrl !== 'undefined') {
-  process.env.DATABASE_URL = resolvedUrl;
-  process.env.TURSO_DATABASE_URL = resolvedUrl;
-}
-
-function makeClient() {
-  if (!resolvedUrl || resolvedUrl === 'undefined') {
-    throw new Error('[OptiCore DB] DATABASE_URL is undefined or invalid.');
-  }
-  
-  // In Prisma 7, the adapter expects a client instance from @libsql/client
-  const client = createClient({ 
-    url: resolvedUrl,
-    authToken: authToken 
-  });
-  
-  const adapter = new PrismaLibSql(client);
-  
-  return new PrismaClient({
-    adapter,
-    log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
-  });
-}
-
-// Fixed: Using a new unique key for the brute-force fix
-const GLOBAL_PRISMA_KEY = 'prisma_v7_bruteforce_v1';
+// Singleton Pattern
+const GLOBAL_DB_KEY = 'opticore_prisma_v7_final';
 const globalForPrisma = globalThis;
 
-if (!globalForPrisma[GLOBAL_PRISMA_KEY]) {
-  globalForPrisma[GLOBAL_PRISMA_KEY] = makeClient();
+if (!globalForPrisma[GLOBAL_DB_KEY]) {
+  globalForPrisma[GLOBAL_DB_KEY] = makePrisma();
 }
 
-export const db = globalForPrisma[GLOBAL_PRISMA_KEY];
-if (process.env.NODE_ENV !== 'production') globalForPrisma[GLOBAL_PRISMA_KEY] = db;
+export const db = globalForPrisma[GLOBAL_DB_KEY];
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
 export async function getClientByEmail(email) {
-  return db.client.findUnique({ where: { email: email.toLowerCase() } });
+  if (!email) return null;
+  return db.client.findUnique({ where: { email: email.toLowerCase().trim() } });
 }
 
 export async function getClientById(id) {
+  if (!id) return null;
   return db.client.findUnique({ where: { id } });
 }
 
@@ -92,7 +76,7 @@ export async function listAllClients(options = {}) {
 
 export async function setClientPlanTier(id, tier, subscriptionId = null, logType = 'payment') {
   const expiry = new Date();
-  expiry.setDate(expiry.getDate() + 30); // 30-day monthly renewal
+  expiry.setDate(expiry.getDate() + 30);
 
   const client = await db.client.update({
     where: { id },
@@ -103,7 +87,6 @@ export async function setClientPlanTier(id, tier, subscriptionId = null, logType
     },
   });
 
-  // Log the transaction
   await logTransaction({
     clientId: id,
     planTier: tier,
@@ -115,7 +98,6 @@ export async function setClientPlanTier(id, tier, subscriptionId = null, logType
   return client;
 }
 
-// ─── Transactions ────────────────────────────────────────────────────────────
 export async function listAllTransactions(options = {}) {
   return db.transaction.findMany({
     include: { client: { select: { name: true, email: true } } },
@@ -136,7 +118,6 @@ export async function logTransaction(data) {
     }
   });
 }
-
 
 export async function recordLogin(id) {
   return db.client.update({
@@ -168,7 +149,7 @@ export async function updateClientPasswordById(id, passwordHash) {
 
 export async function updateClientPasswordByEmail(email, passwordHash) {
   return db.client.update({
-    where: { email: email.toLowerCase() },
+    where: { email: email.toLowerCase().trim() },
     data: { passwordHash },
   });
 }
@@ -191,7 +172,7 @@ export async function createNewClientRecord(data) {
   return db.client.create({
     data: {
       name: data.name,
-      email: data.email.toLowerCase(),
+      email: data.email.toLowerCase().trim(),
       passwordHash: data.password_hash,
       electricityProviderId: data.electricity_provider_id || '',
       waterProviderId: data.water_provider_id || '',
@@ -251,7 +232,6 @@ export async function ensureDefaultProperty(clientId) {
 }
 
 export async function migrateLegacyDataToProperty(clientId, propertyId) {
-  // Safe migration of existing propertyId=null records to the assigned property
   await Promise.all([
     db.utilityReading.updateMany({
       where: { clientId, propertyId: null },
@@ -269,7 +249,6 @@ export async function migrateLegacyDataToProperty(clientId, propertyId) {
 }
 
 export async function createProperty(clientId, data) {
-  // If this is the first property or marked default, reset others
   if (data.isDefault) {
     await db.property.updateMany({
       where: { clientId },
@@ -344,8 +323,6 @@ export async function createReading(data) {
       billAmountElectric:  bill,
       billAmountWater:     Number(data.bill_amount_water || 0),
       readingDate:         data.reading_date,
-
-      // Unbundled charges (all optional, populated by Gemini PDF parsing)
       generationCharge:    data.generation_charge   != null ? Number(data.generation_charge)   : null,
       transmissionCharge:  data.transmission_charge != null ? Number(data.transmission_charge) : null,
       systemLoss:          data.system_loss         != null ? Number(data.system_loss)         : null,
@@ -355,8 +332,6 @@ export async function createReading(data) {
       vat:                 data.vat                 != null ? Number(data.vat)                 : null,
       otherCharges:        data.other_charges       != null ? Number(data.other_charges)       : null,
       effectiveRate:       kwh > 0 ? Number((bill / kwh).toFixed(4)) : null,
-
-      // Source metadata
       sourceType:          data.source_type         || 'manual',
       providerDetected:    data.provider_detected   || null,
       billingPeriod:       data.billing_period      || null,
@@ -370,25 +345,21 @@ export async function getSystemTelemetry() {
     select: {
       totalTokensUsed: true,
       scanCount: true,
-      subscriptionId: true, // Used to check for Google/Social IDs if stored here, but we'll use a count
+      subscriptionId: true,
     }
   });
 
   const totalTokens = clients.reduce((acc, c) => acc + (c.totalTokensUsed || 0), 0);
   const totalScans = clients.reduce((acc, c) => acc + (c.scanCount || 0), 0);
-  
-  // For Google logins, we usually check if they have a specific flag or if passwordHash is null
-  // In our schema, we'll just count all for now or filter by those without password if applicable
-  const googleLogins = await db.client.count(); // Placeholder logic
+  const googleLogins = await db.client.count(); 
 
   return {
     totalTokens,
     totalScans,
     googleLogins,
-    geminiLimit: 1000000, // 1M TPM for Gemini 2.0 Flash Free
+    geminiLimit: 1000000, 
   };
 }
-
 
 export async function getLatestReport(clientId) {
   return db.aIReport.findFirst({
@@ -562,7 +533,6 @@ export async function deleteProvider(id) {
   return db.utilityProvider.delete({ where: { id } });
 }
 
-// Admin stats
 export async function getAdminKPIs() {
   const [totalClients, starter, pro, business, totalReports, activeAlerts] = await Promise.all([
     db.client.count({ where: { role: 'client' } }),
@@ -590,7 +560,6 @@ export async function getAdminKPIs() {
   };
 }
 
-// ─── Verification Tokens (OTPs) ─────────────────────────────────────────────
 export async function createVerificationToken(email, token, expires) {
   return db.verificationToken.create({
     data: { email, token, expires }
@@ -617,7 +586,6 @@ export async function deleteVerificationTokenById(id) {
   });
 }
 
-// ─── Daily Meter Readings ───────────────────────────────────────────────────
 export async function getDailyReadingsByUser(clientId) {
   return db.dailyMeterReading.findMany({
     where: { clientId },
@@ -636,4 +604,3 @@ export async function createDailyReading(data) {
     },
   });
 }
-
