@@ -1,13 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Check, TriangleAlert, ArrowRight, Eye, EyeOff, Sparkles } from 'lucide-react';
 import Spinner from '@/components/ui/Spinner';
 import Logo from '@/components/ui/Logo';
 
-export default function SignupPage() {
+function SignupForm() {
   const [form, setForm] = useState({
     name: '', email: '', password: '', confirm: '', consent: false,
   });
@@ -257,5 +257,13 @@ export default function SignupPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+export default function SignupPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-surface-950" />}>
+      <SignupForm />
+    </Suspense>
   );
 }
