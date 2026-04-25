@@ -1,25 +1,21 @@
 'use client';
 
 import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import DashboardSidebar from '@/components/dashboard/Sidebar';
 import DashboardHeader from '@/components/dashboard/Header';
-import Breadcrumbs from '@/components/ui/Breadcrumbs';
+import MeshGradient from '@/components/ui/MeshGradient';
 
 /**
  * DashboardShell - Client-side wrapper for the dashboard layout.
- * Manages responsive sidebar state.
+ * Manages responsive sidebar state and global background aesthetics.
  */
 export default function DashboardShell({ children, user }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
-    <div className="flex min-h-screen bg-surface-950 text-text-primary overflow-x-hidden selection:bg-cyan-500/30">
-      {/* Background Ambient Glows & Pattern */}
-      <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
-        <div className="absolute inset-0 bg-grid-pattern opacity-40" />
-        <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] rounded-full bg-cyan-500/[0.03] blur-[150px]" />
-        <div className="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] rounded-full bg-purple-600/[0.03] blur-[150px]" />
-      </div>
+    <div className="flex min-h-screen bg-surface-1000 text-white overflow-x-hidden selection:bg-cyan-500/30">
+      <MeshGradient />
 
       <DashboardSidebar 
         user={user} 
@@ -27,18 +23,28 @@ export default function DashboardShell({ children, user }) {
         onClose={() => setIsSidebarOpen(false)} 
       />
 
-      {/* Main content — offset by sidebar width (280px) + left/right gaps */}
-      <div className="lg:pl-[296px] flex flex-col min-h-screen relative z-10 w-full transition-all duration-300">
+      {/* Main content — offset by sidebar width (300px) + gap (24px) */}
+      <div className="lg:pl-[348px] lg:pr-12 flex flex-col min-h-screen relative z-10 w-full transition-all duration-500">
         <DashboardHeader 
           user={user} 
           onMenuClick={() => setIsSidebarOpen(true)} 
         />
         
-        <main className="flex-1 w-full max-w-[1600px] mx-auto transition-all duration-500">
-          {children}
+        <main className="flex-1 w-full max-w-[1600px] mx-auto py-8">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key="dashboard-content"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+              className="w-full h-full"
+            >
+              {children}
+            </motion.div>
+          </AnimatePresence>
         </main>
       </div>
     </div>
-
   );
 }

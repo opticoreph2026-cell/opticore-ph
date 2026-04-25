@@ -1,20 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { X, Loader, FileUp, Keyboard, ArrowLeft, TriangleAlert, Lock } from 'lucide-react';
+import { X, Loader, FileUp, Keyboard, ArrowLeft, TriangleAlert, Lock, Sparkles } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
-/**
- * OptiCore PH - Reading Submission Modal
- * Supports AI Vision OCR (Gemini 2.5 Flash) and Manual Entry.
- * 
- * STRUCTURE:
- *   fixed overlay (overflow-y-auto)
- *     centering wrapper (min-h-full flex items-center)
- *       modal panel (max-w-lg)
- *         hidden file input
- *         header
- *         content body
- */
 export default function SubmitReadingModal({ isOpen, onClose, user, appliances = [] }) {
   const [loading, setLoading]       = useState(false);
   const [step, setStep]             = useState('choose'); // 'choose' | 'manual' | 'processing'
@@ -31,7 +20,6 @@ export default function SubmitReadingModal({ isOpen, onClose, user, appliances =
 
   if (!isOpen) return null;
 
-  // ── Manual Submit ──────────────────────────────────────────────────────────
   async function handleManualSubmit(e) {
     e.preventDefault();
     setLoading(true);
@@ -68,21 +56,19 @@ export default function SubmitReadingModal({ isOpen, onClose, user, appliances =
     }
   }
 
-  // ── Vision Scanner ─────────────────────────────────────────────────────────
   async function handleFileUpload(e) {
     const file = e.target.files[0];
     if (!file) return;
 
     if (file.size > 4 * 1024 * 1024) {
-      setError('File is too large. Please upload an image or PDF under 4MB.');
-      // Reset input so they can select the same file again if needed
+      setError('File is too large. Max 4MB allowed.');
       e.target.value = '';
       return;
     }
 
     setError('');
     setStep('processing');
-    setStatusText('Scanning bill with Gemini 2.5 Flash...');
+    setStatusText('Initiating Neural Scan...');
 
     const reader = new FileReader();
     reader.onloadend = async () => {
@@ -99,27 +85,18 @@ export default function SubmitReadingModal({ isOpen, onClose, user, appliances =
         body:    JSON.stringify({ image: base64 }),
       });
       
-      const contentType = res.headers.get('content-type');
-      if (!contentType || !contentType.includes('application/json')) {
-         throw new Error(`Server payload rejected (Status: ${res.status}). The PDF or image might be too complex or large.`);
-      }
-
       const json = await res.json();
       if (!res.ok) throw new Error(json.message || json.error || 'Scan failed');
 
       const data    = json.data;
-      const isWater = data.type === 'WATER' || !!data.m3Used;
-
-      if (isWater) {
-        throw new Error('Water bill scanning is disabled to conserve AI credits. Please use Manual Entry for water readings.');
+      if (data.type === 'WATER' || !!data.m3Used) {
+        throw new Error('Water bill scanning is restricted. Use Manual Entry.');
       }
 
       setFormData({
         ...formData,
         kwhUsed:            data.kwhUsed || '',
         billAmountElectric: data.totalAmount || '',
-        m3Used:             '',
-        billAmountWater:    '',
         readingDate:        data.billingDate || formData.readingDate,
         providerDetected:   data.providerName || '',
       });
@@ -133,252 +110,168 @@ export default function SubmitReadingModal({ isOpen, onClose, user, appliances =
     }
   }
 
-  // ── Reset / Back ───────────────────────────────────────────────────────────
   function handleBack() {
     setStep('choose');
     setError('');
-    setFormData({
-      readingDate:        new Date().toISOString().substring(0, 10),
-      kwhUsed:            '',
-      billAmountElectric: '',
-      m3Used:             '',
-      billAmountWater:    '',
-      providerDetected:   '',
-    });
   }
 
-  const inputStyle = {
-    background:  'rgba(255, 255, 255, 0.02)',
-    border:      '1px solid rgba(255,255,255,0.05)',
-    borderRadius: '16px',
-  };
-  const inputClass = 'w-full px-5 py-4 text-sm text-white placeholder-slate-600 outline-none transition-all duration-300 focus:ring-4 focus:ring-cyan-500/10 focus:border-cyan-500/40 font-medium shadow-inner-glow-white';
+  const inputClass = 'w-full px-6 py-4 rounded-2xl bg-white/[0.03] border border-white/5 text-sm text-white placeholder-slate-600 outline-none transition-all duration-300 focus:ring-4 focus:ring-cyan-500/10 focus:border-cyan-500/40 font-bold';
 
   return (
-    /* Level 1 — fixed overlay with scroll */
-    <div className="fixed inset-0 z-[100] overflow-y-auto">
-
-      {/* Backdrop */}
-      <div
-        className="fixed inset-0 bg-slate-950/60 backdrop-blur-2xl animate-fade-in"
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 sm:p-12 overflow-hidden">
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 bg-surface-1000/80 backdrop-blur-2xl"
         onClick={() => !loading && onClose(false)}
       />
 
-      {/* Level 2 — centering wrapper */}
-      <div className="relative min-h-full flex items-center justify-center p-6 sm:p-12">
-
-        {/* Level 3 — modal panel */}
-        <div
-          className="relative w-full max-w-xl rounded-[40px] shadow-glass-lg animate-fade-up overflow-hidden border border-white/10 bg-slate-900/95"
-          style={{
-            backdropFilter: 'blur(40px) saturate(180%)',
-            WebkitBackdropFilter: 'blur(40px) saturate(180%)',
-          }}
-          onClick={(e) => e.stopPropagation()}
-        >
-          {/* Ambient Glows */}
-          <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/10 rounded-full blur-[80px] pointer-events-none" />
-          <div className="absolute bottom-0 left-0 w-64 h-64 bg-purple-500/10 rounded-full blur-[80px] pointer-events-none" />
-
-          {/* Hidden file input */}
-          <input
-            id="bill-upload"
-            type="file"
-            accept="image/*,application/pdf"
-            className="hidden"
-            onChange={handleFileUpload}
-          />
-
-          {/* Header */}
-          <div className="relative flex items-center justify-between px-10 py-8 border-b border-white/5 z-10">
-            <div className="flex items-center gap-5">
-              {step !== 'choose' && step !== 'processing' && (
-                <button
-                  onClick={handleBack}
-                  className="w-10 h-10 rounded-2xl bg-white/[0.03] border border-white/5 flex items-center justify-center text-slate-500 hover:text-white transition-all hover:bg-white/[0.08]"
-                >
-                  <ArrowLeft className="w-5 h-5" />
-                </button>
-              )}
-              <div>
-                <p className="text-[10px] font-black uppercase tracking-[0.3em] text-cyan-400 mb-1.5">
-                  {step === 'choose' ? 'Utility Intelligence' : step === 'manual' ? 'Data Verification' : 'AI Neural Scan'}
-                </p>
-                <h2 className="text-display text-2xl font-bold text-white leading-tight">
-                  {step === 'choose' ? 'Submit Reading' :
-                   step === 'manual' ? 'Verify Metrics' :
-                   'Processing Bill…'}
-                </h2>
-              </div>
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.9, y: 20 }}
+        className="relative w-full max-w-xl rounded-[40px] bg-surface-950 border border-white/10 shadow-2xl overflow-hidden"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Ambient background decoration */}
+        <div className="absolute top-0 right-0 w-80 h-80 bg-cyan-500/10 blur-[100px] rounded-full -translate-y-1/2 translate-x-1/2" />
+        
+        {/* Header */}
+        <div className="relative px-10 pt-10 pb-6 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            {step !== 'choose' && step !== 'processing' && (
+              <button onClick={handleBack} className="p-2 rounded-xl bg-white/[0.03] border border-white/5 text-slate-500 hover:text-white transition-colors">
+                <ArrowLeft className="w-5 h-5" />
+              </button>
+            )}
+            <div>
+              <p className="text-[10px] font-black uppercase tracking-[0.3em] text-cyan-400 mb-1">
+                {step === 'choose' ? 'Input Protocol' : 'Data Integrity'}
+              </p>
+              <h2 className="text-2xl font-black text-white">
+                {step === 'choose' ? 'Submit Reading' : 'Verify Metrics'}
+              </h2>
             </div>
-            <button
-              onClick={() => !loading && onClose(false)}
-              disabled={loading}
-              className="w-10 h-10 rounded-2xl bg-white/[0.03] border border-white/5 flex items-center justify-center text-slate-500 hover:text-white transition-all hover:bg-white/[0.08] disabled:opacity-20"
-            >
-              <X className="w-5 h-5" />
-            </button>
           </div>
+          <button onClick={() => onClose(false)} className="p-2 rounded-xl bg-white/[0.03] border border-white/5 text-slate-500 hover:text-white transition-colors">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
 
-          {/* Body */}
-          <div className="relative p-10 z-10">
+        {/* Content */}
+        <div className="px-10 pb-12 pt-4">
+          <AnimatePresence mode="wait">
             {error && (
-              <div className="flex items-start gap-4 p-5 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-sm font-medium mb-8 animate-shake">
-                <TriangleAlert className="w-5 h-5 shrink-0" />
+              <motion.div 
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                className="mb-8 p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs font-bold flex items-center gap-3"
+              >
+                <TriangleAlert className="w-4 h-4 shrink-0" />
                 <p>{error}</p>
-              </div>
+              </motion.div>
             )}
 
-            {/* ── Step: Choose method ── */}
             {step === 'choose' && (
-              <div className="space-y-4">
-                <p className="text-sm text-slate-400 mb-8 leading-relaxed font-medium">
-                  Select your preferred method for monthly reading verification. AI neural scanning is available for electricity bills.
-                </p>
-
-                {/* AI Scan option */}
-                {appliances.length === 0 ? (
-                  <div className="w-full flex items-center gap-6 p-8 rounded-3xl bg-white/[0.02] border border-white/5 opacity-40 grayscale">
-                    <div className="w-16 h-16 rounded-2xl bg-white/[0.03] border border-white/5 flex items-center justify-center shrink-0">
-                      <Lock className="w-6 h-6 text-slate-500" />
+              <motion.div 
+                key="choose"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                className="space-y-4"
+              >
+                <button
+                  onClick={() => document.getElementById('bill-upload').click()}
+                  className="w-full p-8 rounded-3xl bg-white/[0.03] border border-white/5 hover:border-cyan-500/30 text-left transition-all group relative overflow-hidden"
+                >
+                  <div className="absolute top-0 right-0 p-4">
+                    <span className="px-2 py-1 rounded-md bg-cyan-500 text-[8px] font-black text-surface-1000 uppercase tracking-widest">Neural</span>
+                  </div>
+                  <div className="flex items-center gap-6">
+                    <div className="w-16 h-16 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 group-hover:scale-110 transition-transform">
+                      <FileUp className="w-6 h-6" />
                     </div>
                     <div>
-                      <h3 className="text-base font-bold text-slate-300">Electricity Neural Scan <span className="text-xs uppercase tracking-widest text-slate-500 ml-2">(Locked)</span></h3>
-                      <p className="text-xs text-slate-600 mt-1.5 leading-relaxed">
-                        Populate your hardware registry to unlock AI verification.
-                      </p>
+                      <h3 className="text-lg font-black text-white group-hover:text-cyan-400 transition-colors">Neural Bill Scan</h3>
+                      <p className="text-xs text-slate-500 mt-1 leading-relaxed">Extract metrics using Gemini Vision AI</p>
                     </div>
                   </div>
-                ) : (
-                  <button
-                    onClick={() => document.getElementById('bill-upload').click()}
-                    className="w-full flex items-center gap-6 p-8 rounded-3xl text-left group transition-all duration-500 hover:-translate-y-1 hover:shadow-glass-cyan bg-white/[0.03] border border-white/5 hover:border-cyan-500/30"
-                  >
-                    <div className="w-16 h-16 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center shrink-0 shadow-inner-glow-white">
-                      <FileUp className="w-6 h-6 text-cyan-400 group-hover:scale-110 transition-transform duration-500" />
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between gap-3">
-                        <h3 className="text-base font-bold text-white group-hover:text-cyan-400 transition-colors">Neural Bill Scan</h3>
-                        <span className="text-[9px] font-black tracking-[0.2em] bg-cyan-500 text-slate-950 px-2.5 py-1 rounded-full uppercase">Neural</span>
-                      </div>
-                      <p className="text-xs text-slate-500 mt-2 leading-relaxed">
-                        Extract unbundled charges and detect consumption anomalies using Gemini Vision AI.
-                      </p>
-                    </div>
-                  </button>
-                )}
+                </button>
 
-                {/* Manual Entry */}
                 <button
                   onClick={() => setStep('manual')}
-                  className="w-full flex items-center gap-6 p-8 rounded-3xl text-left group transition-all duration-500 hover:-translate-y-1 hover:shadow-glass-lg bg-white/[0.03] border border-white/5 hover:border-white/20"
+                  className="w-full p-8 rounded-3xl bg-white/[0.03] border border-white/5 hover:border-white/20 text-left transition-all group"
                 >
-                  <div className="w-16 h-16 rounded-2xl bg-white/[0.03] border border-white/5 flex items-center justify-center shrink-0">
-                    <Keyboard className="w-6 h-6 text-slate-400 group-hover:scale-110 transition-transform duration-500" />
+                  <div className="flex items-center gap-6">
+                    <div className="w-16 h-16 rounded-2xl bg-white/[0.03] border border-white/10 flex items-center justify-center text-slate-500">
+                      <Keyboard className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-black text-white">Manual Log</h3>
+                      <p className="text-xs text-slate-500 mt-1 leading-relaxed">Optimized for water & manual meters</p>
+                    </div>
+                  </div>
+                </button>
+
+                <input id="bill-upload" type="file" className="hidden" onChange={handleFileUpload} />
+              </motion.div>
+            )}
+
+            {step === 'manual' && (
+              <motion.form 
+                key="manual"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                onSubmit={handleManualSubmit}
+                className="space-y-8"
+              >
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="col-span-full">
+                    <label className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-500 mb-3 block">Reporting Period</label>
+                    <input type="date" value={formData.readingDate} onChange={e => setFormData({ ...formData, readingDate: e.target.value })} className={inputClass} />
+                  </div>
+                  
+                  <div>
+                    <label className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-500 mb-3 block">Energy (kWh)</label>
+                    <input type="number" step="0.1" required value={formData.kwhUsed} onChange={e => setFormData({ ...formData, kwhUsed: e.target.value })} className={inputClass} placeholder="0.0" />
                   </div>
                   <div>
-                    <h3 className="text-base font-bold text-white">Manual Reporting</h3>
-                    <p className="text-xs text-slate-500 mt-2 leading-relaxed">
-                      Optimized for water utility bills and manual hardware meter logs.
-                    </p>
+                    <label className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-500 mb-3 block">Gross Bill (₱)</label>
+                    <input type="number" step="0.01" required value={formData.billAmountElectric} onChange={e => setFormData({ ...formData, billAmountElectric: e.target.value })} className={inputClass} placeholder="0.00" />
                   </div>
+                </div>
+
+                <button type="submit" className="btn-primary w-full py-5 text-xs font-black uppercase tracking-[0.3em]">
+                  Confirm & Synchronize
                 </button>
-              </div>
+              </motion.form>
             )}
 
-            {/* ── Step: Manual form ── */}
-            {step === 'manual' && (
-              <form onSubmit={handleManualSubmit} className="space-y-6">
-                <div>
-                  <label className="block text-[10px] font-black uppercase tracking-[0.25em] text-slate-500 mb-3">
-                    Verification Period
-                  </label>
-                  <input
-                    type="date"
-                    required
-                    value={formData.readingDate}
-                    onChange={e => setFormData({ ...formData, readingDate: e.target.value })}
-                    className={inputClass}
-                  />
-                </div>
-
-                <div className="p-8 rounded-[32px] space-y-5 bg-cyan-500/[0.02] border border-cyan-500/10 shadow-inner-glow-white">
-                  <p className="text-[10px] font-black uppercase tracking-[0.3em] text-cyan-400 flex items-center gap-3">
-                    <span className="w-2 h-2 rounded-full bg-cyan-500 animate-pulse" /> Electrical Payload
-                  </p>
-                  <div className="grid grid-cols-2 gap-6">
-                    <div>
-                      <label className="block text-[10px] text-slate-500 font-black uppercase tracking-widest mb-2.5">Consumption (kWh)</label>
-                      <input type="number" step="0.1" placeholder="0.0" required
-                        value={formData.kwhUsed}
-                        onChange={e => setFormData({ ...formData, kwhUsed: e.target.value })}
-                        className={inputClass}
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-[10px] text-slate-500 font-black uppercase tracking-widest mb-2.5">Gross Amount (₱)</label>
-                      <input type="number" step="0.01" placeholder="0.00" required
-                        value={formData.billAmountElectric}
-                        onChange={e => setFormData({ ...formData, billAmountElectric: e.target.value })}
-                        className={inputClass}
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="p-8 rounded-[32px] space-y-5 bg-blue-500/[0.02] border border-blue-500/10 shadow-inner-glow-white">
-                  <p className="text-[10px] font-black uppercase tracking-[0.3em] text-blue-400 flex items-center gap-3">
-                    <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" /> Water Resource
-                  </p>
-                  <div className="grid grid-cols-2 gap-6">
-                    <div>
-                      <label className="block text-[10px] text-slate-500 font-black uppercase tracking-widest mb-2.5">Volume (m³)</label>
-                      <input type="number" step="0.1" placeholder="0.0"
-                        value={formData.m3Used}
-                        onChange={e => setFormData({ ...formData, m3Used: e.target.value })}
-                        className={inputClass}
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-[10px] text-slate-500 font-black uppercase tracking-widest mb-2.5">Gross Amount (₱)</label>
-                      <input type="number" step="0.01" placeholder="0.00"
-                        value={formData.billAmountWater}
-                        onChange={e => setFormData({ ...formData, billAmountWater: e.target.value })}
-                        className={inputClass}
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <button
-                  type="submit"
-                  className="btn-primary w-full py-5 rounded-[24px] text-xs uppercase tracking-[0.3em]"
-                >
-                  Confirm & Sync Intelligence
-                </button>
-              </form>
-            )}
-
-            {/* ── Step: Processing ── */}
             {step === 'processing' && (
-              <div className="flex flex-col items-center justify-center py-20 text-center space-y-8 animate-fade-up">
+              <motion.div 
+                key="processing"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="py-20 flex flex-col items-center justify-center text-center space-y-6"
+              >
                 <div className="relative">
-                  <div className="w-24 h-24 rounded-[32px] bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center relative z-10 shadow-inner-glow-white">
-                    <Loader className="w-10 h-10 text-cyan-400 animate-spin" />
+                  <div className="w-20 h-20 rounded-3xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center relative z-10">
+                    <Loader className="w-8 h-8 text-cyan-400 animate-spin" />
                   </div>
-                  <div className="absolute inset-[-15px] rounded-[40px] border border-cyan-500/20 animate-pulse" />
+                  <div className="absolute inset-[-10px] border border-cyan-500/20 rounded-[35px] animate-pulse" />
                 </div>
                 <div>
-                  <h3 className="text-display text-2xl font-black text-white uppercase tracking-[0.2em]">Analyzing</h3>
-                  <p className="text-xs text-cyan-400 font-bold tracking-[0.2em] mt-3 animate-pulse">{statusText}</p>
+                  <h3 className="text-xl font-black text-white uppercase tracking-widest">Processing</h3>
+                  <p className="text-[10px] text-cyan-400 font-bold tracking-[0.2em] mt-2 animate-pulse">{statusText}</p>
                 </div>
-              </div>
+              </motion.div>
             )}
-          </div>
+          </AnimatePresence>
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }
 

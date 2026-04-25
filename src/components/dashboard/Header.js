@@ -5,9 +5,13 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { Bell, Search, Menu, Search as SearchIcon, LogOut, User, Settings, ChevronDown } from 'lucide-react';
+import { Bell, Menu, LogOut, User, ChevronDown, Activity } from 'lucide-react';
 import { clsx } from 'clsx';
 
+/**
+ * DashboardHeader - Optimized for professional looks and zero redundancy.
+ * Integrates system status and profile management into a clean obsidian hub.
+ */
 export default function DashboardHeader({ user, onMenuClick }) {
   const router = useRouter();
   const [showUserMenu, setShowUserMenu] = useState(false);
@@ -34,110 +38,111 @@ export default function DashboardHeader({ user, onMenuClick }) {
   };
 
   return (
-    <header className="h-24 px-4 sm:px-12 flex items-center justify-between gap-8 z-50 sticky top-0 bg-surface-950/40 backdrop-blur-md border-b border-white/[0.04]">
+    <header className="h-20 px-6 lg:px-12 flex items-center justify-between gap-8 z-50 sticky top-0 bg-surface-1000/60 backdrop-blur-xl border-b border-white/[0.04]">
       
-      {/* ── Left: Search (Moved to center-left for premium look) ── */}
-      <div className="flex items-center gap-8 flex-1">
+      {/* ── Left: Breadcrumbs or Menu Toggle ── */}
+      <div className="flex items-center gap-6">
         <button 
           onClick={onMenuClick}
-          className="lg:hidden w-12 h-12 rounded-2xl bg-white/[0.03] border border-white/10 flex items-center justify-center text-slate-400"
+          className="lg:hidden w-10 h-10 rounded-xl bg-white/[0.03] border border-white/10 flex items-center justify-center text-slate-400"
         >
           <Menu className="w-5 h-5" />
         </button>
-
-        <div className="hidden md:flex items-center w-full max-w-md h-12 bg-white/[0.03] border border-white/10 rounded-2xl px-4 group focus-within:border-cyan-500/30 transition-all focus-within:bg-white/[0.05]">
-          <SearchIcon className="w-4 h-4 text-slate-500 group-focus-within:text-cyan-400 transition-colors" />
-          <input 
-            type="text" 
-            placeholder="Search across assets..." 
-            className="flex-1 bg-transparent border-none focus:ring-0 text-sm text-white placeholder-slate-600 px-3"
-          />
+        <div className="hidden lg:flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-500">
+          <Activity className="w-4 h-4 text-cyan-400" />
+          <span>OptiCore</span>
+          <span className="text-white/20">/</span>
+          <span className="text-white">Command Center</span>
         </div>
       </div>
 
-      {/* ── Right: User Hub (Facebook Style) ── */}
+      {/* ── Right: Integrated Hub ── */}
       <div className="flex items-center gap-4">
         
-        {/* Notification Bell */}
-        <button className="w-12 h-12 rounded-full bg-white/[0.03] border border-white/10 flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-all relative group">
-          <Bell className="w-5 h-5 group-hover:scale-110 transition-transform" />
-          <span className="absolute top-3 right-3 w-2.5 h-2.5 bg-rose-500 rounded-full border-2 border-surface-950 shadow-[0_0_8px_rgba(244,63,94,0.6)]" />
+        {/* System Status (Moved from Overview) */}
+        <div className="hidden md:flex items-center gap-2.5 px-4 py-2 rounded-full bg-emerald-500/5 border border-emerald-500/10">
+          <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)]" />
+          <span className="text-[10px] font-black text-emerald-400 uppercase tracking-widest">Active System</span>
+        </div>
+
+        {/* Notifications */}
+        <button className="w-10 h-10 rounded-full bg-white/[0.03] border border-white/10 flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-all relative group">
+          <Bell className="w-4 h-4 group-hover:scale-110 transition-transform" />
+          <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-rose-500 rounded-full border-2 border-surface-1000 shadow-[0_0_8px_rgba(244,63,94,0.6)]" />
         </button>
         
-        {/* User Profile Hub */}
+        {/* Divider */}
+        <div className="w-px h-6 bg-white/[0.08]" />
+
+        {/* User Hub */}
         <div className="relative" ref={menuRef}>
           <button 
             onClick={() => setShowUserMenu(!showUserMenu)}
             className={clsx(
-              "flex items-center gap-3 p-1.5 pl-1.5 pr-4 rounded-full border transition-all",
-              showUserMenu 
-                ? "bg-white/[0.08] border-cyan-500/30 ring-4 ring-cyan-500/10" 
-                : "bg-white/[0.03] border-white/10 hover:border-white/20"
+              "flex items-center gap-3 p-1 rounded-full transition-all duration-300",
+              showUserMenu ? "bg-white/[0.1] ring-1 ring-white/20" : "hover:bg-white/5"
             )}
           >
-            <div className="w-9 h-9 rounded-full overflow-hidden border border-white/10 relative">
+            <div className="w-8 h-8 rounded-full overflow-hidden border border-white/10 relative shadow-2xl">
               <Image 
-                src={user?.avatar ?? "https://i.pravatar.cc/150?u=sarah"} 
+                src={user?.avatar ?? `https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.name || 'Opti'}`} 
                 alt="Avatar" 
                 fill
                 className="object-cover"
                 unoptimized
               />
             </div>
-            <div className="hidden sm:block text-left">
-              <p className="text-xs font-black text-white leading-tight">{user?.name?.split(' ')[0] ?? 'User'}</p>
-              <p className="text-[9px] text-slate-500 font-bold uppercase tracking-widest leading-none mt-0.5">Admin</p>
-            </div>
-            <ChevronDown className={clsx("w-4 h-4 text-slate-500 transition-transform", showUserMenu && "rotate-180")} />
+            <ChevronDown className={clsx("w-4 h-4 text-slate-500 mr-2 transition-transform", showUserMenu && "rotate-180")} />
           </button>
 
           {/* User Dropdown */}
-          {showUserMenu && (
-            <motion.div 
-              initial={{ opacity: 0, y: 10, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              className="absolute right-0 mt-3 w-64 bg-surface-900/95 backdrop-blur-2xl border border-white/10 rounded-3xl shadow-2xl shadow-black/50 overflow-hidden z-[100] ring-1 ring-white/10"
-            >
-              <div className="p-5 border-b border-white/5 bg-white/[0.02]">
-                <p className="text-xs font-black text-slate-500 uppercase tracking-widest mb-3">Account Hub</p>
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-cyan-500 to-purple-600 p-[1px]">
-                    <div className="w-full h-full rounded-2xl bg-surface-900 overflow-hidden relative">
+          <AnimatePresence>
+            {showUserMenu && (
+              <motion.div 
+                initial={{ opacity: 0, y: 8, scale: 0.98 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 8, scale: 0.98 }}
+                className="absolute right-0 mt-3 w-64 bg-surface-950/95 backdrop-blur-2xl border border-white/10 rounded-3xl shadow-2xl overflow-hidden z-[100] ring-1 ring-white/10"
+              >
+                <div className="p-5 border-b border-white/5 bg-white/[0.02]">
+                  <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-3">Administrator Profile</p>
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-2xl bg-surface-900 border border-white/10 overflow-hidden relative shadow-lg">
                       <Image 
-                        src={user?.avatar ?? "https://i.pravatar.cc/150?u=sarah"} 
+                        src={user?.avatar ?? `https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.name || 'Opti'}`} 
                         alt="Avatar" 
                         fill
                         className="object-cover"
                         unoptimized
                       />
                     </div>
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-sm font-bold text-white truncate">{user?.name ?? 'User'}</p>
-                    <p className="text-xs text-slate-500 truncate">{user?.email ?? 'admin@opticore.ph'}</p>
+                    <div className="min-w-0">
+                      <p className="text-sm font-black text-white truncate">{user?.name ?? 'User'}</p>
+                      <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{user?.plan ?? 'Starter'} Tier</p>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div className="p-2">
-                <Link 
-                  href="/dashboard/settings" 
-                  className="flex items-center gap-3 px-4 py-3 rounded-2xl text-slate-300 hover:text-white hover:bg-white/5 transition-all group"
-                  onClick={() => setShowUserMenu(false)}
-                >
-                  <User className="w-4 h-4 text-slate-500 group-hover:text-cyan-400" />
-                  <span className="text-sm font-medium">Profile Settings</span>
-                </Link>
-                <button 
-                  onClick={handleLogout}
-                  className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 transition-all group"
-                >
-                  <LogOut className="w-4 h-4 text-rose-500 group-hover:text-rose-400" />
-                  <span className="text-sm font-medium">Sign Out</span>
-                </button>
-              </div>
-            </motion.div>
-          )}
+                <div className="p-2">
+                  <Link 
+                    href="/dashboard/settings" 
+                    className="flex items-center gap-3 px-4 py-3 rounded-2xl text-slate-300 hover:text-white hover:bg-white/5 transition-all group"
+                    onClick={() => setShowUserMenu(false)}
+                  >
+                    <User className="w-4 h-4 text-slate-500 group-hover:text-cyan-400" />
+                    <span className="text-sm font-bold">Profile Info</span>
+                  </Link>
+                  <button 
+                    onClick={handleLogout}
+                    className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 transition-all group"
+                  >
+                    <LogOut className="w-4 h-4 text-rose-500 group-hover:text-rose-400" />
+                    <span className="text-sm font-bold">Sign Out</span>
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
     </header>
