@@ -8,6 +8,7 @@ import { motion } from 'framer-motion';
 import {
   Zap, BarChart3, Users, FileText, Bell, LogOut, ChevronRight, Shield, Database, LayoutDashboard
 } from 'lucide-react';
+import Logo from '@/components/ui/Logo';
 
 const navItems = [
   { href: '/admin',          label: 'KPI Dashboard', icon: LayoutDashboard, color: 'text-blue-400' },
@@ -31,15 +32,17 @@ export default function AdminSidebar() {
     <aside className="w-64 shrink-0 hidden lg:flex flex-col h-screen sticky top-0 border-r border-white/[0.08] bg-surface-950/80 backdrop-blur-xl">
       {/* Logo Section */}
       <div className="px-6 py-8">
-        <Link href="/" className="group flex items-center gap-3">
-          <div className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center border border-white/10 overflow-hidden relative">
-            <Image src="/logo.png" alt="Logo" width={28} height={28} className="object-contain" />
+        <Link href="/" className="group flex items-center gap-4">
+          <div className="w-12 h-12 bg-white/[0.03] border border-white/10 rounded-2xl flex items-center justify-center shadow-2xl group-hover:border-brand-500/30 transition-all duration-500">
+            <Logo className="w-7 h-7 text-white" />
           </div>
           <div>
-            <span className="font-bold text-base tracking-tight text-white block">OptiCore <span className="text-brand-400">PH</span></span>
-            <div className="flex items-center gap-1.5 mt-0.5">
+            <span className="font-bold text-base tracking-tight text-white block leading-none">
+              OptiCore <span className="text-brand-400">PH</span>
+            </span>
+            <div className="flex items-center gap-1.5 mt-2">
               <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-[10px] text-emerald-400 font-bold uppercase tracking-[0.15em]">Admin Portal</span>
+              <span className="text-[10px] text-emerald-400 font-bold uppercase tracking-[0.2em] leading-none">Admin Portal</span>
             </div>
           </div>
         </Link>

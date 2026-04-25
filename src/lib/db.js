@@ -61,12 +61,13 @@ function makeClient() {
     throw new Error('[OptiCore DB] DATABASE_URL is undefined or invalid.');
   }
   
-  // In Prisma 7, we pass the config object to the PrismaLibSql factory
-  // We MUST include the authToken for Turso/Cloud connections
-  const adapter = new PrismaLibSql({ 
+  // In Prisma 7, the adapter expects a client instance from @libsql/client
+  const client = createClient({ 
     url: resolvedUrl,
     authToken: authToken 
   });
+  
+  const adapter = new PrismaLibSql(client);
   
   return new PrismaClient({
     adapter,

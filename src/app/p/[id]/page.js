@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { Brain, ExternalLink, Zap, TrendingDown, LayoutDashboard, ChevronRight } from 'lucide-react';
 import { format } from 'date-fns';
 import Link from 'next/link';
+import Logo from '@/components/ui/Logo';
 
 export async function generateMetadata({ params }) {
   const { id } = params;
@@ -43,11 +44,9 @@ export default async function PublicReportPage({ params }) {
       {/* Header */}
       <header className="relative z-10 border-b border-white/[0.06] bg-surface-900/60 backdrop-blur-xl shrink-0">
         <div className="max-w-4xl mx-auto w-full px-5 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2.5 group">
-            <div className="w-8 h-8 rounded-lg bg-brand-500/15 border border-brand-500/30 flex items-center justify-center">
-              <Zap className="w-4 h-4 text-brand-400" />
-            </div>
-            <span className="font-semibold text-sm">
+          <Link href="/" className="flex items-center gap-3.5 group">
+            <Logo className="w-9 h-9" />
+            <span className="font-bold text-sm tracking-tight">
               <span className="shimmer-text">OptiCore</span>
               <span className="text-text-secondary ml-0.5">PH</span>
             </span>

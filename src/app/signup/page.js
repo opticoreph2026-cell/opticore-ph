@@ -1,12 +1,12 @@
 'use client';
 
-import Image from 'next/image';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Zap, Check, TriangleAlert, ArrowRight, Eye, EyeOff } from 'lucide-react';
+import { Check, TriangleAlert, ArrowRight, Eye, EyeOff } from 'lucide-react';
 import Spinner from '@/components/ui/Spinner';
 import { signIn } from 'next-auth/react';
+import Logo from '@/components/ui/Logo';
 
 export default function SignupPage() {
   const [form, setForm] = useState({
@@ -53,16 +53,8 @@ export default function SignupPage() {
       <div className="w-full max-w-md mx-auto relative z-10 py-10 animate-fade-up">
         {/* Logo */}
         <div className="mb-8 text-center">
-          <Link href="/" className="inline-flex items-center gap-2.5 mb-7 group">
-            <div
-              className="w-8 h-8 rounded-xl flex items-center justify-center transition-all duration-300"
-              style={{
-                background: 'linear-gradient(135deg, rgba(245,158,11,0.2) 0%, rgba(245,158,11,0.05) 100%)',
-                border: '1px solid rgba(245,158,11,0.28)',
-              }}
-            >
-              <Zap className="w-4 h-4 text-brand-400" />
-            </div>
+          <Link href="/" className="inline-flex items-center gap-4 mb-7 group">
+            <Logo className="w-10 h-10" />
             <span className="font-bold text-sm shimmer-text">OptiCore PH</span>
           </Link>
           <h1 className="text-2xl font-bold text-text-primary tracking-tight">Create your account</h1>

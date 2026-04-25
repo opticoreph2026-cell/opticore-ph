@@ -5,6 +5,7 @@ import { Award, ShieldCheck, Download, Sparkles, CheckCircle2, Image as ImageIco
 import { toPng } from 'html-to-image';
 import Image from 'next/image';
 import jsPDF from 'jspdf';
+import Logo from '@/components/ui/Logo';
 
 export default function CertificateCard({ user }) {
   const [cert, setCert] = useState(null);
@@ -179,8 +180,8 @@ export default function CertificateCard({ user }) {
           <div className="absolute bottom-[-20%] left-[-10%] w-[60%] h-[60%] rounded-full bg-purple-500/[0.03] blur-[120px] pointer-events-none" />
           
           {/* Watermark Logo */}
-          <div className="absolute inset-0 flex items-center justify-center opacity-[0.015] pointer-events-none select-none">
-            <Image src="/logo.png" alt="" width={450} height={450} className="object-contain grayscale brightness-200" />
+          <div className="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none select-none">
+            <Logo className="w-[450px] h-[450px] grayscale brightness-200" />
           </div>
 
           <div className="relative z-10 flex flex-col min-h-[650px]">
@@ -188,7 +189,7 @@ export default function CertificateCard({ user }) {
             <div className="flex flex-col sm:flex-row justify-between items-center gap-8 mb-16 border-b border-white/5 pb-10">
                <div className="flex items-center gap-5">
                  <div className="w-16 h-16 bg-white/[0.03] rounded-3xl flex items-center justify-center border border-white/5 shadow-inner-glow-white overflow-hidden p-3 relative">
-                   <Image src="/logo.png" alt="OptiCore" fill className="object-contain" />
+                   <Logo className="w-10 h-10" />
                  </div>
                  <div className="text-center sm:text-left">
                    <h2 className="text-display text-2xl font-black text-white tracking-[0.2em] uppercase leading-none">OptiCore</h2>

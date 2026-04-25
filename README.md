@@ -89,8 +89,8 @@ npm run dev
 ## 5. Pricing Tiers
 
 1. **Starter (Free):** 1 Property, AI Basics, Phantom load detection, 5 Appliances.
-2. **Pro (₱199/Mo):** Hardware ROI Simulator, Weather analytics, Unlimited Appliances, Monthly Digests.
-3. **Business (₱999/Mo):** Predictive AI Forecasting, Max-Tiers Gemini 2.5 Analytics, Peer Benchmarking, Landlord Sub-metering.
+2. **Pro (₱499/Mo):** Hardware ROI Simulator, Weather analytics, Unlimited Appliances, Monthly Digests.
+3. **Business (₱2,499/Mo):** Predictive AI Forecasting, Max-Tiers Gemini 2.5 Analytics, Peer Benchmarking, Landlord Sub-metering.
 
 *(UI features an interactive toggle calculating 20% annual discounts on the fly).*
 

@@ -1,12 +1,12 @@
 'use client';
 
-import Image from 'next/image';
 import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Zap, Eye, EyeOff, CircleAlert, ArrowRight } from 'lucide-react';
+import { Eye, EyeOff, CircleAlert, ArrowRight } from 'lucide-react';
 import Spinner from '@/components/ui/Spinner';
 import { signIn } from 'next-auth/react';
+import Logo from '@/components/ui/Logo';
 
 function LoginForm() {
   const router       = useRouter();
@@ -59,16 +59,8 @@ function LoginForm() {
 
       {/* Top nav */}
       <div className="relative z-10 p-6">
-        <Link href="/" className="inline-flex items-center gap-2.5 group">
-          <div
-            className="w-8 h-8 rounded-xl flex items-center justify-center transition-all duration-300 group-hover:shadow-amber-md"
-            style={{
-              background: 'linear-gradient(135deg, rgba(245,158,11,0.2) 0%, rgba(245,158,11,0.05) 100%)',
-              border: '1px solid rgba(245,158,11,0.28)',
-            }}
-          >
-            <Zap className="w-4 h-4 text-brand-400" />
-          </div>
+        <Link href="/" className="inline-flex items-center gap-4 group">
+          <Logo className="w-10 h-10" />
           <span className="font-bold text-sm">
             <span className="shimmer-text">OptiCore</span>
             <span className="text-text-muted ml-0.5">PH</span>

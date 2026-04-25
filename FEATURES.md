@@ -57,6 +57,6 @@ A state-of-the-art visual language built for professionals.
 ### Technical Stack
 - **Framework**: Next.js 14 (App Router)
 - **Intelligence**: Google Gemini AI (Vision/Flash)
-- **Database**: Prisma ORM with PostgreSQL
+- **Database**: Prisma ORM with LibSQL (Turso Edge)
 - **Motion**: Framer Motion & Tailwind CSS
 - **Visualization**: Recharts High-Fidelity API
