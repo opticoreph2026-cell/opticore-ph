@@ -106,7 +106,12 @@ export async function POST(request) {
     }
 
     const plan = client.planTier ?? 'starter';
-
+    if (plan === 'starter') {
+      const now = new Date();
+      if (client.lastScanReset && (now - new Date(client.lastScanReset)) > 30 * 24 * 60 * 60 * 1000) {
+        await resetClientScanQuota(client.id);
+        client.scanCount = 0;
+      }
       if (client.scanCount >= 1) {
         return NextResponse.json(
           { error: 'QUOTA_EXCEEDED', message: 'You have reached your 1 free AI scan limit for this month. Upgrade to Pro for unlimited scans.' }, 

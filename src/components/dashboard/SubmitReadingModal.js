@@ -185,8 +185,13 @@ export default function SubmitReadingModal({ isOpen, onClose, user, appliances =
                   onClick={() => document.getElementById('bill-upload').click()}
                   className="w-full p-8 rounded-3xl bg-white/[0.03] border border-white/5 hover:border-cyan-500/30 text-left transition-all group relative overflow-hidden"
                 >
-                  <div className="absolute top-0 right-0 p-4">
+                  <div className="absolute top-0 right-0 p-4 flex flex-col items-end gap-2">
                     <span className="px-2 py-1 rounded-md bg-cyan-500 text-[8px] font-black text-surface-1000 uppercase tracking-widest">Neural</span>
+                    {user?.planTier === 'starter' && (
+                      <span className="text-[7px] font-black text-slate-500 uppercase tracking-tighter">
+                        {user.scanCount || 0}/1 Monthly Scans
+                      </span>
+                    )}
                   </div>
                   <div className="flex items-center gap-6">
                     <div className="w-16 h-16 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 group-hover:scale-110 transition-transform">
@@ -240,6 +245,28 @@ export default function SubmitReadingModal({ isOpen, onClose, user, appliances =
                   <div>
                     <label className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-500 mb-3 block">Gross Bill (₱)</label>
                     <input type="number" step="0.01" required value={formData.billAmountElectric} onChange={e => setFormData({ ...formData, billAmountElectric: e.target.value })} className={inputClass} placeholder="0.00" />
+                  </div>
+
+                  <div className="pt-4 col-span-full">
+                    <div className="h-px bg-white/5 w-full mb-6" />
+                    <div className="flex items-center justify-between mb-4">
+                       <label className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-500 block">Water Consumption</label>
+                       {user?.planTier === 'starter' && (
+                         <span className="flex items-center gap-1 text-[8px] font-black text-cyan-400 uppercase tracking-widest bg-cyan-400/10 px-2 py-1 rounded">
+                           <Lock className="w-2 h-2" />
+                           Audit Gated
+                         </span>
+                       )}
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-500 mb-3 block">Volume (m³)</label>
+                    <input type="number" step="0.01" value={formData.m3Used} onChange={e => setFormData({ ...formData, m3Used: e.target.value })} className={inputClass} placeholder="0.00" />
+                  </div>
+                  <div>
+                    <label className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-500 mb-3 block">Water Bill (₱)</label>
+                    <input type="number" step="0.01" value={formData.billAmountWater} onChange={e => setFormData({ ...formData, billAmountWater: e.target.value })} className={inputClass} placeholder="0.00" />
                   </div>
                 </div>
 
