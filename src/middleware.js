@@ -79,7 +79,12 @@ export async function middleware(request) {
     return NextResponse.redirect(loginUrl);
   }
 
-  // 5. Admin specific protection
+  // 5. Force onboarding if not complete
+  if (pathname.startsWith('/dashboard') && user && user.onboarding_complete === false) {
+    return NextResponse.redirect(new URL('/onboarding', request.url));
+  }
+
+  // 6. Admin specific protection
   if (pathname.startsWith('/admin') && user?.role !== 'admin') {
     return NextResponse.redirect(new URL('/dashboard', request.url));
   }

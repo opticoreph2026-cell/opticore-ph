@@ -34,8 +34,10 @@ export async function GET(request) {
     }
 
     // Record login timestamp
-    const { recordLogin } = await import('@/lib/db');
-    await recordLogin(client.id);
+    await db.client.update({
+      where: { id: client.id },
+      data: { lastLoginAt: new Date() },
+    });
 
     // ─── LOGIN & REDIRECT ──────────────────────────────────────────────────────
     // Immediately sign the internal Optics Core Token using jose Web Crypto API
@@ -53,7 +55,11 @@ export async function GET(request) {
     await setAuthCookies(client, accessToken, refreshToken);
 
     // Completely bypass OTP, since Google already authenticated them!
-    return NextResponse.redirect(new URL('/dashboard', request.url));
+    const dest = client.role === 'admin' 
+      ? '/admin' 
+      : (client.onboardingComplete ? '/dashboard' : '/onboarding');
+      
+    return NextResponse.redirect(new URL(dest, request.url));
 
   } catch {
     return NextResponse.redirect(new URL('/login?error=SyncError', request.url));

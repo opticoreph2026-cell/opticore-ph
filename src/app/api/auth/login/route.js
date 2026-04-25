@@ -5,7 +5,7 @@
  */
 
 import { NextResponse }  from 'next/server';
-import { getClientByEmail, updateClientPasswordById } from '@/lib/db';
+import { db, getClientByEmail, updateClientPasswordById } from '@/lib/db';
 import { signAccessToken, signRefreshToken, setAuthCookies, verifyPassword, hashPassword } from '@/lib/auth';
 import { checkRateLimit, getClientIp } from '@/lib/ratelimit';
 
@@ -75,8 +75,10 @@ export async function POST(request) {
   const role  = client.role ?? 'client';
   
   try {
-    const { recordLogin } = await import('@/lib/db');
-    await recordLogin(client.id);
+    await db.client.update({
+      where: { id: client.id },
+      data: { lastLoginAt: new Date() },
+    });
   } catch (e) {}
 
   const payload = {
