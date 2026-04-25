@@ -21,7 +21,7 @@ export async function POST(request) {
     const mimeType = mimeMatch ? mimeMatch[1] : 'audio/webm';
     const base64Data = audioData.split(',')[1] || audioData;
 
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
     const prompt = `
       You are an expert mechanical sound engineer and HVAC diagnostic AI for the Philippines.

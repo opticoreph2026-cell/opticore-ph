@@ -16,6 +16,8 @@ export default function SubmitReadingModal({ isOpen, onClose, user, appliances =
     billAmountElectric: '',
     m3Used:             '',
     billAmountWater:    '',
+    lpgKg:              '',
+    lpgCost:            '',
   });
 
   if (!isOpen) return null;
@@ -37,6 +39,20 @@ export default function SubmitReadingModal({ isOpen, onClose, user, appliances =
           provider_detected: formData.providerDetected || null,
         }),
       });
+      
+      // If LPG data is provided, also sync to LPG predictor
+      if (formData.lpgKg && formData.lpgCost) {
+        await fetch('/api/dashboard/lpg', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            tankSizeKg: formData.lpgKg,
+            costPhp: formData.lpgCost,
+            replacementDate: formData.readingDate,
+            brand: 'Standard',
+          })
+        });
+      }
 
       if (!res.ok) {
         const d = await res.json();
@@ -267,6 +283,28 @@ export default function SubmitReadingModal({ isOpen, onClose, user, appliances =
                   <div>
                     <label htmlFor="billAmountWater" className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-500 mb-3 block">Water Bill (₱)</label>
                     <input id="billAmountWater" name="billAmountWater" type="number" step="0.01" value={formData.billAmountWater} onChange={e => setFormData({ ...formData, billAmountWater: e.target.value })} className={inputClass} placeholder="0.00" />
+                  </div>
+
+                  <div className="pt-4 col-span-full">
+                    <div className="h-px bg-white/5 w-full mb-6" />
+                    <div className="flex items-center justify-between mb-4">
+                       <label className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-500 block">LPG Replacement (Optional)</label>
+                       {user?.planTier === 'starter' && (
+                         <span className="flex items-center gap-1 text-[8px] font-black text-amber-400 uppercase tracking-widest bg-amber-400/10 px-2 py-1 rounded">
+                           <Lock className="w-2 h-2" />
+                           Audit Gated
+                         </span>
+                       )}
+                    </div>
+                  </div>
+
+                  <div>
+                    <label htmlFor="lpgKg" className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-500 mb-3 block">Tank Size (kg)</label>
+                    <input id="lpgKg" name="lpgKg" type="number" step="0.1" value={formData.lpgKg} onChange={e => setFormData({ ...formData, lpgKg: e.target.value })} className={inputClass} placeholder="11.0" />
+                  </div>
+                  <div>
+                    <label htmlFor="lpgCost" className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-500 mb-3 block">Refill Cost (₱)</label>
+                    <input id="lpgCost" name="lpgCost" type="number" step="0.01" value={formData.lpgCost} onChange={e => setFormData({ ...formData, lpgCost: e.target.value })} className={inputClass} placeholder="0.00" />
                   </div>
                 </div>
 

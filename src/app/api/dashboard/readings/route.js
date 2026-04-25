@@ -4,6 +4,7 @@ import { createReading, createReport, getAppliancesByClient, createAlert, getCli
 import { sendMonthlyDigestEmail, sendAnomalyAlertEmail } from '@/lib/email';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { calculateAttribution } from '@/utils/attributionEngine';
+import { analyzeWaterUsage } from '@/lib/algorithms/waterAnalyzer';
 
 const ai = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
 
@@ -206,17 +207,9 @@ export async function POST(request) {
 
     // 7. Water Leak detection (PRO only)
     if (plan !== 'starter' && m3Used > 0) {
-      try {
-        const m3 = parseFloat(m3Used);
-        if (m3 > 50) { // Arbitrary high threshold for home leak
-          await createAlert({
-            client_id: user.sub,
-            title: '💧 Massive Water Leak Alert',
-            message: `Your water consumption of ${m3} m³ is statistically impossible for a standard household. Check your main valves immediately.`,
-            severity: 'critical'
-          });
-        }
-      } catch {}
+      await analyzeWaterUsage(user.sub, activeProperty?.id).catch(err => {
+        console.error('[Water Analyzer Engine] Error:', err);
+      });
     }
 
     // 8. High effective rate alert

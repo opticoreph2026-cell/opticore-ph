@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getCurrentUser } from '@/lib/auth';
-import { getActiveProperty, getClientById, db } from '@/lib/db';
+import { getActiveProperty, getClientById, db, createAlert } from '@/lib/db';
+import { predictLPGDepletion } from '@/lib/algorithms/lpgPredictor';
 
 export async function POST(request) {
   try {
@@ -38,6 +39,24 @@ export async function POST(request) {
         isEmpty: Boolean(isEmpty),
       }
     });
+    
+    // 2. Trigger Intelligence Forecaster
+    try {
+      const forecast = await predictLPGDepletion(user.sub, activeProperty?.id);
+      
+      if (forecast && forecast.status !== 'insufficient_data') {
+        if (forecast.status === 'warning' || forecast.status === 'critical') {
+          await createAlert({
+            client_id: user.sub,
+            title: "🔥 LPG Tank Depletion Alert",
+            message: `Your tank is estimated to be ${forecast.percentLeft.toFixed(0)}% full. Estimated empty date: ${forecast.estimatedDate} (${forecast.daysLeft} days remaining).`,
+            severity: forecast.status === 'critical' ? 'critical' : 'warning'
+          });
+        }
+      }
+    } catch (forecasterErr) {
+      console.error('[LPG Forecaster] Non-fatal error:', forecasterErr);
+    }
 
     return NextResponse.json({ success: true, readingId: reading.id }, { status: 200 });
 
