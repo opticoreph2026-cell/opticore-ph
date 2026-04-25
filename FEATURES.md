@@ -44,6 +44,16 @@ A state-of-the-art visual language built for professionals.
 
 ---
 
+## Explore Detailed Feature Guides
+- [**Unified Command Center**](./docs/features/command-center.md)
+- [**Neural Bill Scanning**](./docs/features/neural-scan.md)
+- [**Engineering Asset Inventory**](./docs/features/asset-inventory.md)
+- [**NGCP Grid Monitoring**](./docs/features/grid-monitoring.md)
+- [**Insight & Audit Engine**](./docs/features/audit-engine.md)
+- [**Premium Obsidian Design System**](./docs/features/design-system.md)
+
+---
+
 ### Technical Stack
 - **Framework**: Next.js 14 (App Router)
 - **Intelligence**: Google Gemini AI (Vision/Flash)
