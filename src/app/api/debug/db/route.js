@@ -29,6 +29,21 @@ export async function GET() {
       results.tables_error = e.message;
     }
 
+    // Test Prisma
+    try {
+      const { db: prismaDb } = await import('@/lib/db');
+      results.step3_prisma = 'pending';
+      const count = await prismaDb.client.count();
+      results.step3_prisma = 'ok';
+      results.client_count = count;
+    } catch (e) {
+      results.step3_prisma = 'error';
+      results.prisma_error = {
+        message: e.message,
+        stack: e.stack,
+      };
+    }
+
     return NextResponse.json(results);
   } catch (e) {
     results.error = {
