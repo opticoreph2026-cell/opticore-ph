@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { clsx } from 'clsx';
 import {
-  LayoutDashboard, Users, Zap, CreditCard, BarChart3, Settings, Bell, LogOut, ChevronRight
+  LayoutDashboard, Users, Zap, CreditCard, BarChart3, Settings, Bell, LogOut, ChevronRight, Activity
 } from 'lucide-react';
 import Logo from '@/components/ui/Logo';
 
