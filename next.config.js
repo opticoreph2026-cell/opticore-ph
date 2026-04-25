@@ -4,6 +4,9 @@ const nextConfig = {
   experimental: {
     serverComponentsExternalPackages: ['@prisma/client', '@prisma/adapter-libsql', '@libsql/client'],
   },
+  env: {
+    DATABASE_URL: 'file:./dev.db',
+  },
   images: {
     remotePatterns: [
       { protocol: 'https', hostname: 'images.unsplash.com' },

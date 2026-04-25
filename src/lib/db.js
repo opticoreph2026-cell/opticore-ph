@@ -8,7 +8,7 @@ import { createClient } from '@libsql/client';
  * OptiCore PH - Database Engine
  * 
  * Final Stabilized Version (Prisma 7 compatible).
- * Uses explicit datasource override to bypass environment variable issues.
+ * Uses Next.js env injection from next.config.js to bypass internal parser issues.
  */
 
 const rawUrl = (process.env.TURSO_DATABASE_URL || '').trim();
@@ -29,26 +29,12 @@ function makePrisma() {
       const client = createClient({ url: dbUrl, authToken: authToken || undefined });
       const adapter = new PrismaLibSql(client);
       
-      // NUCLEAR FIX: Explicitly pass the datasource URL in the constructor 
-      // to prevent "undefined" errors from the internal parser.
-      return new PrismaClient({ 
-        adapter,
-        datasources: {
-          db: {
-            url: 'file:./dev.db' // Dummy string to satisfy Prisma validation
-          }
-        }
-      });
+      // Standard initialization. URL is provided by next.config.js
+      return new PrismaClient({ adapter });
     }
 
     // 2. Local connection (Development/Build) - Use Native Engine
-    return new PrismaClient({
-      datasources: {
-        db: {
-          url: sanitize(process.env.DATABASE_URL) || 'file:./dev.db'
-        }
-      }
-    });
+    return new PrismaClient();
   } catch (error) {
     console.error('[OptiCore DB] CRITICAL INITIALIZATION ERROR:', error);
     return new PrismaClient();
@@ -56,7 +42,7 @@ function makePrisma() {
 }
 
 // Singleton Pattern
-const GLOBAL_DB_KEY = 'opticore_prisma_v7_final_v4';
+const GLOBAL_DB_KEY = 'opticore_prisma_v7_final_v5';
 const globalForPrisma = globalThis;
 
 if (!globalForPrisma[GLOBAL_DB_KEY]) {
