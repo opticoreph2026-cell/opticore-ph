@@ -271,7 +271,7 @@ export default function SubmitReadingModal({ isOpen, onClose, user, appliances =
           </AnimatePresence>
         </div>
       </motion.div>
-    </motion.div>
+    </div>
   );
 }
 
