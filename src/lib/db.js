@@ -1,7 +1,7 @@
 import 'server-only';
 
 import { PrismaClient } from '@prisma/client';
-import { PrismaLibSql } from '@prisma/adapter-libsql';
+import { PrismaLibSQL } from '@prisma/adapter-libsql';
 import { createClient } from '@libsql/client';
 
 /**
@@ -29,7 +29,7 @@ function makePrisma() {
     // 1. Remote connection (Turso) - Use Adapter
     if (dbUrl && (dbUrl.startsWith('libsql://') || dbUrl.startsWith('https://'))) {
       const client = createClient({ url: dbUrl, authToken: authToken || undefined });
-      const adapter = new PrismaLibSql(client);
+      const adapter = new PrismaLibSQL(client);
       
       // Satisfy Prisma 6 validator with a dummy environment variable
       process.env.DATABASE_URL = 'file:./dev.db';
