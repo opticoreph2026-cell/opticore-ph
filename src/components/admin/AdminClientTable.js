@@ -58,7 +58,7 @@ export default function AdminClientTable({ clients }) {
                   <div className="h-10 w-10 rounded-xl bg-surface-800 border border-white/5 flex items-center justify-center overflow-hidden shrink-0">
                     <div className="relative w-full h-full">
                       <Image
-                        src={`https://ui-avatars.com/api/?name=${encodeURIComponent(c.name || 'Anonymous')}&background=f59e0b&color=0a0a0f&bold=true`}
+                        src={c.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(c.name || 'Anonymous')}&background=f59e0b&color=0a0a0f&bold=true`}
                         alt={c.name || 'Client'}
                         fill
                         className="object-cover"

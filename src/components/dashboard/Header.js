@@ -7,6 +7,7 @@ import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Bell, Menu, LogOut, User, ChevronDown } from 'lucide-react';
 import { clsx } from 'clsx';
+import NotificationPopover from './NotificationPopover';
 
 /**
  * DashboardHeader - Optimized for professional looks and zero redundancy.
@@ -54,10 +55,7 @@ export default function DashboardHeader({ user, onMenuClick }) {
       <div className="flex items-center gap-4">
 
         {/* Notifications */}
-        <button className="w-10 h-10 rounded-full bg-white/[0.03] border border-white/10 flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-all relative group">
-          <Bell className="w-4 h-4 group-hover:scale-110 transition-transform" />
-          <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-rose-500 rounded-full border-2 border-surface-1000 shadow-[0_0_8px_rgba(244,63,94,0.6)]" />
-        </button>
+        <NotificationPopover />
         
         {/* Divider */}
         <div className="w-px h-6 bg-white/[0.08]" />
@@ -73,7 +71,7 @@ export default function DashboardHeader({ user, onMenuClick }) {
           >
             <div className="w-8 h-8 rounded-full overflow-hidden border border-white/10 relative shadow-2xl">
               <Image 
-                src={user?.avatar ?? `https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.name || 'Opti'}`} 
+                src={user?.avatar || user?.image || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.name || 'Opti'}`} 
                 alt="Avatar" 
                 fill
                 className="object-cover"
@@ -93,11 +91,11 @@ export default function DashboardHeader({ user, onMenuClick }) {
                 className="absolute right-0 mt-3 w-64 bg-surface-950/95 backdrop-blur-2xl border border-white/10 rounded-3xl shadow-2xl overflow-hidden z-[100] ring-1 ring-white/10"
               >
                 <div className="p-5 border-b border-white/5 bg-white/[0.02]">
-                  <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-3">Administrator Profile</p>
+                  <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-3">Your Account</p>
                   <div className="flex items-center gap-3">
                     <div className="w-12 h-12 rounded-2xl bg-surface-900 border border-white/10 overflow-hidden relative shadow-lg">
                       <Image 
-                        src={user?.avatar ?? `https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.name || 'Opti'}`} 
+                        src={user?.avatar || user?.image || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.name || 'Opti'}`} 
                         alt="Avatar" 
                         fill
                         className="object-cover"
@@ -105,8 +103,8 @@ export default function DashboardHeader({ user, onMenuClick }) {
                       />
                     </div>
                     <div className="min-w-0">
-                      <p className="text-sm font-black text-white truncate">{user?.name ?? 'User'}</p>
-                      <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{user?.plan ?? 'Starter'} Tier</p>
+                      <p className="text-sm font-black text-white truncate">{user?.name ?? 'Valued User'}</p>
+                      <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{user?.plan ?? 'Free'} Plan</p>
                     </div>
                   </div>
                 </div>

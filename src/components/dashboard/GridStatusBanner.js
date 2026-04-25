@@ -1,10 +1,14 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { AlertTriangle, ShieldAlert, Zap, Activity } from 'lucide-react';
+import { AlertTriangle, ShieldAlert, Zap, Activity, Info } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { clsx } from 'clsx';
 
+/**
+ * GridStatusBanner - Simplified for residential users.
+ * Translates complex NGCP grid data into actionable advice.
+ */
 export default function GridStatusBanner() {
   const [grid, setGrid] = useState(null);
 
@@ -25,7 +29,7 @@ export default function GridStatusBanner() {
         initial={{ opacity: 0, y: -20, scale: 0.98 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         className={clsx(
-          "relative overflow-hidden p-6 rounded-[32px] border transition-all duration-500 shadow-2xl",
+          "relative overflow-hidden p-6 rounded-[32px] border transition-all duration-500 shadow-2xl mb-8",
           isRed 
             ? "bg-rose-500/5 border-rose-500/20 shadow-rose-500/10" 
             : "bg-amber-500/5 border-amber-500/20 shadow-amber-500/10"
@@ -53,25 +57,32 @@ export default function GridStatusBanner() {
                 "px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-[0.2em]",
                 isRed ? "bg-rose-500/20 text-rose-400" : "bg-amber-500/20 text-amber-400"
               )}>
-                Grid {grid.status} Protocol
+                National Grid Warning
               </span>
               <div className="flex items-center gap-2 px-2 py-1 rounded-full bg-white/[0.03] border border-white/5">
                 <Zap className="w-3 h-3 text-cyan-400" />
-                <span className="text-[10px] font-black text-slate-300 uppercase">+{grid.surgePenaltyPercent}% Surge</span>
+                <span className="text-[10px] font-black text-slate-300 uppercase tracking-tighter">Higher Rates Active</span>
               </div>
             </div>
-            <h4 className="text-lg font-black text-white tracking-tight">{grid.message}</h4>
+            <h4 className="text-lg font-black text-white tracking-tight leading-tight">
+              {isRed 
+                ? "Grid Critical: Power interruptions may occur. Turn off non-essentials now." 
+                : "Energy Alert: Demand is extremely high. High electricity rates are currently active."
+              }
+            </h4>
+            <p className="text-xs text-slate-500 mt-1 font-medium italic">Source: NGCP Public Feed</p>
           </div>
 
           <div className="shrink-0 flex items-center gap-4">
             <div className="text-right hidden sm:block">
-              <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Incident Level</p>
+              <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">User Action</p>
               <p className={clsx("text-sm font-black uppercase", isRed ? "text-rose-400" : "text-amber-400")}>
-                {isRed ? 'Critical' : 'Warning'}
+                {isRed ? 'Unplug Appliances' : 'Reduce Usage'}
               </p>
             </div>
-            <button className="px-6 py-3 rounded-xl bg-white/[0.05] border border-white/10 text-white text-xs font-black uppercase tracking-widest hover:bg-white/[0.08] transition-all">
-              Details
+            <button className="flex items-center gap-2 px-6 py-3 rounded-xl bg-white/[0.05] border border-white/10 text-white text-xs font-black uppercase tracking-widest hover:bg-white/[0.08] transition-all group">
+              <Info className="w-4 h-4 group-hover:rotate-12 transition-transform" />
+              How to Save
             </button>
           </div>
         </div>

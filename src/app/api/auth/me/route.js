@@ -22,6 +22,7 @@ export async function GET() {
         name:             record.name             ?? jwtUser.name,
         email:            record.email            ?? jwtUser.email,
         plan:             record.planTier         ?? 'starter',
+        avatar:           record.avatar           ?? jwtUser.avatar ?? '',
         electricProvider: record.electricityProviderId ?? '',
         waterProvider:    record.waterProviderId       ?? '',
         role:             record.role             ?? 'client',
@@ -33,13 +34,14 @@ export async function GET() {
     }
   } catch {
     // Fall back to JWT data
-    profile = {
-      id:    jwtUser.sub,
-      name:  jwtUser.name,
-      email: jwtUser.email,
-      plan:  'starter',
-      role:  jwtUser.role ?? 'client',
-    };
+      profile = {
+        id:    jwtUser.sub,
+        name:  jwtUser.name,
+        email: jwtUser.email,
+        plan:  'starter',
+        avatar: jwtUser.avatar ?? '',
+        role:  jwtUser.role ?? 'client',
+      };
   }
 
   return NextResponse.json({ user: profile }, { status: 200 });

@@ -14,8 +14,7 @@ export default function Footer() {
                 <Zap className="w-3.5 h-3.5 text-brand-400" />
               </div>
               <span className="font-semibold text-sm">
-                <span className="shimmer-text">OptiCore</span>
-                <span className="text-text-secondary ml-0.5">PH</span>
+                <span className="shimmer-text">OptiCore <span className="text-brand-500">PH</span></span>
               </span>
             </div>
             <p className="text-sm text-text-muted leading-relaxed max-w-xs">

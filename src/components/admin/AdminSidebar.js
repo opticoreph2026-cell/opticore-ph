@@ -37,8 +37,8 @@ export default function AdminSidebar() {
             <Logo className="w-7 h-7 text-white" />
           </div>
           <div>
-            <span className="font-bold text-base tracking-tight text-white block leading-none">
-              OptiCore <span className="text-brand-400">PH</span>
+            <span className="font-black text-xl tracking-tighter text-white block leading-none">
+              OptiCore <span className="text-cyan-400">PH</span>
             </span>
             <div className="flex items-center gap-1.5 mt-2">
               <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
@@ -49,9 +49,9 @@ export default function AdminSidebar() {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 px-4 py-2 space-y-1.5 overflow-y-auto">
+      <nav className="flex-1 px-4 py-2 space-y-1.5 overflow-y-auto custom-scrollbar">
         <div className="px-4 mb-4">
-          <span className="text-[11px] font-bold text-white/30 uppercase tracking-[0.2em]">Management</span>
+          <span className="text-[11px] font-black text-white/20 uppercase tracking-[0.2em]">Management</span>
         </div>
         
         {navItems.map(({ href, label, icon: Icon, color }) => {
@@ -75,7 +75,7 @@ export default function AdminSidebar() {
               )}
               
               <Icon className={clsx('w-4.5 h-4.5 transition-transform group-hover:scale-110', active ? color : 'text-current')} />
-              <span className="text-sm font-medium tracking-tight">{label}</span>
+              <span className="text-sm font-bold tracking-tight uppercase tracking-wider text-[11px]">{label}</span>
               
               {active && (
                 <motion.div 
@@ -90,21 +90,6 @@ export default function AdminSidebar() {
           );
         })}
       </nav>
-
-      {/* Footer / Sign Out */}
-      <div className="p-4 mt-auto">
-        <div className="bg-white/[0.03] rounded-2xl p-4 border border-white/[0.05]">
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-sm font-medium text-white/50 hover:text-red-400 hover:bg-red-400/10 transition-all group"
-          >
-            <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-red-400/20 transition-colors">
-              <LogOut className="w-4 h-4" />
-            </div>
-            <span>Sign out</span>
-          </button>
-        </div>
-      </div>
     </aside>
   );
 }

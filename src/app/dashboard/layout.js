@@ -24,6 +24,7 @@ export default async function DashboardLayout({ children }) {
         name:  record.name  ?? jwtUser.name,
         email: record.email ?? jwtUser.email,
         plan:  record.planTier ?? 'starter',
+        avatar: record.avatar ?? jwtUser.avatar,
       };
     }
   } catch (err) {
@@ -34,7 +35,8 @@ export default async function DashboardLayout({ children }) {
   const user = profile ?? { 
     name: jwtUser.name, 
     email: jwtUser.email, 
-    plan: 'starter' 
+    plan: 'starter',
+    avatar: jwtUser.avatar,
   };
 
   return (

@@ -25,7 +25,7 @@ export default function Navbar() {
             <Logo className="w-10 h-10" />
             <div className="flex flex-col">
               <span className="text-lg font-black text-white tracking-tighter leading-none group-hover:text-brand-400 transition-colors">
-                OPTICORE<span className="text-brand-500">PH</span>
+                OptiCore <span className="text-brand-500">PH</span>
               </span>
               <span className="text-[8px] font-black text-text-faint uppercase tracking-[0.2em] mt-0.5">Nationwide Protocol</span>
             </div>

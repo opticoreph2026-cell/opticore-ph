@@ -42,6 +42,7 @@ const PLANS = [
     href:      '/signup?plan=pro',
     features: [
       'Everything in Starter',
+      '2 properties / account',
       'Weather & Climate Analytics',
       'Financial ROI Hardware Simulator',
       'Instant Monthly HTML Digests',

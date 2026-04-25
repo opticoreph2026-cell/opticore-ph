@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import {
-  Calculator, Zap, ArrowRight, TrendingDown, DollarSign, Clock,
+  Calculator, Zap, ArrowRight, TrendingDown, Clock, Wallet,
   BarChart3, Sparkles, ChevronDown, RefreshCcw, CircleAlert
 } from 'lucide-react';
 import Spinner from '@/components/ui/Spinner';
@@ -276,7 +276,7 @@ export default function ROISimulator({ effectiveRate = 0 }) {
               sub={`${result.savingsKwhPerMonth} kWh saved`}
             />
             <KPICard
-              icon={<DollarSign className="w-3.5 h-3.5 text-brand-400" />}
+              icon={<Wallet className="w-3.5 h-3.5 text-brand-400" />}
               label="Annual Savings"
               value={`₱${result.annualSavings.toLocaleString()}`}
               sub={`${result.annualKwhSaved} kWh/year`}

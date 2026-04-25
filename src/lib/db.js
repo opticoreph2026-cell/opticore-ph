@@ -198,6 +198,7 @@ export async function updateClientProfile(id, data) {
   const fields = {};
   if (data.applianceCount !== undefined) fields.applianceCount = Number(data.applianceCount);
   if (data.name !== undefined) fields.name = data.name;
+  if (data.avatar !== undefined) fields.avatar = data.avatar;
   
   return db.client.update({
     where: { id },
@@ -207,9 +208,11 @@ export async function updateClientProfile(id, data) {
 
 export async function updateClientSettings(id, data) {
   const patch = {};
-  if (data.electricProvider !== undefined) patch.electricityProviderId = data.electricProvider;
-  if (data.waterProvider !== undefined) patch.waterProviderId = data.waterProvider;
-  if (data.emailAlertsEnabled !== undefined) patch.emailAlertsEnabled = data.emailAlertsEnabled;
+  if (data.electricProvider !== undefined)   patch.electricityProviderId = data.electricProvider;
+  if (data.waterProvider !== undefined)      patch.waterProviderId       = data.waterProvider;
+  if (data.emailAlertsEnabled !== undefined) patch.emailAlertsEnabled    = data.emailAlertsEnabled;
+  if (data.name !== undefined)                patch.name                  = data.name;
+  if (data.avatar !== undefined)              patch.avatar                = data.avatar;
 
   return db.client.update({
     where: { id },

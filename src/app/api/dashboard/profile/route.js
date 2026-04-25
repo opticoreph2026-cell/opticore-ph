@@ -44,11 +44,11 @@ export async function PATCH(request) {
     }
 
     const body = await request.json();
-    const { applianceCount, name } = body;
-
+    const { applianceCount, name, avatar } = body;
     const updated = await updateClientProfile(user.sub, {
       applianceCount: applianceCount !== undefined ? parseInt(applianceCount) : undefined,
-      name
+      name,
+      avatar
     });
 
     return NextResponse.json({
@@ -56,6 +56,7 @@ export async function PATCH(request) {
       profile: {
         id: updated.id,
         name: updated.name,
+        avatar: updated.avatar,
         applianceCount: updated.applianceCount,
       }
     });

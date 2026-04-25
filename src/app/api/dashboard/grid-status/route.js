@@ -5,19 +5,19 @@ export async function GET() {
   
   // Philippine Grid Peak Hours: Yellow/Red Alerts typically happen around 1-4PM during summer
   let status = 'NORMAL';
-  let message = 'NGCP Grid Stable. Spot market rates normal. Safe to run heavy appliances.';
+  let message = 'Power Grid is Stable. Utility rates are normal. Safe to run heavy appliances.';
   let penalty = 0;
   
   // Simulate Yellow Alert during 2PM-4PM (14-16)
   if (currentHour >= 14 && currentHour <= 16) {
     status = 'YELLOW';
-    message = '⚠️ NGCP Yellow Alert. Spot market surging. Pre-cool your house and turn off 2.5kW Inverters to save ₱450 today.';
+    message = '⚠️ Grid Alert: High Demand. Rates are currently higher. Turn off heavy cooling to save money today.';
     penalty = 40; // 40% price surge
   }
   // Simulate Red Alert during 1PM (13)
   else if (currentHour === 13) {
     status = 'RED';
-    message = '🚨 NGCP Red Alert. Rolling blackouts imminent in your sector. Shift all heavy load immediately.';
+    message = '🚨 Grid Alert: Critical Supply. Power interruptions may occur. Please unplug non-essential high-power devices.';
     penalty = 100;
   }
   
@@ -27,7 +27,7 @@ export async function GET() {
      const forceDemoAlert = Math.random() > 0.5;
      if (forceDemoAlert) {
         status = 'YELLOW';
-        message = '⚠️ NGCP Yellow Alert (Demo). Spot market surging. Turn off your Inverter ACs now to save ₱450 today.';
+        message = '⚠️ Grid Alert: High Demand. Rates are slightly higher right now. Reducing usage now helps lower your next bill.';
         penalty = 35;
      }
   }

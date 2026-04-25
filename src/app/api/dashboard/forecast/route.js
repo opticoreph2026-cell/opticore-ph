@@ -15,9 +15,9 @@ export async function GET(request) {
     const client = await getClientById(user.sub);
     const plan = client?.planTier ?? 'starter';
 
-    // Feature Gate
-    if (plan === 'starter') {
-      return NextResponse.json({ error: 'Upgrade required' }, { status: 403 });
+    // Feature Gate - Business Only
+    if (plan === 'starter' || plan === 'pro') {
+      return NextResponse.json({ error: 'Business subscription required for AI Forecasting.' }, { status: 403 });
     }
 
     const activeProperty = await ensureDefaultProperty(client.id);
@@ -32,7 +32,7 @@ export async function GET(request) {
     }
 
     // Sort ascending for the prompt (oldest first)
-    const history = readings.slice(0, 6).reverse().map(r => ({
+    const history = readings.slice(0, 12).reverse().map(r => ({
       date: r.readingDate,
       kwh: r.kwhUsed,
       bill: r.billAmountElectric
@@ -45,6 +45,7 @@ export async function GET(request) {
       
       Identify the trend (increasing, decreasing, stable, seasonal).
       Predict the NEXT month's expected kWh consumption and estimated Bill Amount (PHP).
+      Base predictions on average consumption and observed trends.
       
       Respond STRICTLY in JSON format:
       {
@@ -52,16 +53,14 @@ export async function GET(request) {
         "predictedKwh": <number>,
         "predictedBill": <number>,
         "confidence": "high"|"medium"|"low",
-        "reasoning": "<short 1-sentence explanation>"
+        "reasoning": "<short 1-sentence explanation focusing on the trend and next month's expectation>"
       }
     `;
 
-    const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
-      contents: prompt
-    });
-
-    let rawText = response.text?.trim() || '{}';
+    const model = ai.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    let rawText = response.text()?.trim() || '{}';
     if (rawText.startsWith('```')) {
       rawText = rawText.replace(/^```(?:json)?\s*/, '').replace(/\s*```$/, '');
     }

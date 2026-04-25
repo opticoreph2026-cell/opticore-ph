@@ -192,7 +192,7 @@ export default function CertificateCard({ user }) {
                    <Logo className="w-10 h-10" />
                  </div>
                  <div className="text-center sm:text-left">
-                   <h2 className="text-display text-2xl font-black text-white tracking-[0.2em] uppercase leading-none">OptiCore</h2>
+                   <h2 className="text-display text-2xl font-black text-white tracking-[0.2em] uppercase leading-none">OptiCore <span className="text-cyan-500">PH</span></h2>
                    <p className="text-[10px] text-cyan-400 font-black tracking-[0.3em] uppercase mt-2">Intelligence Systems</p>
                  </div>
                </div>

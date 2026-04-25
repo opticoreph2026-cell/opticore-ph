@@ -44,8 +44,10 @@ export async function GET(request) {
     const payload = {
       sub: client.id,
       email: client.email,
+      name: client.name,
       role: client.role,
       plan: client.planTier,
+      avatar: client.avatar,
       onboarding_complete: client.onboardingComplete ?? false,
     };
 

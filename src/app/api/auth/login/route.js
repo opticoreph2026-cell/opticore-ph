@@ -88,6 +88,7 @@ export async function POST(request) {
     name:               client.name,
     role,
     plan:               client.planTier ?? 'starter',
+    avatar:             client.avatar,
     onboarding_complete: client.onboardingComplete ?? false,
   };
 

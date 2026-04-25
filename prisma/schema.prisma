@@ -15,6 +15,7 @@ model Client {
   passwordHash            String?  // Nullable if they sign up via Google
   googleId                String?  @unique
   planTier                String   @default("starter") // starter, pro, business
+  avatar                  String?  // Profile picture URL (Google or custom)
   role                    String   @default("client")  // client, admin
   electricityProviderId   String?
   waterProviderId         String?

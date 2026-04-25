@@ -11,7 +11,7 @@ export const authOptions = {
   callbacks: {
     async signIn({ user, account, profile }) {
       if (account.provider === 'google') {
-        const { email, name, id: googleId } = user;
+        const { email, name, id: googleId, image: avatar } = user;
         
         try {
           let client = await db.client.findFirst({
@@ -29,6 +29,7 @@ export const authOptions = {
                 email: email.toLowerCase(),
                 name: name,
                 googleId: googleId,
+                avatar: avatar,
                 // Since the DB might still have a NOT NULL constraint on passwordHash,
                 // we provide a random placeholder for social signups.
                 passwordHash: `GOOGLE_OAUTH_USER_${Math.random().toString(36).substring(2, 12)}`,
@@ -38,10 +39,14 @@ export const authOptions = {
                 applianceCount: 0
               }
             });
-          } else if (!client.googleId) {
+          } else {
+            // Update Google info and avatar if it changed
             await db.client.update({
               where: { id: client.id },
-              data: { googleId: googleId }
+              data: { 
+                googleId: googleId,
+                avatar: avatar || client.avatar 
+              }
             });
           }
           

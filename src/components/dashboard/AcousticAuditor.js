@@ -110,10 +110,10 @@ export default function AcousticAuditor() {
           </div>
           
           <h3 className="text-xl font-bold text-white mb-2">
-            {recording ? 'Listening to hardware signature...' : analyzing ? 'Running Acoustic Frequency Analysis...' : 'Tap to Start Acoustic Scan'}
+            {recording ? 'Listening to appliance sound signature...' : analyzing ? 'Running Sound Pattern Analysis...' : 'Tap to Start Acoustic Scan'}
           </h3>
           <p className="text-sm text-text-muted max-w-md mx-auto h-10">
-            {recording ? 'Hold your device close to the appliance. Scanning automatically finishes in 5 seconds.' : analyzing ? 'OptiCore AI is decoding the compressor hum using Gemini 2.5 Flash...' : 'Ensure background noise is minimized. Hold your microphone near the compressor or motor.'}
+            {recording ? 'Hold your device close to the appliance. Scanning automatically finishes in 5 seconds.' : analyzing ? 'OptiCore AI is analyzing the sound of your motor using Gemini 2.5 Flash...' : 'Ensure background noise is minimized. Hold your microphone near the compressor or motor.'}
           </p>
         </div>
       </div>
@@ -151,7 +151,7 @@ export default function AcousticAuditor() {
           <div className="flex flex-col sm:flex-row gap-4">
              <div className="flex-1 p-5 rounded-xl border border-brand-500/20 relative overflow-hidden" style={{ background: 'rgba(245,158,11,0.05)' }}>
                 <div className="absolute inset-0 bg-brand-500/10 opacity-50 blur-xl pointer-events-none" />
-                <p className="text-[10px] font-black uppercase tracking-widest text-brand-400 mb-1 relative z-10">Phantom Load Penalty</p>
+                <p className="text-[10px] font-black uppercase tracking-widest text-brand-400 mb-1 relative z-10">Wasted Energy Penalty</p>
                 <div className="flex items-end gap-1 relative z-10">
                   <span className="text-3xl font-black text-white">+{result.phantomLoadPenalty}%</span>
                   <span className="text-xs text-text-muted mb-1.5">wasted energy</span>

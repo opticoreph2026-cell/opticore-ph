@@ -66,7 +66,9 @@ export async function POST(request) {
       await updateClientSettings(jwtUser.sub, {
         electricProvider: electricProvider ?? '',
         waterProvider: waterProvider ?? '',
-        emailAlertsEnabled
+        emailAlertsEnabled,
+        name: body.name,
+        avatar: body.avatar
       });
       return NextResponse.json({ success: true });
     } catch {

@@ -29,10 +29,17 @@ export async function POST(request) {
   const client = await getClientById(user.sub);
   const plan = client?.planTier ?? 'starter';
 
-  if (plan !== 'business' && existingProperties.length >= 1) {
+  if (plan === 'starter' && existingProperties.length >= 1) {
     return NextResponse.json({ 
       error: 'FORBIDDEN', 
-      message: 'Starter and Pro plans are limited to 1 property. Upgrade to Business for multi-property management.' 
+      message: 'Starter plan is limited to 1 property. Upgrade to Pro for multi-property management.' 
+    }, { status: 403 });
+  }
+
+  if (plan === 'pro' && existingProperties.length >= 2) {
+    return NextResponse.json({ 
+      error: 'FORBIDDEN', 
+      message: 'Pro plan is limited to 2 properties. Upgrade to Business for unlimited property management.' 
     }, { status: 403 });
   }
 

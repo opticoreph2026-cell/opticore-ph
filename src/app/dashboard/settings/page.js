@@ -4,18 +4,23 @@ import { useState, useEffect } from 'react';
 import {
   Settings, Zap, Droplets, Save, CheckCircle, CircleAlert,
   ShieldCheck, Lock, Eye, EyeOff, X, BellRing, Crown,
-  Trash2, AlertTriangle
+  Trash2, AlertTriangle, User
 } from 'lucide-react';
 import Spinner from '@/components/ui/Spinner';
 import Link from 'next/link';
+import Logo from '@/components/ui/Logo';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 export default function SettingsPage() {
+  const router = useRouter();
   const [providers, setProviders] = useState({ electricity: [], water: [] });
   const [form, setForm] = useState({
     electricProvider: '',
     waterProvider: '',
     name: '',
     email: '',
+    avatar: '',
     plan: 'starter',
     isGoogleAccount: false,
     emailAlertsEnabled: true,
@@ -46,6 +51,7 @@ export default function SettingsPage() {
           ...p,
           name:               meData.user?.name ?? '',
           email:              meData.user?.email ?? '',
+          avatar:             meData.user?.avatar ?? '',
           electricProvider:   meData.user?.electricProvider ?? '',
           waterProvider:      meData.user?.waterProvider ?? '',
           plan:               meData.user?.planTier ?? 'starter',
@@ -68,12 +74,19 @@ export default function SettingsPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           section:            'settings',
+          name:               form.name,
+          avatar:             form.avatar,
           electricProvider:   form.electricProvider,
           waterProvider:      form.waterProvider,
           emailAlertsEnabled: form.emailAlertsEnabled,
         }),
       });
-      setStatus(res.ok ? 'success' : 'error');
+      if (res.ok) {
+        setStatus('success');
+        router.refresh();
+      } else {
+        setStatus('error');
+      }
     } catch {
       setStatus('error');
     } finally {
@@ -129,21 +142,50 @@ export default function SettingsPage() {
             </div>
             Profile Information
           </h2>
-          <div className="grid sm:grid-cols-2 gap-4">
+          <div className="flex flex-col sm:flex-row gap-6 mb-8 items-center sm:items-start">
+            <div className="relative group/avatar">
+              <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-brand-500/20 to-cyan-500/20 p-[1px] shadow-2xl">
+                <div className="w-full h-full rounded-[23px] bg-surface-1000 flex items-center justify-center overflow-hidden relative">
+                  {form.avatar ? (
+                    <Image src={form.avatar} alt="Avatar" fill className="object-cover transition-transform duration-500 group-hover/avatar:scale-110" />
+                  ) : (
+                    <User className="w-8 h-8 text-white/20" />
+                  )}
+                </div>
+              </div>
+              <div className="absolute -bottom-2 -right-2 w-8 h-8 rounded-xl bg-surface-900 border border-white/10 flex items-center justify-center shadow-xl">
+                <ShieldCheck className="w-4 h-4 text-emerald-400" />
+              </div>
+            </div>
+            <div className="flex-1 space-y-4 w-full">
+              <div>
+                <label className="block text-[9px] uppercase font-black text-white/25 mb-2 tracking-[0.2em]">Profile Avatar URL</label>
+                <input
+                  className="w-full px-4 py-3 rounded-xl text-sm text-white outline-none transition-all"
+                  style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}
+                  placeholder="https://example.com/avatar.jpg"
+                  value={form.avatar}
+                  onChange={e => setForm({ ...form, avatar: e.target.value })}
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="grid sm:grid-cols-2 gap-4 pt-4 border-t border-white/5">
             <div>
               <label className="block text-[9px] uppercase font-black text-white/25 mb-2 tracking-[0.2em]">Full Name</label>
               <input
-                className="w-full px-4 py-3 rounded-xl text-sm text-white/50 cursor-not-allowed"
-                style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}
+                className="w-full px-4 py-3 rounded-xl text-sm text-white outline-none transition-all"
+                style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}
                 value={form.name}
-                disabled readOnly
+                onChange={e => setForm({ ...form, name: e.target.value })}
               />
             </div>
             <div>
               <label className="block text-[9px] uppercase font-black text-white/25 mb-2 tracking-[0.2em]">Email Address</label>
               <input
-                className="w-full px-4 py-3 rounded-xl text-sm text-white/50 cursor-not-allowed"
-                style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}
+                className="w-full px-4 py-3 rounded-xl text-sm text-white/40 cursor-not-allowed"
+                style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)' }}
                 value={form.email}
                 disabled readOnly
               />
@@ -280,9 +322,9 @@ export default function SettingsPage() {
       <div className="bento-card p-6">
         <div className="flex items-center justify-between">
           <div className="flex items-start gap-3">
-            <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 mt-0.5"
-              style={{ background: 'rgba(245,158,11,0.12)', border: '1px solid rgba(245,158,11,0.25)' }}>
-              <Crown className="w-4 h-4 text-brand-400" />
+            <div className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 mt-0.5 relative group/crown overflow-hidden">
+              <div className="absolute inset-0 bg-brand-500/10 group-hover/crown:bg-brand-500/20 transition-colors" />
+              <Logo className="w-7 h-7 relative z-10" />
             </div>
             <div>
               <h2 className="font-bold text-white text-sm tracking-wide">Subscription Plan</h2>

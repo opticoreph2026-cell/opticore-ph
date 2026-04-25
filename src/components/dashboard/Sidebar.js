@@ -12,23 +12,24 @@ const navigation = [
   {
     title: 'Analytics',
     items: [
-      { href: '/dashboard', label: 'Command Center', icon: LayoutDashboard },
-      { href: '/dashboard/reports', label: 'Insight Reports', icon: BarChart3 },
+      { href: '/dashboard', label: 'Energy Command', icon: LayoutDashboard },
+      { href: '/dashboard/reports', label: 'AI Savings Reports', icon: BarChart3 },
     ]
   },
   {
-    title: 'Engineering',
+    title: 'Management',
     items: [
-      { href: '/dashboard/appliances', label: 'Asset Inventory', icon: Users },
-      { href: '/dashboard/certification', label: 'Certificates', icon: Zap },
-      { href: '/dashboard/roi-simulator', label: 'ROI Engine', icon: CreditCard },
+      { href: '/dashboard/appliances', label: 'Home Appliances', icon: Users },
+      { href: '/dashboard/certification', label: 'Energy Certificates', icon: Zap },
+      { href: '/dashboard/roi-simulator', label: 'Savings Simulator', icon: CreditCard },
+      { href: '/dashboard/forecast', label: 'Predictive Forecast', icon: Activity },
     ]
   },
   {
-    title: 'Administration',
+    title: 'Settings',
     items: [
-      { href: '/dashboard/alerts', label: 'System Alerts', icon: Bell },
-      { href: '/dashboard/settings', label: 'Configuration', icon: Settings },
+      { href: '/dashboard/alerts', label: 'System Notifications', icon: Bell },
+      { href: '/dashboard/settings', label: 'Account Settings', icon: Settings },
     ]
   }
 ];
@@ -75,10 +76,10 @@ export default function DashboardSidebar({ user, isOpen, onClose }) {
             </div>
             <div>
               <h1 className="text-xl font-black text-white tracking-tighter leading-none">
-                OptiCore
+                OptiCore <span className="text-cyan-500">PH</span>
               </h1>
               <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mt-1.5">
-                Intelligence
+                Energy Intelligence
               </p>
             </div>
           </Link>
@@ -95,11 +96,14 @@ export default function DashboardSidebar({ user, isOpen, onClose }) {
                 {section.items.map(({ href, label, icon: Icon }) => {
                   const active = isActive(href);
                   const plan = user?.plan || 'starter';
-                  const isLocked = plan === 'starter' && [
+                  const isLocked = (plan === 'starter' && [
                     '/dashboard/reports',
                     '/dashboard/certification',
-                    '/dashboard/roi-simulator'
-                  ].includes(href);
+                    '/dashboard/roi-simulator',
+                    '/dashboard/forecast'
+                  ].includes(href)) || (plan === 'pro' && [
+                    '/dashboard/forecast'
+                  ].includes(href));
 
                   return (
                     <Link
@@ -108,8 +112,8 @@ export default function DashboardSidebar({ user, isOpen, onClose }) {
                       onClick={(e) => { 
                         if (isLocked) {
                           e.preventDefault();
-                          // Handle upgrade prompt (could be a modal or toast)
-                          alert('Upgrade to Pro to unlock this engineering module.');
+                          const requiredPlan = href === '/dashboard/forecast' ? 'Business' : 'Pro';
+                          alert(`Upgrade to ${requiredPlan} to unlock this engineering module.`);
                         } else if (window.innerWidth < 1024) {
                           onClose();
                         }
@@ -141,7 +145,7 @@ export default function DashboardSidebar({ user, isOpen, onClose }) {
                       )}
                       {isLocked && (
                         <span className="text-[8px] font-black uppercase tracking-wider text-amber-500/80 bg-amber-500/5 px-2 py-0.5 rounded-md border border-amber-500/10">
-                          PRO
+                          {href === '/dashboard/forecast' ? 'BIZ' : 'PRO'}
                         </span>
                       )}
                     </Link>
@@ -152,16 +156,6 @@ export default function DashboardSidebar({ user, isOpen, onClose }) {
           ))}
         </nav>
 
-        {/* Footer actions */}
-        <div className="p-8 border-t border-white/[0.05]">
-          <button 
-            onClick={handleLogout}
-            className="w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 transition-all group"
-          >
-            <LogOut className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
-            <span className="text-sm font-bold">Sign Out</span>
-          </button>
-        </div>
       </aside>
     </>
   );

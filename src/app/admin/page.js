@@ -1,5 +1,5 @@
 import { 
-  Users, FileText, Bell, TrendingUp, Zap, DollarSign, ArrowRight, 
+  Users, FileText, Bell, TrendingUp, Zap, Wallet, ArrowRight, 
   CreditCard, ShieldCheck, History, Edit2, ShieldAlert, Cpu 
 } from 'lucide-react';
 import AdminKpiCharts from '@/components/admin/KpiCharts';
@@ -10,7 +10,7 @@ import { getAdminKPIs, listAllClients, listAllTransactions, getSystemTelemetry }
 import AdminClientTable from '@/components/admin/AdminClientTable';
 
 export const dynamic = 'force-dynamic';
-export const metadata = { title: 'Admin Overview — OptiCore PH' };
+export const metadata = { title: 'Admin Command — OptiCore PH' };
 
 export default async function AdminDashboard() {
   let kpis = null, recentClients = [], transactions = [], telemetry = null;
@@ -29,7 +29,7 @@ export default async function AdminDashboard() {
     { label: 'Total Customers', value: kpis?.totalClients ?? 0, icon: Users, color: 'text-blue-400', bg: 'bg-blue-500/10' },
     { label: 'Pro Subscriptions', value: kpis?.proClients ?? 0, icon: Zap, color: 'text-amber-400', bg: 'bg-amber-500/10' },
     { label: 'Business Tier', value: kpis?.businessClients ?? 0, icon: ShieldCheck, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
-    { label: 'Monthly Revenue', value: `₱${(kpis?.mrr ?? 0).toLocaleString()}`, icon: DollarSign, color: 'text-brand-400', bg: 'bg-brand-500/10' },
+    { label: 'Monthly Earnings', value: `₱${(kpis?.mrr ?? 0).toLocaleString()}`, icon: Wallet, color: 'text-cyan-400', bg: 'bg-cyan-500/10' },
   ];
 
   return (
@@ -128,20 +128,20 @@ export default async function AdminDashboard() {
             
             <div className="space-y-6">
               <div>
-                <div className="flex justify-between text-[10px] font-bold text-text-faint uppercase mb-2">
-                  <span>Gemini Token Load (TPM)</span>
-                  <span className="text-brand-400">
+                <div className="flex justify-between text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">
+                  <span>AI Engine Load</span>
+                  <span className="text-cyan-400">
                     {((telemetry?.totalTokens / (telemetry?.geminiLimit || 1)) * 100).toFixed(2)}%
                   </span>
                 </div>
                 <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
                   <div 
-                    className="h-full bg-brand-500 transition-all duration-1000"
+                    className="h-full bg-cyan-500 shadow-[0_0_8px_rgba(34,211,238,0.4)] transition-all duration-1000"
                     style={{ width: `${Math.min(100, (telemetry?.totalTokens / (telemetry?.geminiLimit || 1)) * 100)}%` }}
                   />
                 </div>
-                <p className="text-[10px] text-text-muted mt-2">
-                  {telemetry?.totalTokens?.toLocaleString()} / 1M Limit
+                <p className="text-[10px] text-slate-600 mt-2 font-bold uppercase">
+                  {telemetry?.totalTokens?.toLocaleString()} / 1M Request Units
                 </p>
               </div>
 
