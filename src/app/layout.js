@@ -1,5 +1,6 @@
 import { Inter, Outfit } from 'next/font/google';
 import './globals.css';
+import AuthProvider from '@/components/ui/AuthProvider';
 
 // Optimize and load fonts
 const inter = Inter({ 
@@ -41,14 +42,16 @@ export const viewport = {
 };
 
 /**
- * Root layout — applies fonts and base structure.
+ * Root layout — applies fonts, NextAuth SessionProvider, and base structure.
+ * SessionProvider is required for signIn('google') to work on client pages.
  */
 export default function RootLayout({ children }) {
   return (
     <html lang="en-PH" className={`${inter.variable} ${outfit.variable}`}>
-      {/* We apply both the antialiased class and directly use the inter font class to ensure it loads globally */}
       <body className={`antialiased ${inter.className}`}>
-        {children}
+        <AuthProvider>
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );

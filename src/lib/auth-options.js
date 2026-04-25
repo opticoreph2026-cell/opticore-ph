@@ -8,69 +8,86 @@ export const authOptions = {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET || process.env.GMAIL_CLIENT_SECRET || '',
     }),
   ],
+
   callbacks: {
-    async signIn({ user, account, profile }) {
-      if (account.provider === 'google') {
+    /**
+     * Fires after Google authenticates the user.
+     * We upsert the user in our own database here.
+     */
+    async signIn({ user, account }) {
+      if (account?.provider === 'google') {
         const { email, name, id: googleId, image: avatar } = user;
-        
+
+        if (!email) return false;
+
         try {
-          let client = await db.client.findFirst({
+          const existing = await db.client.findFirst({
             where: {
               OR: [
                 { email: email.toLowerCase() },
-                { googleId: googleId }
-              ]
-            }
+                { googleId: googleId ?? undefined },
+              ],
+            },
           });
 
-          if (!client) {
-            client = await db.client.create({
+          if (!existing) {
+            // New user — create account automatically
+            await db.client.create({
               data: {
-                email: email.toLowerCase(),
-                name: name,
-                googleId: googleId,
-                avatar: avatar,
-                // Since the DB might still have a NOT NULL constraint on passwordHash,
-                // we provide a random placeholder for social signups.
-                passwordHash: `GOOGLE_OAUTH_USER_${Math.random().toString(36).substring(2, 12)}`,
+                email:              email.toLowerCase(),
+                name:               name || email.split('@')[0],
+                googleId:           googleId || null,
+                avatar:             avatar || null,
+                // Placeholder hash for Google-only users (no password set)
+                passwordHash:       `GOOGLE_OAUTH_USER_${Math.random().toString(36).substring(2, 12)}`,
                 onboardingComplete: false,
-                consentGiven: true,
-                role: 'client',
-                applianceCount: 0
-              }
+                consentGiven:       true,
+                role:               'client',
+                applianceCount:     0,
+              },
             });
           } else {
-            // Update Google info and avatar if it changed
+            // Existing user — sync Google ID and avatar if changed
             await db.client.update({
-              where: { id: client.id },
-              data: { 
-                googleId: googleId,
-                avatar: avatar || client.avatar 
-              }
+              where: { id: existing.id },
+              data: {
+                googleId: googleId || existing.googleId,
+                avatar:   avatar   || existing.avatar,
+              },
             });
           }
-          
-          return true; // Allow sign in
+
+          return true; // Allow sign-in
         } catch (error) {
-          console.error('[NextAuth] Error during sign-in callback:', error);
+          console.error('[NextAuth] signIn callback error:', error);
           return false;
         }
       }
       return true;
     },
-    
+
+    /**
+     * Always route Google sign-in through our internal bridge.
+     * The bridge converts the NextAuth session into OptiCore JWT cookies.
+     */
     async redirect({ url, baseUrl }) {
-      // If the URL is absolute and on the same origin, allow it
-      if (url.startsWith(baseUrl)) return url;
-      // If the URL is relative, allow it
+      // If callbackUrl is explicitly /api/auth/bridge, honour it
+      if (url.includes('/api/auth/bridge')) {
+        return `${baseUrl}/api/auth/bridge`;
+      }
+      // Same-origin relative URLs — allow them
       if (url.startsWith('/')) return `${baseUrl}${url}`;
-      // Default to our internal bridge for social-to-custom-jwt conversion
+      // Same-origin absolute URLs — allow them
+      if (url.startsWith(baseUrl)) return url;
+      // Default: always go to bridge for any Google auth
       return `${baseUrl}/api/auth/bridge`;
-    }
+    },
   },
+
   pages: {
-    signIn: '/login',
-    error: '/login',
+    signIn:  '/login',
+    error:   '/login',
   },
+
   secret: process.env.NEXTAUTH_SECRET,
 };
