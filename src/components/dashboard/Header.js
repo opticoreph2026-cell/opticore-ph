@@ -48,11 +48,19 @@ export default function DashboardHeader({ user, onMenuClick }) {
         >
           <Menu className="w-5 h-5" />
         </button>
+        {/* Breadcrumbs */}
         <div className="hidden lg:flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-500">
           <Activity className="w-4 h-4 text-cyan-400" />
-          <span>OptiCore</span>
-          <span className="text-white/20">/</span>
-          <span className="text-white">Command Center</span>
+          <span className="text-white">
+            {pathname === '/dashboard' ? 'Command Center' : 
+             pathname.startsWith('/dashboard/reports') ? 'Insight Reports' :
+             pathname.startsWith('/dashboard/appliances') ? 'Asset Inventory' :
+             pathname.startsWith('/dashboard/certification') ? 'Certificates' :
+             pathname.startsWith('/dashboard/roi-simulator') ? 'ROI Engine' :
+             pathname.startsWith('/dashboard/alerts') ? 'System Alerts' :
+             pathname.startsWith('/dashboard/settings') ? 'Configuration' :
+             'Command Center'}
+          </span>
         </div>
       </div>
 

@@ -2,10 +2,10 @@ import { NextResponse } from 'next/server';
 import { getCurrentUser } from '@/lib/auth';
 import { createReading, createReport, getAppliancesByClient, createAlert, getClientById, getReadingsByClient, getActiveProperty } from '@/lib/db';
 import { sendMonthlyDigestEmail, sendAnomalyAlertEmail } from '@/lib/email';
-import { GoogleGenAI } from '@google/genai';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 import { calculateAttribution } from '@/utils/attributionEngine';
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
+const ai = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
 
 export async function POST(request) {
   try {
@@ -27,16 +27,27 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Missing required reading parameters' }, { status: 400 });
     }
 
+    // 0. Check for existing reading for this date to prevent duplicates
+    const activeProperty = await getActiveProperty(user.sub);
+    const existingReadings = await getReadingsByClient(user.sub, activeProperty?.id);
+    const isDuplicate = existingReadings.some(r => r.readingDate === readingDate);
+
+    if (isDuplicate) {
+      return NextResponse.json({ 
+        error: 'DUPLICATE_ENTRY', 
+        message: `A reading for ${readingDate} already exists. To update it, please delete the old record first.` 
+      }, { status: 409 });
+    }
+
     // 1. Math calculation for Effective Rate
     const kwh = parseFloat(kwhUsed);
     const bill = parseFloat(billAmountElectric);
     const effectiveRate = kwh > 0 ? (bill / kwh).toFixed(2) : 0;
 
-    // 2. Fetch User Profile, Active Property, and Appliances concurrently
-    const [clientProfile, activeProperty, appliances] = await Promise.all([
+    // 2. Fetch User Profile and Appliances concurrently
+    const [clientProfile, appliances] = await Promise.all([
       getClientById(user.sub),
-      getActiveProperty(user.sub),
-      getAppliancesByClient(user.sub, null) // Needs property scope eventually, but we'll fetch them all here or scope it. Actually, wait.
+      getAppliancesByClient(user.sub, null)
     ]);
     
     // We fetch appliances by active property
@@ -73,17 +84,14 @@ export async function POST(request) {
     `;
 
     // 4. Fire directly to Gemini
-    const geminiResponse = await ai.models.generateContent({
+    const model = ai.getGenerativeModel({ 
       model: 'gemini-1.5-flash',
-      contents: [
-        { text: systemPrompt },
-      ],
-      config: {
-        temperature: 0.2, 
-      }
+      generationConfig: { temperature: 0.2 }
     });
-
-    const rawContent = geminiResponse.text?.trim() || "";
+    
+    const result = await model.generateContent(systemPrompt);
+    const response = await result.response;
+    const rawContent = response.text()?.trim() || "";
 
     // Parse Response
     let summaryMatch = rawContent.match(/SUMMARY:\s*(.*?)(?=RECOMMENDATIONS:)/is);

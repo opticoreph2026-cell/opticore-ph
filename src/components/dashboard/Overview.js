@@ -60,37 +60,34 @@ export default function DashboardOverview({ user, readings = [], alerts = [], ap
     if (!readings || readings.length === 0) {
       return ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'].map(m => ({ name: m, value: 0, water: 0, bill: 0 }));
     }
-    return [...readings]
-      .reverse()
-      .slice(-12)
-      .map(r => ({
-        name: r.readingDate ? format(parseISO(r.readingDate), 'MMM') : '—',
-        value: r.kwhUsed ?? 0,
-        water: r.m3Used ?? 0,
-        bill: (r.billAmountElectric ?? 0) + (r.billAmountWater ?? 0)
-      }));
+    
+    // Group by month to avoid duplicates if multiple readings exist for the same month
+    const groups = {};
+    [...readings].forEach(r => {
+      const date = parseISO(r.readingDate);
+      const monthKey = format(date, 'yyyy-MM');
+      if (!groups[monthKey]) {
+        groups[monthKey] = { name: format(date, 'MMM'), fullDate: date, value: 0, water: 0, bill: 0 };
+      }
+      groups[monthKey].value += (r.kwhUsed ?? 0);
+      groups[monthKey].water += (r.m3Used ?? 0);
+      groups[monthKey].bill += (r.billAmountElectric ?? 0) + (r.billAmountWater ?? 0);
+    });
+
+    return Object.values(groups)
+      .sort((a, b) => a.fullDate - b.fullDate)
+      .slice(-12);
   }, [readings]);
 
-  // Derived activity from real data
-  const realActivity = useMemo(() => {
-    const act = [];
-    if (readings.length > 0) {
-      act.push({ id: 'r1', type: 'Meter Logged', user: 'System', date: format(parseISO(readings[0].readingDate), 'MMM dd') });
-    }
-    if (appliances.length > 0) {
-      act.push({ id: 'a1', type: 'Asset Linked', user: 'Admin', date: 'Active' });
-    }
+  // Intelligence Summary derived from alerts and plan
+  const intelligenceSummary = useMemo(() => {
     if (alerts.length > 0) {
-      act.push({ id: 'alt1', type: 'Alert Detected', user: 'Guardian', date: 'New' });
+      const critical = alerts.filter(a => a.severity === 'critical');
+      if (critical.length > 0) return `${critical.length} critical issues require attention.`;
+      return `${alerts.length} active system notifications.`;
     }
-    // Fallback if empty
-    if (act.length === 0) {
-      return [
-        { id: 1, type: 'System Boot', user: 'OptiCore', date: 'Just now' },
-      ];
-    }
-    return act;
-  }, [readings, appliances, alerts]);
+    return "All systems operational. No anomalies detected.";
+  }, [alerts]);
 
   return (
     <motion.div 
@@ -224,32 +221,23 @@ export default function DashboardOverview({ user, readings = [], alerts = [], ap
         </SpotlightCard>
       </motion.div>
 
-      {/* ── Row 3: Activity & Intelligence ── */}
+      {/* ── Row 3: Intelligence Insights ── */}
       <div className="grid grid-cols-12 gap-6">
         <motion.div variants={itemVariants} className="col-span-12 lg:col-span-8">
-          <SpotlightCard className="p-8">
+          <SpotlightCard className="p-8 h-full">
             <div className="flex items-center justify-between mb-8">
-              <h3 className="text-display text-xl font-black text-white">Event Log</h3>
-              <Link href="/dashboard/reports" className="text-[10px] font-black text-cyan-400 uppercase tracking-widest hover:text-white transition-colors flex items-center gap-2">
-                Audit Trail <ChevronRight className="w-3 h-3" />
+              <h3 className="text-display text-xl font-black text-white">Intelligence Summary</h3>
+              <Link href="/dashboard/alerts" className="text-[10px] font-black text-cyan-400 uppercase tracking-widest hover:text-white transition-colors flex items-center gap-2">
+                View System Alerts <ChevronRight className="w-3 h-3" />
               </Link>
             </div>
             
-            <div className="space-y-4">
-              {realActivity.map((act) => (
-                <div key={act.id} className="flex items-center justify-between p-4 rounded-2xl bg-white/[0.02] border border-white/[0.04] hover:bg-white/[0.04] transition-all group">
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 group-hover:scale-110 transition-transform">
-                      <Activity className="w-4 h-4" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-bold text-white">{act.type}</p>
-                      <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">{act.user}</p>
-                    </div>
-                  </div>
-                  <p className="text-[11px] text-slate-600 font-mono">{act.date}</p>
-                </div>
-              ))}
+            <div className="flex flex-col items-center justify-center py-10 text-center">
+              <div className="w-16 h-16 rounded-3xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 mb-6">
+                <Sparkles className="w-8 h-8" />
+              </div>
+              <p className="text-lg font-bold text-white max-w-md">{intelligenceSummary}</p>
+              <p className="text-sm text-slate-500 mt-2">Gemini AI is auditing your grid in real-time.</p>
             </div>
           </SpotlightCard>
         </motion.div>
@@ -260,15 +248,15 @@ export default function DashboardOverview({ user, readings = [], alerts = [], ap
             
             <div className="relative z-10 flex flex-col h-full">
               <div className="w-14 h-14 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center mb-6">
-                <Sparkles className="w-6 h-6 text-white" />
+                <Calendar className="w-6 h-6 text-white" />
               </div>
-              <h3 className="text-display text-2xl font-black text-white mb-4 leading-tight">Elite Prediction</h3>
+              <h3 className="text-display text-2xl font-black text-white mb-4 leading-tight">Insight Reports</h3>
               <p className="text-white/70 text-sm leading-relaxed mb-8">
-                Unlock autonomous mapping and energy leak detection.
+                Your deep-dive analysis is ready for review.
               </p>
               <div className="mt-auto">
-                <Link href="/dashboard/appliances" className="btn-primary w-full py-3.5">
-                  Go Premium
+                <Link href="/dashboard/reports" className="btn-primary w-full py-3.5">
+                  View Reports
                 </Link>
               </div>
             </div>
