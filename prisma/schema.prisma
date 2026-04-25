@@ -37,6 +37,7 @@ model Client {
   dailyReadings DailyMeterReading[]
   lpgReadings LPGReading[]
   transactions Transaction[]
+  refreshTokens RefreshToken[]
   
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -246,3 +247,14 @@ model Transaction {
   createdAt       DateTime @default(now())
 }
 
+model RefreshToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  clientId  String
+  client    Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([clientId])
+}

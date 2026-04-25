@@ -1,8 +1,8 @@
 import { NextResponse }  from 'next/server';
-import { clearAuthCookie } from '@/lib/auth';
+import { clearAuthCookies } from '@/lib/auth';
 
-/** POST /api/auth/logout — clears the auth cookie */
+/** POST /api/auth/logout — clears all auth cookies */
 export async function POST() {
-  clearAuthCookie();
+  await clearAuthCookies();
   return NextResponse.json({ success: true }, { status: 200 });
 }

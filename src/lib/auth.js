@@ -14,9 +14,14 @@ import 'server-only';
 import { SignJWT, jwtVerify } from 'jose';
 import { cookies } from 'next/headers';
 import bcrypt from 'bcryptjs';
+import { db } from '@/lib/db';
 
-const COOKIE_NAME  = 'opticore_auth';
-const TOKEN_EXPIRY = '24h';
+const ACCESS_COOKIE  = 'opticore_access';
+const REFRESH_COOKIE = 'opticore_refresh';
+
+const ACCESS_EXPIRY  = '15m'; // Short-lived
+const REFRESH_EXPIRY = '7d';  // Long-lived
+
 const BCRYPT_ROUNDS = Number(process.env.BCRYPT_ROUNDS ?? 12);
 
 /** Encode the secret as a Uint8Array for jose */
@@ -29,25 +34,36 @@ function getSecret() {
 // ─── JWT ──────────────────────────────────────────────────────────────────────
 
 /**
- * Sign a JWT payload and return the token string.
- * @param {object} payload - Data to encode (e.g. { sub: recordId, email, role })
- * @returns {Promise<string>} Signed JWT
+ * Sign an Access JWT.
+ * @param {object} payload 
  */
-export async function signToken(payload) {
+export async function signAccessToken(payload) {
   return new SignJWT(payload)
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
-    .setExpirationTime(TOKEN_EXPIRY)
+    .setExpirationTime(ACCESS_EXPIRY)
     .setIssuer('opticore-ph')
     .sign(getSecret());
 }
 
 /**
- * Verify a JWT string and return its decoded payload.
- * @param {string} token
- * @returns {Promise<object|null>} Decoded payload, or null if invalid/expired
+ * Sign a Refresh JWT.
+ * @param {object} payload 
+ */
+export async function signRefreshToken(payload) {
+  return new SignJWT(payload)
+    .setProtectedHeader({ alg: 'HS256' })
+    .setIssuedAt()
+    .setExpirationTime(REFRESH_EXPIRY)
+    .setIssuer('opticore-ph')
+    .sign(getSecret());
+}
+
+/**
+ * Verify a JWT string.
  */
 export async function verifyToken(token) {
+  if (!token) return null;
   try {
     const { payload } = await jwtVerify(token, getSecret(), {
       issuer: 'opticore-ph',
@@ -61,39 +77,78 @@ export async function verifyToken(token) {
 // ─── Cookies ──────────────────────────────────────────────────────────────────
 
 /**
- * Set the auth cookie in the current response.
- * Must be called inside a Route Handler or Server Action.
- * @param {string} token - Signed JWT string
+ * Set both Access and Refresh cookies.
+ * Also persists the refresh token to the database.
  */
-export async function setAuthCookie(token) {
+export async function setAuthCookies(user, accessToken, refreshToken) {
   const cookieStore = await cookies();
-  cookieStore.set(COOKIE_NAME, token, {
+  
+  // Set Access Cookie (15m)
+  cookieStore.set(ACCESS_COOKIE, accessToken, {
     httpOnly: true,
     secure:   process.env.NODE_ENV === 'production',
     sameSite: 'strict',
-    maxAge:   60 * 60 * 24, // 24 hours in seconds
+    maxAge:   15 * 60,
     path:     '/',
   });
+
+  // Set Refresh Cookie (7d)
+  cookieStore.set(REFRESH_COOKIE, refreshToken, {
+    httpOnly: true,
+    secure:   process.env.NODE_ENV === 'production',
+    sameSite: 'strict',
+    maxAge:   60 * 60 * 24 * 7,
+    path:     '/',
+  });
+
+  // Persist Refresh Token to DB
+  try {
+    await db.refreshToken.create({
+      data: {
+        token: refreshToken,
+        clientId: user.id || user.sub,
+        expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
+      }
+    });
+  } catch (error) {
+    console.error('[Auth] Failed to persist refresh token:', error);
+  }
 }
 
 /**
- * Clear the auth cookie (logout).
+ * Clear all auth cookies.
  */
-export async function clearAuthCookie() {
+export async function clearAuthCookies() {
   const cookieStore = await cookies();
-  cookieStore.delete(COOKIE_NAME);
+  
+  // Delete from DB if we have the refresh token
+  const refreshToken = cookieStore.get(REFRESH_COOKIE)?.value;
+  if (refreshToken) {
+    try {
+      await db.refreshToken.delete({ where: { token: refreshToken } }).catch(() => {});
+    } catch {}
+  }
+
+  cookieStore.delete(ACCESS_COOKIE);
+  cookieStore.delete(REFRESH_COOKIE);
 }
 
 /**
- * Get the current authenticated user from the cookie.
- * Returns null if not authenticated or token is expired/invalid.
- * @returns {Promise<object|null>} JWT payload or null
+ * Get the current user from the access token.
  */
 export async function getCurrentUser() {
   const cookieStore = await cookies();
-  const token = cookieStore.get(COOKIE_NAME)?.value;
-  if (!token) return null;
-  return verifyToken(token);
+  const accessToken = cookieStore.get(ACCESS_COOKIE)?.value;
+  
+  if (accessToken) {
+    const payload = await verifyToken(accessToken);
+    if (payload) return payload;
+  }
+
+  // If access token is missing or expired, we might want to trigger a refresh here,
+  // but in Server Components we can't set cookies. 
+  // Refreshing should happen in Middleware or dedicated API routes.
+  return null;
 }
 
 // ─── Password Hashing (bcryptjs) ──────────────────────────────────────────────

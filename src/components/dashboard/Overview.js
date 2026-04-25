@@ -2,11 +2,10 @@
 
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid,
-  Tooltip, ResponsiveContainer, BarChart, Bar,
-  PieChart, Pie, Cell
+  Tooltip, ResponsiveContainer
 } from 'recharts';
 import { 
-  Zap, Droplets, TrendingDown, Users, Plus, 
+  Zap, TrendingDown, Plus, 
   ArrowUpRight, ArrowDownRight, MoreHorizontal,
   ChevronRight, Activity, Calendar, Sparkles
 } from 'lucide-react';
@@ -15,12 +14,11 @@ import Link from 'next/link';
 import { useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
+import { clsx } from 'clsx';
 import SubmitReadingModal from '@/components/dashboard/SubmitReadingModal';
 import GridStatusBanner from '@/components/dashboard/GridStatusBanner';
 import Toast from '@/components/ui/Toast';
 import SpotlightCard from '@/components/ui/SpotlightCard';
-
-const PIE_COLORS = ['#22d3ee', '#a855f7', '#6366f1', '#f59e0b'];
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -73,19 +71,26 @@ export default function DashboardOverview({ user, readings = [], alerts = [], ap
       }));
   }, [readings]);
 
-  const breakdownData = [
-    { name: 'Cooling', value: 45 },
-    { name: 'Lighting', value: 20 },
-    { name: 'Appliances', value: 25 },
-    { name: 'Other', value: 10 },
-  ];
-
-  const recentActivity = [
-    { id: 1, type: 'Bill Logged', user: 'Admin', date: '2 mins ago' },
-    { id: 2, type: 'Appliance Linked', user: 'Admin', date: '1 hour ago' },
-    { id: 3, type: 'Alert Resolved', user: 'System', date: '4 hours ago' },
-    { id: 4, type: 'Report Generated', user: 'Admin', date: '1 day ago' },
-  ];
+  // Derived activity from real data
+  const realActivity = useMemo(() => {
+    const act = [];
+    if (readings.length > 0) {
+      act.push({ id: 'r1', type: 'Meter Logged', user: 'System', date: format(parseISO(readings[0].readingDate), 'MMM dd') });
+    }
+    if (appliances.length > 0) {
+      act.push({ id: 'a1', type: 'Asset Linked', user: 'Admin', date: 'Active' });
+    }
+    if (alerts.length > 0) {
+      act.push({ id: 'alt1', type: 'Alert Detected', user: 'Guardian', date: 'New' });
+    }
+    // Fallback if empty
+    if (act.length === 0) {
+      return [
+        { id: 1, type: 'System Boot', user: 'OptiCore', date: 'Just now' },
+      ];
+    }
+    return act;
+  }, [readings, appliances, alerts]);
 
   return (
     <motion.div 
@@ -94,25 +99,23 @@ export default function DashboardOverview({ user, readings = [], alerts = [], ap
       animate="visible"
       className="p-4 lg:p-0 space-y-8"
     >
-      {/* ── Hero Section (Merged Welcome & Managed Assets) ── */}
+      {/* ── Condensed Hero ── */}
       <motion.div variants={itemVariants} className="flex flex-col lg:flex-row gap-6">
-        <div className="flex-1 bento-card p-8 lg:p-10 bg-gradient-to-br from-white/[0.03] to-transparent">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div>
-              <h1 className="text-display text-3xl lg:text-4xl font-black text-white tracking-tight">
-                Systems Online, {user?.name?.split(' ')[0] ?? 'User'}.
-              </h1>
-              <p className="text-slate-500 font-medium mt-2 max-w-md">
-                Your resource footprint is being monitored across <span className="text-cyan-400">{appliances.length} managed assets</span>.
-              </p>
-            </div>
-            <button 
-              onClick={() => setIsModalOpen(true)}
-              className="btn-primary"
-            >
-              <Plus className="w-4 h-4" /> Log Reading
-            </button>
+        <div className="flex-1 bento-card p-8 lg:p-10 bg-gradient-to-br from-white/[0.03] to-transparent flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div>
+            <h1 className="text-display text-3xl font-black text-white tracking-tight">
+              Operational Overview
+            </h1>
+            <p className="text-slate-500 font-medium mt-2 max-w-md">
+              Monitoring <span className="text-cyan-400 font-black">{appliances.length} assets</span> across your grid.
+            </p>
           </div>
+          <button 
+            onClick={() => setIsModalOpen(true)}
+            className="btn-primary shrink-0"
+          >
+            <Plus className="w-4 h-4" /> Log Reading
+          </button>
         </div>
       </motion.div>
 
@@ -135,7 +138,7 @@ export default function DashboardOverview({ user, readings = [], alerts = [], ap
         </motion.div>
         <motion.div variants={itemVariants}>
           <KpiCard 
-            label="Est. Monthly Bill"
+            label="Current Billing"
             value={`₱${totalBill.toLocaleString()}`}
             delta={`${billDelta}%`}
             isPositive={parseFloat(billDelta) < 0}
@@ -146,9 +149,9 @@ export default function DashboardOverview({ user, readings = [], alerts = [], ap
         </motion.div>
         <motion.div variants={itemVariants}>
           <KpiCard 
-            label="Network Health"
-            value="98.2%"
-            delta="Stable"
+            label="Health Status"
+            value="Stable"
+            delta="98.2%"
             isPositive={true}
             icon={Activity}
             color="rose"
@@ -157,117 +160,72 @@ export default function DashboardOverview({ user, readings = [], alerts = [], ap
         </motion.div>
       </div>
 
-      {/* ── Row 2: Main Insights ── */}
-      <div className="grid grid-cols-12 gap-6">
-        {/* Main Chart */}
-        <motion.div variants={itemVariants} className="col-span-12 xl:col-span-8">
-          <SpotlightCard className="p-8">
-            <div className="flex items-center justify-between mb-8">
-              <div>
-                <h3 className="text-display text-xl font-black text-white">Consumption Protocol</h3>
-                <p className="text-sm text-slate-500 mt-1">Holistic utility trends over the last cycle</p>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/[0.03] border border-white/5 text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                  <Calendar className="w-3 h-3" />
-                  Annual View
-                </div>
-                <button className="p-2 rounded-xl hover:bg-white/5 text-slate-500 transition-colors">
-                  <MoreHorizontal className="w-5 h-5" />
-                </button>
-              </div>
+      {/* ── Row 2: Main Chart ── */}
+      <motion.div variants={itemVariants}>
+        <SpotlightCard className="p-8">
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <h3 className="text-display text-xl font-black text-white">Consumption Protocol</h3>
+              <p className="text-sm text-slate-500 mt-1">Holistic utility trends</p>
             </div>
+            <div className="flex items-center gap-3">
+              <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/[0.03] border border-white/5 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                <Calendar className="w-3 h-3" />
+                Annual View
+              </div>
+              <button className="p-2 rounded-xl hover:bg-white/5 text-slate-500 transition-colors">
+                <MoreHorizontal className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
 
-            <div className="h-[350px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={chartData}>
-                  <defs>
-                    <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#22d3ee" stopOpacity={0.2}/>
-                      <stop offset="95%" stopColor="#22d3ee" stopOpacity={0}/>
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.02)" vertical={false} />
-                  <XAxis 
-                    dataKey="name" 
-                    axisLine={false} 
-                    tickLine={false} 
-                    tick={{fill: '#475569', fontSize: 11, fontWeight: 700}}
-                    dy={10}
-                  />
-                  <YAxis 
-                    axisLine={false} 
-                    tickLine={false} 
-                    tick={{fill: '#475569', fontSize: 11}}
-                  />
-                  <Tooltip 
-                    contentStyle={{ 
-                      backgroundColor: 'rgba(5, 5, 8, 0.9)', 
-                      border: '1px solid rgba(255,255,255,0.1)',
-                      borderRadius: '20px',
-                      backdropFilter: 'blur(10px)'
-                    }}
-                    itemStyle={{ color: '#fff', fontSize: '12px', fontWeight: 'bold' }}
-                  />
-                  <Area 
-                    type="monotone" 
-                    dataKey="value" 
-                    stroke="#22d3ee" 
-                    strokeWidth={4}
-                    fillOpacity={1} 
-                    fill="url(#colorValue)" 
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
-            </div>
-          </SpotlightCard>
-        </motion.div>
-
-        {/* Donut Chart */}
-        <motion.div variants={itemVariants} className="col-span-12 xl:col-span-4">
-          <SpotlightCard className="p-8 h-full flex flex-col">
-            <h3 className="text-display text-xl font-black text-white mb-2">Attribution</h3>
-            <p className="text-sm text-slate-500 mb-8">Load distribution</p>
-            
-            <div className="flex-1 flex flex-col items-center justify-center relative">
-              <div className="h-[220px] w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={breakdownData}
-                      innerRadius={70}
-                      outerRadius={90}
-                      paddingAngle={10}
-                      dataKey="value"
-                    >
-                      {breakdownData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} stroke="none" />
-                      ))}
-                    </Pie>
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center">
-                <p className="text-3xl font-black text-white">82%</p>
-                <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Load</p>
-              </div>
-            </div>
-
-            <div className="mt-8 grid grid-cols-2 gap-4">
-              {breakdownData.map((item, index) => (
-                <div key={item.name} className="flex items-center gap-3">
-                  <div className="w-2 h-2 rounded-full" style={{ backgroundColor: PIE_COLORS[index % PIE_COLORS.length] }} />
-                  <span className="text-[11px] font-bold text-slate-400 uppercase tracking-tight">{item.name}</span>
-                </div>
-              ))}
-            </div>
-          </SpotlightCard>
-        </motion.div>
-      </div>
+          <div className="h-[350px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={chartData}>
+                <defs>
+                  <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#22d3ee" stopOpacity={0.2}/>
+                    <stop offset="95%" stopColor="#22d3ee" stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.02)" vertical={false} />
+                <XAxis 
+                  dataKey="name" 
+                  axisLine={false} 
+                  tickLine={false} 
+                  tick={{fill: '#475569', fontSize: 11, fontWeight: 700}}
+                  dy={10}
+                />
+                <YAxis 
+                  axisLine={false} 
+                  tickLine={false} 
+                  tick={{fill: '#475569', fontSize: 11}}
+                />
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: 'rgba(5, 5, 8, 0.9)', 
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    borderRadius: '20px',
+                    backdropFilter: 'blur(10px)'
+                  }}
+                  itemStyle={{ color: '#fff', fontSize: '12px', fontWeight: 'bold' }}
+                />
+                <Area 
+                  type="monotone" 
+                  dataKey="value" 
+                  stroke="#22d3ee" 
+                  strokeWidth={4}
+                  fillOpacity={1} 
+                  fill="url(#colorValue)" 
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        </SpotlightCard>
+      </motion.div>
 
       {/* ── Row 3: Activity & Intelligence ── */}
       <div className="grid grid-cols-12 gap-6">
-        {/* Activity Table */}
         <motion.div variants={itemVariants} className="col-span-12 lg:col-span-8">
           <SpotlightCard className="p-8">
             <div className="flex items-center justify-between mb-8">
@@ -278,7 +236,7 @@ export default function DashboardOverview({ user, readings = [], alerts = [], ap
             </div>
             
             <div className="space-y-4">
-              {recentActivity.map((act) => (
+              {realActivity.map((act) => (
                 <div key={act.id} className="flex items-center justify-between p-4 rounded-2xl bg-white/[0.02] border border-white/[0.04] hover:bg-white/[0.04] transition-all group">
                   <div className="flex items-center gap-4">
                     <div className="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 group-hover:scale-110 transition-transform">
@@ -296,22 +254,23 @@ export default function DashboardOverview({ user, readings = [], alerts = [], ap
           </SpotlightCard>
         </motion.div>
 
-        {/* Intelligence Upsell (Integrated) */}
         <motion.div variants={itemVariants} className="col-span-12 lg:col-span-4">
           <div className="bento-card p-8 bg-gradient-to-br from-brand-secondary/20 to-brand-primary/20 border-white/10 h-full relative overflow-hidden group">
             <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 blur-[100px] rounded-full -translate-y-1/2 translate-x-1/2" />
             
-            <div className="relative z-10">
+            <div className="relative z-10 flex flex-col h-full">
               <div className="w-14 h-14 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center mb-6">
                 <Sparkles className="w-6 h-6 text-white" />
               </div>
               <h3 className="text-display text-2xl font-black text-white mb-4 leading-tight">Elite Prediction</h3>
               <p className="text-white/70 text-sm leading-relaxed mb-8">
-                Unlock autonomous mapping of your appliance ROI and energy leak detection.
+                Unlock autonomous mapping and energy leak detection.
               </p>
-              <Link href="/dashboard/appliances" className="btn-primary w-full py-3.5">
-                Go Premium
-              </Link>
+              <div className="mt-auto">
+                <Link href="/dashboard/appliances" className="btn-primary w-full py-3.5">
+                  Go Premium
+                </Link>
+              </div>
             </div>
           </div>
         </motion.div>
@@ -346,7 +305,7 @@ function KpiCard({ label, value, delta, isPositive, icon: Icon, color, sparkline
   };
 
   return (
-    <SpotlightCard className="p-6 h-full">
+    <SpotlightCard className="p-6 h-full group">
       <div className="flex items-start justify-between mb-6">
         <div className={clsx("w-12 h-12 rounded-2xl border flex items-center justify-center transition-transform group-hover:scale-110", colorMap[color])}>
           <Icon className="w-6 h-6" />
@@ -361,9 +320,9 @@ function KpiCard({ label, value, delta, isPositive, icon: Icon, color, sparkline
       </div>
       
       <div className="flex items-end justify-between gap-4">
-        <div>
-          <p className="text-[10px] font-black text-slate-600 uppercase tracking-[0.2em] mb-1">{label}</p>
-          <p className="text-3xl font-black text-white tracking-tighter">{value}</p>
+        <div className="min-w-0">
+          <p className="text-[10px] font-black text-slate-600 uppercase tracking-[0.2em] mb-1 truncate">{label}</p>
+          <p className="text-3xl font-black text-white tracking-tighter truncate">{value}</p>
         </div>
         
         <div className="w-20 h-10 shrink-0">

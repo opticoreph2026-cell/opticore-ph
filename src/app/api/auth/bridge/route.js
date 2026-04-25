@@ -1,4 +1,4 @@
-import { signToken, setAuthCookie } from '@/lib/auth';
+import { signAccessToken, signRefreshToken, setAuthCookies } from '@/lib/auth';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-options';
 import { db } from '@/lib/db';
@@ -39,14 +39,18 @@ export async function GET(request) {
 
     // ─── LOGIN & REDIRECT ──────────────────────────────────────────────────────
     // Immediately sign the internal Optics Core Token using jose Web Crypto API
-    const token = await signToken({
+    const payload = {
       sub: client.id,
       email: client.email,
       role: client.role,
-      planTier: client.planTier
-    });
+      plan: client.planTier,
+      onboarding_complete: client.onboardingComplete ?? false,
+    };
 
-    await setAuthCookie(token);
+    const accessToken = await signAccessToken(payload);
+    const refreshToken = await signRefreshToken({ sub: client.id });
+
+    await setAuthCookies(client, accessToken, refreshToken);
 
     // Completely bypass OTP, since Google already authenticated them!
     return NextResponse.redirect(new URL('/dashboard', request.url));

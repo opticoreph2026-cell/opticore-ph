@@ -6,7 +6,7 @@
 
 import { NextResponse }  from 'next/server';
 import { getClientByEmail, updateClientPasswordById } from '@/lib/db';
-import { signToken, setAuthCookie, verifyPassword, hashPassword } from '@/lib/auth';
+import { signAccessToken, signRefreshToken, setAuthCookies, verifyPassword, hashPassword } from '@/lib/auth';
 import { checkRateLimit, getClientIp } from '@/lib/ratelimit';
 
 export async function POST(request) {
@@ -79,16 +79,19 @@ export async function POST(request) {
     await recordLogin(client.id);
   } catch (e) {}
 
-  const token = await signToken({
+  const payload = {
     sub:                client.id,
     email:              client.email,
     name:               client.name,
     role,
     plan:               client.planTier ?? 'starter',
     onboarding_complete: client.onboardingComplete ?? false,
-  });
+  };
 
-  setAuthCookie(token);
+  const accessToken = await signAccessToken(payload);
+  const refreshToken = await signRefreshToken({ sub: client.id });
+
+  await setAuthCookies(client, accessToken, refreshToken);
 
   return NextResponse.json({ success: true, role }, { status: 200 });
 }

@@ -14,7 +14,7 @@
 
 import { NextResponse }    from 'next/server';
 import { getClientByEmail, createNewClientRecord } from '@/lib/db';
-import { hashPassword, signToken, setAuthCookie } from '@/lib/auth';
+import { hashPassword, signAccessToken, signRefreshToken, setAuthCookies } from '@/lib/auth';
 import { sendWelcomeEmail } from '@/lib/email';
 import { checkRateLimit, getClientIp } from '@/lib/ratelimit';
 
@@ -112,15 +112,19 @@ export async function POST(request) {
   }
 
   // ── Issue JWT ─────────────────────────────────────────────────────────────
-  const token = await signToken({
+  const payload = {
     sub:                 client.id,
     email:               client.email,
     name:                client.name,
     role:                'client',
     plan:                client.planTier ?? 'starter',
     onboarding_complete: false,
-  });
-  setAuthCookie(token);
+  };
+
+  const accessToken = await signAccessToken(payload);
+  const refreshToken = await signRefreshToken({ sub: client.id });
+
+  await setAuthCookies(client, accessToken, refreshToken);
 
   // ── Send welcome email (non-blocking) ─────────────────────────────────────
   sendWelcomeEmail({ name: name.trim(), email: email.trim().toLowerCase() })

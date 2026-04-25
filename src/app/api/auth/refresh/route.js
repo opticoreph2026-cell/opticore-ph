@@ -1,42 +1,71 @@
 /**
  * POST /api/auth/refresh
- * Re-issues a fresh 24h JWT using latest DB data (plan, onboarding status, etc.)
- * Useful after a PayMongo upgrade webhook fires and the old JWT still shows 'starter'.
+ * Validates the refresh token and issues a new Access/Refresh pair.
+ * Implements token rotation for maximum security.
  */
 import { NextResponse } from 'next/server';
-import { getCurrentUser, signToken, setAuthCookie } from '@/lib/auth';
-import { getClientById } from '@/lib/db';
+import { cookies } from 'next/headers';
+import { verifyToken, signAccessToken, signRefreshToken, setAuthCookies } from '@/lib/auth';
+import { db } from '@/lib/db';
 
 export async function POST() {
   try {
-    const jwtUser = await getCurrentUser();
-    if (!jwtUser) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const cookieStore = await cookies();
+    const refreshToken = cookieStore.get('opticore_refresh')?.value;
+
+    if (!refreshToken) {
+      return NextResponse.json({ error: 'REFRESH_TOKEN_MISSING' }, { status: 401 });
     }
 
-    // Fetch latest state from DB — this picks up planTier changes from PayMongo webhooks
-    const client = await getClientById(jwtUser.sub);
-    if (!client) {
-      return NextResponse.json({ error: 'User not found.' }, { status: 404 });
+    // 1. Verify token signature and expiry (Web Crypto)
+    const payload = await verifyToken(refreshToken);
+    if (!payload) {
+      return NextResponse.json({ error: 'INVALID_REFRESH_TOKEN' }, { status: 401 });
     }
 
-    const newToken = await signToken({
+    // 2. Check DB persistence and revocation status
+    const dbToken = await db.refreshToken.findUnique({
+      where: { token: refreshToken },
+      include: { client: true }
+    });
+
+    if (!dbToken || dbToken.expiresAt < new Date()) {
+      // If token is found but expired, clean it up
+      if (dbToken) {
+        await db.refreshToken.delete({ where: { token: refreshToken } }).catch(() => {});
+      }
+      return NextResponse.json({ error: 'TOKEN_EXPIRED_OR_REVOKED' }, { status: 401 });
+    }
+
+    const client = dbToken.client;
+
+    // 3. Prepare new payload (synchronizes with latest DB state like planTier)
+    const newPayload = {
       sub:                 client.id,
       email:               client.email,
       name:                client.name,
       role:                client.role ?? 'client',
       plan:                client.planTier ?? 'starter',
       onboarding_complete: client.onboardingComplete ?? false,
-    });
+    };
 
-    await setAuthCookie(newToken);
+    // 4. Generate fresh pair
+    const newAccessToken = await signAccessToken(newPayload);
+    const newRefreshToken = await signRefreshToken({ sub: client.id });
+
+    // 5. Rotate Refresh Token: Delete old one to prevent reuse
+    await db.refreshToken.delete({ where: { token: refreshToken } });
+    
+    // 6. Set Cookies & Persist new refresh token
+    await setAuthCookies(client, newAccessToken, newRefreshToken);
 
     return NextResponse.json({
       success: true,
       plan: client.planTier ?? 'starter',
     });
+
   } catch (error) {
-    console.error('[Auth Refresh]:', error);
-    return NextResponse.json({ error: 'Failed to refresh session.' }, { status: 500 });
+    console.error('[Auth Refresh Engine Error]:', error);
+    return NextResponse.json({ error: 'INTERNAL_REFRESH_ERROR' }, { status: 500 });
   }
 }
