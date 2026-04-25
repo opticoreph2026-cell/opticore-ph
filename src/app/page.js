@@ -312,72 +312,28 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* ── Pricing Preview ────────────────────────────────────────── */}
+        {/* ── Secure Payment CTA ─────────────────────────────────────── */}
         <section className="py-24 px-4 bg-surface-900 border-t border-white/[0.04]">
-          <div className="max-w-5xl mx-auto">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight">
-                Deterministic Pricing
-              </h2>
-              <p className="text-text-muted mt-3">Start analyzing your footprint completely free.</p>
-            </div>
-            
-            <div className="grid md:grid-cols-3 gap-6">
-              {/* Starter */}
-              <div className="bg-surface-950 border border-white/[0.05] p-8 rounded-2xl flex flex-col">
-                <h3 className="text-xl font-bold text-white mb-1">Starter</h3>
-                <p className="text-sm text-text-faint mb-6">For individuals</p>
-                <div className="text-4xl font-black text-white mb-8">Free</div>
-                <ul className="space-y-4 mb-10 flex-1">
-                  {['1 AI bill scan/mo', '5 Appliances max', 'Basic alerts', '1 Property'].map(ft => (
-                    <li key={ft} className="flex items-center gap-3 text-sm text-text-muted">
-                      <ShieldCheck className="w-4 h-4 text-brand-500/50" /> {ft}
-                    </li>
-                  ))}
-                </ul>
-                <Link href="/signup" className="text-sm font-black uppercase tracking-widest text-center px-4 py-3 rounded-xl border border-white/10 text-white hover:bg-white/5 transition-all">Get Started</Link>
-              </div>
-              
-              {/* Pro */}
-              <div className="bg-white/[0.03] border border-amber-500/30 p-8 rounded-2xl relative flex flex-col shadow-[0_0_50px_rgba(245,158,11,0.05)] transform md:-translate-y-4 z-10 box-border">
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1.5 bg-gradient-to-r from-amber-500 to-amber-400 text-black text-[10px] font-black uppercase tracking-[0.2em] rounded-full whitespace-nowrap shadow-xl">
-                  Enterprise Grade
-                </div>
-                <h3 className="text-xl font-bold text-amber-400 mb-1 mt-2">Pro</h3>
-                <p className="text-sm text-text-muted mb-6">Full autonomous analytics</p>
-                <div className="flex items-end gap-1 mb-8">
-                  <span className="text-xl text-text-faint mb-1">₱</span>
-                  <span className="text-5xl font-black text-white">499</span>
-                  <span className="text-sm text-text-faint mb-2">/mo</span>
-                </div>
-                <ul className="space-y-4 mb-10 flex-1">
-                  {['Unlimited AI Vision', 'Water Leak Algorithm', 'LPG Empty Forecaster', 'Hardware Simulator'].map(ft => (
-                    <li key={ft} className="flex items-center gap-3 text-sm text-white">
-                      <ShieldCheck className="w-4 h-4 text-amber-400" /> {ft}
-                    </li>
-                  ))}
-                </ul>
-                <Link href="/signup" className="text-sm font-black uppercase tracking-widest text-center px-4 py-4 rounded-xl bg-gradient-to-r from-amber-500 to-amber-400 text-black hover:opacity-90 transition-all shadow-[0_5px_20px_rgba(245,158,11,0.2)]">Upgrade Plan</Link>
-              </div>
-              
-              {/* Business */}
-              <div className="bg-surface-950 border border-white/[0.05] p-8 rounded-2xl flex flex-col">
-                <h3 className="text-xl font-bold text-white mb-1">Business</h3>
-                <p className="text-sm text-text-faint mb-6">Multi-property scale</p>
-                <div className="flex items-end gap-1 mb-8">
-                  <span className="text-xl text-text-faint mb-1">₱</span>
-                  <span className="text-4xl font-black text-white">2,499</span>
-                  <span className="text-sm text-text-faint mb-2">/mo</span>
-                </div>
-                <ul className="space-y-4 mb-10 flex-1">
-                  {['Multiple Facilities', 'Aggregated Exporting', 'Team access', 'Priority API'].map(ft => (
-                    <li key={ft} className="flex items-center gap-3 text-sm text-text-muted">
-                      <ShieldCheck className="w-4 h-4 text-brand-500/50" /> {ft}
-                    </li>
-                  ))}
-                </ul>
-                <Link href="mailto:opticoreph2026@gmail.com?subject=Business Tier Inquiry — OptiCore PH" className="text-sm font-black uppercase tracking-widest text-center px-4 py-3 rounded-xl border border-white/10 text-white hover:bg-white/5 transition-all">Contact Sales</Link>
-              </div>
+          <div className="max-w-4xl mx-auto text-center">
+            <ShieldCheck className="w-12 h-12 text-brand-400 mx-auto mb-6" />
+            <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight mb-4">
+              Deterministic, Transparent Pricing
+            </h2>
+            <p className="text-text-muted text-lg mb-10 max-w-2xl mx-auto">
+              Start analyzing your footprint completely free. Upgrade securely via PayMongo when you need multiple properties, predictive AI, or enterprise scale.
+            </p>
+            <Link 
+              href="/pricing" 
+              className="inline-flex items-center gap-3 text-sm font-black uppercase tracking-widest px-8 py-4 rounded-xl text-black bg-white hover:bg-brand-400 transition-all shadow-[0_0_30px_rgba(255,255,255,0.1)] group"
+            >
+              View Pricing Plans <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </Link>
+            <div className="mt-8 flex items-center justify-center gap-4 text-xs font-bold text-text-faint">
+              <span>Secured by PayMongo</span>
+              <span className="w-1 h-1 rounded-full bg-white/20" />
+              <span>PCI-DSS Certified</span>
+              <span className="w-1 h-1 rounded-full bg-white/20" />
+              <span>Cancel Anytime</span>
             </div>
           </div>
         </section>
