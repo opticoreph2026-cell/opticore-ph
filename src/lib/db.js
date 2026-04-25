@@ -21,15 +21,10 @@ function sanitize(val) {
 const dbUrl = sanitize(rawUrl) || 'file:./dev.db';
 const authToken = sanitize(rawToken);
 
-// AGGRESSIVE INJECTION: Prisma's internal parser needs a valid URL even with adapters.
-// If remote, we use a dummy 'file:' URL to satisfy the 'sqlite' provider parser.
-if (dbUrl.startsWith('libsql://') || dbUrl.startsWith('https://')) {
-  process.env.DATABASE_URL = 'file:./dev.db';
-} else {
-  process.env.DATABASE_URL = dbUrl;
-}
-
 function makePrisma() {
+  // AGGRESSIVE INJECTION: Prisma 7 internal parser still needs a valid URL dummy
+  process.env.DATABASE_URL = 'file:./dev.db';
+
   try {
     // 1. Remote connection (Turso)
     if (dbUrl.startsWith('libsql://') || dbUrl.startsWith('https://')) {
