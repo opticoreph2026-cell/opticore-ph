@@ -29,6 +29,7 @@ module.exports = {
           emerald: '#10b981',
         },
         surface: {
+          1000: '#020204', // True Obsidian
           950: '#050508', // Deepest black
           900: '#0a0a0f', // Main dark
           850: '#111118', // Card background
