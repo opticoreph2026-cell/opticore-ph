@@ -24,10 +24,17 @@ const REFRESH_EXPIRY = '7d';  // Long-lived
 
 const BCRYPT_ROUNDS = Number(process.env.BCRYPT_ROUNDS ?? 12);
 
-/** Encode the secret as a Uint8Array for jose */
+/** Encode the JWT_SECRET as a Uint8Array for jose */
 function getSecret() {
   const secret = process.env.JWT_SECRET;
   if (!secret) throw new Error('JWT_SECRET environment variable is not set.');
+  return new TextEncoder().encode(secret);
+}
+
+/** Encode the JWT_REFRESH_SECRET for refresh tokens — falls back to JWT_SECRET if not set */
+function getRefreshSecret() {
+  const secret = process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET;
+  if (!secret) throw new Error('JWT_REFRESH_SECRET environment variable is not set.');
   return new TextEncoder().encode(secret);
 }
 
@@ -56,16 +63,31 @@ export async function signRefreshToken(payload) {
     .setIssuedAt()
     .setExpirationTime(REFRESH_EXPIRY)
     .setIssuer('opticore-ph')
-    .sign(getSecret());
+    .sign(getRefreshSecret());
 }
 
 /**
- * Verify a JWT string.
+ * Verify a JWT string using the ACCESS secret.
  */
 export async function verifyToken(token) {
   if (!token) return null;
   try {
     const { payload } = await jwtVerify(token, getSecret(), {
+      issuer: 'opticore-ph',
+    });
+    return payload;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Verify a REFRESH JWT string using the REFRESH secret.
+ */
+export async function verifyRefreshToken(token) {
+  if (!token) return null;
+  try {
+    const { payload } = await jwtVerify(token, getRefreshSecret(), {
       issuer: 'opticore-ph',
     });
     return payload;

@@ -5,7 +5,7 @@
  */
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { verifyToken, signAccessToken, signRefreshToken, setAuthCookies } from '@/lib/auth';
+import { verifyToken, verifyRefreshToken, signAccessToken, signRefreshToken, setAuthCookies } from '@/lib/auth';
 import { db } from '@/lib/db';
 
 export async function POST() {
@@ -35,8 +35,8 @@ async function handleRefresh() {
       return NextResponse.json({ error: 'REFRESH_TOKEN_MISSING' }, { status: 401 });
     }
 
-    // 1. Verify token signature and expiry (Web Crypto)
-    const payload = await verifyToken(refreshToken);
+    // 1. Verify token signature and expiry using the REFRESH secret
+    const payload = await verifyRefreshToken(refreshToken);
     if (!payload) {
       return NextResponse.json({ error: 'INVALID_REFRESH_TOKEN' }, { status: 401 });
     }

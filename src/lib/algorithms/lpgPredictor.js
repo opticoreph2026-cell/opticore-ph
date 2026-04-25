@@ -70,6 +70,15 @@ export async function predictLPGDepletion(clientId, propertyId) {
       }
     }
 
+    // Guard: if burn rate couldn't be established (all consecutive logs on same day), abort cleanly
+    if (!dailyBurnRateKg || dailyBurnRateKg <= 0) {
+      return {
+        status: 'insufficient_data',
+        message: 'Cannot calculate burn rate: all LPG logs have the same replacement date. Please log tanks on different days.',
+        activeTank: lpgHistory[lpgHistory.length - 1]
+      };
+    }
+
     // Determine current active tank
     const currentTank = lpgHistory[lpgHistory.length - 1];
     

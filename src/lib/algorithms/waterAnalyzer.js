@@ -36,6 +36,9 @@ export async function analyzeWaterUsage(clientId, propertyId) {
     const thresholdByFloor = avgHistorical * 1.10;
     const spikeThreshold = Math.max(thresholdByStdev, thresholdByFloor);
 
+    // Guard against zero average (e.g. only one historical reading with 0 m3)
+    if (avgHistorical <= 0) return { hasLeak: false, jump: 0 };
+
     // Deviation based on pure percentage for logging
     const percentageJump = (((currentReading.m3Used - avgHistorical) / avgHistorical) * 100).toFixed(0);
 
@@ -53,7 +56,7 @@ export async function analyzeWaterUsage(clientId, propertyId) {
 
       if (recentFixtures === 0) {
         // Unexplained spike! Trigger critical alert.
-        const msg = `Water consumption spiked by ${percentageJump}% (${currentReading.m3Used} m³) compared to your average Without any new fixtures logged. Check toilets and pipes for hidden leaks immediately.`;
+        const msg = `Water consumption spiked by ${percentageJump}% (${currentReading.m3Used} m³) compared to your 90-day average without any new fixtures logged. Check toilets and pipes for hidden leaks immediately.`;
         
         // Prevent dupes
         const existingAlert = await db.alert.findFirst({

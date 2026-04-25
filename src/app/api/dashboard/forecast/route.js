@@ -2,9 +2,9 @@ export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import { getCurrentUser } from '@/lib/auth';
 import { getClientById, getReadingsByClient, ensureDefaultProperty } from '@/lib/db';
-import { GoogleGenAI } from '@google/genai';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
+const ai = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
 
 export async function GET(request) {
   try {
@@ -61,11 +61,15 @@ export async function GET(request) {
     const result = await model.generateContent(prompt);
     const response = await result.response;
     let rawText = response.text()?.trim() || '{}';
-    if (rawText.startsWith('```')) {
-      rawText = rawText.replace(/^```(?:json)?\s*/, '').replace(/\s*```$/, '');
-    }
+    // Strip markdown code fences if present
+    rawText = rawText.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '').trim();
 
-    const forecastData = JSON.parse(rawText);
+    let forecastData;
+    try {
+      forecastData = JSON.parse(rawText);
+    } catch {
+      throw new Error('Forecast AI returned unparseable response: ' + rawText.substring(0, 100));
+    }
 
     return NextResponse.json({ success: true, data: forecastData });
   } catch (error) {

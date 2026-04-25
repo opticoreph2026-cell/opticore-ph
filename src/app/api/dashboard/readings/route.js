@@ -41,8 +41,10 @@ export async function POST(request) {
     }
 
     // 1. Math calculation for Effective Rate
-    const kwh = parseFloat(kwhUsed);
-    const bill = parseFloat(billAmountElectric);
+    const kwh = parseFloat(kwhUsed) || 0;
+    const bill = parseFloat(billAmountElectric) || 0;
+    const m3Float = parseFloat(m3Used) || 0;
+    const waterBill = parseFloat(billAmountWater) || 0;
     const effectiveRate = kwh > 0 ? (bill / kwh).toFixed(2) : 0;
 
     // 2. Fetch User Profile and Appliances concurrently
@@ -108,9 +110,9 @@ export async function POST(request) {
       client_id: user.sub,
       reading_date: readingDate,
       kwh_used: kwh,
-      m3_used: m3Used,
+      m3_used: m3Float,
       bill_amount_electric: bill,
-      bill_amount_water: billAmountWater,
+      bill_amount_water: waterBill,
       // Unbundled charges (null if manual entry)
       generation_charge,
       transmission_charge,
@@ -139,7 +141,8 @@ export async function POST(request) {
     const plan = clientProfile?.planTier || 'starter';
     try {
       const freshReadings = await getReadingsByClient(user.sub, activeProperty?.id);
-      const prevReading = freshReadings[1]; // index 0 is the one just created
+      // Bug #6 fix: find prev reading by explicitly excluding the new reading's ID
+      const prevReading = freshReadings.find(r => r.id !== reading.id);
 
       if (plan !== 'starter' && propertyAppliances.length > 0 && kwh > 0) {
         const attribution = calculateAttribution(kwh, propertyAppliances);
@@ -206,7 +209,7 @@ export async function POST(request) {
     }
 
     // 7. Water Leak detection (PRO only)
-    if (plan !== 'starter' && m3Used > 0) {
+    if (plan !== 'starter' && m3Float > 0) {
       await analyzeWaterUsage(user.sub, activeProperty?.id).catch(err => {
         console.error('[Water Analyzer Engine] Error:', err);
       });
