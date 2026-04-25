@@ -60,7 +60,7 @@ export default function Navbar() {
             <Link href="/login" className="btn-ghost text-sm px-4 py-2">
               Sign in
             </Link>
-            <Link href="/signup" className="btn-primary text-sm px-4 py-2">
+            <Link href="/pricing" className="btn-primary text-sm px-4 py-2">
               Get Started
             </Link>
           </div>
@@ -101,7 +101,7 @@ export default function Navbar() {
               );
             })}
             <Link
-              href="/signup"
+              href="/pricing"
               className="btn-primary w-full text-sm mt-2"
               onClick={() => setOpen(false)}
             >

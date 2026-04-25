@@ -10,7 +10,7 @@ export async function POST(request) {
     }
 
     const body = await request.json();
-    const { plan } = body;
+    const { plan, interval } = body;
 
     if (plan !== 'pro' && plan !== 'business') {
       return NextResponse.json({ error: 'Invalid plan selected' }, { status: 400 });
@@ -24,6 +24,7 @@ export async function POST(request) {
       clientId: user.sub,
       email: user.email,
       plan,
+      interval: interval || 'monthly',
       successUrl: `${baseUrl}/dashboard?upgraded=true`,
       cancelUrl: `${baseUrl}/pricing`,
     });

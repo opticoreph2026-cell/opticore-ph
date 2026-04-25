@@ -2,11 +2,9 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Eye, EyeOff, CircleAlert, ArrowRight } from 'lucide-react';
 import Spinner from '@/components/ui/Spinner';
-import { signIn } from 'next-auth/react';
 import Logo from '@/components/ui/Logo';
 
 function LoginForm() {
@@ -19,16 +17,13 @@ function LoginForm() {
   const [loading, setLoading] = useState(false);
   const [error,   setError]   = useState('');
 
-  // Handle URL errors and check existing session
+  // Handle URL error codes and check existing session
   useEffect(() => {
     const errCode = searchParams.get('error');
-    if (errCode === 'OAuthSignIn') setError('Could not sign in with Google. Please try again.');
-    else if (errCode === 'OAuthCallback') setError('Authentication failed. Please try again.');
-    else if (errCode === 'SessionExpired') setError('Your session has expired. Please sign in again.');
-    else if (errCode === 'AccountNotFound') setError('No OptiCore account found with that email.');
-    else if (errCode === 'SyncError') setError('Database synchronization failed. Please try again later.');
+    if (errCode === 'SessionExpired')   setError('Your session has expired. Please sign in again.');
+    else if (errCode === 'Unauthorized') setError('You need to sign in to access that page.');
 
-    // Quick check: if already logged in, move them along
+    // Quick check: if already logged in, redirect
     fetch('/api/auth/me').then(r => r.json()).then(data => {
       if (data.user) {
         router.push(data.user.role === 'admin' ? '/admin' : '/dashboard');
@@ -47,12 +42,16 @@ function LoginForm() {
         body:    JSON.stringify(form),
       });
       const data = await res.json();
-      if (!res.ok) { setError(data.error ?? 'Login failed. Please try again.'); return; }
+      if (!res.ok) {
+        setError(data.error ?? 'Login failed. Please try again.');
+        setLoading(false);
+        return;
+      }
+      // Successful login — redirect
       router.push(data.role === 'admin' ? '/admin' : from);
       router.refresh();
     } catch {
       setError('Network error. Please check your connection.');
-    } finally {
       setLoading(false);
     }
   };
@@ -79,7 +78,6 @@ function LoginForm() {
       {/* Main card */}
       <div className="relative z-10 flex-1 flex items-center justify-center px-4 py-8 animate-fade-up">
         <div className="w-full max-w-md">
-          {/* Card */}
           <div
             className="rounded-3xl p-8"
             style={{
@@ -111,35 +109,6 @@ function LoginForm() {
               </div>
             )}
 
-            {/* Google SSO */}
-            <div className="space-y-3 mb-5">
-              <button
-                onClick={() => signIn('google', { callbackUrl: '/api/auth/bridge' })}
-                className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-xl font-semibold text-sm text-text-primary transition-all duration-200"
-                style={{
-                  background: 'rgba(255,255,255,0.04)',
-                  border: '1px solid rgba(255,255,255,0.09)',
-                }}
-                onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.07)'}
-                onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.04)'}
-              >
-                <Image
-                  src="https://authjs.dev/img/providers/google.svg"
-                  alt="Google"
-                  width={18}
-                  height={18}
-                />
-                Continue with Google
-              </button>
-
-              {/* Divider */}
-              <div className="flex items-center gap-3 py-1">
-                <div className="flex-1 h-px" style={{ background: 'rgba(255,255,255,0.06)' }} />
-                <span className="text-[10px] font-black text-text-faint uppercase tracking-[0.18em]">or email</span>
-                <div className="flex-1 h-px" style={{ background: 'rgba(255,255,255,0.06)' }} />
-              </div>
-            </div>
-
             {/* Email/Password form */}
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
@@ -164,11 +133,12 @@ function LoginForm() {
                   <label className="text-[10px] font-black text-text-muted uppercase tracking-[0.16em]" htmlFor="password">
                     Password
                   </label>
+                  {/* Removed dead link to /auth/forgot-password — page does not exist */}
                   <Link
-                    href="/auth/forgot-password"
+                    href="/signup"
                     className="text-[10px] font-bold text-brand-400 hover:text-brand-300 hover:underline transition-colors"
                   >
-                    Forgot password?
+                    No account? Sign up
                   </Link>
                 </div>
                 <div className="relative">
@@ -197,7 +167,7 @@ function LoginForm() {
               <button
                 type="submit"
                 disabled={loading}
-                className="btn-primary w-full disabled:opacity-60 disabled:cursor-not-allowed mt-1 flex items-center gap-2"
+                className="btn-primary w-full disabled:opacity-60 disabled:cursor-not-allowed mt-1 flex items-center justify-center gap-2"
               >
                 {loading ? <Spinner size="sm" /> : <>Sign in <ArrowRight className="w-4 h-4" /></>}
               </button>

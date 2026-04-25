@@ -24,25 +24,38 @@ function authHeader() {
  * @param {string} params.clientId    - Airtable client record ID (used in metadata)
  * @param {string} params.email       - Customer email
  * @param {string} params.plan        - 'pro' | 'business'
+ * @param {string} params.interval    - 'monthly' | 'yearly'
  * @param {string} params.successUrl  - URL to redirect after successful payment
  * @param {string} params.cancelUrl   - URL to redirect if cancelled
  * @returns {Promise<{ checkoutUrl: string; sessionId: string }>}
  */
-export async function createCheckoutSession({ clientId, email, plan, successUrl, cancelUrl }) {
-  // Fix: prices MUST match /pricing page exactly (₱199 / ₱999)
-  // PayMongo amounts are in centavos: ₱199 = 19900, ₱999 = 99900
+export async function createCheckoutSession({ clientId, email, plan, interval = 'monthly', successUrl, cancelUrl }) {
+  // PayMongo amounts are in centavos: ₱499 = 49900
+  // Yearly gets ~20% discount (12 months at 10x monthly price)
   const PRICES = {
-    pro:      49900,   // ₱499.00/month
-    business: 249900,  // ₱2,499.00/month
+    pro: {
+      monthly: 49900,
+      yearly:  479000, // ₱4,790 (approx 20% off)
+    },
+    business: {
+      monthly: 249900,
+      yearly:  2399000, // ₱23,990 (approx 20% off)
+    },
   };
 
   const DESCRIPTIONS = {
-    pro:      'OptiCore PH — Pro Plan (₱499/month)',
-    business: 'OptiCore PH — Business Plan (₱2,499/month)',
+    pro: {
+      monthly: 'OptiCore PH — Pro Plan (₱499/mo)',
+      yearly:  'OptiCore PH — Pro Plan (₱4,790/yr)',
+    },
+    business: {
+      monthly: 'OptiCore PH — Business Plan (₱2,499/mo)',
+      yearly:  'OptiCore PH — Business Plan (₱23,990/yr)',
+    },
   };
 
-  const amount = PRICES[plan];
-  if (!amount) throw new Error(`Unknown plan: ${plan}`);
+  const amount = PRICES[plan]?.[interval];
+  if (!amount) throw new Error(`Unknown plan or interval: ${plan} / ${interval}`);
 
   const body = {
     data: {
@@ -50,7 +63,7 @@ export async function createCheckoutSession({ clientId, email, plan, successUrl,
         billing: { email },
         line_items: [
           {
-            name:        DESCRIPTIONS[plan],
+            name:        DESCRIPTIONS[plan][interval],
             amount,
             currency:    'PHP',
             quantity:    1,
@@ -62,6 +75,7 @@ export async function createCheckoutSession({ clientId, email, plan, successUrl,
         metadata: {
           client_id: clientId,
           plan,
+          interval,
         },
         send_email_receipt: true,
       },

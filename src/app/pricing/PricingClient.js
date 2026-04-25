@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Check, Zap, ChevronDown, Loader2, Sparkles, Shield, Building2 } from 'lucide-react';
+import { Check, Zap, ArrowRight, Loader2, Sparkles, Shield, Building2 } from 'lucide-react';
 import Navbar from '@/components/ui/Navbar';
 import Footer from '@/components/ui/Footer';
 import Toast from '@/components/ui/Toast';
@@ -38,7 +38,7 @@ const PLANS = [
     icon:      Sparkles,
     iconColor: 'text-brand-400',
     iconBg:    'bg-brand-500/15',
-    cta:       'Start Pro Trial',
+    cta:       'Upgrade to Pro',
     href:      '/signup?plan=pro',
     features: [
       'Everything in Starter',
@@ -67,7 +67,7 @@ const PLANS = [
       'Predictive AI Forecasting',
       'Peer-to-Peer Benchmarking',
       '3+ Property scopes',
-      'Max-Tier Gemini 2.5 Flash Analytics',
+      'Max-Tier Gemini 1.5 Flash Analytics',
       'White-glove Support',
     ],
   },
@@ -101,8 +101,8 @@ function FAQItem({ q, a, isOpen, onClick }) {
         className="w-full flex items-center justify-between py-5 text-left group"
       >
         <span className="font-semibold text-text-primary group-hover:text-brand-400 transition-colors">{q}</span>
-        <ChevronDown
-          className={`w-4 h-4 text-text-muted transition-transform duration-200 shrink-0 ml-4 ${isOpen ? 'rotate-180 text-brand-400' : ''}`}
+        <ArrowRight
+          className={`w-4 h-4 text-text-muted transition-transform duration-200 shrink-0 ml-4 ${isOpen ? 'rotate-90 text-brand-400' : ''}`}
         />
       </button>
       <div className={`grid transition-all duration-200 ease-out ${isOpen ? 'grid-rows-[1fr] opacity-100 pb-5' : 'grid-rows-[0fr] opacity-0'}`}>
@@ -131,19 +131,29 @@ export default function PricingClient() {
   }, []);
 
   async function handleCheckout(priceId) {
-    if (!isLoggedIn) { window.location.href = '/signup'; return; }
+    if (!isLoggedIn) { 
+      window.location.href = `/signup?plan=${priceId}`; 
+      return; 
+    }
     setLoadingPlan(priceId);
     try {
       const res  = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ plan: priceId }),
+        body: JSON.stringify({ 
+          plan: priceId,
+          interval: isYearly ? 'yearly' : 'monthly'
+        }),
       });
       const data = await res.json();
       if (data.url) window.location.href = data.url;
-      else { setToastMsg('Could not start checkout. Please try again.'); setToastType('error'); }
+      else { 
+        setToastMsg(data.error ?? 'Could not start checkout. Please try again.'); 
+        setToastType('error'); 
+      }
     } catch {
-      setToastMsg('Network error. Please try again.'); setToastType('error');
+      setToastMsg('Network error. Please try again.'); 
+      setToastType('error');
     } finally {
       setLoadingPlan(null);
     }

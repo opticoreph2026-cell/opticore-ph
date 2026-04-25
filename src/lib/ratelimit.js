@@ -34,20 +34,21 @@ const MAX_HITS   = 10;              // max attempts per window
 /**
  * Check the rate limit for a given identifier (e.g. IP address or email).
  * @param {string} identifier
+ * @param {number} [maxHits] - Optional per-call override (defaults to MAX_HITS)
  * @returns {{ success: boolean; remaining: number; retryAfterMs: number }}
  */
-export function checkRateLimit(identifier) {
+export function checkRateLimit(identifier, maxHits = MAX_HITS) {
   const now = Date.now();
   const entry = store.get(identifier);
 
   // No existing entry or window has expired → allow and reset
   if (!entry || now >= entry.resetAt) {
     store.set(identifier, { count: 1, resetAt: now + WINDOW_MS });
-    return { success: true, remaining: MAX_HITS - 1, retryAfterMs: 0 };
+    return { success: true, remaining: maxHits - 1, retryAfterMs: 0 };
   }
 
   // Still within the window
-  if (entry.count >= MAX_HITS) {
+  if (entry.count >= maxHits) {
     return {
       success: false,
       remaining: 0,
@@ -56,7 +57,7 @@ export function checkRateLimit(identifier) {
   }
 
   entry.count += 1;
-  return { success: true, remaining: MAX_HITS - entry.count, retryAfterMs: 0 };
+  return { success: true, remaining: maxHits - entry.count, retryAfterMs: 0 };
 }
 
 /**

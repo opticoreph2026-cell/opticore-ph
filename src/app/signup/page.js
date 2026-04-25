@@ -1,12 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import Image from 'next/image';
-import { Check, TriangleAlert, ArrowRight, Eye, EyeOff } from 'lucide-react';
+import { Check, TriangleAlert, ArrowRight, Eye, EyeOff, Sparkles } from 'lucide-react';
 import Spinner from '@/components/ui/Spinner';
-import { signIn } from 'next-auth/react';
 import Logo from '@/components/ui/Logo';
 
 export default function SignupPage() {
@@ -19,6 +17,8 @@ export default function SignupPage() {
   const [error,    setError]    = useState('');
   const [success,  setSuccess]  = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const planParam = searchParams.get('plan'); // e.g. 'pro', 'business'
 
   // Redirect if already logged in
   useEffect(() => {
@@ -32,24 +32,39 @@ export default function SignupPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    if (form.password !== form.confirm) { setError('Passwords do not match.'); return; }
+    if (form.password !== form.confirm) {
+      setError('Passwords do not match.');
+      return;
+    }
+    if (form.password.length < 8) {
+      setError('Password must be at least 8 characters.');
+      return;
+    }
     setLoading(true);
     try {
       const res  = await fetch('/api/auth/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: form.name, email: form.email, password: form.password, consent: form.consent }),
+        body: JSON.stringify({
+          name: form.name,
+          email: form.email,
+          password: form.password,
+          consent: form.consent,
+          plan: planParam, // forward plan hint to backend
+        }),
       });
       const data = await res.json();
-      if (!res.ok) { setError(data.error ?? 'Failed to create account.'); }
-      else {
+      if (!res.ok) {
+        setError(data.error ?? 'Failed to create account.');
+        setLoading(false);
+      } else {
         setSuccess(true);
-        setTimeout(() => router.push(data.redirect || '/onboarding'), 1500);
+        // Redirect after short animation
+        setTimeout(() => router.push(data.redirect || '/onboarding'), 1200);
       }
     } catch {
       setError('An unexpected error occurred. Please try again.');
-    } finally {
-      if (!success) setLoading(false);
+      setLoading(false);
     }
   };
 
@@ -68,8 +83,22 @@ export default function SignupPage() {
             <span className="font-bold text-sm shimmer-text">OptiCore PH</span>
           </Link>
           <h1 className="text-2xl font-bold text-text-primary tracking-tight">Create your account</h1>
-          <p className="text-sm text-text-muted mt-1.5">Start optimizing your utility bills in minutes.</p>
+          <p className="text-sm text-text-muted mt-1.5">
+            {planParam === 'pro' && 'You\'re signing up for the Pro plan.'}
+            {planParam === 'business' && 'You\'re signing up for the Business plan.'}
+            {!planParam && 'Start optimizing your utility bills in minutes.'}
+          </p>
         </div>
+
+        {/* Plan badge (if plan selected from pricing) */}
+        {planParam && (
+          <div className="flex justify-center mb-5">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-brand-500/30 bg-brand-500/10 text-[11px] font-bold text-brand-400">
+              <Sparkles className="w-3 h-3" />
+              {planParam === 'pro' ? 'Pro Plan Selected' : 'Business Plan Selected'} — upgrade after signup
+            </div>
+          </div>
+        )}
 
         {/* Main card */}
         <div
@@ -99,25 +128,6 @@ export default function SignupPage() {
             </div>
           ) : (
             <div className="p-7 space-y-5">
-              {/* Google SSO */}
-              <button
-                onClick={() => signIn('google', { callbackUrl: '/api/auth/bridge' })}
-                className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-xl font-semibold text-sm text-text-primary transition-all duration-200"
-                style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.09)' }}
-                onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.07)'}
-                onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.04)'}
-              >
-                <Image src="https://authjs.dev/img/providers/google.svg" alt="Google" width={18} height={18} />
-                Continue with Google
-              </button>
-
-              {/* Divider */}
-              <div className="flex items-center gap-3">
-                <div className="flex-1 h-px" style={{ background: 'rgba(255,255,255,0.06)' }} />
-                <span className="text-[10px] font-black text-text-faint uppercase tracking-[0.18em]">or email signup</span>
-                <div className="flex-1 h-px" style={{ background: 'rgba(255,255,255,0.06)' }} />
-              </div>
-
               {/* Form */}
               <form onSubmit={handleSubmit} className="space-y-4">
                 {error && (
@@ -134,7 +144,8 @@ export default function SignupPage() {
                   <input
                     id="name"
                     name="name"
-                    required className="input-field capitalize"
+                    required
+                    className="input-field capitalize"
                     placeholder="Juan Dela Cruz"
                     value={form.name}
                     onChange={e => setForm({ ...form, name: e.target.value })}
@@ -146,35 +157,40 @@ export default function SignupPage() {
                   <input
                     id="email"
                     name="email"
-                    required type="email" className="input-field"
+                    required
+                    type="email"
+                    className="input-field"
                     placeholder="you@example.com"
                     value={form.email}
                     onChange={e => setForm({ ...form, email: e.target.value })}
                   />
                 </div>
 
+                {/* Fixed: removed extra wrapping div (was causing layout bug) */}
                 <div className="grid grid-cols-2 gap-3">
-                  <div>
                   <div>
                     <label htmlFor="password" className="block text-[10px] font-black text-text-muted uppercase tracking-[0.16em] mb-2">Password</label>
                     <div className="relative">
                       <input
                         id="password"
                         name="password"
-                        required type={showPw ? 'text' : 'password'}
+                        required
+                        type={showPw ? 'text' : 'password'}
+                        minLength={8}
                         className="input-field pr-10"
                         placeholder="••••••••"
                         value={form.password}
                         onChange={e => setForm({ ...form, password: e.target.value })}
                       />
                       <button
-                        type="button" onClick={() => setShowPw(p => !p)}
+                        type="button"
+                        onClick={() => setShowPw(p => !p)}
                         className="absolute right-3 top-1/2 -translate-y-1/2 text-text-faint hover:text-text-muted transition-colors"
+                        aria-label="Toggle password visibility"
                       >
                         {showPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                       </button>
                     </div>
-                  </div>
                   </div>
                   <div>
                     <label htmlFor="confirm" className="block text-[10px] font-black text-text-muted uppercase tracking-[0.16em] mb-2">Confirm</label>
@@ -182,15 +198,18 @@ export default function SignupPage() {
                       <input
                         id="confirm"
                         name="confirm"
-                        required type={showCPw ? 'text' : 'password'}
+                        required
+                        type={showCPw ? 'text' : 'password'}
                         className="input-field pr-10"
                         placeholder="••••••••"
                         value={form.confirm}
                         onChange={e => setForm({ ...form, confirm: e.target.value })}
                       />
                       <button
-                        type="button" onClick={() => setShowCPw(p => !p)}
+                        type="button"
+                        onClick={() => setShowCPw(p => !p)}
                         className="absolute right-3 top-1/2 -translate-y-1/2 text-text-faint hover:text-text-muted transition-colors"
+                        aria-label="Toggle confirm password visibility"
                       >
                         {showCPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                       </button>
@@ -203,7 +222,8 @@ export default function SignupPage() {
                   <input
                     id="consent"
                     name="consent"
-                    type="checkbox" required
+                    type="checkbox"
+                    required
                     className="mt-0.5 w-4 h-4 rounded border-white/10 bg-white/5 text-brand-500 focus:ring-brand-500/20 shrink-0"
                     checked={form.consent}
                     onChange={e => setForm({ ...form, consent: e.target.checked })}
@@ -218,7 +238,8 @@ export default function SignupPage() {
                 </label>
 
                 <button
-                  type="submit" disabled={loading}
+                  type="submit"
+                  disabled={loading}
                   className="btn-primary w-full mt-1 flex items-center justify-center gap-2 disabled:opacity-60"
                 >
                   {loading ? <Spinner size="sm" /> : <>Create Account <ArrowRight className="w-4 h-4" /></>}

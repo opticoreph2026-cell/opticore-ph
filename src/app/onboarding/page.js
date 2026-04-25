@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { CheckCircle, ArrowRight, Zap, Target, Cpu, ChevronRight } from 'lucide-react';
+import { CheckCircle, ArrowRight, Zap, Target, Cpu, ChevronRight, AlertCircle } from 'lucide-react';
 import Spinner from '@/components/ui/Spinner';
 
 export default function OnboardingWizard() {
@@ -10,6 +10,7 @@ export default function OnboardingWizard() {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(true);
+  const [saveError, setSaveError] = useState('');
   
   const [electricProviders, setElectricProviders] = useState([]);
   const [waterProviders, setWaterProviders] = useState([]);
@@ -31,7 +32,7 @@ export default function OnboardingWizard() {
         setElectricProviders(eData.providers ?? []);
         setWaterProviders(wData.providers ?? []);
       } catch {
-        // Silently fail
+        // Silently fail — user can still proceed without provider lists
       } finally {
         setFetching(false);
       }
@@ -41,9 +42,10 @@ export default function OnboardingWizard() {
 
   const handleNext = async () => {
     if (step === 1) {
+      setSaveError('');
       setLoading(true);
       try {
-        await fetch('/api/dashboard/data', {
+        const res = await fetch('/api/dashboard/data', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ 
@@ -52,9 +54,17 @@ export default function OnboardingWizard() {
             waterProvider: form.waterProvider 
           })
         });
-      } catch { /* ignore */ }
-      setLoading(false);
-      setStep(2);
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({}));
+          // Non-fatal: warn but still advance
+          console.warn('[Onboarding] Failed to save providers:', data.error);
+        }
+      } catch {
+        // Network error — non-fatal, advance anyway
+      } finally {
+        setLoading(false);
+        setStep(2);
+      }
     } else {
       handleComplete();
     }
@@ -62,15 +72,22 @@ export default function OnboardingWizard() {
 
   const handleComplete = async () => {
     setLoading(true);
+    setSaveError('');
     try {
-      await fetch('/api/dashboard/data', {
+      const res = await fetch('/api/dashboard/data', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ section: 'onboarding-complete' })
       });
-      router.push('/dashboard');
-      router.refresh();
+      if (!res.ok) {
+        setSaveError('Could not finalize setup. Please try again.');
+        setLoading(false);
+        return;
+      }
+      // Use replace to prevent back-button loop to onboarding
+      router.replace('/dashboard');
     } catch {
+      setSaveError('Network error. Please try again.');
       setLoading(false);
     }
   };
@@ -137,6 +154,15 @@ export default function OnboardingWizard() {
         {/* Main card */}
         <div className="bento-card p-8" style={{ boxShadow: '0 24px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.06)' }}>
 
+          {/* Error banner */}
+          {saveError && (
+            <div className="flex items-center gap-2.5 p-3 mb-5 rounded-xl animate-fade-up"
+              style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)' }}>
+              <AlertCircle className="w-4 h-4 text-red-400 shrink-0" />
+              <p className="text-xs text-red-300">{saveError}</p>
+            </div>
+          )}
+
           {/* Step 1: Providers */}
           {step === 1 && (
             <div className="space-y-6">
@@ -150,7 +176,7 @@ export default function OnboardingWizard() {
                 <p className="text-[10px] font-black text-brand-500/70 uppercase tracking-[0.2em] mb-2">Step 1 of 2</p>
                 <h2 className="text-2xl font-bold text-text-primary mb-2">Set Your Utility Providers</h2>
                 <p className="text-sm text-text-muted leading-relaxed max-w-sm mx-auto">
-                  OptiCore AI needs your providers to calibrate accurate tariff rates and benchmark your consumption.
+                  OptiCore AI uses your providers to calibrate accurate tariff rates and benchmark your consumption.
                 </p>
               </div>
 
@@ -161,8 +187,10 @@ export default function OnboardingWizard() {
               ) : (
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-[10px] font-black text-text-muted uppercase tracking-[0.18em] mb-2 flex items-center gap-1.5">
-                      <Zap className="w-3 h-3 text-brand-500" /> Electricity Provider
+                    <label className="block text-[10px] font-black text-text-muted uppercase tracking-[0.18em] mb-2">
+                      <span className="flex items-center gap-1.5">
+                        <Zap className="w-3 h-3 text-brand-500" /> Electricity Provider
+                      </span>
                     </label>
                     <select
                       className="input-field"
@@ -177,8 +205,10 @@ export default function OnboardingWizard() {
                   </div>
 
                   <div>
-                    <label className="block text-[10px] font-black text-text-muted uppercase tracking-[0.18em] mb-2 flex items-center gap-1.5">
-                      <span className="text-blue-400">💧</span> Water Provider
+                    <label className="block text-[10px] font-black text-text-muted uppercase tracking-[0.18em] mb-2">
+                      <span className="flex items-center gap-1.5">
+                        <span>💧</span> Water Provider
+                      </span>
                     </label>
                     <select
                       className="input-field"
@@ -197,7 +227,7 @@ export default function OnboardingWizard() {
               <button
                 onClick={handleNext}
                 disabled={loading || fetching}
-                className="btn-primary w-full mt-2"
+                className="btn-primary w-full mt-2 flex items-center justify-center gap-2"
               >
                 {loading ? <Spinner size="sm" /> : <>Continue <ArrowRight className="w-4 h-4" /></>}
               </button>
@@ -251,7 +281,7 @@ export default function OnboardingWizard() {
               <button
                 onClick={handleComplete}
                 disabled={loading}
-                className="btn-primary w-full"
+                className="btn-primary w-full flex items-center justify-center gap-2"
               >
                 {loading ? <Spinner size="sm" /> : <>Go to Dashboard <ArrowRight className="w-4 h-4" /></>}
               </button>

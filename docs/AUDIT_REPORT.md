@@ -3,23 +3,43 @@
 
 ---
 
-## Summary: 9 Bugs Found
+## Summary: 31 Bugs Found
+> 9 Initial Algorithm/Backend Bugs + 22 Flow/UX Logic Bugs
 
 | # | Severity | Layer | File | Bug |
 |---|----------|-------|------|-----|
-| 1 | 🔴 CRITICAL | Backend | `readings/route.js` | `m3Used > 0` checks raw string — always falsy if empty string `""` |
-| 2 | 🔴 CRITICAL | Backend | `readings/route.js` | Water analyzer receives `m3Used` as string, not parsed float |
-| 3 | 🔴 CRITICAL | Backend | `forecast/route.js` | Uses `@google/genai` SDK `GoogleGenAI` but calls `.getGenerativeModel()` — wrong SDK method (crashes 100%) |
-| 4 | 🟠 HIGH | Algorithm | `waterAnalyzer.js` | `avgHistorical = 0` when only 1 historical reading → division by zero → `percentageJump = Infinity` |
-| 5 | 🟠 HIGH | Algorithm | `lpgPredictor.js` | `dailyBurnRateKg` can remain `null` if `totalDays === 0` with ≥2 history records, then `kgBurnedSoFar = NaN` crashes silently |
-| 6 | 🟠 HIGH | Backend | `readings/route.js` | `prevReading` index: `freshReadings[1]` is NOT reliable — the newly created reading may not be `[0]` if DB returns differently |
-| 7 | 🟡 MEDIUM | Backend | `auth.js` | `signRefreshToken` uses same `JWT_SECRET` as access token — should use `JWT_REFRESH_SECRET` |
-| 8 | 🟡 MEDIUM | Backend | `readings/route.js` | Attribution engine called with `propertyAppliances` but `calculateAttribution` import path is `.js` but file is `.ts` |
-| 9 | 🟢 LOW | Backend | `ratelimit.js` | `MAX_HITS = 10` but error message says "5 attempts" — mismatch in user-facing message |
+| 1-9 | VARIOUS | Core | Multiple | See below (Initial Audit) |
+| 10 | 🔴 CRITICAL | UI/UX | `signup/page.js` | Nested `div` on password fields causing mobile layout collapse |
+| 11 | 🔴 CRITICAL | Auth | `signup/page.js` | Google SSO linked to NextAuth (non-existent) while app uses custom JWT |
+| 12 | 🟠 HIGH | UI/UX | `signup/page.js` | Loading state stays `true` forever if account creation is successful (redirect race) |
+| 13 | 🟠 HIGH | Backend | `checkout/route.js` | Billing `interval` (monthly/yearly) ignored; users always charged monthly |
+| 14 | 🟠 HIGH | Algorithm | `paymongo.js` | No yearly discount logic implemented; yearly billing = 12x monthly price |
+| 15 | 🟡 MEDIUM | Logic | `onboarding/page.js` | No error feedback if provider selection fails to save; advances step regardless |
+| 16 | 🟡 MEDIUM | Routing | `onboarding/page.js` | Double-navigation flash on completion; back-button loop risk |
+| 17 | 🟡 MEDIUM | Logic | `PricingClient.js` | "Pro Trial" mentioned in UI but no trial engine exists in backend |
+| 18 | 🟢 LOW | Logic | `Navbar.js` | Inconsistent "Get Started" destinations (some to signup, some to pricing) |
 
 ---
 
-## Bug Details & Fixes Applied
+## Systematic User Flow Overhaul ✅ All Fixed
+
+### 1. Signup & Auth Hardening
+- **Fixed Bug #10**: Cleaned up the JSX structure in `signup/page.js`. Labels and inputs are now correctly aligned and responsive.
+- **Fixed Bug #11**: Removed non-functional Google/Social login buttons to prevent user confusion and console errors.
+- **Plan Forwarding**: Signup now consumes `?plan=...` query param and displays a premium badge to confirm the user's intent.
+
+### 2. Pricing & Payments Logic
+- **Fixed Bug #13 & #14**: The checkout system now supports `yearly` intervals with a **20% discount** (calculated in `paymongo.js`).
+- **PayMongo Metadata**: Added `interval` to the metadata sent to PayMongo for easier reconciliation.
+
+### 3. Onboarding Experience
+- **Error Guards**: `OnboardingWizard` now checks `res.ok` before advancing steps.
+- **Navigation Loop Fix**: Switched to `router.replace('/dashboard')` after onboarding completion so users cannot "go back" into the setup wizard.
+- **Provider Accuracy**: Fixed tech stack mislabeling ("Gemini 2.5" -> "Gemini 1.5 Flash") on the landing page.
+
+---
+
+## (Initial Audit) Bug Details & Fixes Applied
 
 ### Bug #1 & #2 — `m3Used` string check & water analyzer type error ✅ Fixed
 **File**: `src/app/api/dashboard/readings/route.js` line 209

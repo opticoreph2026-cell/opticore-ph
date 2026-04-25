@@ -114,11 +114,16 @@ const FEATURES = [
 ];
 
 const TECH_STACK = [
-  { label: 'Gemini 2.5 Flash', desc: 'Multimodal Parsing' },
+  { label: 'Gemini 1.5 Flash', desc: 'Multimodal Parsing' },
   { label: 'Next.js 14', desc: 'App Router' },
   { label: 'LibSQL', desc: 'Edge Database' },
   { label: 'Fuse.js', desc: 'Fuzzy Catalog Search' },
 ];
+
+export const metadata = {
+  title: 'OptiCore PH — AI Utility Intelligence for the Philippines',
+  description: 'Optimize your electricity, water, and LPG bills using Gemini AI and deterministic math. Free to start.',
+};
 
 export default function LandingPage() {
   return (
@@ -352,7 +357,7 @@ export default function LandingPage() {
                     </li>
                   ))}
                 </ul>
-                <Link href="/signup" className="text-sm font-black uppercase tracking-widest text-center px-4 py-4 rounded-xl bg-gradient-to-r from-amber-500 to-amber-400 text-black hover:opacity-90 transition-all shadow-[0_5px_20px_rgba(245,158,11,0.2)]">Upgrade Sub</Link>
+                <Link href="/signup" className="text-sm font-black uppercase tracking-widest text-center px-4 py-4 rounded-xl bg-gradient-to-r from-amber-500 to-amber-400 text-black hover:opacity-90 transition-all shadow-[0_5px_20px_rgba(245,158,11,0.2)]">Upgrade Plan</Link>
               </div>
               
               {/* Business */}
