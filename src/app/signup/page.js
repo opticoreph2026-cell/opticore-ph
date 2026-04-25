@@ -20,6 +20,15 @@ export default function SignupPage() {
   const [success,  setSuccess]  = useState(false);
   const router = useRouter();
 
+  // Redirect if already logged in
+  useEffect(() => {
+    fetch('/api/auth/me').then(r => r.json()).then(data => {
+      if (data.user) {
+        router.push(data.user.role === 'admin' ? '/admin' : '/dashboard');
+      }
+    }).catch(() => {});
+  }, [router]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -92,7 +101,7 @@ export default function SignupPage() {
             <div className="p-7 space-y-5">
               {/* Google SSO */}
               <button
-                onClick={() => signIn('google')}
+                onClick={() => signIn('google', { callbackUrl: '/api/auth/bridge' })}
                 className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-xl font-semibold text-sm text-text-primary transition-all duration-200"
                 style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.09)' }}
                 onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.07)'}

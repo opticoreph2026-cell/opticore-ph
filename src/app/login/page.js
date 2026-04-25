@@ -19,7 +19,7 @@ function LoginForm() {
   const [loading, setLoading] = useState(false);
   const [error,   setError]   = useState('');
 
-  // Handle URL errors (e.g. from NextAuth)
+  // Handle URL errors and check existing session
   useEffect(() => {
     const errCode = searchParams.get('error');
     if (errCode === 'OAuthSignIn') setError('Could not sign in with Google. Please try again.');
@@ -27,7 +27,14 @@ function LoginForm() {
     else if (errCode === 'SessionExpired') setError('Your session has expired. Please sign in again.');
     else if (errCode === 'AccountNotFound') setError('No OptiCore account found with that email.');
     else if (errCode === 'SyncError') setError('Database synchronization failed. Please try again later.');
-  }, [searchParams]);
+
+    // Quick check: if already logged in, move them along
+    fetch('/api/auth/me').then(r => r.json()).then(data => {
+      if (data.user) {
+        router.push(data.user.role === 'admin' ? '/admin' : '/dashboard');
+      }
+    }).catch(() => {});
+  }, [searchParams, router]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -107,7 +114,7 @@ function LoginForm() {
             {/* Google SSO */}
             <div className="space-y-3 mb-5">
               <button
-                onClick={() => signIn('google')}
+                onClick={() => signIn('google', { callbackUrl: '/api/auth/bridge' })}
                 className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-xl font-semibold text-sm text-text-primary transition-all duration-200"
                 style={{
                   background: 'rgba(255,255,255,0.04)',

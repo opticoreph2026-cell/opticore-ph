@@ -39,7 +39,7 @@ const PLANS = [
     iconColor: 'text-brand-400',
     iconBg:    'bg-brand-500/15',
     cta:       'Start Pro Trial',
-    href:      '/signup',
+    href:      '/signup?plan=pro',
     features: [
       'Everything in Starter',
       'Weather & Climate Analytics',
@@ -52,15 +52,15 @@ const PLANS = [
   },
   {
     name:      'Business',
-    priceId:   'biz',
+    priceId:   'business',
     basePrice: 2499,
     tagline:   'For property managers, SMEs & sub-metering.',
     highlight: false,
     icon:      Building2,
     iconColor: 'text-blue-400',
     iconBg:    'bg-blue-500/10',
-    cta:       'Contact Sales',
-    href:      'mailto:opticoreph2026@gmail.com',
+    cta:       'Upgrade to Business',
+    href:      '/signup?plan=business',
     features: [
       'Everything in Pro',
       'Predictive AI Forecasting',
@@ -288,10 +288,6 @@ export default function PricingClient() {
                         >
                           {plan.cta}
                         </Link>
-                      ) : plan.priceId === 'biz' ? (
-                        <a href={plan.href} className="btn-ghost w-full text-center">
-                          {plan.cta}
-                        </a>
                       ) : (
                         <button
                           onClick={() => handleCheckout(plan.priceId)}

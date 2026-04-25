@@ -55,6 +55,11 @@ export const authOptions = {
     },
     
     async redirect({ url, baseUrl }) {
+      // If the URL is absolute and on the same origin, allow it
+      if (url.startsWith(baseUrl)) return url;
+      // If the URL is relative, allow it
+      if (url.startsWith('/')) return `${baseUrl}${url}`;
+      // Default to our internal bridge for social-to-custom-jwt conversion
       return `${baseUrl}/api/auth/bridge`;
     }
   },

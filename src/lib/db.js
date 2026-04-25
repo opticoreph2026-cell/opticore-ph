@@ -573,7 +573,7 @@ export async function getAdminKPIs() {
     db.alert.count({ where: { isRead: false } }),
   ]);
 
-  const mrr = (pro * 199) + (business * 999);
+  const mrr = (pro * 499) + (business * 2499);
 
   return {
     totalClients,
