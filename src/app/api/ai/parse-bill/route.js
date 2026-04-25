@@ -107,15 +107,9 @@ export async function POST(request) {
 
     const plan = client.planTier ?? 'starter';
 
-    if (plan === 'starter') {
-      const now = new Date();
-      if (client.lastScanReset && (now - new Date(client.lastScanReset)) > 30 * 24 * 60 * 60 * 1000) {
-        await resetClientScanQuota(client.id);
-        client.scanCount = 0;
-      }
-      if (client.scanCount >= 3) {
+      if (client.scanCount >= 1) {
         return NextResponse.json(
-          { error: 'Upgrade required. You have reached your 3 free AI scans for the month.' }, 
+          { error: 'QUOTA_EXCEEDED', message: 'You have reached your 1 free AI scan limit for this month. Upgrade to Pro for unlimited scans.' }, 
           { status: 403 }
         );
       }
@@ -251,7 +245,7 @@ export async function POST(request) {
       success: true,
       data: parsed,
       meta: {
-        model: 'gemini-2.5-flash',
+        model: 'gemini-1.5-flash',
         processingTimeMs: elapsed,
       },
     });

@@ -15,7 +15,8 @@ import {
   updateAppliance,
   deleteAppliance,
   getActiveProperty,
-  ensureDefaultProperty
+  ensureDefaultProperty,
+  getClientById
 } from '@/lib/db';
 
 // ── GET — list all appliances for this user ───────────────────────────────────
@@ -49,6 +50,20 @@ export async function POST(request) {
   }
 
   try {
+    const activeProperty = await getActiveProperty(jwtUser.sub);
+    const client = await getClientById(jwtUser.sub);
+    const plan = client?.planTier ?? 'starter';
+
+    if (plan === 'starter') {
+      const appliances = await getAppliancesByClient(jwtUser.sub, activeProperty?.id);
+      if (appliances.length >= 5) {
+        return NextResponse.json({ 
+          error: 'LIMIT_REACHED', 
+          message: 'Starter plan is limited to 5 appliances. Upgrade to Pro for unlimited hardware tracking.' 
+        }, { status: 403 });
+      }
+    }
+
     const record = await createAppliance({
       client_id: jwtUser.sub,
       name:          name.trim(),
@@ -61,10 +76,11 @@ export async function POST(request) {
       energy_rating: energy_rating ?? 'not-rated',
       notes:         notes         ?? '',
       quantity:      quantity      ?? 1,
-      property_id:   (await getActiveProperty(jwtUser.sub))?.id,
+      property_id:   activeProperty?.id,
     });
     return NextResponse.json({ success: true, appliance: record }, { status: 201 });
-  } catch {
+  } catch (err) {
+    console.error('[Appliances] Create Error:', err);
     return NextResponse.json({ error: 'Failed to create appliance.' }, { status: 500 });
   }
 }

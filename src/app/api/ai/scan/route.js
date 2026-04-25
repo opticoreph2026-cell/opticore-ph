@@ -41,7 +41,7 @@ export async function POST(request) {
       return NextResponse.json({ error: 'No image data provided.' }, { status: 400 });
     }
 
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
     const deepAnalysisInstruction = plan !== 'starter' 
       ? '- unbundledCharges: (Object) { generation: number, transmission: number, systemLoss: number, vat: number }\n      Extract granular transmission fees, VAT, and system loss metrics. Be extremely precise.'

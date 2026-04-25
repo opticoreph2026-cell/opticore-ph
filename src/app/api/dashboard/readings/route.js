@@ -74,12 +74,12 @@ export async function POST(request) {
 
     // 4. Fire directly to Gemini
     const geminiResponse = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-1.5-flash',
       contents: [
         { text: systemPrompt },
       ],
       config: {
-        temperature: 0.2, // Low temperature for more analytical/consistent outputs
+        temperature: 0.2, 
       }
     });
 
@@ -126,12 +126,13 @@ export async function POST(request) {
       property_id: activeProperty?.id,
     });
 
-    // 6. Attribution-powered anomaly engine
+    // 6. Plan-based Attribution and Anomaly engine
+    const plan = clientProfile?.planTier || 'starter';
     try {
       const freshReadings = await getReadingsByClient(user.sub, activeProperty?.id);
       const prevReading = freshReadings[1]; // index 0 is the one just created
 
-      if (propertyAppliances.length > 0 && kwh > 0) {
+      if (plan !== 'starter' && propertyAppliances.length > 0 && kwh > 0) {
         const attribution = calculateAttribution(kwh, propertyAppliances);
 
         if (attribution.severity === 'CRITICAL') {
@@ -195,7 +196,22 @@ export async function POST(request) {
       console.error('[Anomaly Engine] Non-fatal error:', anomalyErr);
     }
 
-    // 7. High effective rate alert
+    // 7. Water Leak detection (PRO only)
+    if (plan !== 'starter' && m3Used > 0) {
+      try {
+        const m3 = parseFloat(m3Used);
+        if (m3 > 50) { // Arbitrary high threshold for home leak
+          await createAlert({
+            client_id: user.sub,
+            title: '💧 Massive Water Leak Alert',
+            message: `Your water consumption of ${m3} m³ is statistically impossible for a standard household. Check your main valves immediately.`,
+            severity: 'critical'
+          });
+        }
+      } catch {}
+    }
+
+    // 8. High effective rate alert
     if (parseFloat(effectiveRate) > 16.00) {
       await createAlert({
         client_id: user.sub,
@@ -205,8 +221,7 @@ export async function POST(request) {
       });
     }
 
-    // 8. Send the HTML digest email ONLY for Pro/Business users
-    const plan = clientProfile?.planTier || 'starter';
+    // 9. Send the HTML digest email ONLY for Pro/Business users
     if (plan !== 'starter' && clientProfile?.email) {
       void sendMonthlyDigestEmail({
         email: clientProfile.email,

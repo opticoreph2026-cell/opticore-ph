@@ -4,7 +4,7 @@
  */
 import { NextResponse } from 'next/server';
 import { getCurrentUser } from '@/lib/auth';
-import { getPropertiesByClient, createProperty } from '@/lib/db';
+import { getPropertiesByClient, createProperty, getClientById } from '@/lib/db';
 
 export async function GET() {
   const user = await getCurrentUser();
@@ -25,12 +25,23 @@ export async function POST(request) {
     return NextResponse.json({ error: 'Property name is required.' }, { status: 400 });
   }
 
+  const existingProperties = await getPropertiesByClient(user.sub);
+  const client = await getClientById(user.sub);
+  const plan = client?.planTier ?? 'starter';
+
+  if (plan !== 'business' && existingProperties.length >= 1) {
+    return NextResponse.json({ 
+      error: 'FORBIDDEN', 
+      message: 'Starter and Pro plans are limited to 1 property. Upgrade to Business for multi-property management.' 
+    }, { status: 403 });
+  }
+
   const property = await createProperty(user.sub, {
     name: name.trim(),
     address,
     electricityProviderId,
     waterProviderId,
-    isDefault: isDefault ?? false,
+    isDefault: isDefault ?? (existingProperties.length === 0),
   });
 
   return NextResponse.json({ property }, { status: 201 });

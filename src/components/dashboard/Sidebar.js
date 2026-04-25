@@ -94,25 +94,55 @@ export default function DashboardSidebar({ user, isOpen, onClose }) {
               <div className="space-y-1.5">
                 {section.items.map(({ href, label, icon: Icon }) => {
                   const active = isActive(href);
+                  const plan = user?.plan || 'starter';
+                  const isLocked = plan === 'starter' && [
+                    '/dashboard/reports',
+                    '/dashboard/certification',
+                    '/dashboard/roi-simulator'
+                  ].includes(href);
+
                   return (
                     <Link
                       key={href}
-                      href={href}
-                      onClick={() => { if(window.innerWidth < 1024) onClose(); }}
+                      href={isLocked ? '#' : href}
+                      onClick={(e) => { 
+                        if (isLocked) {
+                          e.preventDefault();
+                          // Handle upgrade prompt (could be a modal or toast)
+                          alert('Upgrade to Pro to unlock this engineering module.');
+                        } else if (window.innerWidth < 1024) {
+                          onClose();
+                        }
+                      }}
                       className={clsx(
                         'group flex items-center gap-4 px-5 py-3.5 rounded-2xl transition-all duration-300 relative',
                         active
                           ? 'text-white font-bold bg-white/[0.06] shadow-xl ring-1 ring-white/10'
-                          : 'text-slate-500 hover:text-slate-200 hover:bg-white/[0.03]'
+                          : isLocked 
+                            ? 'text-slate-700 opacity-60 cursor-not-allowed'
+                            : 'text-slate-500 hover:text-slate-200 hover:bg-white/[0.03]'
                       )}
                     >
-                      <Icon className={clsx(
-                        'w-5 h-5 transition-all duration-300',
-                        active ? 'text-cyan-400 scale-110' : 'text-slate-600 group-hover:text-slate-400'
-                      )} />
+                      <div className="relative">
+                        <Icon className={clsx(
+                          'w-5 h-5 transition-all duration-300',
+                          active ? 'text-cyan-400 scale-110' : 'text-slate-600 group-hover:text-slate-400',
+                          isLocked && 'grayscale'
+                        )} />
+                        {isLocked && (
+                          <div className="absolute -top-1.5 -right-1.5 w-3 h-3 bg-amber-500 rounded-full border-2 border-surface-1000 flex items-center justify-center">
+                            <div className="w-1 h-1 bg-white rounded-full" />
+                          </div>
+                        )}
+                      </div>
                       <span className="flex-1 text-sm tracking-tight">{label}</span>
                       {active && (
                         <div className="w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_12px_rgba(34,211,238,0.8)] animate-pulse" />
+                      )}
+                      {isLocked && (
+                        <span className="text-[8px] font-black uppercase tracking-wider text-amber-500/80 bg-amber-500/5 px-2 py-0.5 rounded-md border border-amber-500/10">
+                          PRO
+                        </span>
                       )}
                     </Link>
                   );
