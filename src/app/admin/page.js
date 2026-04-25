@@ -9,6 +9,7 @@ import { getAdminKPIs, listAllClients, listAllTransactions, getSystemTelemetry }
 
 import AdminClientTable from '@/components/admin/AdminClientTable';
 
+export const dynamic = 'force-dynamic';
 export const metadata = { title: 'Admin Overview — OptiCore PH' };
 
 export default async function AdminDashboard() {

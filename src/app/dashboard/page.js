@@ -10,6 +10,8 @@ import { analyzeWaterUsage } from '@/lib/algorithms/waterAnalyzer';
  * Fix: AIReport is now fetched as a separate query — readings[0]?.report
  * never existed on the UtilityReading model and always returned null.
  */
+export const dynamic = 'force-dynamic';
+export const metadata = { title: 'Dashboard — OptiCore PH' };
 
 export default async function DashboardPage() {
   // 1. Session Guard
