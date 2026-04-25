@@ -312,28 +312,51 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* ── Secure Payment CTA ─────────────────────────────────────── */}
-        <section className="py-24 px-4 bg-surface-900 border-t border-white/[0.04]">
-          <div className="max-w-4xl mx-auto text-center">
-            <ShieldCheck className="w-12 h-12 text-brand-400 mx-auto mb-6" />
-            <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight mb-4">
-              Deterministic, Transparent Pricing
-            </h2>
-            <p className="text-text-muted text-lg mb-10 max-w-2xl mx-auto">
-              Start analyzing your footprint completely free. Upgrade securely via PayMongo when you need multiple properties, predictive AI, or enterprise scale.
-            </p>
-            <Link 
-              href="/pricing" 
-              className="inline-flex items-center gap-3 text-sm font-black uppercase tracking-widest px-8 py-4 rounded-xl text-black bg-white hover:bg-brand-400 transition-all shadow-[0_0_30px_rgba(255,255,255,0.1)] group"
-            >
-              View Pricing Plans <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </Link>
-            <div className="mt-8 flex items-center justify-center gap-4 text-xs font-bold text-text-faint">
+        {/* ── Pricing Overview ───────────────────────────────────────── */}
+        <section className="py-24 px-4 border-t border-white/[0.04] bg-surface-950 relative">
+          <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-brand-500/5 blur-[150px] rounded-full pointer-events-none" />
+          <div className="max-w-6xl mx-auto relative z-10">
+            <div className="text-center mb-16">
+              <ShieldCheck className="w-12 h-12 text-brand-400 mx-auto mb-4" />
+              <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight mb-4">
+                Deterministic, Transparent Pricing
+              </h2>
+              <p className="text-text-muted text-sm max-w-2xl mx-auto">
+                Start analyzing your footprint completely free. Upgrade securely via PayMongo when you need multiple properties, predictive AI, or enterprise scale.
+              </p>
+            </div>
+            
+            <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+              {/* Starter */}
+              <div className="bento-card p-8 flex flex-col items-center text-center hover:border-white/20 transition-all">
+                <p className="text-[10px] font-black uppercase tracking-widest text-text-faint mb-2">Starter</p>
+                <p className="text-4xl font-black text-white mb-4">Free</p>
+                <p className="text-xs text-text-muted mb-8 leading-relaxed">For households getting started with basic energy tracking.</p>
+                <Link href="/signup" className="btn-ghost w-full flex items-center justify-center">Get Started Free</Link>
+              </div>
+
+              {/* Pro */}
+              <div className="bento-card p-8 flex flex-col items-center text-center relative" style={{ border: '1px solid rgba(245,158,11,0.3)', background: 'linear-gradient(160deg, rgba(30,28,20,0.9) 0%, rgba(18,18,26,0.95) 100%)', boxShadow: '0 8px 32px rgba(245,158,11,0.1)' }}>
+                <div className="absolute -top-3 px-3 py-1 bg-gradient-to-r from-amber-500 to-amber-600 rounded-full text-[9px] font-black uppercase tracking-widest text-black shadow-lg">Most Popular</div>
+                <p className="text-[10px] font-black uppercase tracking-widest text-brand-400 mb-2">Pro</p>
+                <p className="text-4xl font-black text-white mb-4">₱499<span className="text-sm text-text-muted font-medium">/mo</span></p>
+                <p className="text-xs text-text-muted mb-8 leading-relaxed">Advanced analytics, ROI simulators, and multi-property support.</p>
+                <Link href="/pricing" className="btn-primary w-full flex items-center justify-center shadow-[0_0_20px_rgba(245,158,11,0.2)]">Upgrade to Pro</Link>
+              </div>
+
+              {/* Business */}
+              <div className="bento-card p-8 flex flex-col items-center text-center hover:border-white/20 transition-all">
+                <p className="text-[10px] font-black uppercase tracking-widest text-blue-400 mb-2">Business</p>
+                <p className="text-4xl font-black text-white mb-4">₱2,499<span className="text-sm text-text-muted font-medium">/mo</span></p>
+                <p className="text-xs text-text-muted mb-8 leading-relaxed">Full scale predictive intelligence and peer benchmarking.</p>
+                <Link href="/pricing" className="btn-ghost w-full flex items-center justify-center">View Business</Link>
+              </div>
+            </div>
+
+            <div className="mt-12 flex items-center justify-center gap-4 text-[10px] font-black uppercase tracking-widest text-text-faint">
               <span>Secured by PayMongo</span>
               <span className="w-1 h-1 rounded-full bg-white/20" />
               <span>PCI-DSS Certified</span>
-              <span className="w-1 h-1 rounded-full bg-white/20" />
-              <span>Cancel Anytime</span>
             </div>
           </div>
         </section>

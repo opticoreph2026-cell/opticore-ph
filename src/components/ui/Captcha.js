@@ -12,7 +12,7 @@ export default function Captcha({ onVerify }) {
   useEffect(() => {
     // Inject Turnstile script
     const script = document.createElement('script');
-    script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
+    script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onloadTurnstileCallback';
     script.async = true;
     script.defer = true;
     document.head.appendChild(script);
