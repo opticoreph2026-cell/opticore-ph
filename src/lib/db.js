@@ -7,8 +7,10 @@ import { createClient } from '@libsql/client';
 /**
  * OptiCore PH - Database Engine
  * 
- * Final Stabilized Version (Prisma 7 compatible).
- * Relies on hardcoded schema URL for parser validation.
+ * Version: Prisma 6 Stable
+ * 
+ * This version uses the proven driver adapter pattern from Prisma 6.
+ * It handles remote Turso connections via LibSQL and local SQLite via native engine.
  */
 
 const rawUrl = (process.env.TURSO_DATABASE_URL || '').trim();
@@ -29,11 +31,16 @@ function makePrisma() {
       const client = createClient({ url: dbUrl, authToken: authToken || undefined });
       const adapter = new PrismaLibSql(client);
       
-      // We rely on the "file:./dev.db" in schema.prisma to satisfy the internal parser
+      // Satisfy Prisma 6 validator with a dummy environment variable
+      process.env.DATABASE_URL = 'file:./dev.db';
+      
       return new PrismaClient({ adapter });
     }
 
     // 2. Local connection (Development/Build) - Use Native Engine
+    if (!process.env.DATABASE_URL) {
+      process.env.DATABASE_URL = 'file:./dev.db';
+    }
     return new PrismaClient();
   } catch (error) {
     console.error('[OptiCore DB] CRITICAL INITIALIZATION ERROR:', error);
@@ -42,7 +49,7 @@ function makePrisma() {
 }
 
 // Singleton Pattern
-const GLOBAL_DB_KEY = 'opticore_prisma_v7_final_v6';
+const GLOBAL_DB_KEY = 'opticore_prisma_v6_stable';
 const globalForPrisma = globalThis;
 
 if (!globalForPrisma[GLOBAL_DB_KEY]) {
