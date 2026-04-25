@@ -4,16 +4,16 @@ import { PrismaLibSql } from '@prisma/adapter-libsql';
 import { createClient } from '@libsql/client';
 import path from 'path';
 
-let rawUrl = process.env.TURSO_DATABASE_URL || process.env.DATABASE_URL || 'file:./dev.db';
-const authToken = process.env.TURSO_AUTH_TOKEN?.replace(/['"]/g, '');
+let rawUrl = (process.env.TURSO_DATABASE_URL || process.env.DATABASE_URL || 'file:./dev.db').trim();
+const authToken = process.env.TURSO_AUTH_TOKEN?.replace(/['"]/g, '')?.trim();
 
-// Defensive: Some environments might set these to the literal string "undefined"
-if (rawUrl === 'undefined' || !rawUrl) {
+// Defensive: Some environments might set these to the literal string "undefined" or "null"
+if (rawUrl === 'undefined' || rawUrl === 'null' || !rawUrl) {
   rawUrl = 'file:./dev.db';
 }
 
 // Strip surrounding quotes that may appear in .env values
-const cleanUrl = rawUrl.replace(/['"]/g, '').split('?')[0];
+const cleanUrl = rawUrl.replace(/['"]/g, '').split('?')[0].trim();
 
 // ─── URL resolution ────────────────────────────────────────────────────────────
 // libsql on Windows hangs when given a *relative* file: path (e.g. file:./dev.db).
