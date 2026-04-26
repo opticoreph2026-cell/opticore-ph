@@ -1,4 +1,4 @@
-import { db } from '../db';
+import { db, createAlert } from '../db';
 import { differenceInDays, addDays, format, parseISO } from 'date-fns';
 
 /**
@@ -92,6 +92,16 @@ export async function predictLPGDepletion(clientId, propertyId) {
 
     // If burned > size, it's effectively empty
     if (kgRemaining <= 0) {
+      const msg = `LPG Tank is likely empty. Please replace and log the new tank to resume monitoring.`;
+      const existing = await db.alert.findFirst({ where: { clientId, message: msg, isRead: false } });
+      if (!existing) {
+        await createAlert({
+          client_id: clientId,
+          title: "LPG Tank Depleted",
+          message: msg,
+          severity: "critical"
+        });
+      }
       return { 
         status: 'critical', 
         daysLeft: 0, 
@@ -104,8 +114,24 @@ export async function predictLPGDepletion(clientId, propertyId) {
     const estimatedDate = format(addDays(new Date(), daysLeft), 'MMM dd, yyyy');
     const percentLeft = Math.max(0, Math.min(100, (kgRemaining / currentTank.tankSizeKg) * 100));
 
+    const status = percentLeft <= 15 ? 'warning' : 'healthy';
+
+    // 2. Alert creation (using client_id per directive)
+    if (status === 'warning' || percentLeft <= 15) {
+      const msg = `LPG Tank is low (${percentLeft.toFixed(0)}%). Estimated depletion date: ${estimatedDate}.`;
+      const existing = await db.alert.findFirst({ where: { clientId, message: msg, isRead: false } });
+      if (!existing) {
+        await createAlert({
+          client_id: clientId,
+          title: "Low LPG Warning",
+          message: msg,
+          severity: "warning"
+        });
+      }
+    }
+
     return {
-      status: percentLeft <= 15 ? 'warning' : 'healthy',
+      status,
       daysLeft,
       estimatedDate,
       percentLeft,
