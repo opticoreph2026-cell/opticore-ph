@@ -9,6 +9,14 @@ export async function GET() {
     const user = await getCurrentUser();
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
+    const client = await getClientById(user.sub);
+    if (client?.planTier === 'starter') {
+      return NextResponse.json({ 
+        error: 'FORBIDDEN', 
+        message: 'LPG history is a Pro feature.' 
+      }, { status: 403 });
+    }
+
     const activeProperty = await getActiveProperty(user.sub);
     const readings = await db.lPGReading.findMany({
       where: { 
@@ -93,6 +101,11 @@ export async function DELETE(request) {
   try {
     const user = await getCurrentUser();
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+    const client = await getClientById(user.sub);
+    if (client?.planTier === 'starter') {
+      return NextResponse.json({ error: 'FORBIDDEN' }, { status: 403 });
+    }
 
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
