@@ -13,6 +13,8 @@ import 'server-only';
 
 import { SignJWT, jwtVerify } from 'jose';
 import { cookies } from 'next/headers';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth-options';
 import bcrypt from 'bcryptjs';
 import { db } from '@/lib/db';
 
@@ -155,12 +157,13 @@ export async function clearAuthCookies() {
   cookieStore.delete(REFRESH_COOKIE);
 }
 
+
 /**
  * Get the current user session.
  * If the access token is expired but a valid refresh token exists,
  * it will automatically refresh the session (including cookies).
  * 
- * NOTE: This only works in API routes or Server Actions where cookies can be set.
+ * Falls back to NextAuth (Google) session if custom JWT is missing.
  */
 export async function getSession() {
   const jwtUser = await getCurrentUser();
@@ -169,41 +172,73 @@ export async function getSession() {
   // Access token missing/expired. Try refresh.
   const cookieStore = await cookies();
   const refreshToken = cookieStore.get(REFRESH_COOKIE)?.value;
-  if (!refreshToken) return null;
+  
+  if (refreshToken) {
+    try {
+      const payload = await verifyRefreshToken(refreshToken);
+      if (payload) {
+        const dbToken = await db.refreshToken.findUnique({
+          where: { token: refreshToken },
+          include: { client: true }
+        });
 
-  try {
-    const payload = await verifyRefreshToken(refreshToken);
-    if (!payload) return null;
+        if (dbToken && dbToken.expiresAt > new Date()) {
+          const client = dbToken.client;
+          const newPayload = {
+            sub:                 client.id,
+            email:               client.email,
+            name:                client.name,
+            role:                client.role ?? 'client',
+            plan:                client.planTier ?? 'starter',
+            onboarding_complete: client.onboardingComplete ?? false,
+          };
 
-    const dbToken = await db.refreshToken.findUnique({
-      where: { token: refreshToken },
-      include: { client: true }
-    });
+          const newAccessToken = await signAccessToken(newPayload);
+          const newRefreshToken = await signRefreshToken({ sub: client.id });
 
-    if (!dbToken || dbToken.expiresAt < new Date()) return null;
+          // Rotate
+          await db.refreshToken.delete({ where: { token: refreshToken } }).catch(() => {});
+          await setAuthCookies(client, newAccessToken, newRefreshToken);
 
-    const client = dbToken.client;
-    const newPayload = {
-      sub:                 client.id,
-      email:               client.email,
-      name:                client.name,
-      role:                client.role ?? 'client',
-      plan:                client.planTier ?? 'starter',
-      onboarding_complete: client.onboardingComplete ?? false,
-    };
-
-    const newAccessToken = await signAccessToken(newPayload);
-    const newRefreshToken = await signRefreshToken({ sub: client.id });
-
-    // Rotate
-    await db.refreshToken.delete({ where: { token: refreshToken } }).catch(() => {});
-    await setAuthCookies(client, newAccessToken, newRefreshToken);
-
-    return newPayload;
-  } catch (error) {
-    console.error('[Auth Server Session] Refresh failed:', error);
-    return null;
+          return newPayload;
+        }
+      }
+    } catch (error) {
+      console.error('[Auth Server Session] Refresh failed:', error);
+    }
   }
+
+  // Final fallback: Check NextAuth session (for Google users)
+  try {
+    const nextAuthSession = await getServerSession(authOptions);
+    if (nextAuthSession?.user?.email) {
+      const client = await db.client.findUnique({
+        where: { email: nextAuthSession.user.email.toLowerCase() }
+      });
+
+      if (client) {
+        const payload = {
+          sub:                 client.id,
+          email:               client.email,
+          name:                client.name,
+          role:                client.role ?? 'client',
+          plan:                client.planTier ?? 'starter',
+          onboarding_complete: client.onboardingComplete ?? false,
+        };
+        
+        // Re-sync cookies
+        const accessToken = await signAccessToken(payload);
+        const refreshToken = await signRefreshToken({ sub: client.id });
+        await setAuthCookies(client, accessToken, refreshToken);
+        
+        return payload;
+      }
+    }
+  } catch (err) {
+    console.error('[Auth Session] NextAuth fallback failed:', err);
+  }
+
+  return null;
 }
 
 /**
