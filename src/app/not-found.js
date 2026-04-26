@@ -1,31 +1,62 @@
 import Link from 'next/link';
-import { ShieldAlert, ArrowLeft, LayoutDashboard } from 'lucide-react';
+import { Radar, LayoutDashboard, Home } from 'lucide-react';
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen bg-surface-950 flex flex-col items-center justify-center px-4 text-center overflow-hidden relative">
-      <div className="absolute inset-0 bg-grid-pattern pointer-events-none opacity-50 z-0" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-amber-radial pointer-events-none z-0" />
-      <div className="relative z-10 animate-fade-up">
-        <div className="w-20 h-20 rounded-3xl bg-brand-500/10 border border-brand-500/20 flex items-center justify-center mx-auto mb-8 shadow-amber-md">
-          <ShieldAlert className="w-10 h-10 text-brand-400 animate-pulse-slow" />
+    <div className="min-h-screen bg-[#0f172a] flex flex-col items-center justify-center px-4 text-center relative overflow-hidden">
+      {/* Radar Pulse Effect */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none">
+        <div className="w-[300px] h-[300px] border border-sky-500/10 rounded-full animate-ping duration-3000" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] border border-sky-500/5 rounded-full animate-ping duration-3000 delay-700" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] border border-sky-500/5 rounded-full animate-ping duration-3000 delay-1000" />
+      </div>
+
+      <div className="relative z-10 animate-in fade-in zoom-in duration-700">
+        <div className="relative mb-12">
+          <div className="absolute inset-0 bg-sky-500/20 blur-3xl rounded-full scale-150" />
+          <div className="relative w-24 h-24 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center shadow-2xl mx-auto">
+            <Radar className="w-12 h-12 text-sky-400 animate-spin-slow" />
+          </div>
         </div>
-        <p className="text-[120px] font-black text-brand-500/10 mb-2 font-mono leading-none tracking-tighter">
-          404
+
+        <h1 className="text-6xl font-black text-white/5 mb-2 tracking-tight select-none">404</h1>
+        <h2 className="text-4xl font-bold text-white mb-4 tracking-tight">Intelligence Gap</h2>
+        
+        <p className="text-slate-400 max-w-sm mx-auto mb-12 text-lg leading-relaxed">
+          Our scanning protocol indicates this sector is currently offline or never existed. 
+          The data stream has been localized to the main hub.
         </p>
-        <h1 className="text-3xl font-semibold text-text-primary mb-4 drop-shadow-md">Lost in the grid</h1>
-        <p className="text-text-secondary mb-10 max-w-sm mx-auto leading-relaxed">
-          The page you're looking for was either phantom-loaded away or simply doesn't exist. Let's get you back to the data.
-        </p>
+
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-          <Link href="/dashboard" className="btn-primary w-full sm:w-auto px-8 py-3">
-            <LayoutDashboard className="w-4 h-4 mr-2" /> Go to Dashboard
+          <Link 
+            href="/dashboard" 
+            className="w-full sm:w-auto bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold px-10 py-4 rounded-2xl transition-all shadow-xl shadow-sky-500/20 active:scale-95 flex items-center justify-center gap-3"
+          >
+            <LayoutDashboard className="w-5 h-5" />
+            Return to Dashboard
           </Link>
-          <Link href="/" className="btn-ghost w-full sm:w-auto px-8 py-3">
-            <ArrowLeft className="w-4 h-4 mr-2" /> Back to Home
+          <Link 
+            href="/" 
+            className="w-full sm:w-auto bg-slate-900/50 hover:bg-slate-800 text-white font-semibold px-10 py-4 rounded-2xl border border-slate-800 transition-all backdrop-blur-md flex items-center justify-center gap-3"
+          >
+            <Home className="w-5 h-5" />
+            Landing Page
           </Link>
         </div>
       </div>
+
+      <style jsx>{`
+        .animate-spin-slow {
+          animation: spin 6s linear infinite;
+        }
+        .duration-3000 {
+          animation-duration: 3s;
+        }
+        @keyframes spin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+      `}</style>
     </div>
   );
 }

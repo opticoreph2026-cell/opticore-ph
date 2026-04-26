@@ -9,6 +9,14 @@ export async function GET() {
     const user = await getCurrentUser();
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
+    const client = await db.client.findUnique({ where: { id: user.sub } });
+    if (client?.planTier !== 'business') {
+      return NextResponse.json({ 
+        error: 'FORBIDDEN', 
+        message: 'Energy Performance Certification requires a Business subscription.' 
+      }, { status: 403 });
+    }
+
     const property = await ensureDefaultProperty(user.sub);
     const readings = await getReadingsByClient(user.sub, property.id);
     const appliances = await db.appliance.findMany({

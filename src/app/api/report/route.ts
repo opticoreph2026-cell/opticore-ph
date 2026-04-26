@@ -35,6 +35,14 @@ export async function POST() {
     const user = await getCurrentUser();
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
+    const client = await db.client.findUnique({ where: { id: user.sub } });
+    if (client?.planTier === 'starter') {
+      return NextResponse.json({ 
+        error: 'FORBIDDEN', 
+        message: 'AI Intelligence Reports are a Pro feature. Please upgrade to unlock Ghost Load and Leak analysis.' 
+      }, { status: 403 });
+    }
+
     // 1. Data Aggregation
     const [latestReading, appliances] = await Promise.all([
       db.utilityReading.findFirst({

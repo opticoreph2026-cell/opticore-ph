@@ -11,6 +11,15 @@ export async function POST(request) {
     const user = await getCurrentUser();
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
+    const { db } = await import('@/lib/db');
+    const client = await db.client.findUnique({ where: { id: user.sub } });
+    if (client?.planTier === 'starter') {
+      return NextResponse.json({ 
+        error: 'FORBIDDEN', 
+        message: 'Acoustic Hardware Audit is a Pro feature. Please upgrade to unlock high-fidelity diagnostics.' 
+      }, { status: 403 });
+    }
+
     const { audioData } = await request.json(); 
     
     if (!audioData) {

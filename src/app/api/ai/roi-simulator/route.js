@@ -157,6 +157,15 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const { db } = await import('@/lib/db');
+    const client = await db.client.findUnique({ where: { id: user.sub } });
+    if (client?.planTier === 'starter') {
+      return NextResponse.json({ 
+        error: 'FORBIDDEN', 
+        message: 'Hardware ROI Simulator is a Pro feature. Please upgrade to simulate energy savings.' 
+      }, { status: 403 });
+    }
+
     const body = await request.json();
     const {
       currentWattage, proposedWattage, hoursPerDay,
@@ -214,6 +223,15 @@ export async function GET() {
   const user = await getCurrentUser();
   if (!user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  const { db } = await import('@/lib/db');
+  const client = await db.client.findUnique({ where: { id: user.sub } });
+  if (client?.planTier === 'starter') {
+    return NextResponse.json({ 
+      error: 'FORBIDDEN', 
+      message: 'Hardware ROI Simulator is a Pro feature. Please upgrade to unlock upgrade presets.' 
+    }, { status: 403 });
   }
 
   return NextResponse.json({ presets: PRESETS });
