@@ -27,7 +27,7 @@ export default function Navbar() {
               <span className="text-lg font-black text-white tracking-tighter leading-none group-hover:text-brand-400 transition-colors">
                 OptiCore <span className="text-brand-500">PH</span>
               </span>
-              <span className="text-[8px] font-black text-text-faint uppercase tracking-[0.2em] mt-0.5">The Nationwide Resource Protocol</span>
+              <span className="text-[8px] font-black text-text-faint uppercase tracking-[0.2em] mt-0.5">Intelligent to the CORE</span>
             </div>
           </Link>
 

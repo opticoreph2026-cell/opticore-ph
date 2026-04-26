@@ -11,9 +11,14 @@ export default function Captcha({ onVerify }) {
 
   useEffect(() => {
     const scriptId = 'turnstile-script';
-    
+    let timeoutId;
+    let retryCount = 0;
+    const maxRetries = 10;
+
     const initTurnstile = () => {
       if (window.turnstile && containerRef.current) {
+        // Clear previous content just in case
+        containerRef.current.innerHTML = '';
         try {
           window.turnstile.render(containerRef.current, {
             sitekey: SITE_KEY,
@@ -25,6 +30,10 @@ export default function Captcha({ onVerify }) {
         } catch (e) {
           console.warn('Turnstile render failed:', e);
         }
+      } else if (retryCount < maxRetries) {
+        // Retry if window.turnstile is not yet available but script is present
+        retryCount++;
+        timeoutId = setTimeout(initTurnstile, 500);
       }
     };
 
@@ -37,10 +46,12 @@ export default function Captcha({ onVerify }) {
       script.onload = initTurnstile;
       document.head.appendChild(script);
     } else {
-      initTurnstile();
+      // Small delay to ensure the existing script has executed
+      timeoutId = setTimeout(initTurnstile, 100);
     }
 
     return () => {
+      if (timeoutId) clearTimeout(timeoutId);
       const current = containerRef.current;
       if (current) {
         current.innerHTML = '';

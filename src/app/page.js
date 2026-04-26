@@ -141,7 +141,7 @@ export default function LandingPage() {
             {/* Badge */}
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-white/10 bg-white/5 backdrop-blur-md text-[11px] font-bold text-white mb-8 shadow-2xl">
               <span className="w-1.5 h-1.5 rounded-full bg-brand-400 animate-pulse-slow" />
-              Version 2.0. The Nationwide Resource Protocol.
+              Version 2.0. Intelligent to the CORE.
             </div>
 
             {/* Headline */}
@@ -149,7 +149,7 @@ export default function LandingPage() {
               <span className="text-white">The Ultimate</span>
               <br />
               <span className="text-brand-400 font-black drop-shadow-[0_0_25px_rgba(34,211,238,0.2)]">
-                Nationwide Resource Protocol.
+                Intelligent to the CORE.
               </span>
             </h1>
 

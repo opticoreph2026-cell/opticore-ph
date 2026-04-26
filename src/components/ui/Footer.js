@@ -18,7 +18,7 @@ export default function Footer() {
               </span>
             </div>
             <p className="text-sm text-text-muted leading-relaxed max-w-xs">
-              The Nationwide Resource Protocol for energy intelligence. 
+              Intelligent to the CORE. 
               Optimizing Filipino utility consumption with Gemini AI and deterministic math.
             </p>
           </div>
