@@ -147,6 +147,13 @@ export default function PricingClient() {
       window.location.href = `/signup?plan=${priceId}`; 
       return; 
     }
+
+    // If already logged in and choosing free, just go to dashboard
+    if (priceId === 'free') {
+      router.push(userRole === 'admin' ? '/admin' : '/dashboard');
+      return;
+    }
+
     setLoadingPlan(priceId);
     try {
       const res  = await fetch('/api/checkout', {
@@ -305,24 +312,15 @@ export default function PricingClient() {
 
                     {/* CTA */}
                     <div className="mt-8">
-                      {plan.priceId === 'free' ? (
-                        <Link 
-                          href={!isLoggedIn ? plan.href : (userRole === 'admin' ? '/admin' : '/dashboard')} 
-                          className="btn-ghost w-full py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest flex items-center justify-center hover:bg-white/5 transition-all"
-                        >
-                          {plan.cta}
-                        </Link>
-                      ) : (
-                        <button
-                          onClick={() => handleCheckout(plan.priceId)}
-                          disabled={loadingPlan === plan.priceId}
-                          className="btn-primary w-full py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-2 disabled:opacity-70"
-                        >
-                          {loadingPlan === plan.priceId
-                            ? <><Loader2 className="w-4 h-4 animate-spin" /> Processing…</>
-                            : plan.cta}
-                        </button>
-                      )}
+                      <button
+                        onClick={() => handleCheckout(plan.priceId)}
+                        disabled={loadingPlan === plan.priceId}
+                        className={`${plan.priceId === 'free' ? 'btn-ghost border border-white/10' : 'btn-primary'} w-full py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-2 disabled:opacity-70`}
+                      >
+                        {loadingPlan === plan.priceId
+                          ? <><Loader2 className="w-4 h-4 animate-spin" /> Processing…</>
+                          : plan.cta}
+                      </button>
                     </div>
                   </div>
                 </div>

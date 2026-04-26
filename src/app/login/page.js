@@ -235,7 +235,7 @@ function LoginForm() {
             {/* Footer links */}
             <p className="mt-6 text-center text-xs text-text-muted">
               Don&apos;t have an account?{' '}
-              <Link href="/pricing" className="text-brand-400 hover:underline font-bold">
+              <Link href="/signup" className="text-brand-400 hover:underline font-bold">
                 Get started free
               </Link>
             </p>

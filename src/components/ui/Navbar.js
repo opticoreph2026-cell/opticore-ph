@@ -3,8 +3,8 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, X } from 'lucide-react';
-import Image from 'next/image';
+import { useSession, signOut } from 'next-auth/react';
+import { Menu, X, LayoutDashboard } from 'lucide-react';
 import Logo from '@/components/ui/Logo';
 
 const NAV_LINKS = [
@@ -15,6 +15,8 @@ const NAV_LINKS = [
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
+  const { data: session, status } = useSession();
+  const isLoggedIn = status === 'authenticated';
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 glass-panel border-b border-white/[0.06]">
@@ -57,12 +59,21 @@ export default function Navbar() {
 
           {/* CTA */}
           <div className="hidden md:flex items-center gap-3">
-            <Link href="/login" className="btn-ghost text-sm px-4 py-2">
-              Sign in
-            </Link>
-            <Link href="/pricing" className="btn-primary text-sm px-4 py-2">
-              Get Started
-            </Link>
+            {!isLoggedIn ? (
+              <>
+                <Link href="/login" className="btn-ghost text-sm px-4 py-2">
+                  Sign in
+                </Link>
+                <Link href="/signup" className="btn-primary text-sm px-4 py-2">
+                  Get Started
+                </Link>
+              </>
+            ) : (
+              <Link href="/dashboard" className="btn-primary text-sm px-4 py-2 flex items-center gap-2">
+                <LayoutDashboard className="w-4 h-4" />
+                Dashboard
+              </Link>
+            )}
           </div>
 
           {/* Mobile toggle */}
@@ -82,7 +93,7 @@ export default function Navbar() {
           <div className="px-4 py-4 space-y-1">
             {[
               ...NAV_LINKS,
-              { href: '/login', label: 'Sign in', match: '/login' },
+              ...(!isLoggedIn ? [{ href: '/login', label: 'Sign in', match: '/login' }] : []),
             ].map(({ href, label, match }) => {
               const isActive = pathname === match;
               return (
@@ -100,13 +111,24 @@ export default function Navbar() {
                 </Link>
               );
             })}
-            <Link
-              href="/pricing"
-              className="btn-primary w-full text-sm mt-2"
-              onClick={() => setOpen(false)}
-            >
-              Get Started Free
-            </Link>
+            {!isLoggedIn ? (
+              <Link
+                href="/signup"
+                className="btn-primary w-full text-sm mt-2"
+                onClick={() => setOpen(false)}
+              >
+                Get Started Free
+              </Link>
+            ) : (
+              <Link
+                href="/dashboard"
+                className="btn-primary w-full text-sm mt-2 flex items-center justify-center gap-2"
+                onClick={() => setOpen(false)}
+              >
+                <LayoutDashboard className="w-4 h-4" />
+                Go to Dashboard
+              </Link>
+            )}
           </div>
         </div>
       )}
