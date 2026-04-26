@@ -77,12 +77,16 @@ export default function DashboardOverview({ user, readings = [], alerts = [], ap
     [...readings].forEach(r => {
       const date = parseISO(r.readingDate);
       const monthKey = format(date, 'yyyy-MM');
+      // Only take the first encounter (since readings are sorted desc, this is the latest)
       if (!groups[monthKey]) {
-        groups[monthKey] = { name: format(date, 'MMM'), fullDate: date, value: 0, water: 0, bill: 0 };
+        groups[monthKey] = { 
+          name: format(date, 'MMM'), 
+          fullDate: date, 
+          value: r.kwhUsed ?? 0, 
+          water: r.m3Used ?? 0, 
+          bill: (r.billAmountElectric ?? 0) + (r.billAmountWater ?? 0) 
+        };
       }
-      groups[monthKey].value += (r.kwhUsed ?? 0);
-      groups[monthKey].water += (r.m3Used ?? 0);
-      groups[monthKey].bill += (r.billAmountElectric ?? 0) + (r.billAmountWater ?? 0);
     });
 
     return Object.values(groups)
