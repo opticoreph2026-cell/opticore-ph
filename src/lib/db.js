@@ -78,7 +78,10 @@ export async function listAllClients(options = {}) {
   const { maxRecords = 100, includeAdmins = false } = options;
   return db.client.findMany({
     where: includeAdmins ? {} : { 
-      NOT: { role: 'admin' }
+      OR: [
+        { role: { not: 'admin' } },
+        { role: null }
+      ]
     },
     orderBy: { createdAt: 'desc' },
     take: maxRecords,
@@ -568,8 +571,8 @@ export async function getAdminKPIs() {
 
   const totalClients = Math.max(0, totalUsers - admins);
   
-  // For counts, we exclude admins from the tiers just in case an admin has a tier set
-  // In most cases admins won't have 'pro'/'business' tiers but we handle it here
+  // Robust tier counting: count all in tier and subtract any admins in that tier
+  // SQLite/Prisma fix: handle NULL roles explicitly if needed, but subtraction is safer
   const proClients = Math.max(0, pro - await db.client.count({ where: { planTier: 'pro', role: 'admin' } }));
   const businessClients = Math.max(0, business - await db.client.count({ where: { planTier: 'business', role: 'admin' } }));
   const starter = Math.max(0, totalClients - proClients - businessClients);

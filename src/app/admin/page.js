@@ -134,17 +134,17 @@ export default async function AdminDashboard() {
                 <div className="flex justify-between text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">
                   <span>AI Engine Load</span>
                   <span className="text-cyan-400">
-                    {((telemetry?.totalTokens / (telemetry?.geminiLimit || 1)) * 100).toFixed(2)}%
+                    {(((telemetry?.totalTokens || 0) / (telemetry?.geminiLimit || 1000000)) * 100).toFixed(2)}%
                   </span>
                 </div>
                 <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
                   <div 
                     className="h-full bg-cyan-500 shadow-[0_0_8px_rgba(34,211,238,0.4)] transition-all duration-1000"
-                    style={{ width: `${Math.min(100, (telemetry?.totalTokens / (telemetry?.geminiLimit || 1)) * 100)}%` }}
+                    style={{ width: `${Math.min(100, ((telemetry?.totalTokens || 0) / (telemetry?.geminiLimit || 1000000)) * 100)}%` }}
                   />
                 </div>
                 <p className="text-[10px] text-slate-600 mt-2 font-bold uppercase">
-                  {telemetry?.totalTokens?.toLocaleString()} / 1M Request Units
+                  {(telemetry?.totalTokens || 0).toLocaleString()} / 1M Request Units
                 </p>
               </div>
 
