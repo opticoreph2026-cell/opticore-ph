@@ -1,23 +1,26 @@
-'use client';
-
 import Link from 'next/link';
 import { Radar, LayoutDashboard, Home } from 'lucide-react';
 
+/**
+ * OptiCore PH - 404 Intelligence Gap Page
+ * Switched to pure Tailwind to ensure Server Component compatibility and build stability.
+ */
 export default function NotFound() {
   return (
     <div className="min-h-screen bg-[#0f172a] flex flex-col items-center justify-center px-4 text-center relative overflow-hidden">
       {/* Radar Pulse Effect */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none">
-        <div className="w-[300px] h-[300px] border border-sky-500/10 rounded-full animate-ping duration-3000" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] border border-sky-500/5 rounded-full animate-ping duration-3000 delay-700" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] border border-sky-500/5 rounded-full animate-ping duration-3000 delay-1000" />
+        <div className="w-[300px] h-[300px] border border-sky-500/10 rounded-full animate-[ping_3s_linear_infinite]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] border border-sky-500/5 rounded-full animate-[ping_3s_linear_infinite] [animation-delay:700ms]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] border border-sky-500/5 rounded-full animate-[ping_3s_linear_infinite] [animation-delay:1000ms]" />
       </div>
 
       <div className="relative z-10 animate-in fade-in zoom-in duration-700">
         <div className="relative mb-12">
           <div className="absolute inset-0 bg-sky-500/20 blur-3xl rounded-full scale-150" />
           <div className="relative w-24 h-24 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center shadow-2xl mx-auto">
-            <Radar className="w-12 h-12 text-sky-400 animate-spin-slow" />
+            {/* Custom 6s spin using Tailwind arbitrary value */}
+            <Radar className="w-12 h-12 text-sky-400 animate-[spin_6s_linear_infinite]" />
           </div>
         </div>
 
@@ -46,19 +49,6 @@ export default function NotFound() {
           </Link>
         </div>
       </div>
-
-      <style jsx>{`
-        .animate-spin-slow {
-          animation: spin 6s linear infinite;
-        }
-        .duration-3000 {
-          animation-duration: 3s;
-        }
-        @keyframes spin {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
-        }
-      `}</style>
     </div>
   );
 }
