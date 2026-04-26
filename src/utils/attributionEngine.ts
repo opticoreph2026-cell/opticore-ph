@@ -38,6 +38,18 @@ export function calculateAttribution(
     quantity: number;
   }>
 ): AttributionResult {
+  // 0. Guard against zero consumption or empty profiles to prevent false Ghost Load alerts
+  if (actualKwh <= 0 || !appliances || appliances.length === 0) {
+    return {
+      unit: 'kWh',
+      totalEstimated: 0,
+      actual: actualKwh,
+      categories: {},
+      discrepancy: { value: 0, percentage: 0 },
+      severity: 'NORMAL',
+    };
+  }
+
   const categories: AttributionResult['categories'] = {};
   let totalEstimatedKwh = 0;
 
