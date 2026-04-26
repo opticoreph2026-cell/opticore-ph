@@ -10,7 +10,7 @@ import { clsx } from 'clsx';
 import Logo from '@/components/ui/Logo';
 import AdminNotificationBell from '@/components/admin/AdminNotificationBell';
 
-const TAGLINE = "The Nationwide Protocol";
+const TAGLINE = "Intelligent to the CORE";
 
 export default function AdminHeader({ user, onMenuClick }) {
   const router = useRouter();

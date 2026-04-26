@@ -79,7 +79,7 @@ export default function DashboardSidebar({ user, isOpen, onClose }) {
                 OptiCore <span className="text-cyan-500">PH</span>
               </h1>
               <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mt-1.5">
-                Nationwide Protocol
+                Intelligent to the CORE
               </p>
             </div>
           </Link>
