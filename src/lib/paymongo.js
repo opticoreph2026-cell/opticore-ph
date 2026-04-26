@@ -69,7 +69,7 @@ export async function createCheckoutSession({ clientId, email, plan, interval = 
             quantity:    1,
           },
         ],
-        payment_method_types: ['card', 'gcash', 'grab_pay', 'paymaya'],
+        payment_method_types: ['card', 'gcash', 'grab_pay', 'maya'],
         success_url: successUrl,
         cancel_url:  cancelUrl,
         metadata: {

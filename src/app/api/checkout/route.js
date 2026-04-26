@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getCurrentUser } from '@/lib/auth';
+import { getSession } from '@/lib/auth';
 import { createCheckoutSession } from '@/lib/paymongo';
 
 export async function POST(request) {
@@ -13,9 +13,9 @@ export async function POST(request) {
   }
 
   try {
-    const user = await getCurrentUser();
+    const user = await getSession();
     if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized. Please log in again.' }, { status: 401 });
     }
 
     let body;
@@ -44,22 +44,26 @@ export async function POST(request) {
       cancelUrl:  `${baseUrl}/pricing`,
     });
 
+    if (!checkoutUrl) {
+      throw new Error('PayMongo returned an empty checkout URL.');
+    }
+
     return NextResponse.json({ url: checkoutUrl });
 
   } catch (error) {
-    console.error('[Checkout API Error]:', error?.message ?? error);
+    console.error('[Checkout API Error]:', error);
 
-    // Surface PayMongo-specific errors so front-end can show them
-    const message = error?.message ?? '';
-    if (message.includes('PayMongo error')) {
+    // Detailed error for debugging (will be shown in toast)
+    const errorMessage = error?.message || 'Unknown error';
+    if (errorMessage.includes('PayMongo error')) {
       return NextResponse.json(
-        { error: 'Payment gateway rejected the request. Please try again or contact support.' },
+        { error: `Payment gateway error: ${errorMessage.replace('PayMongo error: ', '')}` },
         { status: 502 }
       );
     }
 
     return NextResponse.json(
-      { error: 'Failed to create checkout session. Please try again.' },
+      { error: `Checkout failed: ${errorMessage}` },
       { status: 500 }
     );
   }

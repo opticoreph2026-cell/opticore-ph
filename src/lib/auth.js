@@ -156,7 +156,58 @@ export async function clearAuthCookies() {
 }
 
 /**
- * Get the current user from the access token.
+ * Get the current user session.
+ * If the access token is expired but a valid refresh token exists,
+ * it will automatically refresh the session (including cookies).
+ * 
+ * NOTE: This only works in API routes or Server Actions where cookies can be set.
+ */
+export async function getSession() {
+  const jwtUser = await getCurrentUser();
+  if (jwtUser) return jwtUser;
+
+  // Access token missing/expired. Try refresh.
+  const cookieStore = await cookies();
+  const refreshToken = cookieStore.get(REFRESH_COOKIE)?.value;
+  if (!refreshToken) return null;
+
+  try {
+    const payload = await verifyRefreshToken(refreshToken);
+    if (!payload) return null;
+
+    const dbToken = await db.refreshToken.findUnique({
+      where: { token: refreshToken },
+      include: { client: true }
+    });
+
+    if (!dbToken || dbToken.expiresAt < new Date()) return null;
+
+    const client = dbToken.client;
+    const newPayload = {
+      sub:                 client.id,
+      email:               client.email,
+      name:                client.name,
+      role:                client.role ?? 'client',
+      plan:                client.planTier ?? 'starter',
+      onboarding_complete: client.onboardingComplete ?? false,
+    };
+
+    const newAccessToken = await signAccessToken(newPayload);
+    const newRefreshToken = await signRefreshToken({ sub: client.id });
+
+    // Rotate
+    await db.refreshToken.delete({ where: { token: refreshToken } }).catch(() => {});
+    await setAuthCookies(client, newAccessToken, newRefreshToken);
+
+    return newPayload;
+  } catch (error) {
+    console.error('[Auth Server Session] Refresh failed:', error);
+    return null;
+  }
+}
+
+/**
+ * Get the current user from the access token (no refresh).
  */
 export async function getCurrentUser() {
   const cookieStore = await cookies();
@@ -167,9 +218,6 @@ export async function getCurrentUser() {
     if (payload) return payload;
   }
 
-  // If access token is missing or expired, we might want to trigger a refresh here,
-  // but in Server Components we can't set cookies. 
-  // Refreshing should happen in Middleware or dedicated API routes.
   return null;
 }
 

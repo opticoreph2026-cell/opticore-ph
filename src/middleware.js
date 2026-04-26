@@ -37,8 +37,11 @@ export async function middleware(request) {
   }
 
   // 2. If no valid Access Token but we have a Refresh Token, try to trigger a refresh
-  // Skip refresh redirect if we are already on login or signup to avoid loops
-  if (!user && refreshToken && pathname !== '/login' && pathname !== '/signup') {
+  // Skip refresh redirect if we are already on login, signup, or the refresh endpoint to avoid loops
+  const isAuthRoute = pathname.startsWith('/api/auth') || pathname === '/login' || pathname === '/signup';
+  const isApiRoute  = pathname.startsWith('/api');
+  
+  if (!user && refreshToken && !isAuthRoute && !isApiRoute) {
     try {
       const { payload: refreshPayload } = await jwtVerify(refreshToken, getSecret(), {
         issuer: 'opticore-ph',
@@ -94,10 +97,13 @@ export async function middleware(request) {
 
 export const config = {
   matcher: [
-    '/dashboard/:path*',
-    '/admin/:path*',
-    '/onboarding/:path*',
-    '/login',
-    '/signup',
+    /*
+     * Match all request paths except for the ones starting with:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * - images (local public images)
+     */
+    '/((?!_next/static|_next/image|favicon.ico|images).*)',
   ],
 };
