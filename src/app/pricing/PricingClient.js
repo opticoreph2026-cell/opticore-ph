@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { Check, Zap, ArrowRight, Loader2, Sparkles, Shield, Building2 } from 'lucide-react';
+import { Check, Zap, ArrowRight, Loader2, Sparkles, Shield, Building2, X, Mail } from 'lucide-react';
 import Navbar from '@/components/ui/Navbar';
 import Footer from '@/components/ui/Footer';
 import Toast from '@/components/ui/Toast';
@@ -121,9 +121,12 @@ export default function PricingClient() {
   const planParam = searchParams.get('plan');
   const [isYearly,    setIsYearly]    = useState(false);
   const [openFaq,     setOpenFaq]     = useState(0);
-  const [loadingPlan, setLoadingPlan] = useState(null);
-  const [toastMsg,    setToastMsg]    = useState(null);
-  const [toastType,   setToastType]   = useState('info');
+  const [guestEmail,   setGuestEmail]  = useState('');
+  const [showEmailModal, setShowEmailModal] = useState(false);
+  const [modalPlan,    setModalPlan]   = useState(null);
+  const [loadingPlan,  setLoadingPlan]  = useState(null);
+  const [toastMsg,     setToastMsg]     = useState(null);
+  const [toastType,    setToastType]    = useState('info');
 
   const isLoggedIn = status === 'authenticated';
   const userRole   = session?.user?.role;
@@ -131,7 +134,6 @@ export default function PricingClient() {
   // Auto-trigger checkout if plan is in URL
   useEffect(() => {
     if (isLoggedIn && planParam && (planParam === 'pro' || planParam === 'business')) {
-      // Small delay to ensure UI is ready
       const timer = setTimeout(() => {
         handleCheckout(planParam);
       }, 500);
@@ -140,17 +142,23 @@ export default function PricingClient() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoggedIn, planParam]);
 
-  async function handleCheckout(priceId) {
+  async function handleCheckout(priceId, emailOverride = null) {
     if (status === 'loading') return;
 
-    if (!isLoggedIn) { 
-      window.location.href = `/signup?plan=${priceId}`; 
-      return; 
+    // Free plan always goes to signup
+    if (priceId === 'free') {
+      if (isLoggedIn) {
+        router.push(userRole === 'admin' ? '/admin' : '/dashboard');
+      } else {
+        window.location.href = `/signup?plan=free`;
+      }
+      return;
     }
 
-    // If already logged in and choosing free, just go to dashboard
-    if (priceId === 'free') {
-      router.push(userRole === 'admin' ? '/admin' : '/dashboard');
+    // Pro/Business: If not logged in and no email provided, show modal
+    if (!isLoggedIn && !emailOverride) {
+      setModalPlan(priceId);
+      setShowEmailModal(true);
       return;
     }
 
@@ -161,7 +169,8 @@ export default function PricingClient() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
           plan: priceId,
-          interval: isYearly ? 'yearly' : 'monthly'
+          interval: isYearly ? 'yearly' : 'monthly',
+          guestEmail: emailOverride || guestEmail
         }),
       });
       const data = await res.json();
@@ -176,6 +185,7 @@ export default function PricingClient() {
       setToastType('error');
     } finally {
       setLoadingPlan(null);
+      setShowEmailModal(false);
     }
   }
 
@@ -367,6 +377,57 @@ export default function PricingClient() {
         </div>
       </main>
       <Footer />
+      
+      {/* ── Guest Email Modal ── */}
+      {showEmailModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
+          <div 
+            className="w-full max-w-sm rounded-3xl p-8 border border-white/10 relative animate-scale-in"
+            style={{ background: 'rgba(15,15,22,0.95)', boxShadow: '0 24px 64px rgba(0,0,0,0.8)' }}
+          >
+            <button 
+              onClick={() => setShowEmailModal(false)}
+              className="absolute top-4 right-4 p-2 rounded-xl hover:bg-white/5 text-text-faint transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            
+            <div className="text-center mb-8">
+              <div className="w-14 h-14 rounded-2xl bg-brand-500/10 border border-brand-500/20 flex items-center justify-center mx-auto mb-4">
+                <Mail className="w-7 h-7 text-brand-400" />
+              </div>
+              <h3 className="text-xl font-bold text-text-primary">Where should we send your receipt?</h3>
+              <p className="text-sm text-text-muted mt-2">Enter your email to proceed to secure payment for the {modalPlan} plan.</p>
+            </div>
+            
+            <form onSubmit={(e) => { e.preventDefault(); handleCheckout(modalPlan, guestEmail); }} className="space-y-4">
+              <div className="relative">
+                <input 
+                  type="email" 
+                  required
+                  placeholder="name@email.com"
+                  className="input-field pl-11"
+                  value={guestEmail}
+                  onChange={(e) => setGuestEmail(e.target.value)}
+                  autoFocus
+                />
+                <Mail className="w-4 h-4 text-text-faint absolute left-4 top-1/2 -translate-y-1/2" />
+              </div>
+              <button 
+                type="submit"
+                disabled={loadingPlan === modalPlan}
+                className="btn-primary w-full py-4 rounded-2xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2"
+              >
+                {loadingPlan === modalPlan ? <Loader2 className="w-4 h-4 animate-spin" /> : <>Continue to Payment <ArrowRight className="w-4 h-4" /></>}
+              </button>
+              <p className="text-[10px] text-center text-text-faint uppercase tracking-widest font-bold">
+                Secured by PayMongo
+              </p>
+            </form>
+          </div>
+        </div>
+      )}
+
       <Toast message={toastMsg} type={toastType} onClose={() => setToastMsg(null)} />
     </div>
   );

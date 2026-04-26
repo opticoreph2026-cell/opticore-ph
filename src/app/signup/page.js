@@ -22,9 +22,20 @@ function GoogleIcon() {
 }
 
 function SignupForm() {
+  const router      = useRouter();
+  const searchParams = useSearchParams();
+  const planParam   = searchParams.get('plan'); // e.g. 'pro', 'business'
+  const paidParam   = searchParams.get('paid') === 'true';
+  const emailParam  = searchParams.get('email');
+
   const [form, setForm] = useState({
-    name: '', email: '', password: '', confirm: '', consent: false,
+    name: '', 
+    email: emailParam || '', 
+    password: '', 
+    confirm: '', 
+    consent: false,
   });
+
   const [showPw,     setShowPw]     = useState(false);
   const [showCPw,    setShowCPw]    = useState(false);
   const [loading,    setLoading]    = useState(false);
@@ -32,9 +43,11 @@ function SignupForm() {
   const [error,      setError]      = useState('');
   const [success,    setSuccess]    = useState(false);
   const [captchaToken, setCaptchaToken] = useState(null);
-  const router      = useRouter();
-  const searchParams = useSearchParams();
-  const planParam   = searchParams.get('plan'); // e.g. 'pro', 'business'
+
+  // Sync email param if it changes
+  useEffect(() => {
+    if (emailParam) setForm(f => ({ ...f, email: emailParam }));
+  }, [emailParam]);
 
 
   const handleSubmit = async (e) => {
@@ -72,8 +85,8 @@ function SignupForm() {
       } else {
         setSuccess(true);
         
-        // If a plan was selected, trigger checkout automatically
-        if (planParam && (planParam === 'pro' || planParam === 'business')) {
+        // If a plan was selected and NOT yet paid, trigger checkout automatically
+        if (!paidParam && planParam && (planParam === 'pro' || planParam === 'business')) {
           try {
             const checkoutRes = await fetch('/api/checkout', {
               method: 'POST',
@@ -119,20 +132,17 @@ function SignupForm() {
       <div className="fixed top-1/3 right-1/4 w-72 h-72 rounded-full bg-brand-500/3 blur-3xl pointer-events-none z-0" />
 
       <div className="w-full max-w-md mx-auto relative z-10 py-10 animate-fade-up">
-        {/* Logo */}
-        <div className="mb-8 text-center">
-          <Link href="/" className="inline-flex items-center gap-4 mb-7 group">
-            <Logo className="w-10 h-10" />
-            <span className="font-bold text-sm shimmer-text">OptiCore PH</span>
+        {/* Logo & Header */}
+        <div className="flex flex-col items-center mb-10">
+          <Link href="/" className="mb-6 hover:scale-105 transition-transform">
+            <Logo className="w-14 h-14" />
           </Link>
-          <h1 className="text-2xl font-bold text-text-primary tracking-tight">Create your account</h1>
-          <p className="text-sm text-text-muted mt-1.5">
-            {planParam === 'pro' && 'You\'re signing up for the Pro plan.'}
-            {planParam === 'business' && 'You\'re signing up for the Business plan.'}
-            {!planParam && 'Start optimizing your utility bills in minutes.'}
+          <h1 className="text-3xl font-black text-white tracking-tighter text-center">
+            Create Your Account
+          </h1>
+          <p className="text-text-muted mt-2 text-sm text-center">
+            Join households optimizing infrastructure across the Philippines.
           </p>
-        </div>
-
         {/* Plan badge */}
         {planParam && (
           <div className="flex justify-center mb-5">

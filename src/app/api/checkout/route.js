@@ -14,10 +14,7 @@ export async function POST(request) {
 
   try {
     const user = await getSession();
-    if (!user) {
-      return NextResponse.json({ error: 'Unauthorized. Please log in again.' }, { status: 401 });
-    }
-
+    
     let body;
     try {
       body = await request.json();
@@ -25,7 +22,15 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Invalid request body.' }, { status: 400 });
     }
 
-    const { plan, interval } = body ?? {};
+    const { plan, interval, guestEmail } = body ?? {};
+
+    // Ensure we have an email either from session or guest input
+    const email = user?.email || guestEmail;
+    if (!email) {
+      return NextResponse.json({ error: 'Authentication required or guest email missing.' }, { status: 401 });
+    }
+
+    const clientId = user?.sub || `guest_${Date.now()}`;
 
     if (plan !== 'pro' && plan !== 'business') {
       return NextResponse.json({ error: 'Invalid plan selected.' }, { status: 400 });
@@ -36,11 +41,13 @@ export async function POST(request) {
     const baseUrl  = `${protocol}://${host}`;
 
     const { checkoutUrl } = await createCheckoutSession({
-      clientId:   user.sub,
-      email:      user.email,
+      clientId,
+      email,
       plan,
       interval:   interval || 'monthly',
-      successUrl: `${baseUrl}/dashboard?upgraded=true&plan=${plan}`,
+      successUrl: user 
+        ? `${baseUrl}/dashboard?upgraded=true&plan=${plan}`
+        : `${baseUrl}/signup?plan=${plan}&paid=true&email=${encodeURIComponent(email)}`,
       cancelUrl:  `${baseUrl}/pricing`,
     });
 

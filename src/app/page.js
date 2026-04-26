@@ -158,7 +158,7 @@ export default function LandingPage() {
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
-              <Link href="/signup" className="text-sm font-black uppercase tracking-widest px-8 py-4 rounded-xl text-black bg-white hover:bg-gray-200 transition-all shadow-[0_0_30px_rgba(255,255,255,0.2)] flex items-center gap-2">
+              <Link href="/pricing" className="text-sm font-black uppercase tracking-widest px-8 py-4 rounded-xl text-black bg-white hover:bg-gray-200 transition-all shadow-[0_0_30px_rgba(255,255,255,0.2)] flex items-center gap-2">
                 Get Started Free <ChevronRight className="w-4 h-4" />
               </Link>
               <Link 
@@ -326,7 +326,7 @@ export default function LandingPage() {
               <Link href="/pricing" className="btn-primary px-10 py-4 text-sm font-black uppercase tracking-widest flex items-center gap-2">
                 View Pricing Plans <ArrowRight className="w-4 h-4" />
               </Link>
-              <Link href="/signup" className="btn-ghost px-10 py-4 text-sm font-black uppercase tracking-widest">
+              <Link href="/pricing" className="btn-ghost px-10 py-4 text-sm font-black uppercase tracking-widest">
                 Create Free Account
               </Link>
             </div>

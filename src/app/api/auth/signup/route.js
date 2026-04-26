@@ -47,6 +47,7 @@ export async function POST(request) {
     email,
     password,
     consent,
+    plan,
   } = body ?? {};
 
   // ── Input validation ──────────────────────────────────────────────────────
@@ -99,6 +100,7 @@ export async function POST(request) {
       name:                    toTitleCase(name.trim()),
       email:                   email.trim().toLowerCase(),
       password_hash:           passwordHash,
+      plan_tier:               plan || 'starter',
     });
   } catch (err) {
     console.error('[signup] Failed to create client:', err?.message);
@@ -128,7 +130,7 @@ export async function POST(request) {
     type:    'new_user',
     title:   `New user registered`,
     message: `${toTitleCase(name.trim())} signed up with email/password`,
-    meta: { email: email.trim().toLowerCase(), name: toTitleCase(name.trim()), plan: 'starter' },
+    meta: { email: email.trim().toLowerCase(), name: toTitleCase(name.trim()), plan: plan || 'starter' },
   }).catch(() => {});
 
   return NextResponse.json(

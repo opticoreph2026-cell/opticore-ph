@@ -189,7 +189,7 @@ export async function createNewClientRecord(data) {
       consentGiven: true,
       onboardingComplete: false,
       role: 'client',
-      planTier: 'starter',
+      planTier: data.plan_tier || 'starter',
     },
   });
 }
