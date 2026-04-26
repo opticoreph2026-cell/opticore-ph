@@ -79,6 +79,25 @@ function SignupForm() {
         setLoading(false);
       } else {
         setSuccess(true);
+        
+        // If a plan was selected, trigger checkout automatically
+        if (planParam && (planParam === 'pro' || planParam === 'business')) {
+          try {
+            const checkoutRes = await fetch('/api/checkout', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ plan: planParam, interval: 'monthly' }),
+            });
+            const checkoutData = await checkoutRes.json();
+            if (checkoutRes.ok && checkoutData.url) {
+              setTimeout(() => { window.location.href = checkoutData.url; }, 800);
+              return;
+            }
+          } catch (checkoutErr) {
+            console.error('Auto-checkout failed:', checkoutErr);
+          }
+        }
+        
         setTimeout(() => router.push(data.redirect || '/onboarding'), 1200);
       }
     } catch {

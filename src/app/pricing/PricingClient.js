@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Check, Zap, ArrowRight, Loader2, Sparkles, Shield, Building2 } from 'lucide-react';
 import Navbar from '@/components/ui/Navbar';
@@ -112,25 +114,34 @@ function FAQItem({ q, a, isOpen, onClick }) {
   );
 }
 
+
 export default function PricingClient() {
+  const { data: session, status } = useSession();
+  const searchParams = useSearchParams();
+  const planParam = searchParams.get('plan');
   const [isYearly,    setIsYearly]    = useState(false);
   const [openFaq,     setOpenFaq]     = useState(0);
   const [loadingPlan, setLoadingPlan] = useState(null);
-  const [isLoggedIn,  setIsLoggedIn]  = useState(false);
-  const [userRole,    setUserRole]    = useState(null);
   const [toastMsg,    setToastMsg]    = useState(null);
   const [toastType,   setToastType]   = useState('info');
 
+  const isLoggedIn = status === 'authenticated';
+  const userRole   = session?.user?.role;
+
+  // Auto-trigger checkout if plan is in URL
   useEffect(() => {
-    fetch('/api/auth/me').then(r => r.json()).then(data => { 
-      if (data.user) {
-        setIsLoggedIn(true);
-        setUserRole(data.user.role);
-      }
-    }).catch(() => {});
-  }, []);
+    if (isLoggedIn && planParam && (planParam === 'pro' || planParam === 'business')) {
+      // Small delay to ensure UI is ready
+      const timer = setTimeout(() => {
+        handleCheckout(planParam);
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [isLoggedIn, planParam]);
 
   async function handleCheckout(priceId) {
+    if (status === 'loading') return;
+
     if (!isLoggedIn) { 
       window.location.href = `/signup?plan=${priceId}`; 
       return; 
