@@ -167,7 +167,6 @@ export async function POST(request) {
 
     let response;
     try {
-    try {
       const result = await ai.models.generateContent({ 
         model: 'gemini-1.5-flash',
         systemInstruction: SYSTEM_PROMPT,
