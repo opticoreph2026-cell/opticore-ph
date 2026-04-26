@@ -66,7 +66,14 @@ export default function AdminClientTable({ clients }) {
                     </div>
                   </div>
                   <div className="flex flex-col">
-                    <span className="font-bold text-text-primary">{c.name || 'Anonymous'}</span>
+                    <div className="flex items-center gap-2">
+                      <span className="font-bold text-text-primary">{c.name || 'Anonymous'}</span>
+                      {c.role === 'admin' && (
+                        <span className="bg-purple-500/10 text-purple-400 text-[8px] font-black uppercase px-1.5 py-0.5 rounded border border-purple-500/20">
+                          Admin
+                        </span>
+                      )}
+                    </div>
                     <span className="text-[11px] text-text-faint">{c.email}</span>
                   </div>
                 </div>
@@ -89,7 +96,7 @@ export default function AdminClientTable({ clients }) {
                 ) : (
                   <span className={clsx(
                     "px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider",
-                    c.planTier === 'pro' ? "bg-amber-500/10 text-amber-400 border border-amber-500/20" :
+                    c.planTier === 'pro' ? "bg-cyan-500/10 text-cyan-400 border border-cyan-500/20" :
                     c.planTier === 'business' ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" :
                     "bg-white/5 text-text-muted border border-white/10"
                   )}>
@@ -117,7 +124,7 @@ export default function AdminClientTable({ clients }) {
             </tr>
           ))}
           {clients.length === 0 && (
-            <tr><td colSpan="3" className="px-6 py-10 text-center text-text-faint italic">No clients registered yet.</td></tr>
+            <tr><td colSpan="6" className="px-6 py-10 text-center text-text-faint italic">No clients registered yet.</td></tr>
           )}
         </tbody>
       </table>

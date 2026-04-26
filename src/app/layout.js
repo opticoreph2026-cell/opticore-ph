@@ -2,6 +2,8 @@ import { Inter, Outfit } from 'next/font/google';
 import './globals.css';
 import AuthProvider from '@/components/ui/AuthProvider';
 
+import { CSPostHogProvider } from '@/components/providers/PostHogProvider';
+
 // Optimize and load fonts
 const inter = Inter({ 
   subsets: ['latin'], 
@@ -38,7 +40,7 @@ export const metadata = {
 export const viewport = {
   width: 'device-width',
   initialScale: 1,
-  themeColor: '#f59e0b',
+  themeColor: '#22d3ee',
 };
 
 /**
@@ -49,9 +51,11 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en-PH" className={`${inter.variable} ${outfit.variable}`}>
       <body className={`antialiased ${inter.className}`}>
-        <AuthProvider>
-          {children}
-        </AuthProvider>
+        <CSPostHogProvider>
+          <AuthProvider>
+            {children}
+          </AuthProvider>
+        </CSPostHogProvider>
       </body>
     </html>
   );

@@ -114,7 +114,7 @@ export default function AdminClientsPage() {
                     <td className="px-5 py-4 text-text-muted">{c.email ?? '—'}</td>
                     <td className="px-5 py-4 text-xs">
                       <span className={`stat-badge ${
-                        c.planTier === 'business' ? 'stat-badge-amber' :
+                        c.planTier === 'business' ? 'stat-badge-emerald' :
                         c.planTier === 'pro'      ? 'stat-badge-blue'  :
                         'bg-surface-700 text-text-muted border border-white/[0.06]'
                       }`}>

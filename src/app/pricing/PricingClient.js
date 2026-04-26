@@ -202,8 +202,8 @@ export default function PricingClient() {
                     : 'text-text-muted hover:text-text-secondary'
                 }`}
                 style={isYearly ? {
-                  background: 'rgba(245,158,11,0.10)',
-                  border: '1px solid rgba(245,158,11,0.2)',
+                  background: 'rgba(34,211,238,0.10)',
+                  border: '1px solid rgba(34,211,238,0.2)',
                 } : {}}
               >
                 Yearly
@@ -215,7 +215,7 @@ export default function PricingClient() {
           </div>
 
           {/* ── Plans Bento Grid ── */}
-          <div className="grid md:grid-cols-3 gap-4 mb-24 items-stretch">
+          <div className="grid md:grid-cols-3 gap-6 mb-24 items-stretch">
             {PLANS.map((plan) => {
               const currentPrice  = isYearly && plan.basePrice > 0 ? Math.floor(plan.basePrice * 0.8) : plan.basePrice;
               const displayPrice  = plan.basePrice === 0 ? 'Free' : `₱${currentPrice.toLocaleString()}`;
@@ -224,21 +224,21 @@ export default function PricingClient() {
               return (
                 <div
                   key={plan.name}
-                  className="bento-card flex flex-col relative"
+                  className="bento-card flex flex-col relative group"
                   style={plan.highlight ? {
-                    border: '1px solid rgba(245,158,11,0.35)',
-                    boxShadow: '0 0 40px rgba(245,158,11,0.12), 0 1px 0 rgba(255,255,255,0.05) inset, 0 8px 32px rgba(0,0,0,0.5)',
-                    background: 'linear-gradient(160deg, rgba(30,28,20,0.9) 0%, rgba(18,18,26,0.95) 100%)',
+                    border: '1px solid rgba(34,211,238,0.35)',
+                    boxShadow: '0 0 60px rgba(34,211,238,0.1), 0 1px 0 rgba(255,255,255,0.05) inset, 0 8px 32px rgba(0,0,0,0.5)',
+                    background: 'linear-gradient(160deg, rgba(10,20,25,0.95) 0%, rgba(5,5,8,0.98) 100%)',
                   } : {}}
                 >
                   {/* Popular badge */}
                   {plan.badge && (
                     <div
-                      className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full text-[10px] uppercase tracking-[0.18em] font-black whitespace-nowrap z-30"
+                      className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full text-[10px] uppercase tracking-[0.18em] font-black whitespace-nowrap z-30"
                       style={{
-                        background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
-                        color: '#0a0a0f',
-                        boxShadow: '0 4px 16px rgba(245,158,11,0.4)',
+                        background: 'linear-gradient(135deg, #22d3ee 0%, #0891b2 100%)',
+                        color: '#020204',
+                        boxShadow: '0 4px 20px rgba(34,211,238,0.4)',
                       }}
                     >
                       {plan.badge}
@@ -246,57 +246,57 @@ export default function PricingClient() {
                   )}
 
                   {/* Card content */}
-                  <div className="p-7 flex flex-col gap-0 flex-1">
+                  <div className="p-8 flex flex-col gap-0 flex-1">
                     {/* Plan header */}
-                    <div className="mb-6">
-                      <div className="flex items-center justify-between mb-5">
-                        <div className={`w-10 h-10 rounded-xl ${plan.iconBg} border ${plan.highlight ? 'border-brand-500/30' : 'border-white/10'} flex items-center justify-center`}>
-                          <PlanIcon className={`w-5 h-5 ${plan.iconColor}`} />
+                    <div className="mb-8">
+                      <div className="flex items-center justify-between mb-6">
+                        <div className={`w-12 h-12 rounded-2xl ${plan.iconBg} border ${plan.highlight ? 'border-brand-500/30' : 'border-white/10'} flex items-center justify-center transition-transform group-hover:scale-110 duration-500`}>
+                          <PlanIcon className={`w-6 h-6 ${plan.iconColor}`} />
                         </div>
                         {plan.highlight && (
                           <span
-                            className="text-[9px] font-black uppercase tracking-[0.15em] text-brand-400 px-2 py-0.5 rounded-md"
-                            style={{ background: 'rgba(245,158,11,0.12)', border: '1px solid rgba(245,158,11,0.2)' }}
+                            className="text-[9px] font-black uppercase tracking-[0.15em] text-brand-400 px-2.5 py-1 rounded-lg"
+                            style={{ background: 'rgba(34,211,238,0.1)', border: '1px solid rgba(34,211,238,0.2)' }}
                           >
                             Recommended
                           </span>
                         )}
                       </div>
 
-                      <p className="text-[10px] font-black text-text-faint uppercase tracking-[0.2em] mb-2">{plan.name}</p>
-                      <div className="flex items-end gap-1.5 mb-3">
+                      <p className="text-[10px] font-black text-text-faint uppercase tracking-[0.25em] mb-2">{plan.name}</p>
+                      <div className="flex items-end gap-2 mb-4">
                         <span className={`text-5xl font-black tracking-tight leading-none ${plan.highlight ? 'shimmer-text' : 'text-text-primary'}`}>
                           {displayPrice}
                         </span>
                         {plan.basePrice > 0 && (
-                          <span className="text-text-faint text-xs font-medium mb-1.5">
-                            /{isYearly ? 'mo, billed yearly' : 'month'}
+                          <span className="text-text-faint text-xs font-semibold mb-1.5">
+                            /{isYearly ? 'mo' : 'month'}
                           </span>
                         )}
                       </div>
-                      <p className="text-xs text-text-muted leading-relaxed">{plan.tagline}</p>
+                      <p className="text-sm text-text-muted leading-relaxed font-medium">{plan.tagline}</p>
                     </div>
 
                     {/* Features */}
-                    <ul className="space-y-3 flex-1 pt-5" style={{ borderTop: '1px solid rgba(255,255,255,0.055)' }}>
+                    <ul className="space-y-4 flex-1 pt-6" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
                       {plan.features.map((f) => (
-                        <li key={f} className="flex items-start gap-3">
-                          <div className={`w-4 h-4 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${
-                            plan.highlight ? 'bg-brand-500/20' : 'bg-emerald-500/10'
+                        <li key={f} className="flex items-start gap-3 group/feat">
+                          <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5 transition-colors ${
+                            plan.highlight ? 'bg-brand-500/15 group-hover/feat:bg-brand-500/25' : 'bg-emerald-500/10'
                           }`}>
-                            <Check className={`w-2.5 h-2.5 ${plan.highlight ? 'text-brand-400' : 'text-emerald-400'}`} />
+                            <Check className={`w-3 h-3 ${plan.highlight ? 'text-brand-400' : 'text-emerald-400'}`} />
                           </div>
-                          <span className="text-sm text-text-secondary font-medium leading-snug">{f}</span>
+                          <span className="text-sm text-text-secondary font-medium leading-snug group-hover/feat:text-text-primary transition-colors">{f}</span>
                         </li>
                       ))}
                     </ul>
 
                     {/* CTA */}
-                    <div className="mt-7">
+                    <div className="mt-8">
                       {plan.priceId === 'free' ? (
                         <Link 
                           href={!isLoggedIn ? plan.href : (userRole === 'admin' ? '/admin' : '/dashboard')} 
-                          className="btn-ghost w-full text-center"
+                          className="btn-ghost w-full py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest flex items-center justify-center hover:bg-white/5 transition-all"
                         >
                           {plan.cta}
                         </Link>
@@ -304,7 +304,7 @@ export default function PricingClient() {
                         <button
                           onClick={() => handleCheckout(plan.priceId)}
                           disabled={loadingPlan === plan.priceId}
-                          className="btn-primary w-full flex items-center justify-center gap-2 disabled:opacity-70"
+                          className="btn-primary w-full py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-2 disabled:opacity-70"
                         >
                           {loadingPlan === plan.priceId
                             ? <><Loader2 className="w-4 h-4 animate-spin" /> Processing…</>

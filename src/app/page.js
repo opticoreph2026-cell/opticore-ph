@@ -148,7 +148,7 @@ export default function LandingPage() {
             <h1 className="text-display text-5xl sm:text-6xl md:text-7xl font-normal leading-tight mb-6">
               <span className="text-white">The Ultimate</span>
               <br />
-              <span className="text-brand-400 font-black drop-shadow-[0_0_25px_rgba(245,158,11,0.2)]">
+              <span className="text-brand-400 font-black drop-shadow-[0_0_25px_rgba(34,211,238,0.2)]">
                 Command Center.
               </span>
             </h1>
@@ -280,11 +280,11 @@ export default function LandingPage() {
             <div className="grid md:grid-cols-3 gap-6">
               {TESTIMONIALS.map((t, i) => (
                 <div key={i} className="bg-white/[0.02] border border-white/[0.05] p-8 rounded-2xl flex flex-col justify-between hover:bg-white/[0.04] transition-all"
-                  style={{ borderTop: '2px solid rgba(245,158,11,0.5)' }}
+                  style={{ borderTop: '2px solid rgba(34,211,238,0.5)' }}
                 >
                   <div>
                     <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 mb-6">
-                      <div className="flex text-amber-500 gap-1">
+                      <div className="flex text-brand-400 gap-1">
                         {[...Array(5)].map((_, j) => (
                           <svg key={j} className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
                         ))}
@@ -336,12 +336,12 @@ export default function LandingPage() {
               </div>
 
               {/* Pro */}
-              <div className="bento-card p-8 flex flex-col items-center text-center relative" style={{ border: '1px solid rgba(245,158,11,0.3)', background: 'linear-gradient(160deg, rgba(30,28,20,0.9) 0%, rgba(18,18,26,0.95) 100%)', boxShadow: '0 8px 32px rgba(245,158,11,0.1)' }}>
-                <div className="absolute -top-3 px-3 py-1 bg-gradient-to-r from-amber-500 to-amber-600 rounded-full text-[9px] font-black uppercase tracking-widest text-black shadow-lg">Most Popular</div>
+              <div className="bento-card p-8 flex flex-col items-center text-center relative" style={{ border: '1px solid rgba(34,211,238,0.3)', background: 'linear-gradient(160deg, rgba(10,20,25,0.95) 0%, rgba(5,5,8,0.98) 100%)', boxShadow: '0 8px 32px rgba(34,211,238,0.1)' }}>
+                <div className="absolute -top-3 px-3 py-1 bg-gradient-to-r from-brand-400 to-brand-600 rounded-full text-[9px] font-black uppercase tracking-widest text-black shadow-lg">Most Popular</div>
                 <p className="text-[10px] font-black uppercase tracking-widest text-brand-400 mb-2">Pro</p>
                 <p className="text-4xl font-black text-white mb-4">₱499<span className="text-sm text-text-muted font-medium">/mo</span></p>
                 <p className="text-xs text-text-muted mb-8 leading-relaxed">Advanced analytics, ROI simulators, and multi-property support.</p>
-                <Link href="/pricing" className="btn-primary w-full flex items-center justify-center shadow-[0_0_20px_rgba(245,158,11,0.2)]">Upgrade to Pro</Link>
+                <Link href="/pricing" className="btn-primary w-full flex items-center justify-center shadow-[0_0_20px_rgba(34,211,238,0.2)]">Upgrade to Pro</Link>
               </div>
 
               {/* Business */}

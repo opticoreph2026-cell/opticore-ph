@@ -12,11 +12,11 @@
  * Body: { name, email, password, electricity_provider_id?, water_provider_id?, consent }
  */
 
-import { NextResponse }    from 'next/server';
+import { NextResponse } from 'next/server';
 import { getClientByEmail, createNewClientRecord } from '@/lib/db';
 import { hashPassword, signAccessToken, signRefreshToken, setAuthCookies } from '@/lib/auth';
 import { sendWelcomeEmail } from '@/lib/email';
-import { checkRateLimit, getClientIp } from '@/lib/ratelimit';
+import { ratelimit } from '@/lib/redis';
 import { createAdminNotification } from '@/lib/db';
 
 
@@ -32,13 +32,21 @@ function toTitleCase(str) {
 }
 
 export async function POST(request) {
-  // ── Rate limiting (5 signups per IP per 15 min) ───────────────────────────
-  const ip = getClientIp(request);
-  const rl = checkRateLimit(`signup:${ip}`, 5);
-  if (!rl.success) {
+  // ── Rate limiting (Redis-backed) ───────────────────────────────────────────
+  const ip = request.headers.get('x-forwarded-for') ?? '127.0.0.1';
+  const { success, limit, reset, remaining } = await ratelimit.limit(`signup_${ip}`);
+
+  if (!success) {
     return NextResponse.json(
-      { error: 'Too many signup attempts. Please wait and try again.' },
-      { status: 429 }
+      { error: 'Too many signup attempts. Please try again later.' },
+      { 
+        status: 429,
+        headers: {
+          'X-RateLimit-Limit': limit.toString(),
+          'X-RateLimit-Remaining': remaining.toString(),
+          'X-RateLimit-Reset': reset.toString(),
+        }
+      }
     );
   }
 

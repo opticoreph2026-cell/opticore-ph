@@ -42,11 +42,16 @@ export default function Captcha({ onVerify }) {
   }, [onVerify]);
 
   return (
-    <div className="flex justify-center my-4">
+    <div className="flex flex-col items-center gap-3 my-6 animate-fade-in">
       <div 
         ref={containerRef} 
-        className="turnstile-container"
+        className="turnstile-container min-h-[65px] flex items-center justify-center p-2 rounded-2xl bg-white/[0.02] border border-white/[0.05] shadow-xl"
       />
+      {!process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY && (
+        <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+          Secured by Cloudflare Turnstile
+        </p>
+      )}
     </div>
   );
 }

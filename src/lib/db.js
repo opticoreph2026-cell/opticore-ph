@@ -3,6 +3,7 @@ import 'server-only';
 import { PrismaClient } from '@prisma/client';
 import { PrismaLibSQL } from '@prisma/adapter-libsql';
 import { createClient } from '@libsql/client';
+import { redis } from '@/lib/redis';
 
 /**
  * OptiCore PH - Database Engine
@@ -75,7 +76,6 @@ export async function getClientById(id) {
 
 export async function listAllClients(options = {}) {
   return db.client.findMany({
-    where: { role: 'client' },
     orderBy: { createdAt: 'desc' },
     take: options.maxRecords || 100,
   });
@@ -551,11 +551,20 @@ export async function deleteProvider(id) {
 }
 
 export async function getAdminKPIs() {
-  const [totalClients, starter, pro, business, totalReports, activeAlerts] = await Promise.all([
+  const CACHE_KEY = 'admin:kpis';
+  try {
+    const cached = await redis.get(CACHE_KEY);
+    if (cached) return cached;
+  } catch (err) {
+    console.error('Redis cache error:', err);
+  }
+
+  const [totalClients, starter, pro, business, admins, totalReports, activeAlerts] = await Promise.all([
     db.client.count({ where: { role: 'client' } }),
     db.client.count({ where: { role: 'client', planTier: 'starter' } }),
     db.client.count({ where: { role: 'client', planTier: 'pro' } }),
     db.client.count({ where: { role: 'client', planTier: 'business' } }),
+    db.client.count({ where: { role: 'admin' } }),
     db.aIReport.count(),
     db.alert.count({ where: { isRead: false } }),
   ]);
@@ -566,6 +575,7 @@ export async function getAdminKPIs() {
     totalClients,
     proClients: pro,
     businessClients: business,
+    adminCount: admins,
     activeAlerts,
     totalReports,
     mrr,
@@ -575,6 +585,14 @@ export async function getAdminKPIs() {
       business,
     },
   };
+
+  try {
+    await redis.set(CACHE_KEY, kpis, { ex: 300 }); // Cache for 5 mins
+  } catch (err) {
+    console.error('Redis set error:', err);
+  }
+
+  return kpis;
 }
 
 export async function createVerificationToken(email, token, expires) {
