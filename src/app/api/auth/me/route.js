@@ -4,11 +4,11 @@
  */
 
 import { NextResponse }        from 'next/server';
-import { getCurrentUser }      from '@/lib/auth';
+import { getSession }         from '@/lib/auth';
 import { getClientById }       from '@/lib/db';
 
 export async function GET() {
-  const jwtUser = await getCurrentUser();
+  const jwtUser = await getSession();
   if (!jwtUser) {
     return NextResponse.json({ user: null }, { status: 200 });
   }
