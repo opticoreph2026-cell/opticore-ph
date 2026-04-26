@@ -18,8 +18,8 @@ export default function Footer() {
               </span>
             </div>
             <p className="text-sm text-text-muted leading-relaxed max-w-xs">
-              AI-powered utility bill optimization for every Filipino household and business.
-              Works with any electricity or water provider nationwide.
+              The Nationwide Resource Protocol for energy intelligence. 
+              Optimizing Filipino utility consumption with Gemini AI and deterministic math.
             </p>
           </div>
 

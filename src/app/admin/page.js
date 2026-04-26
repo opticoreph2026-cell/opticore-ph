@@ -19,7 +19,7 @@ export default async function AdminDashboard() {
   try {
     [kpis, recentClients, transactions, telemetry, initialNotifications] = await Promise.all([
       getAdminKPIs(),
-      listAllClients({ maxRecords: 10 }),
+      listAllClients({ maxRecords: 50 }),
       listAllTransactions({ maxRecords: 10 }),
       getSystemTelemetry(),
       getAdminNotifications(5),

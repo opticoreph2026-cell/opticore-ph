@@ -215,7 +215,7 @@ export default function PricingClient() {
           </div>
 
           {/* ── Plans Bento Grid ── */}
-          <div className="grid md:grid-cols-3 gap-6 mb-24 items-stretch pt-10">
+          <div className="grid md:grid-cols-3 gap-6 mb-24 items-stretch pt-14 relative z-10">
             {PLANS.map((plan) => {
               const currentPrice  = isYearly && plan.basePrice > 0 ? Math.floor(plan.basePrice * 0.8) : plan.basePrice;
               const displayPrice  = plan.basePrice === 0 ? 'Free' : `₱${currentPrice.toLocaleString()}`;

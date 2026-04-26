@@ -22,8 +22,18 @@ export async function GET(request) {
     return NextResponse.redirect(new URL(callbackUrl, request.url));
   }
   
-  // If refresh fails, go to login
-  return NextResponse.redirect(new URL('/login?error=SessionExpired', request.url));
+  // If refresh fails, determine if we MUST go to login
+  const isProtected = callbackUrl.startsWith('/dashboard') || callbackUrl.startsWith('/admin') || callbackUrl.startsWith('/onboarding');
+  
+  if (isProtected) {
+    return NextResponse.redirect(new URL('/login?error=SessionExpired', request.url));
+  }
+
+  // For public routes (like /pricing), just go back as guest
+  const response = NextResponse.redirect(new URL(callbackUrl, request.url));
+  response.cookies.set('opticore_access', '', { maxAge: 0 });
+  response.cookies.set('opticore_refresh', '', { maxAge: 0 });
+  return response;
 }
 
 async function handleRefresh() {
