@@ -8,6 +8,23 @@ import { analyzeWaterUsage } from '@/lib/algorithms/waterAnalyzer';
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
+// ── GET ───────────────────────────────────────────────────────────────────────
+export async function GET() {
+  try {
+    const user = await getCurrentUser();
+    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+    const activeProperty = await getActiveProperty(user.sub);
+    const readings = await getReadingsByClient(user.sub, activeProperty?.id);
+    
+    return NextResponse.json({ readings });
+  } catch (error) {
+    console.error('[Readings API GET] Error:', error);
+    return NextResponse.json({ error: 'Failed to fetch readings' }, { status: 500 });
+  }
+}
+
+// ── POST ──────────────────────────────────────────────────────────────────────
 export async function POST(request) {
   try {
     const user = await getCurrentUser();

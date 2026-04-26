@@ -33,10 +33,10 @@ export async function GET() {
 }
 
 /**
- * PATCH /api/dashboard/profile
+ * POST /api/dashboard/profile
  * Updates the user's profile fields.
  */
-export async function PATCH(request) {
+export async function POST(request) {
   try {
     const user = await getCurrentUser();
     if (!user) {
