@@ -7,6 +7,8 @@ import { NextResponse }        from 'next/server';
 import { getSession }         from '@/lib/auth';
 import { getClientById }       from '@/lib/db';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   const jwtUser = await getSession();
   if (!jwtUser) {
