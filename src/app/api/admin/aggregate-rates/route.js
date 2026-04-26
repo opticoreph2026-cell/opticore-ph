@@ -9,9 +9,9 @@ import { aggregateProviderBenchmarking } from '@/lib/algorithms/providerAggregat
  */
 export async function POST(request) {
   try {
-    // Note: In production, enforce an admin API key or session check here.
+    const cronSecret = process.env.ADMIN_CRON_SECRET;
     const authHeader = request.headers.get('authorization');
-    if (authHeader !== `Bearer ${process.env.ADMIN_CRON_SECRET || 'opticore-dev-secret'}`) {
+    if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 

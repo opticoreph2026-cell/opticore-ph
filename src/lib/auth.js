@@ -13,8 +13,6 @@ import 'server-only';
 
 import { SignJWT, jwtVerify } from 'jose';
 import { cookies } from 'next/headers';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth-options';
 import bcrypt from 'bcryptjs';
 import { db } from '@/lib/db';
 
@@ -33,10 +31,10 @@ function getSecret() {
   return new TextEncoder().encode(secret);
 }
 
-/** Encode the JWT_REFRESH_SECRET for refresh tokens — falls back to JWT_SECRET if not set */
+/** Encode the JWT_REFRESH_SECRET for refresh tokens */
 function getRefreshSecret() {
-  const secret = process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET;
-  if (!secret) throw new Error('JWT_REFRESH_SECRET environment variable is not set.');
+  const secret = process.env.JWT_REFRESH_SECRET;
+  if (!secret) throw new Error('[Auth] JWT_REFRESH_SECRET is not set.');
   return new TextEncoder().encode(secret);
 }
 
@@ -162,8 +160,7 @@ export async function clearAuthCookies() {
  * Get the current user session.
  * If the access token is expired but a valid refresh token exists,
  * it will automatically refresh the session (including cookies).
- * 
- * Falls back to NextAuth (Google) session if custom JWT is missing.
+ * Returns null if no valid access or refresh token is found.
  */
 export async function getSession() {
   const jwtUser = await getCurrentUser();
@@ -206,36 +203,6 @@ export async function getSession() {
     } catch (error) {
       console.error('[Auth Server Session] Refresh failed:', error);
     }
-  }
-
-  // Final fallback: Check NextAuth session (for Google users)
-  try {
-    const nextAuthSession = await getServerSession(authOptions);
-    if (nextAuthSession?.user?.email) {
-      const client = await db.client.findUnique({
-        where: { email: nextAuthSession.user.email.toLowerCase() }
-      });
-
-      if (client) {
-        const payload = {
-          sub:                 client.id,
-          email:               client.email,
-          name:                client.name,
-          role:                client.role ?? 'client',
-          plan:                client.planTier ?? 'starter',
-          onboarding_complete: client.onboardingComplete ?? false,
-        };
-        
-        // Re-sync cookies
-        const accessToken = await signAccessToken(payload);
-        const refreshToken = await signRefreshToken({ sub: client.id });
-        await setAuthCookies(client, accessToken, refreshToken);
-        
-        return payload;
-      }
-    }
-  } catch (err) {
-    console.error('[Auth Session] NextAuth fallback failed:', err);
   }
 
   return null;
