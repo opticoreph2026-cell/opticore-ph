@@ -143,6 +143,15 @@ function SignupForm() {
           <p className="text-text-muted mt-2 text-sm text-center">
             Join households optimizing infrastructure across the Philippines.
           </p>
+          
+          {paidParam && (
+            <div className="mt-4 px-4 py-2 rounded-full bg-brand-500/10 border border-brand-500/20 flex items-center gap-2 animate-bounce-subtle">
+              <div className="w-2 h-2 rounded-full bg-brand-400 animate-pulse" />
+              <span className="text-[10px] font-black text-brand-400 uppercase tracking-widest">Payment Verified: {planParam} Plan</span>
+            </div>
+          )}
+        </div>
+
         {/* Plan badge */}
         {planParam && (
           <div className="flex justify-center mb-5">
