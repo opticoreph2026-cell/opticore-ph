@@ -8,6 +8,7 @@ import { NextResponse }  from 'next/server';
 import { db, getClientByEmail, updateClientPasswordById } from '@/lib/db';
 import { signAccessToken, signRefreshToken, setAuthCookies, verifyPassword, hashPassword } from '@/lib/auth';
 import { checkRateLimit, getClientIp } from '@/lib/ratelimit';
+import { verifyTurnstileToken } from '@/lib/security';
 
 export async function POST(request) {
   // ── Rate limiting ────────────────────────────────────────────────────────
@@ -31,7 +32,14 @@ export async function POST(request) {
     return NextResponse.json({ error: 'Invalid request body.' }, { status: 400 });
   }
 
-  const { email, password } = body ?? {};
+  const { email, password, captchaToken } = body ?? {};
+
+  // ── CAPTCHA Verification ──────────────────────────────────────────────────
+  const isHuman = await verifyTurnstileToken(captchaToken, ip);
+  if (!isHuman) {
+    return NextResponse.json({ error: 'Security check failed. Please refresh and try again.' }, { status: 403 });
+  }
+
   if (!email || !password) {
     return NextResponse.json({ error: 'Email and password are required.' }, { status: 400 });
   }

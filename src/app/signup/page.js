@@ -64,6 +64,7 @@ function SignupForm() {
           password: form.password,
           consent: form.consent,
           plan: planParam,
+          captchaToken,
         }),
       });
       const data = await res.json();

@@ -18,6 +18,8 @@ import { hashPassword, signAccessToken, signRefreshToken, setAuthCookies } from 
 import { sendWelcomeEmail } from '@/lib/email';
 
 import { createAdminNotification } from '@/lib/db';
+import { verifyTurnstileToken } from '@/lib/security';
+import { getClientIp } from '@/lib/ratelimit';
 
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -48,7 +50,15 @@ export async function POST(request) {
     password,
     consent,
     plan,
+    captchaToken,
   } = body ?? {};
+
+  // ── CAPTCHA Verification ──────────────────────────────────────────────────
+  const ip = getClientIp(request);
+  const isHuman = await verifyTurnstileToken(captchaToken, ip);
+  if (!isHuman) {
+    return NextResponse.json({ error: 'Security check failed. Please refresh and try again.' }, { status: 403 });
+  }
 
   // ── Input validation ──────────────────────────────────────────────────────
   if (!name || typeof name !== 'string' || name.trim().length < 2) {
