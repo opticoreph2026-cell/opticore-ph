@@ -56,15 +56,18 @@ export default function OnboardingWizard() {
         });
         if (!res.ok) {
           const data = await res.json().catch(() => ({}));
-          // Non-fatal: warn but still advance
-          console.warn('[Onboarding] Failed to save providers:', data.error);
+          setSaveError(data.error || 'Failed to save utility providers. Please try again.');
+          setLoading(false);
+          return;
         }
       } catch {
-        // Network error — non-fatal, advance anyway
+        setSaveError('Network error while saving providers. Please try again.');
+        setLoading(false);
+        return;
       } finally {
         setLoading(false);
-        setStep(2);
       }
+      setStep(2);
     } else {
       handleComplete();
     }
