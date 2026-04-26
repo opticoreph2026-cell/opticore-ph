@@ -48,12 +48,6 @@ function LoginForm() {
     if (errCode && messages[errCode]) setError(messages[errCode]);
   }, [searchParams]);
 
-  // Quick check: if already logged in, redirect
-  useEffect(() => {
-    fetch('/api/auth/me').then(r => r.json()).then(data => {
-      if (data.user) router.push(data.user.role === 'admin' ? '/admin' : '/dashboard');
-    }).catch(() => {});
-  }, [router]);
 
   const handleEmailLogin = async (e) => {
     e.preventDefault();

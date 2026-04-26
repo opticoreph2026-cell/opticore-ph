@@ -36,14 +36,6 @@ function SignupForm() {
   const searchParams = useSearchParams();
   const planParam   = searchParams.get('plan'); // e.g. 'pro', 'business'
 
-  // Redirect if already logged in
-  useEffect(() => {
-    fetch('/api/auth/me').then(r => r.json()).then(data => {
-      if (data.user) {
-        router.push(data.user.role === 'admin' ? '/admin' : '/dashboard');
-      }
-    }).catch(() => {});
-  }, [router]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
