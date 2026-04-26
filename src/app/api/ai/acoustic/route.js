@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { GoogleGenAI } from '@google/genai';
 import { getCurrentUser } from '@/lib/auth';
 
-const genAI = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 export const maxDuration = 60; // Allow more time for audio processing if deployed on Vercel
 
@@ -38,7 +38,7 @@ export async function POST(request) {
       Return ONLY the raw JSON object. Do not use markdown backticks. If you cannot Simple identify the sound or if it's completely silent, return status "UNKNOWN".
     `;
 
-    const result = await genAI.models.generateContent({
+    const result = await ai.models.generateContent({
       model: 'gemini-1.5-flash',
       contents: [
         { text: prompt },

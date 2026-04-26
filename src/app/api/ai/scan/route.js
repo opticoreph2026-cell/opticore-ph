@@ -4,7 +4,7 @@ import { getCurrentUser } from '@/lib/auth';
 import { getClientById, incrementClientScanQuota, resetClientScanQuota } from '@/lib/db';
 import { findProvider } from '@/data/utilityProviders';
 
-const genAI = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 /**
  * POST /api/ai/scan
@@ -30,7 +30,7 @@ export async function POST(request) {
       }
       if (client.scanCount >= 1) {
         return NextResponse.json(
-          { error: 'QUOTA_EXCEEDED', message: 'You have reached your 1 free AI scan limit. Upgrade to Pro for unlimited scans and deep analysis.' }, 
+          { error: 'QUOTA_EXCEEDED', message: 'You have reached your 1 free AI scan limit. Upgrade to Pro for unlimited scans and deep analysis.' },
           { status: 403 }
         );
       }
@@ -41,7 +41,7 @@ export async function POST(request) {
       return NextResponse.json({ error: 'No image data provided.' }, { status: 400 });
     }
 
-    const deepAnalysisInstruction = plan !== 'starter' 
+    const deepAnalysisInstruction = plan !== 'starter'
       ? '- unbundledCharges: (Object) { generation: number, transmission: number, systemLoss: number, vat: number }\n      Extract granular transmission fees, VAT, and system loss metrics. Be extremely precise.'
       : '- unbundledCharges: null (Skip deep unbundled breakdown for this tier).';
 
@@ -71,11 +71,11 @@ export async function POST(request) {
     const mimeType = mimeMatch ? mimeMatch[1] : 'image/jpeg';
     const base64Data = image.split(',')[1] || image;
 
-    const result = await genAI.models.generateContent({
+    const result = await ai.models.generateContent({
       model: 'gemini-1.5-flash',
       contents: [
         { text: prompt },
-        { 
+        {
           inlineData: {
             data: base64Data,
             mimeType: mimeType
@@ -86,7 +86,7 @@ export async function POST(request) {
 
     const text = result.candidates?.[0]?.content?.parts?.[0]?.text || '';
     const usage = result.usageMetadata; // Extract token usage
-    
+
     // Track usage in background
     const { incrementTokenUsage, incrementScanCount } = await import('@/lib/db');
     if (usage?.totalTokenCount) {
@@ -98,21 +98,21 @@ export async function POST(request) {
     let jsonStr = text.replace(/```json/gi, '').replace(/```/g, '').trim();
     const startIndex = jsonStr.indexOf('{');
     const endIndex = jsonStr.lastIndexOf('}');
-    
+
     if (startIndex !== -1 && endIndex !== -1 && endIndex > startIndex) {
-        jsonStr = jsonStr.substring(startIndex, endIndex + 1);
+      jsonStr = jsonStr.substring(startIndex, endIndex + 1);
     }
-    
+
     let rawData;
     try {
-        rawData = JSON.parse(jsonStr);
+      rawData = JSON.parse(jsonStr);
     } catch (parseError) {
-        throw new Error('AI returned malformed data that could not be parsed: ' + text.substring(0, 50));
+      throw new Error('AI returned malformed data that could not be parsed: ' + text.substring(0, 50));
     }
 
     // Cross-reference with our Registry
     const verifiedProvider = findProvider(rawData.providerName || '');
-    
+
     const enrichedData = {
       ...rawData,
       verifiedProvider: verifiedProvider ? {
@@ -130,11 +130,11 @@ export async function POST(request) {
     // Fire admin notification (non-blocking)
     const { createAdminNotification } = await import('@/lib/db');
     createAdminNotification({
-      type:    'ai_scan',
-      title:   'AI Bill Scan',
+      type: 'ai_scan',
+      title: 'AI Bill Scan',
       message: `${client.name || client.email} scanned a ${rawData.providerName || 'Utility'} bill.`,
-      meta:    { clientId: client.id, email: client.email, provider: rawData.providerName, amount: rawData.totalAmount },
-    }).catch(() => {});
+      meta: { clientId: client.id, email: client.email, provider: rawData.providerName, amount: rawData.totalAmount },
+    }).catch(() => { });
 
     return NextResponse.json({
       success: true,
@@ -143,7 +143,7 @@ export async function POST(request) {
 
   } catch (error) {
     console.error('[Vision OCR] Critical Error:', error);
-    
+
     // Standardized SRE Error for rate limits or AI failures
     if (error.status === 429 || error.message?.includes('429')) {
       return NextResponse.json(
