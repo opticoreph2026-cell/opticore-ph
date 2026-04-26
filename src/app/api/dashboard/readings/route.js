@@ -2,11 +2,11 @@ import { NextResponse } from 'next/server';
 import { getCurrentUser } from '@/lib/auth';
 import { createReading, createReport, getAppliancesByClient, createAlert, getClientById, getReadingsByClient, getActiveProperty } from '@/lib/db';
 import { sendMonthlyDigestEmail, sendAnomalyAlertEmail } from '@/lib/email';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { GoogleGenAI } from '@google/genai';
 import { calculateAttribution } from '@/utils/attributionEngine';
 import { analyzeWaterUsage } from '@/lib/algorithms/waterAnalyzer';
 
-const ai = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 export async function POST(request) {
   try {
@@ -87,14 +87,13 @@ export async function POST(request) {
     `;
 
     // 4. Fire directly to Gemini
-    const model = ai.getGenerativeModel({ 
+    const result = await ai.models.generateContent({
       model: 'gemini-1.5-flash',
-      generationConfig: { temperature: 0.2 }
+      contents: systemPrompt,
+      config: { temperature: 0.2 }
     });
     
-    const result = await model.generateContent(systemPrompt);
-    const response = await result.response;
-    const rawContent = response.text()?.trim() || "";
+    const rawContent = result.candidates?.[0]?.content?.parts?.[0]?.text || "";
 
     // Parse Response
     let summaryMatch = rawContent.match(/SUMMARY:\s*(.*?)(?=RECOMMENDATIONS:)/is);

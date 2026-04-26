@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { GoogleGenAI } from '@google/genai';
 import { getCurrentUser } from '@/lib/auth';
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
+const genAI = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 export const maxDuration = 60; // Allow more time for audio processing if deployed on Vercel
 
@@ -21,8 +21,6 @@ export async function POST(request) {
     const mimeType = mimeMatch ? mimeMatch[1] : 'audio/webm';
     const base64Data = audioData.split(',')[1] || audioData;
 
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-
     const prompt = `
       You are an expert mechanical sound engineer and HVAC diagnostic AI for the Philippines.
       Listen to this short audio clip of a household appliance (likely an air conditioner or refrigerator).
@@ -37,21 +35,23 @@ export async function POST(request) {
         "recommendedAction": "Actionable advice for the user (e.g., 'No action needed', 'Schedule a cleaning', 'Replace compressor capacitor immediately')."
       }
 
-      Return ONLY the raw JSON object. Do not use markdown backticks. If you cannot identify the sound or if it's completely silent, return status "UNKNOWN".
+      Return ONLY the raw JSON object. Do not use markdown backticks. If you cannot Simple identify the sound or if it's completely silent, return status "UNKNOWN".
     `;
 
-    const result = await model.generateContent([
-      prompt,
-      {
-        inlineData: {
-          data: base64Data,
-          mimeType: mimeType
+    const result = await genAI.models.generateContent({
+      model: 'gemini-1.5-flash',
+      contents: [
+        { text: prompt },
+        { 
+          inlineData: {
+            data: base64Data,
+            mimeType: mimeType
+          }
         }
-      }
-    ]);
+      ]
+    });
 
-    const response = await result.response;
-    const text = response.text();
+    const text = result.candidates?.[0]?.content?.parts?.[0]?.text || '';
     
     // Parse JSON safely
     let jsonStr = text.replace(/```json/gi, '').replace(/```/g, '').trim();

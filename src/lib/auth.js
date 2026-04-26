@@ -16,8 +16,8 @@ import { cookies } from 'next/headers';
 import bcrypt from 'bcryptjs';
 import { db } from '@/lib/db';
 
-const ACCESS_COOKIE  = 'opticore_access';
-const REFRESH_COOKIE = 'opticore_refresh';
+const ACCESS_COOKIE  = 'access_token';
+const REFRESH_COOKIE = 'refresh_token';
 
 const ACCESS_EXPIRY  = '15m'; // Short-lived
 const REFRESH_EXPIRY = '7d';  // Long-lived

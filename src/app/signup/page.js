@@ -2,7 +2,6 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { signIn } from 'next-auth/react';
 import Link from 'next/link';
 import { Check, TriangleAlert, ArrowRight, Eye, EyeOff, Sparkles, Loader2 } from 'lucide-react';
 import Spinner from '@/components/ui/Spinner';
@@ -112,16 +111,7 @@ function SignupForm() {
   };
 
   const handleGoogleSignUp = async () => {
-    setError('');
-    setGoogleLoad(true);
-    try {
-      // Google sign-up uses the same flow as sign-in.
-      // auth-options.js automatically creates a new user if one doesn't exist.
-      await signIn('google', { callbackUrl: '/api/auth/bridge' });
-    } catch {
-      setError('Failed to start Google sign-up. Please try again.');
-      setGoogleLoad(false);
-    }
+    setError('Social sign-up is currently being updated. Please use the form below.');
   };
 
   return (

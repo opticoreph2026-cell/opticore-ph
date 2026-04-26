@@ -12,10 +12,10 @@
 import { NextResponse } from 'next/server';
 import { getCurrentUser } from '@/lib/auth';
 import { getClientById, incrementClientScanQuota, resetClientScanQuota, db } from '@/lib/db';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { GoogleGenAI } from '@google/genai';
 
 // ── Gemini Client (singleton) ─────────────────────────────────────────────────
-const ai = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 // ── System Prompt: Philippine Utility Bill Extraction ─────────────────────────
 const SYSTEM_PROMPT = `You are OptiCore PH Bill Analyzer, an elite AI utility-bill parser specialized in Philippine electricity bills.
@@ -167,20 +167,20 @@ export async function POST(request) {
 
     let response;
     try {
-      const model = ai.getGenerativeModel({ 
+    try {
+      const result = await ai.models.generateContent({ 
         model: 'gemini-1.5-flash',
-        systemInstruction: SYSTEM_PROMPT 
-      });
-      
-      const result = await model.generateContent([
-        {
-          inlineData: {
-            mimeType,
-            data: file,
+        systemInstruction: SYSTEM_PROMPT,
+        contents: [
+          {
+            inlineData: {
+              mimeType,
+              data: file,
+            },
           },
-        },
-      ]);
-      response = { text: result.response.text() };
+        ],
+      });
+      response = { text: result.candidates?.[0]?.content?.parts?.[0]?.text || '' };
     } catch (aiError) {
       console.error('[OptiCore AI] Gemini API Call Failed:', aiError);
       return NextResponse.json(

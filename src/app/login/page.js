@@ -3,7 +3,6 @@
 import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { signIn } from 'next-auth/react';
 import { Eye, EyeOff, CircleAlert, ArrowRight, Loader2 } from 'lucide-react';
 import Spinner from '@/components/ui/Spinner';
 import Logo from '@/components/ui/Logo';
@@ -78,15 +77,7 @@ function LoginForm() {
   };
 
   const handleGoogleSignIn = async () => {
-    setError('');
-    setGoogleLoad(true);
-    try {
-      // callbackUrl routes to the bridge which converts NextAuth session → OptiCore JWT
-      await signIn('google', { callbackUrl: '/api/auth/bridge' });
-    } catch {
-      setError('Failed to start Google sign-in. Please try again.');
-      setGoogleLoad(false);
-    }
+    setError('Social login is currently being updated. Please use email and password.');
   };
 
   return (

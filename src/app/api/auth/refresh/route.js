@@ -31,15 +31,15 @@ export async function GET(request) {
 
   // For public routes (like /pricing), just go back as guest
   const response = NextResponse.redirect(new URL(callbackUrl, request.url));
-  response.cookies.set('opticore_access', '', { maxAge: 0 });
-  response.cookies.set('opticore_refresh', '', { maxAge: 0 });
+  response.cookies.set('access_token', '', { maxAge: 0 });
+  response.cookies.set('refresh_token', '', { maxAge: 0 });
   return response;
 }
 
 async function handleRefresh() {
   try {
     const cookieStore = await cookies();
-    const refreshToken = cookieStore.get('opticore_refresh')?.value;
+    const refreshToken = cookieStore.get('refresh_token')?.value;
 
     if (!refreshToken) {
       return NextResponse.json({ error: 'REFRESH_TOKEN_MISSING' }, { status: 401 });

@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { GoogleGenAI } from '@google/genai';
 import { getCurrentUser } from '@/lib/auth';
 import { getClientById, incrementClientScanQuota, resetClientScanQuota } from '@/lib/db';
 import { findProvider } from '@/data/utilityProviders';
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
+const genAI = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 /**
  * POST /api/ai/scan
@@ -41,8 +41,6 @@ export async function POST(request) {
       return NextResponse.json({ error: 'No image data provided.' }, { status: 400 });
     }
 
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-
     const deepAnalysisInstruction = plan !== 'starter' 
       ? '- unbundledCharges: (Object) { generation: number, transmission: number, systemLoss: number, vat: number }\n      Extract granular transmission fees, VAT, and system loss metrics. Be extremely precise.'
       : '- unbundledCharges: null (Skip deep unbundled breakdown for this tier).';
@@ -68,24 +66,26 @@ export async function POST(request) {
       Return ONLY raw JSON. No markdown. If a value is missing, infer it from the data if possible, otherwise return null.
     `;
 
-    // Extract mime type dynamically (e.g. data:image/png;base64,... or data:application/pdf;base64,...)
+    // Extract mime type dynamically
     const mimeMatch = image.match(/^data:([a-zA-Z0-9-]+\/[a-zA-Z0-9-.]+);base64,/);
     const mimeType = mimeMatch ? mimeMatch[1] : 'image/jpeg';
     const base64Data = image.split(',')[1] || image;
 
-    const result = await model.generateContent([
-      prompt,
-      {
-        inlineData: {
-          data: base64Data,
-          mimeType: mimeType
+    const result = await genAI.models.generateContent({
+      model: 'gemini-1.5-flash',
+      contents: [
+        { text: prompt },
+        { 
+          inlineData: {
+            data: base64Data,
+            mimeType: mimeType
+          }
         }
-      }
-    ]);
+      ]
+    });
 
-    const response = await result.response;
-    const text = response.text();
-    const usage = response.usageMetadata; // Extract token usage
+    const text = result.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    const usage = result.usageMetadata; // Extract token usage
     
     // Track usage in background
     const { incrementTokenUsage, incrementScanCount } = await import('@/lib/db');

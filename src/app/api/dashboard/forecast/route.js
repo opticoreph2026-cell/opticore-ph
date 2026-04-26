@@ -2,9 +2,9 @@ export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import { getCurrentUser } from '@/lib/auth';
 import { getClientById, getReadingsByClient, ensureDefaultProperty } from '@/lib/db';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { GoogleGenAI } from '@google/genai';
 
-const ai = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 export async function GET(request) {
   try {
@@ -57,10 +57,11 @@ export async function GET(request) {
       }
     `;
 
-    const model = ai.getGenerativeModel({ model: 'gemini-1.5-flash' });
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    let rawText = response.text()?.trim() || '{}';
+    const result = await ai.models.generateContent({
+      model: 'gemini-1.5-flash',
+      contents: prompt
+    });
+    let rawText = result.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
     // Strip markdown code fences if present
     rawText = rawText.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '').trim();
 

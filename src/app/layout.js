@@ -44,8 +44,7 @@ export const viewport = {
 };
 
 /**
- * Root layout — applies fonts, NextAuth SessionProvider, and base structure.
- * SessionProvider is required for signIn('google') to work on client pages.
+ * Root layout — applies fonts, custom JWT AuthContext, and base structure.
  */
 export default function RootLayout({ children }) {
   return (

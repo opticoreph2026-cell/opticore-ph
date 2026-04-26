@@ -116,7 +116,8 @@ function FAQItem({ q, a, isOpen, onClick }) {
 
 
 export default function PricingClient() {
-  const { data: session, status } = useSession();
+  const { user, status } = useAuth();
+  const router = useRouter();
   const searchParams = useSearchParams();
   const planParam = searchParams.get('plan');
   const [isYearly,    setIsYearly]    = useState(false);
@@ -129,7 +130,7 @@ export default function PricingClient() {
   const [toastType,    setToastType]    = useState('info');
 
   const isLoggedIn = status === 'authenticated';
-  const userRole   = session?.user?.role;
+  const userRole   = user?.role;
 
   // Auto-trigger checkout if plan is in URL
   useEffect(() => {

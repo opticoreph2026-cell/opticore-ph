@@ -3,18 +3,23 @@
  * @description Route protection middleware using Access/Refresh token architecture.
  *
  * Cookies:
- *   opticore_access  (15m)
- *   opticore_refresh (7d)
+ *   access_token  (15m)
+ *   refresh_token (7d)
  */
 
 import { NextResponse } from 'next/server';
 import { jwtVerify } from 'jose';
 
-const ACCESS_COOKIE  = 'opticore_access';
-const REFRESH_COOKIE = 'opticore_refresh';
+const ACCESS_COOKIE  = 'access_token';
+const REFRESH_COOKIE = 'refresh_token';
 
 function getSecret() {
   return new TextEncoder().encode(process.env.JWT_SECRET);
+}
+
+function getRefreshSecret() {
+  const secret = process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET;
+  return new TextEncoder().encode(secret);
 }
 
 export async function middleware(request) {
@@ -43,7 +48,7 @@ export async function middleware(request) {
   
   if (!user && refreshToken && !isAuthRoute && !isApiRoute) {
     try {
-      const { payload: refreshPayload } = await jwtVerify(refreshToken, getSecret(), {
+      const { payload: refreshPayload } = await jwtVerify(refreshToken, getRefreshSecret(), {
         issuer: 'opticore-ph',
       });
       
