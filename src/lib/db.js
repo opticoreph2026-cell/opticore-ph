@@ -75,8 +75,8 @@ export async function getClientById(id) {
 }
 
 export async function listAllClients(options = {}) {
-  const { maxRecords = 100, includeAdmins = false } = options;
-  // Temporarily remove ALL filters to see if ANY data exists in the table
+  const { maxRecords = 100 } = options;
+  // ULTIMATE DEBUG: Return every single record in the Client table
   return db.client.findMany({
     orderBy: { createdAt: 'desc' },
     take: maxRecords,
