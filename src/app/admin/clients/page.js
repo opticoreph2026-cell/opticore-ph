@@ -1,17 +1,25 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { Users, TrendingUp, Search, Check, Trash2 } from 'lucide-react';
 import Spinner from '@/components/ui/Spinner';
 
 const TIERS = ['starter', 'pro', 'business'];
 
 export default function AdminClientsPage() {
+  const searchParams = useSearchParams();
+  const queryQ = searchParams.get('q') || '';
+  
   const [clients, setClients] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState(queryQ);
   const [upgrading, setUpgrading] = useState(null);
   const [deleting, setDeleting] = useState(null);
+
+  useEffect(() => {
+    setSearch(queryQ);
+  }, [queryQ]);
 
   useEffect(() => {
     fetch('/api/admin/clients')
@@ -62,9 +70,11 @@ export default function AdminClientsPage() {
   };
 
   const filtered = clients.filter(c =>
-    !search ||
-    (c.name ?? '').toLowerCase().includes(search.toLowerCase()) ||
-    (c.email ?? '').toLowerCase().includes(search.toLowerCase())
+    c.role !== 'admin' && (
+      !search ||
+      (c.name ?? '').toLowerCase().includes(search.toLowerCase()) ||
+      (c.email ?? '').toLowerCase().includes(search.toLowerCase())
+    )
   );
 
   return (

@@ -75,9 +75,11 @@ export async function getClientById(id) {
 }
 
 export async function listAllClients(options = {}) {
+  const { maxRecords = 100, includeAdmins = false } = options;
   return db.client.findMany({
+    where: includeAdmins ? {} : { role: { not: 'admin' } },
     orderBy: { createdAt: 'desc' },
-    take: options.maxRecords || 100,
+    take: maxRecords,
   });
 }
 
@@ -553,21 +555,23 @@ export async function deleteProvider(id) {
 }
 
 export async function getAdminKPIs() {
-  const [totalUsers, clientsCount, starter, pro, business, admins, totalReports, activeAlerts] = await Promise.all([
+  const [totalUsers, admins, pro, business, totalReports, activeAlerts] = await Promise.all([
     db.client.count(),
-    db.client.count({ where: { role: 'client' } }),
-    db.client.count({ where: { planTier: 'starter' } }),
-    db.client.count({ where: { planTier: 'pro' } }),
-    db.client.count({ where: { planTier: 'business' } }),
     db.client.count({ where: { role: 'admin' } }),
+    db.client.count({ where: { planTier: 'pro', role: { not: 'admin' } } }),
+    db.client.count({ where: { planTier: 'business', role: { not: 'admin' } } }),
     db.aIReport.count(),
     db.alert.count({ where: { isRead: false } }),
   ]);
 
+  // For starter, we just subtract pro/business from total clients
+  const totalClients = Math.max(0, totalUsers - admins);
+  const starter = Math.max(0, totalClients - pro - business);
+
   const mrr = (pro * 499) + (business * 2499);
 
   return {
-    totalClients: clientsCount || totalUsers - admins, // Fallback if roles are missing
+    totalClients,
     proClients: pro,
     businessClients: business,
     adminCount: admins,
