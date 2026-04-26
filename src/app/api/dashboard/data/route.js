@@ -8,7 +8,7 @@
 export const dynamic = 'force-dynamic';
 
 import { NextResponse }    from 'next/server';
-import { getCurrentUser }  from '@/lib/auth';
+import { signAccessToken, signRefreshToken, setAuthCookies, getCurrentUser }  from '@/lib/auth';
 import {
   getAlertsByClient,
   markAlertRead,
@@ -124,9 +124,26 @@ export async function POST(request) {
   // ── Mark onboarding complete ──────────────────────────────────────────────
   if (section === 'onboarding-complete') {
     try {
-      await setOnboardingComplete(jwtUser.sub);
+      const updatedUser = await setOnboardingComplete(jwtUser.sub);
+      
+      // REFRESH COOKIES: Update JWT to reflect onboarding_complete: true
+      // Otherwise middleware will redirect user back to onboarding!
+      const payload = {
+        sub:                 updatedUser.id,
+        email:               updatedUser.email,
+        name:                updatedUser.name,
+        role:                updatedUser.role ?? 'client',
+        plan:                updatedUser.planTier ?? 'starter',
+        onboarding_complete: true,
+      };
+
+      const accessToken = await signAccessToken(payload);
+      const refreshToken = await signRefreshToken({ sub: updatedUser.id });
+      await setAuthCookies(updatedUser, accessToken, refreshToken);
+
       return NextResponse.json({ success: true });
-    } catch {
+    } catch (err) {
+      console.error('[Onboarding API] Error:', err);
       return NextResponse.json({ error: 'Failed to update onboarding status.' }, { status: 500 });
     }
   }

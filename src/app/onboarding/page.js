@@ -87,6 +87,7 @@ export default function OnboardingWizard() {
         setLoading(false);
         return;
       }
+      setLoading(false);
       // Use replace to prevent back-button loop to onboarding
       router.replace('/dashboard');
     } catch {
