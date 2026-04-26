@@ -87,13 +87,17 @@ export async function POST(request) {
     `;
 
     // 4. Fire directly to Gemini
-    const result = await ai.models.generateContent({
-      model: 'gemini-1.5-flash',
-      contents: systemPrompt,
-      config: { temperature: 0.2 }
-    });
-    
-    const rawContent = result.candidates?.[0]?.content?.parts?.[0]?.text || "";
+    let rawContent = "";
+    try {
+      const result = await ai.models.generateContent({
+        model: 'gemini-1.5-flash',
+        contents: systemPrompt,
+        config: { temperature: 0.2 }
+      });
+      rawContent = result.candidates?.[0]?.content?.parts?.[0]?.text || "";
+    } catch (aiErr) {
+      console.error('[OptiCore AI] Analysis Engine Error:', aiErr);
+    }
 
     // Parse Response
     let summaryMatch = rawContent.match(/SUMMARY:\s*(.*?)(?=RECOMMENDATIONS:)/is);
@@ -143,7 +147,8 @@ export async function POST(request) {
       // Bug #6 fix: find prev reading by explicitly excluding the new reading's ID
       const prevReading = freshReadings.find(r => r.id !== reading.id);
 
-      if (plan !== 'starter' && propertyAppliances.length > 0 && kwh > 0) {
+    if (plan !== 'starter' && propertyAppliances.length > 0 && kwh > 0) {
+      try {
         const attribution = calculateAttribution(kwh, propertyAppliances);
 
         if (attribution.severity === 'CRITICAL') {
@@ -179,32 +184,39 @@ export async function POST(request) {
             }).catch(e => console.error('Failed sending anomaly email:', e));
           }
         }
+      } catch (attrErr) {
+        console.error('[Attribution Engine] Error:', attrErr);
       }
+    }
 
       // Month-over-month spike detection
       if (prevReading && prevReading.kwhUsed > 0) {
-        const spikePct = ((kwh - prevReading.kwhUsed) / prevReading.kwhUsed) * 100;
-        if (spikePct > 20) {
-          const severityLvl = spikePct > 40 ? 'critical' : 'warning';
-          await createAlert({
-            client_id: user.sub,
-            title: '📈 Consumption Spike Detected',
-            message: `Your electricity usage jumped ${spikePct.toFixed(0)}% vs last month (${prevReading.kwhUsed} → ${kwh} kWh). Review high-consumption appliances.`,
-            severity: severityLvl,
-          });
-          if (clientProfile?.emailAlertsEnabled && clientProfile?.email) {
-            sendAnomalyAlertEmail({
-              email: clientProfile.email,
-              name: clientProfile.name,
-              title: 'Consumption Spike Detected',
+        try {
+          const spikePct = ((kwh - prevReading.kwhUsed) / prevReading.kwhUsed) * 100;
+          if (spikePct > 20) {
+            const severityLvl = spikePct > 40 ? 'critical' : 'warning';
+            await createAlert({
+              client_id: user.sub,
+              title: '📈 Consumption Spike Detected',
               message: `Your electricity usage jumped ${spikePct.toFixed(0)}% vs last month (${prevReading.kwhUsed} → ${kwh} kWh). Review high-consumption appliances.`,
-              severity: severityLvl
-            }).catch(e => console.error('Failed sending anomaly email:', e));
+              severity: severityLvl,
+            });
+            if (clientProfile?.emailAlertsEnabled && clientProfile?.email) {
+              sendAnomalyAlertEmail({
+                email: clientProfile.email,
+                name: clientProfile.name,
+                title: 'Consumption Spike Detected',
+                message: `Your electricity usage jumped ${spikePct.toFixed(0)}% vs last month (${prevReading.kwhUsed} → ${kwh} kWh). Review high-consumption appliances.`,
+                severity: severityLvl
+              }).catch(e => console.error('Failed sending anomaly email:', e));
+            }
           }
+        } catch (spikeErr) {
+          console.error('[Spike Engine] Error:', spikeErr);
         }
       }
-    } catch (anomalyErr) {
-      console.error('[Anomaly Engine] Non-fatal error:', anomalyErr);
+    } catch (dbErr) {
+      console.error('[Dashboard Engine] Secondary context error:', dbErr);
     }
 
     // 7. Water Leak detection (PRO only)
@@ -216,12 +228,16 @@ export async function POST(request) {
 
     // 8. High effective rate alert
     if (parseFloat(effectiveRate) > 16.00) {
-      await createAlert({
-        client_id: user.sub,
-        title: 'High Effective Rate Detected',
-        message: `Your effective rate of ₱${effectiveRate}/kWh is abnormally high. Check your bill for surcharges or penalties.`,
-        severity: 'warning'
-      });
+      try {
+        await createAlert({
+          client_id: user.sub,
+          title: 'High Effective Rate Detected',
+          message: `Your effective rate of ₱${effectiveRate}/kWh is abnormally high. Check your bill for surcharges or penalties.`,
+          severity: 'warning'
+        });
+      } catch (alertErr) {
+        console.error('[Alert Engine] High Rate Error:', alertErr);
+      }
     }
 
     // 9. Send the HTML digest email ONLY for Pro/Business users
