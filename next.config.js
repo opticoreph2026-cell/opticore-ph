@@ -1,6 +1,3 @@
-/** @type {import('next').NextConfig} */
-const { withSentryConfig } = require("@sentry/nextjs");
-
 const nextConfig = {
   reactStrictMode: true,
   experimental: {
@@ -31,15 +28,4 @@ const nextConfig = {
   },
 };
 
-const sentryConfig = {
-  silent: true,
-  org: "opticore-ph",
-  project: "opticore-ph",
-  widenClientFileUpload: true,
-  transpileClientSDK: true,
-  hideSourceMaps: true,
-  disableLogger: true,
-  automaticVercelMonitors: true,
-};
-
-module.exports = withSentryConfig(nextConfig, sentryConfig);
+module.exports = nextConfig;

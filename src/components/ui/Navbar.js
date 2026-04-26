@@ -17,7 +17,7 @@ export default function Navbar() {
   const pathname = usePathname();
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 glass border-b border-white/[0.06]">
+    <nav className="fixed top-0 left-0 right-0 z-50 glass-panel border-b border-white/[0.06]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
@@ -27,7 +27,7 @@ export default function Navbar() {
               <span className="text-lg font-black text-white tracking-tighter leading-none group-hover:text-brand-400 transition-colors">
                 OptiCore <span className="text-brand-500">PH</span>
               </span>
-              <span className="text-[8px] font-black text-text-faint uppercase tracking-[0.2em] mt-0.5">Nationwide Protocol</span>
+              <span className="text-[8px] font-black text-text-faint uppercase tracking-[0.2em] mt-0.5">The Nationwide Resource Protocol</span>
             </div>
           </Link>
 

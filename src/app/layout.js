@@ -2,7 +2,7 @@ import { Inter, Outfit } from 'next/font/google';
 import './globals.css';
 import AuthProvider from '@/components/ui/AuthProvider';
 
-import { CSPostHogProvider } from '@/components/providers/PostHogProvider';
+
 
 // Optimize and load fonts
 const inter = Inter({ 
@@ -51,11 +51,9 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en-PH" className={`${inter.variable} ${outfit.variable}`}>
       <body className={`antialiased ${inter.className}`}>
-        <CSPostHogProvider>
-          <AuthProvider>
-            {children}
-          </AuthProvider>
-        </CSPostHogProvider>
+        <AuthProvider>
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );

@@ -3,7 +3,7 @@ import 'server-only';
 import { PrismaClient } from '@prisma/client';
 import { PrismaLibSQL } from '@prisma/adapter-libsql';
 import { createClient } from '@libsql/client';
-import { redis } from '@/lib/redis';
+
 
 /**
  * OptiCore PH - Database Engine
@@ -186,6 +186,8 @@ export async function createNewClientRecord(data) {
       applianceCount: data.appliance_count || 0,
       consentGiven: true,
       onboardingComplete: false,
+      role: 'client',
+      planTier: 'starter',
     },
   });
 }
@@ -551,19 +553,12 @@ export async function deleteProvider(id) {
 }
 
 export async function getAdminKPIs() {
-  const CACHE_KEY = 'admin:kpis';
-  try {
-    const cached = await redis.get(CACHE_KEY);
-    if (cached) return cached;
-  } catch (err) {
-    console.error('Redis cache error:', err);
-  }
-
-  const [totalClients, starter, pro, business, admins, totalReports, activeAlerts] = await Promise.all([
+  const [totalUsers, clientsCount, starter, pro, business, admins, totalReports, activeAlerts] = await Promise.all([
+    db.client.count(),
     db.client.count({ where: { role: 'client' } }),
-    db.client.count({ where: { role: 'client', planTier: 'starter' } }),
-    db.client.count({ where: { role: 'client', planTier: 'pro' } }),
-    db.client.count({ where: { role: 'client', planTier: 'business' } }),
+    db.client.count({ where: { planTier: 'starter' } }),
+    db.client.count({ where: { planTier: 'pro' } }),
+    db.client.count({ where: { planTier: 'business' } }),
     db.client.count({ where: { role: 'admin' } }),
     db.aIReport.count(),
     db.alert.count({ where: { isRead: false } }),
@@ -572,7 +567,7 @@ export async function getAdminKPIs() {
   const mrr = (pro * 499) + (business * 2499);
 
   return {
-    totalClients,
+    totalClients: clientsCount || totalUsers - admins, // Fallback if roles are missing
     proClients: pro,
     businessClients: business,
     adminCount: admins,
@@ -585,14 +580,6 @@ export async function getAdminKPIs() {
       business,
     },
   };
-
-  try {
-    await redis.set(CACHE_KEY, kpis, { ex: 300 }); // Cache for 5 mins
-  } catch (err) {
-    console.error('Redis set error:', err);
-  }
-
-  return kpis;
 }
 
 export async function createVerificationToken(email, token, expires) {

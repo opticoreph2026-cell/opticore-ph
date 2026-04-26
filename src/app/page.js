@@ -149,7 +149,7 @@ export default function LandingPage() {
               <span className="text-white">The Ultimate</span>
               <br />
               <span className="text-brand-400 font-black drop-shadow-[0_0_25px_rgba(34,211,238,0.2)]">
-                Command Center.
+                Nationwide Resource Protocol.
               </span>
             </h1>
 
