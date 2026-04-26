@@ -137,6 +137,7 @@ export default function PricingClient() {
       }, 500);
       return () => clearTimeout(timer);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoggedIn, planParam]);
 
   async function handleCheckout(priceId) {

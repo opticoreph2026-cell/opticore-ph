@@ -41,8 +41,9 @@ export default function Captcha({ onVerify }) {
     }
 
     return () => {
-      if (containerRef.current) {
-        containerRef.current.innerHTML = '';
+      const current = containerRef.current;
+      if (current) {
+        current.innerHTML = '';
       }
     };
   }, [onVerify]);

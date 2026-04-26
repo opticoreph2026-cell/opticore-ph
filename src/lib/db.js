@@ -78,11 +78,7 @@ export async function listAllClients(options = {}) {
   const { maxRecords = 100, includeAdmins = false } = options;
   return db.client.findMany({
     where: includeAdmins ? {} : { 
-      OR: [
-        { role: 'client' },
-        { role: null },
-        { role: '' }
-      ]
+      NOT: { role: 'admin' }
     },
     orderBy: { createdAt: 'desc' },
     take: maxRecords,
@@ -564,30 +560,34 @@ export async function getAdminKPIs() {
   const [totalUsers, admins, pro, business, totalReports, activeAlerts] = await Promise.all([
     db.client.count(),
     db.client.count({ where: { role: 'admin' } }),
-    db.client.count({ where: { planTier: 'pro', role: { not: 'admin' } } }),
-    db.client.count({ where: { planTier: 'business', role: { not: 'admin' } } }),
+    db.client.count({ where: { planTier: 'pro' } }),
+    db.client.count({ where: { planTier: 'business' } }),
     db.aIReport.count(),
     db.alert.count({ where: { isRead: false } }),
   ]);
 
-  // For starter, we just subtract pro/business from total clients
   const totalClients = Math.max(0, totalUsers - admins);
-  const starter = Math.max(0, totalClients - pro - business);
+  
+  // For counts, we exclude admins from the tiers just in case an admin has a tier set
+  // In most cases admins won't have 'pro'/'business' tiers but we handle it here
+  const proClients = Math.max(0, pro - await db.client.count({ where: { planTier: 'pro', role: 'admin' } }));
+  const businessClients = Math.max(0, business - await db.client.count({ where: { planTier: 'business', role: 'admin' } }));
+  const starter = Math.max(0, totalClients - proClients - businessClients);
 
-  const mrr = (pro * 499) + (business * 2499);
+  const mrr = (proClients * 499) + (businessClients * 2499);
 
   return {
     totalClients,
-    proClients: pro,
-    businessClients: business,
+    proClients,
+    businessClients,
     adminCount: admins,
     activeAlerts,
     totalReports,
     mrr,
     planCounts: {
       starter,
-      pro,
-      business,
+      pro: proClients,
+      business: businessClients,
     },
   };
 }
