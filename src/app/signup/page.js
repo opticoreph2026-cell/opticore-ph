@@ -94,7 +94,7 @@ function SignupForm() {
               return;
             }
           } catch (checkoutErr) {
-            console.error('Auto-checkout failed:', checkoutErr);
+            // Silently fail auto-checkout and proceed to onboarding
           }
         }
         
