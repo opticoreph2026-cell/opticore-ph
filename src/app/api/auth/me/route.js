@@ -10,7 +10,7 @@ import { getClientById }       from '@/lib/db';
 export async function GET() {
   const jwtUser = await getCurrentUser();
   if (!jwtUser) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    return NextResponse.json({ user: null }, { status: 200 });
   }
 
   let profile = null;
