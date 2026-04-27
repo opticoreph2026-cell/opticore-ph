@@ -41,7 +41,7 @@ const itemVariants = {
   },
 };
 
-export default function DashboardOverview({ user, readings = [], alerts = [], appliances = [], searchParams }) {
+export default function DashboardOverview({ user, readings = [], alerts = [], appliances = [], latestReport = null, lpgStatus = null, waterAnalysis = null, searchParams }) {
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [toastMsg, setToastMsg] = useState(null);
