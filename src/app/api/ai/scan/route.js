@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getCurrentUser } from '@/lib/auth';
-import { getClientById, resetClientScanQuota } from '@/lib/db-utils';
+import { db as prisma } from '@/lib/db';
 import pdfParse from 'pdf-parse';
 import Tesseract from 'tesseract.js';
 
@@ -131,7 +131,7 @@ export async function POST(request) {
     const user = await getCurrentUser();
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-    const client = await getClientById(user.sub);
+    const client = await prisma.client.findUnique({ where: { id: user.sub } });
     if (!client) return NextResponse.json({ error: 'User not found' }, { status: 404 });
 
     const plan = client.planTier ?? 'starter';
@@ -139,7 +139,10 @@ export async function POST(request) {
     if (plan === 'starter') {
       const now = new Date();
       if (client.lastScanReset && (now - new Date(client.lastScanReset)) > 30 * 24 * 60 * 60 * 1000) {
-        await resetClientScanQuota(client.id);
+        await prisma.client.update({
+          where: { id: client.id },
+          data: { scanCount: 0, lastScanReset: new Date() }
+        });
         client.scanCount = 0;
       }
       if (client.scanCount >= 1) {
