@@ -88,21 +88,29 @@ export default function SubmitReadingModal({ isOpen, onClose, user, appliances =
 
     const reader = new FileReader();
     reader.onloadend = async () => {
-      await scanBill(reader.result);
+      await scanBill(reader.result, file.type);
     };
     reader.readAsDataURL(file);
   }
 
-  async function scanBill(base64) {
+  async function scanBill(base64, mimeType) {
     try {
       const res  = await fetch('/api/ai/scan', {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ image: base64 }),
+        body:    JSON.stringify({ 
+          image: base64,
+          mimeType: mimeType 
+        }),
       });
       
       const json = await res.json();
-      if (!res.ok) throw new Error(json.message || json.error || 'Scan failed');
+      if (!res.ok) {
+        if (json.error === 'PARSE_FAILED') {
+          throw new Error('Could not read this PDF. Try taking a photo of the bill instead and uploading as JPG.');
+        }
+        throw new Error(json.message || json.error || 'Scan failed');
+      }
 
       const data    = json.data;
       if (data.type === 'WATER' || !!data.m3Used) {

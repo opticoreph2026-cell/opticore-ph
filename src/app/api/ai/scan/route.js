@@ -36,7 +36,7 @@ export async function POST(request) {
       }
     }
 
-    const { image } = await request.json(); // base64 encoded image
+    const { image, mimeType: providedMimeType } = await request.json(); // base64 encoded image
     if (!image) {
       return NextResponse.json({ error: 'No image data provided.' }, { status: 400 });
     }
@@ -46,29 +46,31 @@ export async function POST(request) {
       : '- unbundledCharges: null (Skip deep unbundled breakdown for this tier).';
 
     const prompt = `
-      You are an expert utility bill auditor for the Philippines (Meralco, VECO, Davao Light, etc.). 
-      Analyze this bill with extreme precision.
-      
-      Extract the following data in strict JSON format:
-      - providerName: (String) Name of the utility company/cooperative.
-      - type: (String) "ELECTRIC".
-      - kwhUsed: (Number) Total kWh consumed.
-      - billingPeriod: (String) The date range (e.g., "Oct 20 - Nov 19").
-      - totalAmount: (Number) Total amount due in ₱.
-      - effectiveRate: (Number) Exactly: totalAmount / kwhUsed.
-      - billingDate: (String) The specific reading date or statement date in YYYY-MM-DD format. Ensure this is NOT null.
-      ${deepAnalysisInstruction}
-      
-      ADVISORY LOGIC:
-      - anomalies: (Array of Strings) Identify any unusual metrics (e.g., "High System Loss (>10%)", "Unexpected 20% spike vs average", "High Generation Charge").
-      - solutions: (Array of Strings) Provide actionable, Philippine-specific advice for each anomaly (e.g., "Check for grounding leaks in old wiring", "Shift laundry to morning hours", "Clean AC filters to reduce drag").
+      This is a Philippine utility bill PDF/Image. Extract the following fields with extreme precision.
+      Return ONLY a JSON object with no markdown, no code blocks, no explanation.
 
-      Return ONLY raw JSON. No markdown. If a value is missing, infer it from the data if possible, otherwise return null.
+      {
+        "providerName": string (e.g., "Meralco", "VECO"),
+        "type": "ELECTRICITY" | "WATER",
+        "kwhUsed": number (set to 0 if water),
+        "m3Used": number (set to 0 if electric),
+        "billingDate": string (YYYY-MM-DD),
+        "totalAmount": number,
+        "effectiveRate": number,
+        "billingPeriod": string (e.g., "Oct 20 - Nov 19"),
+        ${deepAnalysisInstruction}
+      }
+
+      ADVISORY LOGIC:
+      - anomalies: (Array of Strings) Identify unusual metrics.
+      - solutions: (Array of Strings) Provide actionable advice.
+
+      If a field cannot be found, set it to null.
     `;
 
-    // Extract mime type dynamically
+    // Extract mime type dynamically or use provided
     const mimeMatch = image.match(/^data:([a-zA-Z0-9-]+\/[a-zA-Z0-9-.]+);base64,/);
-    const mimeType = mimeMatch ? mimeMatch[1] : 'image/jpeg';
+    const mimeType = providedMimeType || (mimeMatch ? mimeMatch[1] : 'image/jpeg');
     const base64Data = image.split(',')[1] || image;
 
     const result = await ai.models.generateContent({
@@ -84,8 +86,9 @@ export async function POST(request) {
       ]
     });
 
-    const text = result.candidates?.[0]?.content?.parts?.[0]?.text || '';
-    const usage = result.usageMetadata; // Extract token usage
+    const rawText = result.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    const usage = result.usageMetadata;
+    console.log('[Scan API] Gemini raw response:', rawText);
 
     // Track usage in background
     const { incrementTokenUsage, incrementScanCount } = await import('@/lib/db');
@@ -94,20 +97,29 @@ export async function POST(request) {
     }
     await incrementScanCount(client.id);
 
-    // Hardened JSON extraction: pull only the first '{' to the last '}'
-    let jsonStr = text.replace(/```json/gi, '').replace(/```/g, '').trim();
-    const startIndex = jsonStr.indexOf('{');
-    const endIndex = jsonStr.lastIndexOf('}');
-
-    if (startIndex !== -1 && endIndex !== -1 && endIndex > startIndex) {
-      jsonStr = jsonStr.substring(startIndex, endIndex + 1);
+    function extractJSON(text) {
+      const cleaned = text
+        .replace(/```json\n?/gi, '')
+        .replace(/```\n?/gi, '')
+        .trim();
+      try {
+        return JSON.parse(cleaned);
+      } catch {
+        const match = cleaned.match(/\{[\s\S]*\}/);
+        if (match) return JSON.parse(match[0]);
+        throw new Error('No valid JSON found in response');
+      }
     }
 
     let rawData;
     try {
-      rawData = JSON.parse(jsonStr);
+      rawData = extractJSON(rawText);
     } catch (parseError) {
-      throw new Error('AI returned malformed data that could not be parsed: ' + text.substring(0, 50));
+      console.error('[Scan API] Parse Failure:', parseError);
+      return NextResponse.json({ 
+        error: 'PARSE_FAILED',
+        message: 'Could not extract bill data. For PDFs, ensure the bill is text-based. Try uploading a JPG photo instead.'
+      }, { status: 422 });
     }
 
     // Cross-reference with our Registry
