@@ -408,11 +408,31 @@ export async function createReport(data) {
 }
 
 // ─── Alerts ──────────────────────────────────────────────────────────────────
-export async function getAlertsByClient(clientId) {
+export async function getAlertsByClient(clientId, options = {}) {
+  const { 
+    severity, 
+    read, 
+    type, 
+    take = 20, 
+    skip = 0 
+  } = options;
+
+  const where = { clientId };
+  if (severity) where.severity = severity;
+  if (read !== undefined) where.isRead = (read === 'true' || read === true);
+  if (type) where.type = type;
+
   return db.alert.findMany({
-    where: { clientId, isRead: false },
+    where,
     orderBy: { createdAt: 'desc' },
-    take: 20,
+    take: Number(take),
+    skip: Number(skip),
+  });
+}
+
+export async function countUnreadAlerts(clientId) {
+  return db.alert.count({
+    where: { clientId, isRead: false }
   });
 }
 

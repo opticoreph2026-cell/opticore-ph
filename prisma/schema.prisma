@@ -139,6 +139,7 @@ model Alert {
   title        String
   message      String
   severity     String   @default("info") // info, warning, critical
+  type         String   @default("rate") // ghost_load, water_leak, lpg, spike, rate
   isRead       Boolean  @default(false)
   
   createdAt    DateTime @default(now())
