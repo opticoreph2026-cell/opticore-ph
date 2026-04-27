@@ -1,67 +1,36 @@
 import { NextResponse } from 'next/server';
-import OpenAI from 'openai';
+import { GoogleGenAI } from '@google/genai';
 import { getCurrentUser } from '@/lib/auth';
 import { getClientById, incrementClientScanQuota, resetClientScanQuota } from '@/lib/db';
 import { findProvider } from '@/data/utilityProviders';
 
-const openai = new OpenAI({
-  baseURL: 'https://openrouter.ai/api/v1',
-  apiKey: process.env.OPENROUTER_API_KEY,
-  defaultHeaders: {
-    'HTTP-Referer': process.env.NEXT_PUBLIC_APP_URL,
-    'X-Title': 'OptiCore PH',
-  },
-});
-
-const MODELS = [
-  'google/gemini-2.0-flash-exp:free',
-  'google/gemini-flash-1.5-8b',
-  'qwen/qwen2.5-vl-7b-instruct:free',
-  'meta-llama/llama-3.2-11b-vision-instruct:free'
-];
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 async function callVisionAI(mimeType, base64string, prompt) {
-  const errors = [];
-  
-  for (const model of MODELS) {
-    try {
-      const response = await openai.chat.completions.create({
-        model,
-        messages: [{
-          role: 'user',
-          content: [
-            {
-              type: 'image_url',
-              image_url: {
-                url: `data:${mimeType};base64,${base64string}`,
-              }
+  // Strip data URL prefix if present (inlineData needs raw base64 only)
+  const rawBase64 = base64string.includes(',')
+    ? base64string.split(',')[1]
+    : base64string;
+
+  const response = await ai.models.generateContent({
+    model: 'gemini-1.5-flash',
+    contents: [
+      {
+        parts: [
+          {
+            inlineData: {
+              mimeType,
+              data: rawBase64,
             },
-            { type: 'text', text: prompt }
-          ]
-        }],
-        max_tokens: 1000,
-      });
-      
-      console.log(`[Scan API] Success with model: ${model}`);
-      return {
-        content: response.choices[0]?.message?.content || '',
-        usage: response.usage
-      };
-    } catch (err) {
-      const status = err.status || err.response?.status;
-      const message = err.message || 'Unknown error';
-      console.warn(`[Scan API] Model ${model} failed (Status: ${status}): ${message}`);
-      errors.push(`${model}: ${message}`);
-      
-      // If it's a 401 (Auth) or something non-retriable, stop early
-      if (status === 401) throw err;
-      
-      continue;
-    }
-  }
-  
-  console.error('[Scan API] All models failed:', errors.join(' | '));
-  throw new Error('All vision models are currently unavailable. Please try again in a few minutes.');
+          },
+          { text: prompt },
+        ],
+      },
+    ],
+  });
+
+  console.log('[Scan API] Used model: gemini-1.5-flash');
+  return response.candidates?.[0]?.content?.parts?.[0]?.text || '';
 }
 
 /**
@@ -122,15 +91,13 @@ Rules:
 - If any field cannot be found, use null
 - Return ONLY the JSON. Nothing else.`;
 
-    const { content: rawText, usage } = await callVisionAI(mimeType, base64string, prompt);
-    console.log('[Scan API] OpenRouter raw response:', rawText);
+    const rawText = await callVisionAI(mimeType, base64string, prompt);
+    console.log('[Scan API] AI raw response:', rawText);
 
     // Track usage in background
-    const { incrementTokenUsage, incrementScanCount } = await import('@/lib/db');
-    if (usage?.total_tokens) {
-      await incrementTokenUsage(client.id, usage.total_tokens);
-    }
+    const { incrementScanCount } = await import('@/lib/db');
     await incrementScanCount(client.id);
+
 
     function extractBillJSON(text) {
       const cleaned = text
