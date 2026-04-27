@@ -6,39 +6,47 @@ import { findProvider } from '@/data/utilityProviders';
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
+const SCAN_MODELS = ['gemini-1.5-flash-8b', 'gemini-2.0-flash-lite'];
+
 async function callVisionAI(mimeType, base64string, prompt) {
-  // Strip data URL prefix if present (inlineData needs raw base64 only)
   const rawBase64 = base64string.includes(',')
     ? base64string.split(',')[1]
     : base64string;
 
-  try {
-    const response = await ai.models.generateContent({
-      model: 'gemini-1.5-flash',
-      contents: [
-        {
-          parts: [
-            {
-              inlineData: {
-                mimeType,
-                data: rawBase64,
+  for (const model of SCAN_MODELS) {
+    try {
+      const response = await ai.models.generateContent({
+        model,
+        contents: [
+          {
+            parts: [
+              {
+                inlineData: {
+                  mimeType,
+                  data: rawBase64,
+                },
               },
-            },
-            { text: prompt },
-          ],
-        },
-      ],
-    });
+              { text: prompt },
+            ],
+          },
+        ],
+      });
 
-    console.log('[Scan API] Used model: gemini-1.5-flash');
-    return response.candidates?.[0]?.content?.parts?.[0]?.text || '';
-  } catch (err) {
-    if (err.status === 429) {
-      console.error('[Scan API] Quota exhausted on this API key.');
-      throw new Error('QUOTA_EXHAUSTED');
+      console.log(`[Scan API] Used model: ${model}`);
+      return response.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    } catch (err) {
+      if (err.status === 404 || err.status === 503) {
+        console.warn(`[Scan API] Model ${model} unavailable (${err.status}), trying next...`);
+        continue;
+      }
+      if (err.status === 429) {
+        console.error('[Scan API] Quota exhausted on this API key.');
+        throw new Error('QUOTA_EXHAUSTED');
+      }
+      throw err;
     }
-    throw err;
   }
+  throw new Error('All scan models unavailable. Please use manual entry.');
 }
 
 /**
