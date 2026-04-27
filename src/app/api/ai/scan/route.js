@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getCurrentUser } from '@/lib/auth';
 import { db as prisma } from '@/lib/db';
+import { extractText } from 'unpdf';
 
 // ── Regex extraction engine ──────────────────────────
 function extractBillData(rawText) {
@@ -210,63 +211,12 @@ function extractBillData(rawText) {
   return { kwhUsed, m3Used, totalAmount, billingDate, providerName, type, confidence };
 }
 
-// ── Raw PDF buffer extraction ─────────────────────────
-function extractTextFromPDFBuffer(buffer) {
-  // Convert buffer to string preserving latin chars
-  const raw = buffer.toString('latin1');
-  
-  const textChunks = [];
-
-  // Extract text from BT...ET blocks (PDF text objects)
-  const btEtRegex = /BT[\s\S]*?ET/g;
-  let block;
-  while ((block = btEtRegex.exec(raw)) !== null) {
-    // Extract string literals: (Hello World)
-    const parenRegex = /\(([^)]*)\)/g;
-    let match;
-    while ((match = parenRegex.exec(block[0])) !== null) {
-      const text = match[1]
-        .replace(/\\n/g, '\n')
-        .replace(/\\r/g, '\r')
-        .replace(/\\t/g, '\t')
-        .replace(/\\\\/g, '\\')
-        .replace(/\\([0-7]{3})/g, (_, oct) => 
-          String.fromCharCode(parseInt(oct, 8))
-        )
-        .trim();
-      if (text.length > 0) textChunks.push(text);
-    }
-
-    // Extract hex strings: <48656c6c6f>
-    const hexRegex = /<([0-9a-fA-F]+)>/g;
-    while ((match = hexRegex.exec(block[0])) !== null) {
-      const hex = match[1];
-      if (hex.length % 2 === 0) {
-        let text = '';
-        for (let i = 0; i < hex.length; i += 2) {
-          const code = parseInt(hex.substr(i, 2), 16);
-          if (code > 31 && code < 127) text += String.fromCharCode(code);
-        }
-        if (text.length > 1) textChunks.push(text);
-      }
-    }
-  }
-
-  // Also scan for plain readable strings outside BT/ET 
-  // (some PDFs embed text differently)
-  if (textChunks.length < 10) {
-    const readable = raw.match(/[\x20-\x7E]{4,}/g) || [];
-    textChunks.push(...readable.filter(s => /[a-zA-Z]{2,}/.test(s)));
-  }
-
-  const fullText = textChunks.join(' ');
-  console.log('[Scan API] Raw PDF extraction, chars:', fullText.length);
-  return fullText;
-}
-
+// ── PDF extraction ───────────────────────────────────
 async function extractFromPDF(buffer) {
-  const text = extractTextFromPDFBuffer(buffer);
-  console.log('[Scan API] Text sample:', text.substring(0, 500));
+  const uint8 = new Uint8Array(buffer);
+  const { text } = await extractText(uint8, { mergePages: true });
+  console.log('[Scan API] unpdf extracted, chars:', text.length);
+  console.log('[Scan API] Text sample:', text.substring(0, 300));
   return extractBillData(text);
 }
 
