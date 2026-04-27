@@ -1,8 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getCurrentUser } from '@/lib/auth';
 import { db as prisma } from '@/lib/db';
-import PDFParser from 'pdf2json';
-import Tesseract from 'tesseract.js';
+import pdfParse from 'pdf-parse';
 
 // ── Regex extraction engine ──────────────────────────
 function extractBillData(rawText) {
@@ -105,33 +104,9 @@ function extractBillData(rawText) {
 
 // ── PDF extraction ───────────────────────────────────
 async function extractFromPDF(buffer) {
-  return new Promise((resolve, reject) => {
-    const pdfParser = new PDFParser(null, 1); // 1 = text only mode
-
-    pdfParser.on('pdfParser_dataError', err => reject(err.parserError));
-    pdfParser.on('pdfParser_dataReady', () => {
-      const rawText = pdfParser.getRawTextContent();
-      console.log('[Scan API] PDF text extracted, length:', rawText.length);
-      resolve(extractBillData(rawText));
-    });
-
-    pdfParser.parseBuffer(buffer);
-  });
-}
-
-// ── Image OCR extraction ─────────────────────────────
-async function extractFromImage(buffer, mimeType) {
-  const base64 = buffer.toString('base64');
-  const dataUrl = `data:${mimeType};base64,${base64}`;
-  const { data: { text } } = await Tesseract.recognize(dataUrl, 'eng', {
-    logger: m => {
-      if (m.status === 'recognizing text') {
-        console.log(`[Scan API] OCR progress: ${Math.round(m.progress * 100)}%`);
-      }
-    }
-  });
-  console.log('[Scan API] OCR text extracted, length:', text.length);
-  return extractBillData(text);
+  const data = await pdfParse(buffer);
+  console.log('[Scan API] PDF text extracted, chars:', data.text.length);
+  return extractBillData(data.text);
 }
 
 // ── Main POST handler logic ──────────────────────────
@@ -177,7 +152,20 @@ export async function POST(request) {
       if (mimeType === 'application/pdf') {
         result = await extractFromPDF(buffer);
       } else if (mimeType.startsWith('image/')) {
-        result = await extractFromImage(buffer, mimeType);
+        // OCR is not supported in serverless environment.
+        // Return partial result prompting manual verification.
+        console.log('[Scan API] Image upload — returning manual entry prompt');
+        return NextResponse.json({
+          kwhUsed: null,
+          totalAmount: null,
+          billingDate: null,
+          providerName: null,
+          type: 'electricity',
+          confidence: 0,
+          warning: 'Image scanning is not available. Please enter your bill ' +
+                   'details manually below. For best results, upload a PDF ' +
+                   'version of your bill.'
+        });
       } else {
         return NextResponse.json(
           { error: 'Unsupported file type. Upload a PDF or image.' },
