@@ -13,13 +13,17 @@ const openai = new OpenAI({
   },
 });
 
-const MODELS = {
-  primary: 'google/gemini-2.0-flash-exp:free',
-  fallback: 'qwen/qwen2.5-vl-7b-instruct:free'
-};
+const MODELS = [
+  'google/gemini-2.0-flash-exp:free',
+  'google/gemini-flash-1.5-8b',
+  'qwen/qwen2.5-vl-7b-instruct:free',
+  'meta-llama/llama-3.2-11b-vision-instruct:free'
+];
 
 async function callVisionAI(mimeType, base64string, prompt) {
-  for (const model of [MODELS.primary, MODELS.fallback]) {
+  const errors = [];
+  
+  for (const model of MODELS) {
     try {
       const response = await openai.chat.completions.create({
         model,
@@ -30,27 +34,33 @@ async function callVisionAI(mimeType, base64string, prompt) {
               type: 'image_url',
               image_url: {
                 url: `data:${mimeType};base64,${base64string}`,
-                detail: 'high'
               }
             },
             { type: 'text', text: prompt }
           ]
         }],
-        max_tokens: 500,
+        max_tokens: 1000,
       });
-      console.log(`[Scan API] Used model: ${model}`);
+      
+      console.log(`[Scan API] Success with model: ${model}`);
       return {
         content: response.choices[0]?.message?.content || '',
         usage: response.usage
       };
     } catch (err) {
-      if (err.status === 404 || err.status === 503 || err.status === 400) {
-        console.warn(`[Scan API] Model ${model} unavailable or failed, trying next...`);
-        continue;
-      }
-      throw err;
+      const status = err.status || err.response?.status;
+      const message = err.message || 'Unknown error';
+      console.warn(`[Scan API] Model ${model} failed (Status: ${status}): ${message}`);
+      errors.push(`${model}: ${message}`);
+      
+      // If it's a 401 (Auth) or something non-retriable, stop early
+      if (status === 401) throw err;
+      
+      continue;
     }
   }
+  
+  console.error('[Scan API] All models failed:', errors.join(' | '));
   throw new Error('All vision models are currently unavailable. Please try again in a few minutes.');
 }
 
