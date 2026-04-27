@@ -1,10 +1,17 @@
 import { NextResponse } from 'next/server';
-import { GoogleGenAI } from '@google/genai';
+import OpenAI from 'openai';
 import { getCurrentUser } from '@/lib/auth';
 import { getClientById, incrementClientScanQuota, resetClientScanQuota } from '@/lib/db';
 import { findProvider } from '@/data/utilityProviders';
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+const openai = new OpenAI({
+  baseURL: 'https://openrouter.ai/api/v1',
+  apiKey: process.env.OPENROUTER_API_KEY,
+  defaultHeaders: {
+    'HTTP-Referer': process.env.NEXT_PUBLIC_APP_URL,
+    'X-Title': 'OptiCore PH',
+  },
+});
 
 /**
  * POST /api/ai/scan
@@ -41,66 +48,61 @@ export async function POST(request) {
       return NextResponse.json({ error: 'No image data provided.' }, { status: 400 });
     }
 
-    const deepAnalysisInstruction = plan !== 'starter'
-      ? '- unbundledCharges: (Object) { generation: number, transmission: number, systemLoss: number, vat: number }\n      Extract granular transmission fees, VAT, and system loss metrics. Be extremely precise.'
-      : '- unbundledCharges: null (Skip deep unbundled breakdown for this tier).';
+    const base64string = image.split(',')[1] || image;
 
-    const prompt = `
-      You are a utility bill parser for the Philippines. Analyze this utility bill image or PDF.
-      Return ONLY a raw JSON object. No markdown. No code blocks. No explanation. Just the JSON.
-
-      {
-        "kwhUsed": number,
-        "totalAmount": number,
-        "billingDate": "YYYY-MM-DD",
-        "providerName": "string",
-        "type": "electricity" | "water",
-        "m3Used": number,
-        "effectiveRate": number,
-        "billingPeriod": "string"
-      }
-
-      Rules:
-      - kwhUsed: total kilowatt-hours consumed this billing period
-      - totalAmount: total amount due in Philippine Peso
-      - billingDate: billing period end date in YYYY-MM-DD format
-      - providerName: utility company (e.g. MERALCO, VECO, MCWD)
-      - type: electricity if kWh mentioned, water if cubic meters
-      - If any field cannot be found, use null
-      - Return ONLY the JSON object. Nothing else.
-    `;
-
-    const base64Data = image.split(',')[1] || image;
-
-    const result = await ai.models.generateContent({
-      model: 'gemini-2.0-flash',
-      contents: [
+    const response = await openai.chat.completions.create({
+      model: 'meta-llama/llama-3.2-11b-vision-instruct:free',
+      messages: [
         {
-          parts: [
-            { text: prompt },
+          role: 'user',
+          content: [
             {
-              inlineData: {
-                data: base64Data,
-                mimeType: mimeType
-              }
-            }
-          ]
-        }
-      ]
+              type: 'image_url',
+              image_url: {
+                url: `data:${mimeType};base64,${base64string}`,
+              },
+            },
+            {
+              type: 'text',
+              text: `You are a utility bill parser for the Philippines. Analyze this utility bill carefully.
+
+Return ONLY a raw JSON object. No markdown. No code blocks. No explanation. Just the JSON object itself.
+
+{
+  "kwhUsed": <number or null>,
+  "totalAmount": <number or null>,
+  "billingDate": "<YYYY-MM-DD or null>",
+  "providerName": "<string or null>",
+  "type": "<electricity or water>"
+}
+
+Rules:
+- kwhUsed: total kilowatt-hours consumed
+- totalAmount: total amount due in Philippine Peso
+- billingDate: billing period end date YYYY-MM-DD
+- providerName: utility company (MERALCO, VECO, MCWD)
+- type: electricity if kWh mentioned, water if m³
+- If any field cannot be found, use null
+- Return ONLY the JSON. Nothing else.`,
+            },
+          ],
+        },
+      ],
+      max_tokens: 500,
     });
 
-    const rawText = result.candidates?.[0]?.content?.parts?.[0]?.text || '';
-    const usage = result.usageMetadata;
-    console.log('[Scan API] Gemini raw response:', rawText);
+    const rawText = response.choices[0]?.message?.content || '';
+    const usage = response.usage;
+    console.log('[Scan API] OpenRouter raw response:', rawText);
 
     // Track usage in background
     const { incrementTokenUsage, incrementScanCount } = await import('@/lib/db');
-    if (usage?.totalTokenCount) {
-      await incrementTokenUsage(client.id, usage.totalTokenCount);
+    if (usage?.total_tokens) {
+      await incrementTokenUsage(client.id, usage.total_tokens);
     }
     await incrementScanCount(client.id);
 
-    function extractJSON(text) {
+    function extractBillJSON(text) {
       const cleaned = text
         .replace(/```json\n?/gi, '')
         .replace(/```\n?/gi, '')
@@ -116,7 +118,7 @@ export async function POST(request) {
 
     let rawData;
     try {
-      rawData = extractJSON(rawText);
+      rawData = extractBillJSON(rawText);
     } catch (parseError) {
       console.error('[Scan API] Parse Failure:', parseError);
       return NextResponse.json({ 

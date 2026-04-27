@@ -18,7 +18,17 @@
  */
 
 import { NextResponse } from 'next/server';
+import OpenAI from 'openai';
 import { getCurrentUser } from '@/lib/auth';
+
+const openai = new OpenAI({
+  baseURL: 'https://openrouter.ai/api/v1',
+  apiKey: process.env.OPENROUTER_API_KEY,
+  defaultHeaders: {
+    'HTTP-Referer': process.env.NEXT_PUBLIC_APP_URL,
+    'X-Title': 'OptiCore PH',
+  },
+});
 
 // ── Philippine Electricity Constants ─────────────────────────────────────────
 const DAYS_PER_MONTH = 30;
@@ -194,7 +204,7 @@ export async function POST(request) {
       );
     }
 
-    const result = calculateROI({
+    const mathResult = calculateROI({
       currentWattage: Number(currentWattage),
       proposedWattage: Number(proposedWattage),
       hoursPerDay: Number(hoursPerDay),
@@ -203,10 +213,39 @@ export async function POST(request) {
       upgradeCost: Number(upgradeCost),
     });
 
+    // ── AI Recommendation Step ───────────────────────────────────────────────
+    const prompt = `
+      You are an Energy ROI Consultant in the Philippines.
+      Analyze this hardware upgrade scenario:
+      Appliance: ${applianceName || 'Utility Upgrade'}
+      Monthly Savings: ₱${mathResult.savingsPerMonth}
+      Annual Savings: ₱${mathResult.annualSavings}
+      Payback Period: ${mathResult.paybackMonths} months
+      Efficiency Gain: ${mathResult.efficiencyGain}%
+      
+      Provide a 2-sentence expert recommendation. Is this a "No-Brainer", "Good Investment", or "Marginal Benefit"? 
+      Mention if there are other factors (like maintenance or comfort) to consider.
+    `;
+
+    let recommendation = "Calculating recommendation...";
+    try {
+      const response = await openai.chat.completions.create({
+        model: 'google/gemini-2.0-flash-exp:free',
+        messages: [{ role: 'user', content: prompt }],
+        max_tokens: 150,
+      });
+      recommendation = response.choices[0]?.message?.content?.trim() || recommendation;
+    } catch (err) {
+      console.error('[ROI AI Error]:', err);
+    }
+
     return NextResponse.json({
       success: true,
       applianceName: applianceName || 'Custom Upgrade',
-      analysis: result,
+      analysis: {
+        ...mathResult,
+        recommendation
+      },
     });
 
   } catch (error) {
