@@ -1,17 +1,10 @@
 import { NextResponse } from 'next/server';
-import OpenAI from 'openai';
+import { GoogleGenAI } from '@google/genai';
 import { getCurrentUser } from '@/lib/auth';
 
-const openai = new OpenAI({
-  baseURL: 'https://openrouter.ai/api/v1',
-  apiKey: process.env.OPENROUTER_API_KEY,
-  defaultHeaders: {
-    'HTTP-Referer': process.env.NEXT_PUBLIC_APP_URL,
-    'X-Title': 'OptiCore PH',
-  },
-});
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
-export const maxDuration = 60; // Allow more time for audio processing if deployed on Vercel
+export const maxDuration = 60; 
 
 export async function POST(request) {
   try {
@@ -53,29 +46,24 @@ export async function POST(request) {
       Return ONLY the raw JSON object. Do not use markdown backticks. If you cannot identify the sound or if it's completely silent, return status "UNKNOWN".
     `;
 
-    const response = await openai.chat.completions.create({
-      model: 'meta-llama/llama-3.2-11b-vision-instruct:free',
-      messages: [
+    const result = await ai.models.generateContent({
+      model: 'gemini-2.0-flash',
+      contents: [
         {
-          role: 'user',
-          content: [
+          parts: [
+            { text: prompt },
             {
-              type: 'text',
-              text: prompt,
-            },
-            {
-              type: 'image_url',
-              image_url: {
-                url: `data:${mimeType};base64,${base64Data}`,
+              inlineData: {
+                mimeType,
+                data: base64Data,
               },
             },
           ],
         },
       ],
-      max_tokens: 500,
     });
 
-    const text = response.choices[0]?.message?.content || '';
+    const text = result.candidates?.[0]?.content?.parts?.[0]?.text || '';
     
     // Parse JSON safely
     let jsonStr = text.replace(/```json/gi, '').replace(/```/g, '').trim();

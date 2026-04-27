@@ -1,17 +1,10 @@
 export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
-import OpenAI from 'openai';
+import { GoogleGenAI } from '@google/genai';
 import { getCurrentUser } from '@/lib/auth';
 import { getClientById, getReadingsByClient, ensureDefaultProperty } from '@/lib/db';
 
-const openai = new OpenAI({
-  baseURL: 'https://openrouter.ai/api/v1',
-  apiKey: process.env.OPENROUTER_API_KEY,
-  defaultHeaders: {
-    'HTTP-Referer': process.env.NEXT_PUBLIC_APP_URL,
-    'X-Title': 'OptiCore PH',
-  },
-});
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 export async function GET(request) {
   try {
@@ -64,12 +57,12 @@ export async function GET(request) {
       }
     `;
 
-    const response = await openai.chat.completions.create({
-      model: 'google/gemini-2.0-flash-exp:free',
-      messages: [{ role: 'user', content: prompt }],
-      max_tokens: 500,
+    const result = await ai.models.generateContent({
+      model: 'gemini-2.0-flash',
+      contents: [{ role: 'user', parts: [{ text: prompt }] }],
     });
-    let rawText = response.choices[0]?.message?.content || '{}';
+    
+    let rawText = result.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
     // Strip markdown code fences if present
     rawText = rawText.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '').trim();
 

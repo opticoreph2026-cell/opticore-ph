@@ -18,17 +18,10 @@
  */
 
 import { NextResponse } from 'next/server';
-import OpenAI from 'openai';
+import { GoogleGenAI } from '@google/genai';
 import { getCurrentUser } from '@/lib/auth';
 
-const openai = new OpenAI({
-  baseURL: 'https://openrouter.ai/api/v1',
-  apiKey: process.env.OPENROUTER_API_KEY,
-  defaultHeaders: {
-    'HTTP-Referer': process.env.NEXT_PUBLIC_APP_URL,
-    'X-Title': 'OptiCore PH',
-  },
-});
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 // ── Philippine Electricity Constants ─────────────────────────────────────────
 const DAYS_PER_MONTH = 30;
@@ -229,12 +222,11 @@ export async function POST(request) {
 
     let recommendation = "Calculating recommendation...";
     try {
-      const response = await openai.chat.completions.create({
-        model: 'google/gemini-2.0-flash-exp:free',
-        messages: [{ role: 'user', content: prompt }],
-        max_tokens: 150,
+      const result = await ai.models.generateContent({
+        model: 'gemini-2.0-flash',
+        contents: [{ role: 'user', parts: [{ text: prompt }] }],
       });
-      recommendation = response.choices[0]?.message?.content?.trim() || recommendation;
+      recommendation = result.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || recommendation;
     } catch (err) {
       console.error('[ROI AI Error]:', err);
     }

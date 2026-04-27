@@ -1,19 +1,12 @@
 import { NextResponse } from 'next/server';
-import OpenAI from 'openai';
+import { GoogleGenAI } from '@google/genai';
 import { getCurrentUser } from '@/lib/auth';
 import { createReading, createReport, getAppliancesByClient, createAlert, getClientById, getReadingsByClient, getActiveProperty } from '@/lib/db';
 import { sendMonthlyDigestEmail, sendAnomalyAlertEmail } from '@/lib/email';
 import { calculateAttribution } from '@/utils/attributionEngine';
 import { analyzeWaterUsage } from '@/lib/algorithms/waterAnalyzer';
 
-const openai = new OpenAI({
-  baseURL: 'https://openrouter.ai/api/v1',
-  apiKey: process.env.OPENROUTER_API_KEY,
-  defaultHeaders: {
-    'HTTP-Referer': process.env.NEXT_PUBLIC_APP_URL,
-    'X-Title': 'OptiCore PH',
-  },
-});
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 // ── GET ───────────────────────────────────────────────────────────────────────
 export async function GET() {
@@ -110,15 +103,14 @@ export async function POST(request) {
     ESTIMATED_SAVINGS: [number]
     `;
 
-    // 4. Fire directly to OpenRouter
+    // 4. Call Google GenAI
     let rawContent = "";
     try {
-      const response = await openai.chat.completions.create({
-        model: 'google/gemini-2.0-flash-exp:free',
-        messages: [{ role: 'user', content: systemPrompt }],
-        max_tokens: 1000,
+      const result = await ai.models.generateContent({
+        model: 'gemini-2.0-flash',
+        contents: [{ role: 'user', parts: [{ text: systemPrompt }] }],
       });
-      rawContent = response.choices[0]?.message?.content || "";
+      rawContent = result.candidates?.[0]?.content?.parts?.[0]?.text || "";
     } catch (aiErr) {
       console.error('[OptiCore AI] Analysis Engine Error:', aiErr);
     }

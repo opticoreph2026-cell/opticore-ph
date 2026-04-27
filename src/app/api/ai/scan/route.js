@@ -13,7 +13,7 @@ async function callVisionAI(mimeType, base64string, prompt) {
     : base64string;
 
   const response = await ai.models.generateContent({
-    model: 'gemini-1.5-flash',
+    model: 'gemini-2.0-flash',
     contents: [
       {
         parts: [
@@ -29,15 +29,12 @@ async function callVisionAI(mimeType, base64string, prompt) {
     ],
   });
 
-  console.log('[Scan API] Used model: gemini-1.5-flash');
+  console.log('[Scan API] Used model: gemini-2.0-flash');
   return response.candidates?.[0]?.content?.parts?.[0]?.text || '';
 }
 
 /**
  * POST /api/ai/scan
- * 
- * Vision-based OCR for Philippine Utility Bills.
- * Targets: Meralco, VECO, Primewater, etc.
  */
 export async function POST(request) {
   try {
@@ -63,7 +60,7 @@ export async function POST(request) {
       }
     }
 
-    const { image, mimeType = 'image/jpeg', fileName } = await request.json(); // base64 encoded image
+    const { image, mimeType = 'image/jpeg' } = await request.json(); // base64 encoded image
     if (!image) {
       return NextResponse.json({ error: 'No image data provided.' }, { status: 400 });
     }
@@ -97,7 +94,6 @@ Rules:
     // Track usage in background
     const { incrementScanCount } = await import('@/lib/db');
     await incrementScanCount(client.id);
-
 
     function extractBillJSON(text) {
       const cleaned = text
