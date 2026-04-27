@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Plus, X, ServerCrash, Save, Calculator, AlertTriangle, Trash2, Search, Filter, Cpu, Zap, Wallet } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ApplianceCard from './ApplianceCard';

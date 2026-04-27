@@ -43,12 +43,14 @@ export default function DashboardHeader({ user, onMenuClick }) {
     <header className="h-20 px-6 lg:px-12 flex items-center justify-between gap-8 z-50 sticky top-0 bg-surface-1000/60 backdrop-blur-xl border-b border-white/[0.04]">
       
       <div className="flex items-center gap-6">
-        <button 
+        <motion.button 
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
           onClick={onMenuClick}
-          className="lg:hidden w-10 h-10 rounded-xl bg-white/[0.03] border border-white/10 flex items-center justify-center text-slate-400"
+          className="lg:hidden w-12 h-12 rounded-2xl bg-white/[0.03] border border-white/10 flex items-center justify-center text-slate-400 hover:text-white hover:border-cyan-500/30 transition-all shadow-2xl"
         >
-          <Menu className="w-5 h-5" />
-        </button>
+          <Menu className="w-6 h-6" />
+        </motion.button>
       </div>
 
       {/* ── Right: Integrated Hub ── */}

@@ -210,108 +210,118 @@ export default function DashboardOverview({ user, readings = [], alerts = [], ap
       </motion.div>
 
       {/* ── KPI Grid ── */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-        {/* 1. Energy Consumption */}
-        <motion.div variants={itemVariants}>
-          <KpiCard 
-            label="Energy Consumption"
-            value={`${latest.kwhUsed || 0} kWh`}
-            delta={kwhDelta ? `${kwhDelta}%` : "FIRST READING"}
-            isPositive={parseFloat(kwhDelta) < 0}
-            icon={Lightbulb}
-            color="cyan"
-            sparklineData={chartData.slice(-6)}
-            dataKey="value"
-          />
-        </motion.div>
+      <div className="space-y-10 lg:space-y-20">
+        {/* Row 1: Primary Metrics */}
+        <div className="space-y-6 lg:space-y-8">
+          <div className="flex items-center gap-4 px-1 group">
+            <div className="w-1.5 h-6 bg-cyan-500 rounded-full group-hover:scale-y-125 transition-transform duration-500 shadow-[0_0_12px_rgba(34,211,238,0.4)]" />
+            <h2 className="text-xs font-black text-white uppercase tracking-[0.4em] drop-shadow-sm transition-colors group-hover:text-cyan-400">Grid Telemetry</h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5 lg:gap-8">
+            <motion.div variants={itemVariants}>
+              <KpiCard 
+                label="Energy Consumption"
+                value={`${latest.kwhUsed || 0} kWh`}
+                delta={kwhDelta ? `${kwhDelta}%` : "FIRST READING"}
+                isPositive={parseFloat(kwhDelta) < 0}
+                icon={Lightbulb}
+                color="cyan"
+                sparklineData={chartData.slice(-6)}
+                dataKey="value"
+              />
+            </motion.div>
 
-        {/* 2. Total Estimated Bill */}
-        <motion.div variants={itemVariants}>
-          <KpiCard 
-            label="Total Estimated Bill"
-            value={`₱${totalBill.toLocaleString(undefined, {minimumFractionDigits: 0})}`}
-            delta={billDelta ? `${billDelta}%` : "NEW CYCLE"}
-            isPositive={parseFloat(billDelta) < 0}
-            icon={Wallet}
-            color="amber"
-            sparklineData={chartData.slice(-6)}
-            dataKey="bill"
-          />
-        </motion.div>
+            <motion.div variants={itemVariants}>
+              <KpiCard 
+                label="Total Estimated Bill"
+                value={`₱${totalBill.toLocaleString(undefined, {minimumFractionDigits: 0})}`}
+                delta={billDelta ? `${billDelta}%` : "NEW CYCLE"}
+                isPositive={parseFloat(billDelta) < 0}
+                icon={Wallet}
+                color="amber"
+                sparklineData={chartData.slice(-6)}
+                dataKey="bill"
+              />
+            </motion.div>
 
-        {/* 3. Effective Rate */}
-        <motion.div variants={itemVariants}>
-          <KpiCard 
-            label="Effective Rate"
-            value={latest.kwhUsed > 0 ? `₱${effectiveRate.toFixed(2)}/kWh` : "—"}
-            delta={latest.kwhUsed > 0 ? (effectiveRate <= 16 ? "EFFICIENT" : "HIGH") : "NO DATA"}
-            isPositive={effectiveRate <= 16}
-            icon={Zap}
-            color="cyan"
-          />
-        </motion.div>
+            <motion.div variants={itemVariants}>
+              <KpiCard 
+                label="Effective Rate"
+                value={latest.kwhUsed > 0 ? `₱${effectiveRate.toFixed(2)}/kWh` : "—"}
+                delta={latest.kwhUsed > 0 ? (effectiveRate <= 16 ? "EFFICIENT" : "HIGH") : "NO DATA"}
+                isPositive={effectiveRate <= 16}
+                icon={Zap}
+                color="cyan"
+              />
+            </motion.div>
 
-        {/* 4. MoM Change */}
-        <motion.div variants={itemVariants}>
-          <KpiCard 
-            label="Month-over-Month"
-            value={billDelta ? `${billDelta}%` : "—"}
-            delta={billDelta ? (parseFloat(billDelta) < 0 ? "DECREASED" : "INCREASED") : "NO PREVIOUS DATA"}
-            isPositive={parseFloat(billDelta) < 0}
-            icon={TrendingDown}
-            color={parseFloat(billDelta) < 0 ? "emerald" : "rose"}
-          />
-        </motion.div>
+            <motion.div variants={itemVariants}>
+              <KpiCard 
+                label="Month-over-Month"
+                value={billDelta ? `${billDelta}%` : "—"}
+                delta={billDelta ? (parseFloat(billDelta) < 0 ? "DECREASED" : "INCREASED") : "NO PREVIOUS DATA"}
+                isPositive={parseFloat(billDelta) < 0}
+                icon={TrendingDown}
+                color={parseFloat(billDelta) < 0 ? "emerald" : "rose"}
+              />
+            </motion.div>
+          </div>
+        </div>
 
-        {/* 5. Water Usage */}
-        <motion.div variants={itemVariants}>
-          <KpiCard 
-            label="Water Usage"
-            value={`${latest.m3Used || 0} m³`}
-            delta={waterDelta ? `${waterDelta}%` : "NO SPIKE"}
-            isPositive={parseFloat(waterDelta) <= 0}
-            icon={Droplets}
-            color="blue"
-            sparklineData={chartData.slice(-6)}
-            dataKey="water"
-          />
-        </motion.div>
+        {/* Row 2: Secondary Metrics */}
+        <div className="space-y-6 lg:space-y-8">
+          <div className="flex items-center gap-4 px-1 group">
+            <div className="w-1.5 h-6 bg-purple-500 rounded-full group-hover:scale-y-125 transition-transform duration-500 shadow-[0_0_12px_rgba(168,85,247,0.4)]" />
+            <h2 className="text-xs font-black text-white uppercase tracking-[0.4em] drop-shadow-sm transition-colors group-hover:text-purple-400">Resource Monitoring</h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5 lg:gap-8">
+            <motion.div variants={itemVariants}>
+              <KpiCard 
+                label="Water Usage"
+                value={`${latest.m3Used || 0} m³`}
+                delta={waterDelta ? `${waterDelta}%` : "NO SPIKE"}
+                isPositive={parseFloat(waterDelta) <= 0}
+                icon={Droplets}
+                color="blue"
+                sparklineData={chartData.slice(-6)}
+                dataKey="water"
+              />
+            </motion.div>
 
-        {/* 6. LPG Status */}
-        <motion.div variants={itemVariants}>
-          <KpiCard 
-            label="LPG Status"
-            value={lpgStatus?.percentLeft != null ? `${lpgStatus.percentLeft.toFixed(0)}%` : "—"}
-            delta={lpgStatus ? (lpgStatus.daysLeft > 0 ? `${lpgStatus.daysLeft} days left` : "REFILL NEEDED") : "NO LPG DATA"}
-            isPositive={lpgStatus?.percentLeft > 15}
-            icon={Zap}
-            color={lpgStatus?.percentLeft <= 15 ? "amber" : "cyan"}
-          />
-        </motion.div>
+            <motion.div variants={itemVariants}>
+              <KpiCard 
+                label="LPG Status"
+                value={lpgStatus?.percentLeft != null ? `${lpgStatus.percentLeft.toFixed(0)}%` : "—"}
+                delta={lpgStatus ? (lpgStatus.daysLeft > 0 ? `${lpgStatus.daysLeft} days left` : "REFILL NEEDED") : "NO LPG DATA"}
+                isPositive={lpgStatus?.percentLeft > 15}
+                icon={Zap}
+                color={lpgStatus?.percentLeft <= 15 ? "amber" : "cyan"}
+              />
+            </motion.div>
 
-        {/* 7. Ghost Load % */}
-        <motion.div variants={itemVariants}>
-          <KpiCard 
-            label="Ghost Load"
-            value={attribution?.electric?.discrepancy?.percentage != null ? `${attribution.electric.discrepancy.percentage}%` : "CALCULATING..."}
-            delta={attribution?.electric?.severity || "MONITORING"}
-            isPositive={attribution?.electric?.severity === 'NORMAL'}
-            icon={Activity}
-            color={attribution?.electric?.severity === 'CRITICAL' ? "rose" : "purple"}
-          />
-        </motion.div>
+            <motion.div variants={itemVariants}>
+              <KpiCard 
+                label="Ghost Load"
+                value={attribution?.electric?.discrepancy?.percentage != null ? `${attribution.electric.discrepancy.percentage}%` : "CALCULATING..."}
+                delta={attribution?.electric?.severity || "MONITORING"}
+                isPositive={attribution?.electric?.severity === 'NORMAL'}
+                icon={Activity}
+                color={attribution?.electric?.severity === 'CRITICAL' ? "rose" : "purple"}
+              />
+            </motion.div>
 
-        {/* 8. Active Alerts */}
-        <motion.div variants={itemVariants}>
-          <KpiCard 
-            label="Active Alerts"
-            value={alerts.length}
-            delta={alerts.length === 0 ? "SYSTEM HEALTHY" : `${alerts.filter(a => a.severity === 'critical').length} CRITICAL`}
-            isPositive={alerts.length === 0}
-            icon={ShieldAlert}
-            color={alerts.length > 0 ? "rose" : "emerald"}
-          />
-        </motion.div>
+            <motion.div variants={itemVariants}>
+              <KpiCard 
+                label="Active Alerts"
+                value={alerts.length}
+                delta={alerts.length === 0 ? "SYSTEM HEALTHY" : `${alerts.filter(a => a.severity === 'critical').length} CRITICAL`}
+                isPositive={alerts.length === 0}
+                icon={ShieldAlert}
+                color={alerts.length > 0 ? "rose" : "emerald"}
+              />
+            </motion.div>
+          </div>
+        </div>
       </div>
 
       {/* ── Visual Insights Grid ── */}
