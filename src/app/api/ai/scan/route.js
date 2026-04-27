@@ -13,6 +13,47 @@ const openai = new OpenAI({
   },
 });
 
+const MODELS = {
+  primary: 'google/gemini-2.0-flash-exp:free',
+  fallback: 'qwen/qwen2.5-vl-7b-instruct:free'
+};
+
+async function callVisionAI(mimeType, base64string, prompt) {
+  for (const model of [MODELS.primary, MODELS.fallback]) {
+    try {
+      const response = await openai.chat.completions.create({
+        model,
+        messages: [{
+          role: 'user',
+          content: [
+            {
+              type: 'image_url',
+              image_url: {
+                url: `data:${mimeType};base64,${base64string}`,
+                detail: 'high'
+              }
+            },
+            { type: 'text', text: prompt }
+          ]
+        }],
+        max_tokens: 500,
+      });
+      console.log(`[Scan API] Used model: ${model}`);
+      return {
+        content: response.choices[0]?.message?.content || '',
+        usage: response.usage
+      };
+    } catch (err) {
+      if (err.status === 404 || err.status === 503 || err.status === 400) {
+        console.warn(`[Scan API] Model ${model} unavailable or failed, trying next...`);
+        continue;
+      }
+      throw err;
+    }
+  }
+  throw new Error('All vision models are currently unavailable. Please try again in a few minutes.');
+}
+
 /**
  * POST /api/ai/scan
  * 
@@ -50,21 +91,7 @@ export async function POST(request) {
 
     const base64string = image.split(',')[1] || image;
 
-    const response = await openai.chat.completions.create({
-      model: 'meta-llama/llama-3.2-11b-vision-instruct:free',
-      messages: [
-        {
-          role: 'user',
-          content: [
-            {
-              type: 'image_url',
-              image_url: {
-                url: `data:${mimeType};base64,${base64string}`,
-              },
-            },
-            {
-              type: 'text',
-              text: `You are a utility bill parser for the Philippines. Analyze this utility bill carefully.
+    const prompt = `You are a utility bill parser for the Philippines. Analyze this utility bill carefully.
 
 Return ONLY a raw JSON object. No markdown. No code blocks. No explanation. Just the JSON object itself.
 
@@ -77,22 +104,15 @@ Return ONLY a raw JSON object. No markdown. No code blocks. No explanation. Just
 }
 
 Rules:
-- kwhUsed: total kilowatt-hours consumed
+- kwhUsed: total kilowatt-hours consumed this period
 - totalAmount: total amount due in Philippine Peso
-- billingDate: billing period end date YYYY-MM-DD
+- billingDate: billing period end date in YYYY-MM-DD
 - providerName: utility company (MERALCO, VECO, MCWD)
-- type: electricity if kWh mentioned, water if m³
+- type: electricity if kWh mentioned, water if cubic meters
 - If any field cannot be found, use null
-- Return ONLY the JSON. Nothing else.`,
-            },
-          ],
-        },
-      ],
-      max_tokens: 500,
-    });
+- Return ONLY the JSON. Nothing else.`;
 
-    const rawText = response.choices[0]?.message?.content || '';
-    const usage = response.usage;
+    const { content: rawText, usage } = await callVisionAI(mimeType, base64string, prompt);
     console.log('[Scan API] OpenRouter raw response:', rawText);
 
     // Track usage in background
