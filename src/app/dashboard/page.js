@@ -24,7 +24,7 @@ export default async function DashboardPage({ searchParams }) {
     await migrateLegacyDataToProperty(jwtUser.sub, activeProperty.id);
 
     // 3. Parallel data fetch — Scoped by active property
-    const [readings, alerts, appliances, clientRecord, latestReport, lpgStatus, waterAnalysis] = await Promise.all([
+    const [readings, alerts, appliances, clientRecord, latestReport] = await Promise.all([
       db.utilityReading.findMany({
         where: { clientId: jwtUser.sub, propertyId: activeProperty.id },
         orderBy: { readingDate: 'desc' },
@@ -40,14 +40,26 @@ export default async function DashboardPage({ searchParams }) {
         orderBy: { createdAt: 'desc' },
       }),
       db.client.findUnique({ where: { id: jwtUser.sub } }),
-      // Fix: fetch latest AI report directly — not via reading relation
       db.aIReport.findFirst({
         where: { clientId: jwtUser.sub, propertyId: activeProperty.id },
         orderBy: { generatedAt: 'desc' },
       }),
-      predictLPGDepletion(jwtUser.sub, activeProperty.id),
-      analyzeWaterUsage(jwtUser.sub, activeProperty.id),
     ]);
+
+    // Individual Algorithm try/catch
+    let lpgStatus = null;
+    try {
+      lpgStatus = await predictLPGDepletion(jwtUser.sub, activeProperty.id);
+    } catch (e) {
+      console.error('[Dashboard Page] predictLPGDepletion non-fatal error:', e.message);
+    }
+
+    let waterAnalysis = null;
+    try {
+      waterAnalysis = await analyzeWaterUsage(jwtUser.sub, activeProperty.id);
+    } catch (e) {
+      console.error('[Dashboard Page] analyzeWaterUsage non-fatal error:', e.message);
+    }
 
     // 3. Null Guard
     if (!clientRecord) {
@@ -65,7 +77,7 @@ export default async function DashboardPage({ searchParams }) {
 
     return (
       <DashboardOverview
-        user={clientRecord}
+        user={{ ...clientRecord, activeProperty }}
         readings={readings || []}
         alerts={alerts || []}
         appliances={appliances || []}

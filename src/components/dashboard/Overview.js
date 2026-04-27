@@ -8,7 +8,7 @@ import {
   Zap, TrendingDown, Plus, 
   ArrowUpRight, ArrowDownRight, MoreHorizontal,
   ChevronRight, Activity, Calendar, Sparkles,
-  Droplets, Lightbulb, Wallet
+  Droplets, Lightbulb, Wallet, ShieldAlert
 } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import Link from 'next/link';
@@ -64,9 +64,24 @@ export default function DashboardOverview({ user, readings = [], alerts = [], ap
   const prevTotalBill = (previous.billAmountElectric ?? 0) + (previous.billAmountWater ?? 0);
   
   const billDelta = useMemo(() => {
-    if (!totalBill || !prevTotalBill) return '0.0';
+    if (!totalBill || !prevTotalBill) return null;
     return ((totalBill - prevTotalBill) / prevTotalBill * 100).toFixed(1);
   }, [totalBill, prevTotalBill]);
+
+  const kwhDelta = useMemo(() => {
+    if (!latest.kwhUsed || !previous.kwhUsed) return null;
+    return (((latest.kwhUsed - previous.kwhUsed) / previous.kwhUsed) * 100).toFixed(1);
+  }, [latest.kwhUsed, previous.kwhUsed]);
+
+  const waterDelta = useMemo(() => {
+    if (!latest.m3Used || !previous.m3Used) return null;
+    return (((latest.m3Used - previous.m3Used) / previous.m3Used) * 100).toFixed(1);
+  }, [latest.m3Used, previous.m3Used]);
+
+  const effectiveRate = useMemo(() => {
+    if (!latest.kwhUsed) return 0;
+    return (latest.billAmountElectric / latest.kwhUsed);
+  }, [latest.kwhUsed, latest.billAmountElectric]);
 
   const chartData = useMemo(() => {
     if (!readings || readings.length === 0) {
@@ -77,7 +92,6 @@ export default function DashboardOverview({ user, readings = [], alerts = [], ap
     [...readings].forEach(r => {
       const date = parseISO(r.readingDate);
       const monthKey = format(date, 'yyyy-MM');
-      // Only take the first encounter (since readings are sorted desc, this is the latest)
       if (!groups[monthKey]) {
         groups[monthKey] = { 
           name: format(date, 'MMM'), 
@@ -103,6 +117,39 @@ export default function DashboardOverview({ user, readings = [], alerts = [], ap
     return "Your home is running efficiently. No issues detected.";
   }, [alerts]);
 
+  // Empty State Logic
+  if (readings.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-6">
+        <div className="w-20 h-20 rounded-3xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center">
+          <Zap className="w-10 h-10 text-cyan-400 animate-pulse" />
+        </div>
+        <div className="space-y-2">
+          <h2 className="text-3xl font-black text-white tracking-tighter">Dashboard Offline</h2>
+          <p className="text-slate-500 text-sm max-w-md mx-auto">
+            Submit your first reading to see your dashboard come alive with AI insights and telemetry.
+          </p>
+        </div>
+        <button 
+          onClick={() => setIsModalOpen(true)}
+          className="btn-primary px-8 py-4 text-xs font-black uppercase tracking-widest"
+        >
+          Add Your First Reading
+        </button>
+
+        <SubmitReadingModal
+          isOpen={isModalOpen}
+          onClose={(refresh) => {
+            setIsModalOpen(false);
+            if (refresh) router.refresh();
+          }}
+          user={user}
+          appliances={appliances}
+        />
+      </div>
+    );
+  }
+
   return (
     <motion.div 
       variants={containerVariants}
@@ -124,7 +171,7 @@ export default function DashboardOverview({ user, readings = [], alerts = [], ap
             Welcome Back, <span className="text-cyan-400">{user?.name?.split(' ')[0] || 'User'}</span>
           </h1>
           <p className="text-slate-500 font-medium mt-2">
-            Managing <span className="text-white font-black">{appliances.length} appliances</span> at your <span className="text-white font-black">Main Property</span>.
+            Managing <span className="text-white font-black">{appliances.length} appliances</span> at your <span className="text-white font-black">{user.activeProperty?.name || 'Main Property'}</span>.
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -143,41 +190,106 @@ export default function DashboardOverview({ user, readings = [], alerts = [], ap
       </motion.div>
 
       {/* ── KPI Grid ── */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* 1. Energy Consumption */}
         <motion.div variants={itemVariants}>
           <KpiCard 
             label="Energy Consumption"
             value={`${latest.kwhUsed || 0} kWh`}
-            delta="Electricity"
-            isPositive={true}
+            delta={kwhDelta ? `${kwhDelta}%` : "First reading"}
+            isPositive={parseFloat(kwhDelta) < 0}
             icon={Lightbulb}
             color="cyan"
             sparklineData={chartData.slice(-6)}
             dataKey="value"
           />
         </motion.div>
+
+        {/* 2. Total Estimated Bill */}
+        <motion.div variants={itemVariants}>
+          <KpiCard 
+            label="Total Estimated Bill"
+            value={`₱${totalBill.toLocaleString(undefined, {minimumFractionDigits: 2})}`}
+            delta={billDelta ? `${billDelta}%` : "New cycle"}
+            isPositive={parseFloat(billDelta) < 0}
+            icon={Wallet}
+            color="amber"
+            sparklineData={chartData.slice(-6)}
+            dataKey="bill"
+          />
+        </motion.div>
+
+        {/* 3. Effective Rate */}
+        <motion.div variants={itemVariants}>
+          <KpiCard 
+            label="Effective Rate"
+            value={latest.kwhUsed > 0 ? `₱${effectiveRate.toFixed(2)}/kWh` : "—"}
+            delta={latest.kwhUsed > 0 ? (effectiveRate <= 16 ? "Efficient" : "High") : "No data"}
+            isPositive={effectiveRate <= 16}
+            icon={Zap}
+            color="cyan"
+          />
+        </motion.div>
+
+        {/* 4. MoM Change */}
+        <motion.div variants={itemVariants}>
+          <KpiCard 
+            label="Month-over-Month"
+            value={billDelta ? `${billDelta}%` : "—"}
+            delta={billDelta ? (parseFloat(billDelta) < 0 ? "Decreased" : "Increased") : "No previous data"}
+            isPositive={parseFloat(billDelta) < 0}
+            icon={TrendingDown}
+            color={parseFloat(billDelta) < 0 ? "emerald" : "rose"}
+          />
+        </motion.div>
+
+        {/* 5. Water Usage */}
         <motion.div variants={itemVariants}>
           <KpiCard 
             label="Water Usage"
             value={`${latest.m3Used || 0} m³`}
-            delta="Domestic"
-            isPositive={true}
+            delta={waterDelta ? `${waterDelta}%` : "No spike"}
+            isPositive={parseFloat(waterDelta) <= 0}
             icon={Droplets}
             color="blue"
             sparklineData={chartData.slice(-6)}
             dataKey="water"
           />
         </motion.div>
+
+        {/* 6. LPG Status */}
         <motion.div variants={itemVariants}>
           <KpiCard 
-            label="Total Estimated Bill"
-            value={`₱${totalBill.toLocaleString(undefined, {minimumFractionDigits: 2})}`}
-            delta={`${billDelta}%`}
-            isPositive={parseFloat(billDelta) < 0}
-            icon={Wallet}
-            color="amber"
-            sparklineData={chartData.slice(-6)}
-            dataKey="bill"
+            label="LPG Status"
+            value={lpgStatus?.percentLeft != null ? `${lpgStatus.percentLeft.toFixed(0)}%` : "—"}
+            delta={lpgStatus ? (lpgStatus.daysLeft > 0 ? `${lpgStatus.daysLeft} days left` : "Refill needed") : "No LPG data"}
+            isPositive={lpgStatus?.percentLeft > 15}
+            icon={Zap}
+            color={lpgStatus?.percentLeft <= 15 ? "amber" : "cyan"}
+          />
+        </motion.div>
+
+        {/* 7. Ghost Load % */}
+        <motion.div variants={itemVariants}>
+          <KpiCard 
+            label="Ghost Load"
+            value="Coming Soon"
+            delta="Analysis pending"
+            isPositive={true}
+            icon={Activity}
+            color="purple"
+          />
+        </motion.div>
+
+        {/* 8. Active Alerts */}
+        <motion.div variants={itemVariants}>
+          <KpiCard 
+            label="Active Alerts"
+            value={alerts.length}
+            delta={alerts.length === 0 ? "System healthy" : `${alerts.filter(a => a.severity === 'critical').length} critical`}
+            isPositive={alerts.length === 0}
+            icon={ShieldAlert}
+            color={alerts.length > 0 ? "rose" : "emerald"}
           />
         </motion.div>
       </div>
@@ -318,15 +430,21 @@ export default function DashboardOverview({ user, readings = [], alerts = [], ap
 
 function KpiCard({ label, value, delta, isPositive, icon: Icon, color, sparklineData, dataKey }) {
   const colorMap = {
-    cyan:  'text-cyan-400 bg-cyan-500/10 border-cyan-500/20 shadow-cyan-500/10',
-    blue:  'text-blue-400 bg-blue-500/10 border-blue-500/20 shadow-blue-500/10',
-    amber: 'text-amber-400 bg-amber-500/10 border-amber-500/20 shadow-amber-500/10',
+    cyan:    'text-cyan-400 bg-cyan-500/10 border-cyan-500/20 shadow-cyan-500/10',
+    blue:    'text-blue-400 bg-blue-500/10 border-blue-500/20 shadow-blue-500/10',
+    amber:   'text-amber-400 bg-amber-500/10 border-amber-500/20 shadow-amber-500/10',
+    emerald: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20 shadow-emerald-500/10',
+    rose:    'text-rose-400 bg-rose-500/10 border-rose-500/20 shadow-rose-500/10',
+    purple:  'text-purple-400 bg-purple-500/10 border-purple-500/20 shadow-purple-500/10',
   };
 
   const strokeMap = {
-    cyan:  '#22d3ee',
-    blue:  '#3b82f6',
-    amber: '#f59e0b',
+    cyan:    '#22d3ee',
+    blue:    '#3b82f6',
+    amber:   '#f59e0b',
+    emerald: '#10b981',
+    rose:    '#f43f5e',
+    purple:  '#8b5cf6',
   };
 
   return (
