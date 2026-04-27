@@ -86,38 +86,18 @@ export default function SubmitReadingModal({ isOpen, onClose, user, appliances =
       return;
     }
 
-    if (file.size > 4 * 1024 * 1024) {
-      setError('File must be under 4MB. Please compress and retry.');
+    if (file.size > 8 * 1024 * 1024) {
+      setError('File must be under 8MB. Please compress and retry.');
       e.target.value = '';
       return;
     }
 
     setError('');
     setStep('processing');
-    setStatusText('Initiating Neural Scan...');
+    setStatusText('Initiating OCR Scan...');
 
     try {
-      const reader = new FileReader();
-      reader.onloadend = async () => {
-        try {
-          const result = reader.result;
-          const base64 = result?.split(',')[1];
-          if (!base64) throw new Error('FileReader returned empty result');
-
-          await scanBill(base64, file.type, file.name);
-        } catch (err) {
-          console.error('[Scan] FileReader onloadend error:', err);
-          setError('Failed to read file. Please try again.');
-          setStep('choose');
-        }
-      };
-
-      reader.onerror = () => {
-        setError('File system error. Could not read file.');
-        setStep('choose');
-      };
-
-      reader.readAsDataURL(file);
+      await scanBill(file);
     } catch (err) {
       console.error('[Scan] File upload trigger error:', err);
       setError('Something went wrong. Please try again.');
@@ -125,34 +105,41 @@ export default function SubmitReadingModal({ isOpen, onClose, user, appliances =
     }
   }
 
-  async function scanBill(base64, mimeType, fileName) {
+  async function scanBill(file) {
     try {
+      const formDataToSend = new FormData();
+      formDataToSend.append('file', file);
+
       const res = await fetch('/api/ai/scan', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          image: base64, 
-          mimeType, 
-          fileName 
-        }),
+        body: formDataToSend,
+        // Do NOT set Content-Type header - browser sets it for FormData
       });
       
-      const json = await res.json();
+      const data = await res.json();
+
       if (!res.ok) {
-        if (json.error === 'PARSE_FAILED') {
-          throw new Error('Could not read this PDF. Try taking a photo of the bill instead and uploading as JPG.');
+        if (res.status === 422) {
+          setError('Could not read this file. Switched to manual entry.');
+          setTimeout(() => {
+            setStep('manual');
+            setError('');
+          }, 2000);
+          return;
         }
-        throw new Error(json.message || json.error || 'Scan failed');
+        throw new Error(data.message || data.error || 'Scan failed');
       }
 
-      const data    = json.data;
-      if (data.type === 'WATER' || !!data.m3Used) {
-        throw new Error('Water bill scanning is restricted. Use Manual Entry.');
+      if (data.warning) {
+        // We'll show this via status text since we don't have a toast lib easily accessible here 
+        // without knowing the project structure, but we can update the UI.
+        setError(data.warning);
       }
 
       setFormData({
         ...formData,
         kwhUsed:            data.kwhUsed || '',
+        m3Used:             data.m3Used || '',
         billAmountElectric: data.totalAmount || '',
         readingDate:        data.billingDate || formData.readingDate,
         providerDetected:   data.providerName || '',

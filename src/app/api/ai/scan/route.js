@@ -1,57 +1,131 @@
 import { NextResponse } from 'next/server';
-import { GoogleGenAI } from '@google/genai';
 import { getCurrentUser } from '@/lib/auth';
-import { getClientById, incrementClientScanQuota, resetClientScanQuota } from '@/lib/db';
-import { findProvider } from '@/data/utilityProviders';
+import { getClientById, resetClientScanQuota } from '@/lib/db-utils';
+import pdfParse from 'pdf-parse';
+import Tesseract from 'tesseract.js';
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+// ── Regex extraction engine ──────────────────────────
+function extractBillData(rawText) {
+  const text = rawText.toUpperCase();
 
-const SCAN_MODELS = ['gemini-1.5-flash-8b', 'gemini-2.0-flash-lite'];
+  // Provider detection
+  let providerName = null;
+  if (text.includes('MERALCO')) providerName = 'MERALCO';
+  else if (text.includes('VECO')) providerName = 'VECO';
+  else if (text.includes('CEBU ELECTRIC')) providerName = 'VECO';
+  else if (text.includes('MCWD')) providerName = 'MCWD';
+  else if (text.includes('METRO CEBU WATER')) providerName = 'MCWD';
+  else if (text.includes('MANILA WATER')) providerName = 'Manila Water';
+  else if (text.includes('MAYNILAD')) providerName = 'Maynilad';
 
-async function callVisionAI(mimeType, base64string, prompt) {
-  const rawBase64 = base64string.includes(',')
-    ? base64string.split(',')[1]
-    : base64string;
+  // Bill type
+  const isWater = text.includes('CUBIC METER') || 
+                  text.includes('CU.M') || 
+                  text.includes('M3') ||
+                  text.includes('WATER');
+  const type = isWater ? 'water' : 'electricity';
 
-  for (const model of SCAN_MODELS) {
-    try {
-      const response = await ai.models.generateContent({
-        model,
-        contents: [
-          {
-            parts: [
-              {
-                inlineData: {
-                  mimeType,
-                  data: rawBase64,
-                },
-              },
-              { text: prompt },
-            ],
-          },
-        ],
-      });
-
-      console.log(`[Scan API] Used model: ${model}`);
-      return response.candidates?.[0]?.content?.parts?.[0]?.text || '';
-    } catch (err) {
-      if (err.status === 404 || err.status === 503) {
-        console.warn(`[Scan API] Model ${model} unavailable (${err.status}), trying next...`);
-        continue;
-      }
-      if (err.status === 429) {
-        console.error('[Scan API] Quota exhausted on this API key.');
-        throw new Error('QUOTA_EXHAUSTED');
-      }
-      throw err;
+  // kWh extraction (electricity)
+  let kwhUsed = null;
+  const kwhPatterns = [
+    /(\d[\d,]*\.?\d*)\s*KWH/,
+    /KWH\s*[:\-]?\s*(\d[\d,]*\.?\d*)/,
+    /KILOWATT[- ]HOUR[S]?\s*[:\-]?\s*(\d[\d,]*\.?\d*)/,
+    /CONSUMPTION[:\s]*(\d[\d,]*\.?\d*)\s*KWH/,
+    /PRESENT\s+READING.*?(\d{4,6})/,
+  ];
+  for (const pattern of kwhPatterns) {
+    const match = rawText.toUpperCase().match(pattern);
+    if (match) {
+      kwhUsed = parseFloat(match[1].replace(/,/g, ''));
+      break;
     }
   }
-  throw new Error('All scan models unavailable. Please use manual entry.');
+
+  // m³ extraction (water)
+  let m3Used = null;
+  if (isWater) {
+    const m3Patterns = [
+      /(\d[\d,]*\.?\d*)\s*(?:CU\.?M|M3|CUBIC)/,
+      /CONSUMPTION[:\s]*(\d[\d,]*\.?\d*)/,
+      /VOLUME[:\s]*(\d[\d,]*\.?\d*)/,
+    ];
+    for (const pattern of m3Patterns) {
+      const match = rawText.toUpperCase().match(pattern);
+      if (match) {
+        m3Used = parseFloat(match[1].replace(/,/g, ''));
+        break;
+      }
+    }
+  }
+
+  // Total amount extraction
+  let totalAmount = null;
+  const amountPatterns = [
+    /(?:AMOUNT DUE|TOTAL AMOUNT DUE|TOTAL DUE|AMOUNT PAYABLE)[:\s]*(?:PHP|₱)?\s*([\d,]+\.?\d*)/,
+    /(?:PHP|₱)\s*([\d,]+\.\d{2})\s*(?:TOTAL|DUE|PAYABLE)/,
+    /PLEASE PAY[:\s]*(?:PHP|₱)?\s*([\d,]+\.?\d*)/,
+    /TOTAL[:\s]*(?:PHP|₱)?\s*([\d,]+\.\d{2})/,
+  ];
+  for (const pattern of amountPatterns) {
+    const match = rawText.toUpperCase().match(pattern);
+    if (match) {
+      totalAmount = parseFloat(match[1].replace(/,/g, ''));
+      if (totalAmount > 50) break; // ignore suspiciously small amounts
+    }
+  }
+
+  // Billing date extraction
+  let billingDate = null;
+  const datePatterns = [
+    /(?:BILL(?:ING)?\s+DATE|DUE DATE|READING DATE)[:\s]*(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4})/i,
+    /(\d{1,2})\s+(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)[A-Z]*[\s,]+(\d{4})/i,
+    /(?:JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)[A-Z]*\s+(\d{1,2}),?\s+(\d{4})/i,
+  ];
+  for (const pattern of datePatterns) {
+    const match = rawText.match(pattern);
+    if (match) {
+      try {
+        const parsed = new Date(match[0].replace(/[A-Z]+:/i, '').trim());
+        if (!isNaN(parsed)) {
+          billingDate = parsed.toISOString().split('T')[0];
+          break;
+        }
+      } catch {}
+    }
+  }
+
+  // Confidence score — how many fields were extracted
+  const extractedFields = [kwhUsed, m3Used, totalAmount, billingDate, providerName]
+    .filter(Boolean).length;
+  const confidence = Math.round((extractedFields / 5) * 100);
+
+  return { kwhUsed, m3Used, totalAmount, billingDate, providerName, type, confidence };
 }
 
-/**
- * POST /api/ai/scan
- */
+// ── PDF extraction ───────────────────────────────────
+async function extractFromPDF(buffer) {
+  const data = await pdfParse(buffer);
+  console.log('[Scan API] PDF text extracted, length:', data.text.length);
+  return extractBillData(data.text);
+}
+
+// ── Image OCR extraction ─────────────────────────────
+async function extractFromImage(buffer, mimeType) {
+  const base64 = buffer.toString('base64');
+  const dataUrl = `data:${mimeType};base64,${base64}`;
+  const { data: { text } } = await Tesseract.recognize(dataUrl, 'eng', {
+    logger: m => {
+      if (m.status === 'recognizing text') {
+        console.log(`[Scan API] OCR progress: ${Math.round(m.progress * 100)}%`);
+      }
+    }
+  });
+  console.log('[Scan API] OCR text extracted, length:', text.length);
+  return extractBillData(text);
+}
+
+// ── Main POST handler logic ──────────────────────────
 export async function POST(request) {
   try {
     const user = await getCurrentUser();
@@ -76,124 +150,48 @@ export async function POST(request) {
       }
     }
 
-    const { image, mimeType = 'image/jpeg' } = await request.json(); // base64 encoded image
-    if (!image) {
-      return NextResponse.json({ error: 'No image data provided.' }, { status: 400 });
+    const formData = await request.formData();
+    const file = formData.get('file');
+    if (!file) {
+      return NextResponse.json({ error: 'No file provided' }, { status: 400 });
     }
 
-    const base64string = image.split(',')[1] || image;
+    const bytes = await file.arrayBuffer();
+    const buffer = Buffer.from(bytes);
+    const mimeType = file.type;
 
-    const prompt = `You are a utility bill parser for the Philippines. Analyze this utility bill carefully.
-
-Return ONLY a raw JSON object. No markdown. No code blocks. No explanation. Just the JSON object itself.
-
-{
-  "kwhUsed": <number or null>,
-  "totalAmount": <number or null>,
-  "billingDate": "<YYYY-MM-DD or null>",
-  "providerName": "<string or null>",
-  "type": "<electricity or water>"
-}
-
-Rules:
-- kwhUsed: total kilowatt-hours consumed this period
-- totalAmount: total amount due in Philippine Peso
-- billingDate: billing period end date in YYYY-MM-DD
-- providerName: utility company (MERALCO, VECO, MCWD)
-- type: electricity if kWh mentioned, water if cubic meters
-- If any field cannot be found, use null
-- Return ONLY the JSON. Nothing else.`;
-
-    let rawText;
+    let result;
     try {
-      rawText = await callVisionAI(mimeType, base64string, prompt);
-    } catch (err) {
-      if (err.message === 'QUOTA_EXHAUSTED') {
+      if (mimeType === 'application/pdf') {
+        result = await extractFromPDF(buffer);
+      } else if (mimeType.startsWith('image/')) {
+        result = await extractFromImage(buffer, mimeType);
+      } else {
         return NextResponse.json(
-          {
-            error: 'AI_QUOTA_EXHAUSTED',
-            message: 'Bill scanning is temporarily unavailable. Please use manual entry for now.'
-          },
-          { status: 503 }
+          { error: 'Unsupported file type. Upload a PDF or image.' },
+          { status: 400 }
         );
       }
-      throw err;
-    }
-    console.log('[Scan API] AI raw response:', rawText);
-
-    // Track usage in background
-    const { incrementScanCount } = await import('@/lib/db');
-    await incrementScanCount(client.id);
-
-    function extractBillJSON(text) {
-      const cleaned = text
-        .replace(/```json\n?/gi, '')
-        .replace(/```\n?/gi, '')
-        .trim();
-      try {
-        return JSON.parse(cleaned);
-      } catch {
-        const match = cleaned.match(/\{[\s\S]*\}/);
-        if (match) return JSON.parse(match[0]);
-        throw new Error('No valid JSON found in response');
-      }
-    }
-
-    let rawData;
-    try {
-      rawData = extractBillJSON(rawText);
-    } catch (parseError) {
-      console.error('[Scan API] Parse Failure:', parseError);
-      return NextResponse.json({ 
-        error: 'PARSE_FAILED',
-        message: 'Could not extract bill data. For PDFs, ensure the bill is text-based. Try uploading a JPG photo instead.'
-      }, { status: 422 });
-    }
-
-    // Cross-reference with our Registry
-    const verifiedProvider = findProvider(rawData.providerName || '');
-
-    const enrichedData = {
-      ...rawData,
-      verifiedProvider: verifiedProvider ? {
-        id: verifiedProvider.id,
-        officialName: verifiedProvider.name,
-        region: verifiedProvider.region
-      } : null,
-      isCooperative: rawData.providerName ? /Electric Cooperative|ELCO/i.test(rawData.providerName) : false
-    };
-
-    if (plan === 'starter') {
-      await incrementClientScanQuota(client.id);
-    }
-
-    // Fire admin notification (non-blocking)
-    const { createAdminNotification } = await import('@/lib/db');
-    createAdminNotification({
-      type: 'ai_scan',
-      title: 'AI Bill Scan',
-      message: `${client.name || client.email} scanned a ${rawData.providerName || 'Utility'} bill.`,
-      meta: { clientId: client.id, email: client.email, provider: rawData.providerName, amount: rawData.totalAmount },
-    }).catch(() => { });
-
-    return NextResponse.json({
-      success: true,
-      data: enrichedData
-    });
-
-  } catch (error) {
-    console.error('[Vision OCR] Critical Error:', error);
-
-    // Standardized SRE Error for rate limits or AI failures
-    if (error.status === 429 || error.message?.includes('429')) {
+    } catch (err) {
+      console.error('[Scan API] Extraction failed:', err.message);
       return NextResponse.json(
-        { error: "AI_LIMIT", message: "AI Engine is at capacity. Please try again in a few minutes." },
-        { status: 429 }
+        { error: 'Could not read this file. Please try manual entry.' },
+        { status: 422 }
       );
     }
 
+    // Warn frontend if confidence is low
+    if (result.confidence < 40) {
+      result.warning = 'Low confidence extraction. Please verify all fields before submitting.';
+    }
+
+    console.log(`[Scan API] Extraction complete. Confidence: ${result.confidence}%`);
+    return NextResponse.json(result);
+
+  } catch (error) {
+    console.error('[Scan API] Global Error:', error);
     return NextResponse.json(
-      { error: "AI_ERROR", message: "Failed to parse bill. Ensure the photo is clear and try again." },
+      { error: 'INTERNAL_ERROR', message: 'System failure during extraction' },
       { status: 500 }
     );
   }
