@@ -1,306 +1,315 @@
 import { NextResponse } from 'next/server';
 import { getCurrentUser } from '@/lib/auth';
-import { db as prisma } from '@/lib/db';
-import { extractText } from 'unpdf';
 
-// ── Regex extraction engine ──────────────────────────
-function extractBillData(rawText) {
-  // ── Step 1: Deduplicate doubled characters ─────────
-  // This PDF has two overlapping text layers. Every character
-  // appears twice: "kk WW hh" = "kWh", "11 88 33" = "183"
-  // Fix: collapse any character immediately repeated (with 
-  // optional space between) into a single character.
+// ─── PDF TEXT EXTRACTION ────────────────────────────────
+async function extractTextFromPDF(buffer) {
+  // Dynamic import to avoid SSR issues
+  const pdfjsLib = await import('pdfjs-dist/legacy/build/pdf.mjs');
+  
+  const bytes = new Uint8Array(buffer);
+  const loadingTask = pdfjsLib.getDocument({ data: bytes });
+  const pdf = await loadingTask.promise;
+  
+  let fullText = '';
+  
+  // Extract text from all pages with position data
+  for (let pageNum = 1; pageNum <= Math.min(pdf.numPages, 3); pageNum++) {
+    const page = await pdf.getPage(pageNum);
+    const textContent = await page.getTextContent();
+    
+    // Sort text items by vertical position (y), then horizontal (x)
+    // This reconstructs reading order for multi-column layouts
+    const items = textContent.items
+      .filter(item => item.str && item.str.trim())
+      .map(item => ({
+        str: item.str,
+        x: Math.round(item.transform[4]),
+        y: Math.round(item.transform[5]),
+      }))
+      .sort((a, b) => {
+        // Group into rows (within 5px vertical tolerance)
+        const yDiff = b.y - a.y;
+        if (Math.abs(yDiff) > 5) return yDiff;
+        return a.x - b.x;
+      });
+    
+    // Build text preserving spatial structure
+    let lastY = null;
+    for (const item of items) {
+      if (lastY !== null && Math.abs(item.y - lastY) > 5) {
+        fullText += '\n';
+      }
+      fullText += item.str + ' ';
+      lastY = item.y;
+    }
+    fullText += '\n\n';
+  }
+  
+  console.log('[Scan API] PDF text extracted, length:', fullText.length);
+  console.log('[Scan API] Text sample:', fullText.substring(0, 300));
+  return fullText;
+}
 
-  let deduped = rawText
-    // Collapse doubled chars with space: "k k" → "k", "1 1" → "1"
-    .replace(/(\S) \1/g, '$1')
-    // Collapse directly doubled chars: "kk" → "k", "11" → "1"  
-    .replace(/(.)\1+/g, '$1')
-    // Now collapse whitespace
-    .replace(/\r\n/g, '\n')
-    .replace(/[ \t]+/g, ' ')
+// ─── IMAGE OCR EXTRACTION ───────────────────────────────
+async function extractTextFromImage(buffer) {
+  const { createWorker } = await import('tesseract.js');
+  
+  const worker = await createWorker('eng', 1, {
+    logger: () => {}, // silence progress logs
+  });
+  
+  const { data: { text } } = await worker.recognize(buffer);
+  await worker.terminate();
+  
+  console.log('[Scan API] OCR text extracted, length:', text.length);
+  console.log('[Scan API] OCR sample:', text.substring(0, 300));
+  return text;
+}
+
+// ─── REGEX BILL PARSER ──────────────────────────────────
+// Handles Philippine utility bills: MERALCO, VECO, CEBECO, 
+// MCWD, Manila Water, DLPC, etc.
+
+function parseBillText(text) {
+  const normalized = text
+    .replace(/\s+/g, ' ')
+    .replace(/,/g, '')  // remove thousand separators for number parsing
+    .toUpperCase()
     .trim();
 
-  // ── Step 2: Collapse remaining character-spaced words ─
-  // After dedup, some words may still be space-separated chars
-  // "k W h" → "kWh", "M E R A L C O" → "MERALCO"
-  function collapseSpacedText(text) {
-    const lines = text.split('\n');
-    return lines.map(line => {
-      const tokens = line.trim().split(' ');
-      if (tokens.length < 3) return line;
-      let result = '';
-      let i = 0;
-      while (i < tokens.length) {
-        let runEnd = i;
-        while (runEnd < tokens.length && tokens[runEnd].length === 1) {
-          runEnd++;
-        }
-        if (runEnd - i >= 3) {
-          result += tokens.slice(i, runEnd).join('') + ' ';
-          i = runEnd;
-        } else {
-          result += tokens[i] + ' ';
-          i++;
-        }
-      }
-      return result.trim();
-    }).join('\n');
-  }
+  console.log('[Scan API] Normalized text sample:', normalized.substring(0, 500));
 
-  const normalized = collapseSpacedText(deduped);
-  const upper = normalized.toUpperCase();
-  const spaceless = upper.replace(/\s+/g, '');
-
-  console.log('[Scan API] Normalized sample:', normalized.substring(0, 300));
-
-  // ── Step 3: Provider detection ───────────────────────
-  let providerName = null;
-  if (upper.includes('MERALCO')) providerName = 'MERALCO';
-  else if (upper.includes('VECO')) providerName = 'VECO';
-  else if (upper.includes('CEBU ELECTRIC')) providerName = 'VECO';
-  else if (upper.includes('MCWD')) providerName = 'MCWD';
-  else if (upper.includes('METRO CEBU WATER')) providerName = 'MCWD';
-  else if (upper.includes('MANILA WATER')) providerName = 'Manila Water';
-  else if (upper.includes('MAYNILAD')) providerName = 'Maynilad';
-
-  // ── Step 4: Bill type ────────────────────────────────
-  const isWater = upper.includes('CUBIC METER') ||
-                  upper.includes('CU.M') ||
-                  spaceless.includes('CUBICMETER') ||
-                  (upper.includes('WATER') && !upper.includes('WATERMARK') &&
-                   !upper.includes('MERALCO'));
-  const type = isWater ? 'water' : 'electricity';
-
-  // ── Step 5: kWh extraction ───────────────────────────
-  // Target: "183 kWh" or "183kWh" or "183 KWH"
-  // Also: metering info line "183 kWh" appears multiple times
-  let kwhUsed = null;
-  const kwhPatterns = [
-    // Direct: 183 kWh
-    /(\d{2,6})\s*KWH/i,
-    // Labeled consumption
-    /CONSUMPTION[:\s]*(\d{2,6})\s*KWH/i,
-    // Electricity Used label (Meralco specific)
-    /ELECTRICITY\s*USE[D]?\s*(\d{2,6})/i,
-    // Metering info: "183 kWh" after meter reading numbers
-    /\b(\d{3,4})\s+KWH\b/i,
-    // After kWh label
-    /KWH\s*[:\-]?\s*(\d{2,6})/i,
+  // ── Provider detection ────────────────────────────────
+  const providers = [
+    'MERALCO', 'VECO', 'CEBECO', 'DLPC', 'BENECO',
+    'MCWD', 'MANILA WATER', 'MAYNILAD', 'MWSS',
+    'CEBU WATER', 'SUBIC WATER'
   ];
-  for (const pattern of kwhPatterns) {
-    const match = upper.match(pattern);
-    if (match) {
-      const val = parseFloat(match[1].replace(/,/g, ''));
-      // Sanity check: typical Philippine residential bill 1-9999 kWh
-      if (val >= 1 && val <= 9999) {
-        kwhUsed = val;
-        break;
-      }
+  let providerName = null;
+  for (const p of providers) {
+    if (normalized.includes(p)) {
+      providerName = p;
+      break;
     }
   }
 
-  // ── Step 6: m³ extraction (water bills) ─────────────
-  let m3Used = null;
-  if (isWater) {
-    const m3Patterns = [
-      /(\d{1,5}\.?\d*)\s*(?:CU\.?M|M3|CUBIC\s*METER)/i,
-      /CONSUMPTION[:\s]*(\d{1,5}\.?\d*)/i,
-      /VOLUME[:\s]*(\d{1,5}\.?\d*)/i,
+  // ── Utility type detection ────────────────────────────
+  const hasKwh = /\d+\.?\d*\s*KWH/i.test(text);
+  const hasCubicMeter = /\d+\.?\d*\s*M[³3]/i.test(text) || 
+                        /CU\.?\s*M/i.test(text) ||
+                        normalized.includes('CUBIC METER');
+  const type = hasCubicMeter ? 'water' : 'electricity';
+
+  // ── kWh extraction ────────────────────────────────────
+  let kwhUsed = null;
+  if (type === 'electricity') {
+    const kwhPatterns = [
+      /PRESENT\s+READING[^0-9]*(\d+\.?\d*)/i,
+      /KWH\s+CONSUMED[^0-9]*(\d+\.?\d*)/i,
+      /CONSUMPTION[^0-9]*(\d+\.?\d*)\s*KWH/i,
+      /TOTAL\s+KWH[^0-9]*(\d+\.?\d*)/i,
+      /(\d+\.?\d*)\s*KWH/i,
+      /ENERGY\s+CHARGE[^0-9]*(\d+)/i,
     ];
-    for (const pattern of m3Patterns) {
-      const match = upper.match(pattern);
+    
+    for (const pattern of kwhPatterns) {
+      const match = text.match(pattern);
       if (match) {
-        const val = parseFloat(match[1].replace(/,/g, ''));
-        if (val >= 1 && val <= 9999) { m3Used = val; break; }
+        const val = parseFloat(match[1].replace(',', ''));
+        // Sanity check: kWh for household should be 10-5000
+        if (val >= 10 && val <= 5000) {
+          kwhUsed = val;
+          break;
+        }
       }
     }
   }
 
-  // ── Step 7: Total amount extraction ─────────────────
-  // Target: "Total Amount Due ₱ 2,179.63" or "Please Pay 2,179.63"
-  // Meralco uses "Charges for this billing period ₱ 2,179.63"
+  // ── Water m³ extraction ───────────────────────────────
+  let m3Used = null;
+  if (type === 'water') {
+    const m3Patterns = [
+      /CONSUMPTION[^0-9]*(\d+\.?\d*)\s*M/i,
+      /(\d+\.?\d*)\s*M[³3]/i,
+      /(\d+\.?\d*)\s*CU\.?\s*M/i,
+      /VOLUME\s+USED[^0-9]*(\d+)/i,
+    ];
+    
+    for (const pattern of m3Patterns) {
+      const match = text.match(pattern);
+      if (match) {
+        const val = parseFloat(match[1].replace(',', ''));
+        if (val >= 1 && val <= 1000) {
+          m3Used = val;
+          break;
+        }
+      }
+    }
+  }
+
+  // ── Total amount extraction ───────────────────────────
   let totalAmount = null;
   const amountPatterns = [
-    // Most reliable: "Total Amount Due" label — Meralco standard
-    /TOTAL\s+AMOUNT\s+DUE\s*[₱P]?\s*([\d,]+\.?\d*)/i,
-    // "Please Pay" section on payment stub
-    /PLEASE\s+PAY\s*[₱P]?\s*([\d,]+\.\d{2})/i,
-    // "Charges for this billing period"
-    /CHARGES\s+FOR\s+THIS\s+BILL[A-Z\s]*\s*[₱P]?\s*([\d,]+\.?\d*)/i,
-    // Amount Due generic
-    /AMOUNT\s+DUE\s*[₱P]?\s*([\d,]+\.?\d*)/i,
-    // ₱ or P followed by 4+ digit amount with decimal
-    /[₱P]\s*([\d,]{4,}\.?\d*)/,
-    // Spaceless fallback: TOTALAMOUNTDUE followed by number
-    /TOTALAMOUNTDUE\s*[₱P]?\s*([\d,]+\.?\d*)/i,
+    /AMOUNT\s+DUE[^0-9]*(\d{1,6}\.?\d{0,2})/i,
+    /TOTAL\s+AMOUNT\s+DUE[^0-9]*(\d{1,6}\.?\d{0,2})/i,
+    /PLEASE\s+PAY[^0-9]*(\d{1,6}\.?\d{0,2})/i,
+    /TOTAL\s+DUE[^0-9]*(\d{1,6}\.?\d{0,2})/i,
+    /CURRENT\s+CHARGES[^0-9]*(\d{1,6}\.?\d{0,2})/i,
+    /BILLING\s+AMOUNT[^0-9]*(\d{1,6}\.?\d{0,2})/i,
+    /NET\s+AMOUNT[^0-9]*(\d{1,6}\.?\d{0,2})/i,
   ];
+  
   for (const pattern of amountPatterns) {
-    const match = upper.match(pattern);
+    const match = text.match(pattern);
     if (match) {
-      const val = parseFloat(match[1].replace(/,/g, ''));
-      // Sanity: Philippine bill between ₱50 and ₱999,999
-      if (val >= 50 && val <= 999999) {
+      const val = parseFloat(match[1].replace(',', ''));
+      // Sanity check: Philippine utility bill ₱100-₱100,000
+      if (val >= 100 && val <= 100000) {
         totalAmount = val;
         break;
       }
     }
   }
 
-  // ── Step 8: Billing date extraction ─────────────────
-  // Target: "Billing Period: 11 Dec 2024 to 10 Jan 2025"
-  // We want the END date (10 Jan 2025 = due date)
+  // ── Billing date extraction ───────────────────────────
   let billingDate = null;
-  const MONTHS = {
-    JAN:1,FEB:2,MAR:3,APR:4,MAY:5,JUN:6,
-    JUL:7,AUG:8,SEP:9,OCT:10,NOV:11,DEC:12
+  const datePatterns = [
+    // DD/MM/YYYY or MM/DD/YYYY
+    /(\d{1,2})[\/\-](\d{1,2})[\/\-](20\d{2})/g,
+    // Month DD, YYYY
+    /(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)[A-Z]*\.?\s+(\d{1,2}),?\s+(20\d{2})/gi,
+    // YYYY-MM-DD
+    /(20\d{2})[\/\-](\d{1,2})[\/\-](\d{1,2})/g,
+  ];
+  
+  const monthMap = {
+    JAN: '01', FEB: '02', MAR: '03', APR: '04',
+    MAY: '05', JUN: '06', JUL: '07', AUG: '08',
+    SEP: '09', OCT: '10', NOV: '11', DEC: '12'
+  };
+  
+  // Try named month pattern first (most reliable)
+  const namedMatch = text.match(
+    /(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)[A-Z]*\.?\s+(\d{1,2}),?\s+(20\d{2})/i
+  );
+  if (namedMatch) {
+    const month = monthMap[namedMatch[1].toUpperCase().substring(0, 3)];
+    const day = namedMatch[2].padStart(2, '0');
+    const year = namedMatch[3];
+    billingDate = `${year}-${month}-${day}`;
+  }
+  
+  // Try numeric date if named failed
+  if (!billingDate) {
+    const numMatch = text.match(/(\d{1,2})[\/\-](\d{1,2})[\/\-](20\d{2})/);
+    if (numMatch) {
+      // Assume MM/DD/YYYY for Philippine bills
+      const month = numMatch[1].padStart(2, '0');
+      const day = numMatch[2].padStart(2, '0');
+      const year = numMatch[3];
+      // Validate
+      if (parseInt(month) <= 12 && parseInt(day) <= 31) {
+        billingDate = `${year}-${month}-${day}`;
+      }
+    }
+  }
+
+  // ── Confidence calculation ────────────────────────────
+  let confidence = 0;
+  if (providerName) confidence += 20;
+  if (totalAmount) confidence += 35;
+  if (kwhUsed || m3Used) confidence += 35;
+  if (billingDate) confidence += 10;
+
+  const result = {
+    kwhUsed: kwhUsed ?? null,
+    m3Used: m3Used ?? null,
+    totalAmount: totalAmount ?? null,
+    billingDate: billingDate ?? null,
+    providerName: providerName ?? null,
+    type,
+    confidence,
   };
 
-  // Pattern 1: "DD Mon YYYY to DD Mon YYYY" — capture the TO date
-  const periodPattern = /(\d{1,2})\s+(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)[A-Z]*\s+(\d{4})\s+TO\s+(\d{1,2})\s+(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)[A-Z]*\s+(\d{4})/i;
-  const periodMatch = upper.match(periodPattern);
-  if (periodMatch) {
-    const day = parseInt(periodMatch[4]);
-    const month = MONTHS[periodMatch[5].substring(0,3).toUpperCase()];
-    const year = parseInt(periodMatch[6]);
-    if (year >= 2020 && year <= 2030) {
-      billingDate = `${year}-${String(month).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
-    }
-  }
-
-  // Pattern 2: Single date near "Bill Date" / "Due Date" label
-  if (!billingDate) {
-    const singleDatePattern = /(?:BILL\s*DATE|DUE\s*DATE|BILLING\s*DATE)\s*[:\-]?\s*(\d{1,2})\s+(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)[A-Z]*\s+(\d{4})/i;
-    const singleMatch = upper.match(singleDatePattern);
-    if (singleMatch) {
-      const day = parseInt(singleMatch[1]);
-      const month = MONTHS[singleMatch[2].substring(0,3).toUpperCase()];
-      const year = parseInt(singleMatch[3]);
-      if (year >= 2020 && year <= 2030) {
-        billingDate = `${year}-${String(month).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
-      }
-    }
-  }
-
-  // Pattern 3: DD/MM/YYYY or MM/DD/YYYY numeric fallback
-  if (!billingDate) {
-    const numericDate = upper.match(/(\d{2})[\/\-](\d{2})[\/\-](\d{4})/);
-    if (numericDate) {
-      const a = parseInt(numericDate[1]);
-      const b = parseInt(numericDate[2]);
-      const year = parseInt(numericDate[3]);
-      if (year >= 2020 && year <= 2030) {
-        // Assume MM/DD/YYYY for Philippine bills
-        billingDate = `${year}-${String(a).padStart(2,'0')}-${String(b).padStart(2,'0')}`;
-      }
-    }
-  }
-
-  // ── Step 9: Confidence score ─────────────────────────
-  const fields = [kwhUsed ?? m3Used, totalAmount, billingDate, providerName];
-  const extracted = fields.filter(Boolean).length;
-  const confidence = Math.round((extracted / 4) * 100);
-
-  console.log('[Scan API] Extracted:', { kwhUsed, m3Used, totalAmount, billingDate, providerName, type, confidence });
-
-  if (confidence < 40) {
-    console.log('[Scan API] Low confidence debug — normalized text:',
-      normalized.substring(0, 500));
-  }
-
-  return { kwhUsed, m3Used, totalAmount, billingDate, providerName, type, confidence };
+  console.log('[Scan API] Parsed result:', result);
+  return result;
 }
 
-// ── PDF extraction ───────────────────────────────────
-async function extractFromPDF(buffer) {
-  const uint8 = new Uint8Array(buffer);
-  const { text } = await extractText(uint8, { mergePages: true });
-  console.log('[Scan API] unpdf extracted, chars:', text.length);
-  console.log('[Scan API] Text sample:', text.substring(0, 300));
-  return extractBillData(text);
-}
-
-// ── Main POST handler logic ──────────────────────────
-export async function POST(request) {
+// ─── MAIN HANDLER ───────────────────────────────────────
+export async function POST(req) {
   try {
     const user = await getCurrentUser();
-    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-
-    const client = await prisma.client.findUnique({ where: { id: user.sub } });
-    if (!client) return NextResponse.json({ error: 'User not found' }, { status: 404 });
-
-    const plan = client.planTier ?? 'starter';
-
-    if (plan === 'starter') {
-      const now = new Date();
-      if (client.lastScanReset && (now - new Date(client.lastScanReset)) > 30 * 24 * 60 * 60 * 1000) {
-        await prisma.client.update({
-          where: { id: client.id },
-          data: { scanCount: 0, lastScanReset: new Date() }
-        });
-        client.scanCount = 0;
-      }
-      if (client.scanCount >= 1) {
-        return NextResponse.json(
-          { error: 'QUOTA_EXCEEDED', message: 'You have reached your 1 free AI scan limit. Upgrade to Pro for unlimited scans and deep analysis.' },
-          { status: 403 }
-        );
-      }
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const formData = await request.formData();
+    const formData = await req.formData();
     const file = formData.get('file');
+
     if (!file) {
-      return NextResponse.json({ error: 'No file provided' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'No file provided' }, { status: 400 }
+      );
+    }
+
+    // Size check
+    if (file.size > 8 * 1024 * 1024) {
+      return NextResponse.json(
+        { error: 'File must be under 8MB.' }, { status: 413 }
+      );
     }
 
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
     const mimeType = file.type;
 
-    let result;
-    try {
-      if (mimeType === 'application/pdf') {
-        result = await extractFromPDF(buffer);
-      } else if (mimeType.startsWith('image/')) {
-        console.log('[Scan API] Image upload — returning manual entry prompt');
-        return NextResponse.json({
-          kwhUsed: null,
-          totalAmount: null,
-          billingDate: null,
-          providerName: null,
-          type: 'electricity',
-          confidence: 0,
-          warning: 'Image scanning is not supported. Please upload a PDF ' +
-                   'version of your bill, or enter your details manually below.'
-        });
-      } else {
-        return NextResponse.json(
-          { error: 'Unsupported file type. Upload a PDF or image.' },
-          { status: 400 }
-        );
-      }
-    } catch (err) {
-      console.error('[Scan API] Extraction failed:', err.message);
-      return NextResponse.json(
-        { error: 'Could not read this file. Please try manual entry.' },
-        { status: 422 }
-      );
+    // Extract text based on file type
+    let extractedText = '';
+    if (mimeType === 'application/pdf') {
+      extractedText = await extractTextFromPDF(buffer);
+    } else {
+      extractedText = await extractTextFromImage(buffer);
     }
 
-    // Warn frontend if confidence is low
-    if (result.confidence < 40) {
-      result.warning = 'Low confidence extraction. Please verify all fields before submitting.';
+    if (!extractedText || extractedText.trim().length < 20) {
+      return NextResponse.json({
+        error: 'EXTRACTION_FAILED',
+        message: 'Could not extract text from this file. ' +
+          'For PDFs: ensure it contains selectable text (not a scanned image). ' +
+          'For images: ensure the photo is clear and well-lit.'
+      }, { status: 422 });
     }
 
-    console.log(`[Scan API] Extraction complete. Confidence: ${result.confidence}%`);
-    return NextResponse.json(result);
+    // Parse bill fields from extracted text
+    const billData = parseBillText(extractedText);
+
+    if (billData.confidence < 30) {
+      return NextResponse.json({
+        error: 'LOW_CONFIDENCE',
+        message: 'Could not reliably read this bill. ' +
+          'Found: ' + (billData.providerName || 'unknown provider') + '. ' +
+          'Please ensure the total amount and kWh are clearly visible, ' +
+          'or enter the values manually.',
+        partial: billData, // Return what we found so user can correct
+      }, { status: 422 });
+    }
+
+    return NextResponse.json({
+      success: true,
+      kwhUsed: billData.kwhUsed,
+      m3Used: billData.m3Used,
+      totalAmount: billData.totalAmount,
+      billingDate: billData.billingDate,
+      providerName: billData.providerName,
+      type: billData.type,
+      confidence: billData.confidence,
+    });
 
   } catch (error) {
-    console.error('[Scan API] Global Error:', error);
-    return NextResponse.json(
-      { error: 'INTERNAL_ERROR', message: 'System failure during extraction' },
-      { status: 500 }
-    );
+    console.error('[Vision OCR] Critical Error:', error);
+    return NextResponse.json({
+      error: 'SCAN_ERROR',
+      message: 'Scan failed. Please try again or enter values manually.',
+    }, { status: 500 });
   }
 }
