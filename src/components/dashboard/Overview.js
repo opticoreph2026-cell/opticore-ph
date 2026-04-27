@@ -158,28 +158,27 @@ export default function DashboardOverview({ user, readings = [], alerts = [], ap
       className="p-4 lg:p-0 space-y-8 pb-20"
     >
       {/* ── Welcome Header ── */}
-      <motion.div variants={itemVariants} className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-        <div>
-          <div className="flex items-center gap-3 mb-2">
-            <div className="px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-[10px] font-black text-cyan-400 uppercase tracking-widest">
-              Live Feedback Active
+      <motion.div variants={itemVariants} className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 pb-4">
+        <div className="relative">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-[10px] font-black text-cyan-400 uppercase tracking-[0.3em] animate-pulse">
+              Live Neural Feedback
             </div>
-            <span className="text-xs text-slate-500 font-bold">•</span>
-            <span className="text-xs text-slate-500 font-bold">{format(new Date(), 'MMMM d, yyyy')}</span>
+            <span className="text-[10px] text-slate-500 font-black uppercase tracking-widest">{format(new Date(), 'MMMM d, yyyy')}</span>
           </div>
-          <h1 className="text-4xl font-black text-white tracking-tighter">
-            Welcome Back, <span className="text-cyan-400">{user?.name?.split(' ')[0] || 'User'}</span>
+          <h1 className="text-5xl lg:text-6xl font-black text-white tracking-tighter leading-none">
+            Welcome Back, <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400">{user?.name?.split(' ')[0] || 'User'}</span>
           </h1>
-          <p className="text-slate-500 font-medium mt-2">
-            Managing <span className="text-white font-black">{appliances.length} appliances</span> at your <span className="text-white font-black">{user.activeProperty?.name || 'Main Property'}</span>.
+          <p className="text-slate-500 font-bold mt-4 text-lg">
+            Analyzing telemetry for <span className="text-white">{appliances.length} appliances</span> at <span className="text-white underline decoration-cyan-500/30 underline-offset-4">{user.activeProperty?.name || 'Main Home'}</span>.
           </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-4">
           <button 
             onClick={() => setIsModalOpen(true)}
-            className="flex items-center gap-3 px-8 py-4 rounded-2xl bg-cyan-500 text-surface-1000 font-black text-sm uppercase tracking-widest hover:bg-cyan-400 transition-all shadow-[0_8px_32px_rgba(34,211,238,0.3)] group"
+            className="flex items-center gap-3 px-10 py-5 rounded-2xl bg-white text-surface-1000 font-black text-sm uppercase tracking-[0.2em] hover:scale-105 hover:shadow-[0_0_50px_rgba(255,255,255,0.2)] transition-all duration-500 group shadow-2xl"
           >
-            <Plus className="w-4 h-4 group-hover:rotate-90 transition-transform" /> 
+            <Plus className="w-5 h-5 group-hover:rotate-90 transition-transform" /> 
             Add Bill Reading
           </button>
         </div>
@@ -190,13 +189,13 @@ export default function DashboardOverview({ user, readings = [], alerts = [], ap
       </motion.div>
 
       {/* ── KPI Grid ── */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
         {/* 1. Energy Consumption */}
         <motion.div variants={itemVariants}>
           <KpiCard 
             label="Energy Consumption"
             value={`${latest.kwhUsed || 0} kWh`}
-            delta={kwhDelta ? `${kwhDelta}%` : "First reading"}
+            delta={kwhDelta ? `${kwhDelta}%` : "FIRST READING"}
             isPositive={parseFloat(kwhDelta) < 0}
             icon={Lightbulb}
             color="cyan"
@@ -209,8 +208,8 @@ export default function DashboardOverview({ user, readings = [], alerts = [], ap
         <motion.div variants={itemVariants}>
           <KpiCard 
             label="Total Estimated Bill"
-            value={`₱${totalBill.toLocaleString(undefined, {minimumFractionDigits: 2})}`}
-            delta={billDelta ? `${billDelta}%` : "New cycle"}
+            value={`₱${totalBill.toLocaleString(undefined, {minimumFractionDigits: 0})}`}
+            delta={billDelta ? `${billDelta}%` : "NEW CYCLE"}
             isPositive={parseFloat(billDelta) < 0}
             icon={Wallet}
             color="amber"
@@ -224,7 +223,7 @@ export default function DashboardOverview({ user, readings = [], alerts = [], ap
           <KpiCard 
             label="Effective Rate"
             value={latest.kwhUsed > 0 ? `₱${effectiveRate.toFixed(2)}/kWh` : "—"}
-            delta={latest.kwhUsed > 0 ? (effectiveRate <= 16 ? "Efficient" : "High") : "No data"}
+            delta={latest.kwhUsed > 0 ? (effectiveRate <= 16 ? "EFFICIENT" : "HIGH") : "NO DATA"}
             isPositive={effectiveRate <= 16}
             icon={Zap}
             color="cyan"
@@ -236,7 +235,7 @@ export default function DashboardOverview({ user, readings = [], alerts = [], ap
           <KpiCard 
             label="Month-over-Month"
             value={billDelta ? `${billDelta}%` : "—"}
-            delta={billDelta ? (parseFloat(billDelta) < 0 ? "Decreased" : "Increased") : "No previous data"}
+            delta={billDelta ? (parseFloat(billDelta) < 0 ? "DECREASED" : "INCREASED") : "NO PREVIOUS DATA"}
             isPositive={parseFloat(billDelta) < 0}
             icon={TrendingDown}
             color={parseFloat(billDelta) < 0 ? "emerald" : "rose"}
@@ -248,7 +247,7 @@ export default function DashboardOverview({ user, readings = [], alerts = [], ap
           <KpiCard 
             label="Water Usage"
             value={`${latest.m3Used || 0} m³`}
-            delta={waterDelta ? `${waterDelta}%` : "No spike"}
+            delta={waterDelta ? `${waterDelta}%` : "NO SPIKE"}
             isPositive={parseFloat(waterDelta) <= 0}
             icon={Droplets}
             color="blue"
@@ -262,7 +261,7 @@ export default function DashboardOverview({ user, readings = [], alerts = [], ap
           <KpiCard 
             label="LPG Status"
             value={lpgStatus?.percentLeft != null ? `${lpgStatus.percentLeft.toFixed(0)}%` : "—"}
-            delta={lpgStatus ? (lpgStatus.daysLeft > 0 ? `${lpgStatus.daysLeft} days left` : "Refill needed") : "No LPG data"}
+            delta={lpgStatus ? (lpgStatus.daysLeft > 0 ? `${lpgStatus.daysLeft} days left` : "REFILL NEEDED") : "NO LPG DATA"}
             isPositive={lpgStatus?.percentLeft > 15}
             icon={Zap}
             color={lpgStatus?.percentLeft <= 15 ? "amber" : "cyan"}
@@ -273,8 +272,8 @@ export default function DashboardOverview({ user, readings = [], alerts = [], ap
         <motion.div variants={itemVariants}>
           <KpiCard 
             label="Ghost Load"
-            value="Coming Soon"
-            delta="Analysis pending"
+            value="ANALYSIS PENDING"
+            delta="ANALYSIS PENDING"
             isPositive={true}
             icon={Activity}
             color="purple"
@@ -286,7 +285,7 @@ export default function DashboardOverview({ user, readings = [], alerts = [], ap
           <KpiCard 
             label="Active Alerts"
             value={alerts.length}
-            delta={alerts.length === 0 ? "System healthy" : `${alerts.filter(a => a.severity === 'critical').length} critical`}
+            delta={alerts.length === 0 ? "SYSTEM HEALTHY" : `${alerts.filter(a => a.severity === 'critical').length} CRITICAL`}
             isPositive={alerts.length === 0}
             icon={ShieldAlert}
             color={alerts.length > 0 ? "rose" : "emerald"}
@@ -430,12 +429,12 @@ export default function DashboardOverview({ user, readings = [], alerts = [], ap
 
 function KpiCard({ label, value, delta, isPositive, icon: Icon, color, sparklineData, dataKey }) {
   const colorMap = {
-    cyan:    'text-cyan-400 bg-cyan-500/10 border-cyan-500/20 shadow-cyan-500/10',
-    blue:    'text-blue-400 bg-blue-500/10 border-blue-500/20 shadow-blue-500/10',
-    amber:   'text-amber-400 bg-amber-500/10 border-amber-500/20 shadow-amber-500/10',
-    emerald: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20 shadow-emerald-500/10',
-    rose:    'text-rose-400 bg-rose-500/10 border-rose-500/20 shadow-rose-500/10',
-    purple:  'text-purple-400 bg-purple-500/10 border-purple-500/20 shadow-purple-500/10',
+    cyan:    'text-cyan-400 bg-cyan-500/10 border-cyan-500/20',
+    blue:    'text-blue-400 bg-blue-500/10 border-blue-500/20',
+    amber:   'text-amber-400 bg-amber-500/10 border-amber-500/20',
+    emerald: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20',
+    rose:    'text-rose-400 bg-rose-500/10 border-rose-500/20',
+    purple:  'text-purple-400 bg-purple-500/10 border-purple-500/20',
   };
 
   const strokeMap = {
@@ -448,39 +447,52 @@ function KpiCard({ label, value, delta, isPositive, icon: Icon, color, sparkline
   };
 
   return (
-    <SpotlightCard className="p-8 h-full group hover:border-white/20 transition-all duration-500">
-      <div className="flex items-start justify-between mb-8">
-        <div className={clsx("w-14 h-14 rounded-[20px] border flex items-center justify-center transition-all duration-500 group-hover:rotate-6 shadow-2xl", colorMap[color])}>
+    <SpotlightCard className="p-8 h-full group hover:border-white/20 transition-all duration-700 relative overflow-hidden bg-surface-950/40 backdrop-blur-3xl">
+      {/* Decorative gradient glow */}
+      <div className={clsx(
+        "absolute -top-24 -right-24 w-48 h-48 blur-[100px] opacity-0 group-hover:opacity-20 transition-opacity duration-700",
+        color === 'cyan' && "bg-cyan-500",
+        color === 'amber' && "bg-amber-500",
+        color === 'purple' && "bg-purple-500",
+        color === 'rose' && "bg-rose-500"
+      )} />
+
+      <div className="flex items-start justify-between mb-10">
+        <div className={clsx("w-14 h-14 rounded-2xl border flex items-center justify-center transition-all duration-700 group-hover:scale-110 group-hover:shadow-[0_0_30px_rgba(34,211,238,0.2)]", colorMap[color])}>
           <Icon className="w-7 h-7" />
         </div>
         <div className={clsx(
-          "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all duration-500",
+          "flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-[0.2em] border transition-all duration-700",
           isPositive ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" : "bg-rose-500/10 text-rose-400 border-rose-500/20"
         )}>
-          {isPositive ? <ArrowUpRight className="w-3.5 h-3.5" /> : <ArrowDownRight className="w-3.5 h-3.5" />}
+          {isPositive ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
           {delta}
         </div>
       </div>
       
-      <div className="flex items-end justify-between gap-6">
-        <div className="min-w-0">
-          <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.25em] mb-2 truncate">{label}</p>
-          <p className="text-3xl font-black text-white tracking-tighter truncate leading-none">{value}</p>
-        </div>
-        
-        <div className="w-24 h-12 shrink-0 opacity-40 group-hover:opacity-100 transition-opacity duration-500">
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={sparklineData}>
-              <Area 
-                type="monotone" 
-                dataKey={dataKey} 
-                stroke={strokeMap[color]} 
-                strokeWidth={3} 
-                fill="none" 
-                dot={false}
-              />
-            </AreaChart>
-          </ResponsiveContainer>
+      <div className="flex flex-col gap-2">
+        <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">{label}</p>
+        <div className="flex items-end justify-between gap-4">
+          <p className="text-4xl font-black text-white tracking-tighter leading-none group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-white/50 transition-all duration-700">
+            {value}
+          </p>
+          
+          {sparklineData && (
+            <div className="w-24 h-10 opacity-30 group-hover:opacity-100 transition-opacity duration-700">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={sparklineData}>
+                  <Area 
+                    type="monotone" 
+                    dataKey={dataKey} 
+                    stroke={strokeMap[color]} 
+                    strokeWidth={3} 
+                    fill="none" 
+                    dot={false}
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          )}
         </div>
       </div>
     </SpotlightCard>

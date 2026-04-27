@@ -29,58 +29,58 @@ export default function GridStatusBanner() {
         initial={{ opacity: 0, y: -20, scale: 0.98 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         className={clsx(
-          "relative overflow-hidden p-6 rounded-[32px] border transition-all duration-500 shadow-2xl mb-8",
+          "relative overflow-hidden p-8 rounded-[32px] border transition-all duration-700 shadow-2xl mb-12 bg-surface-950/60 backdrop-blur-3xl",
           isRed 
-            ? "bg-rose-500/5 border-rose-500/20 shadow-rose-500/10" 
-            : "bg-amber-500/5 border-amber-500/20 shadow-amber-500/10"
+            ? "border-rose-500/30 shadow-rose-500/10" 
+            : "border-amber-500/30 shadow-amber-500/10"
         )}
       >
-        {/* Background Animation */}
+        {/* Background Animation - Obsidian Glow */}
         <div className={clsx(
-          "absolute top-0 right-0 w-64 h-full blur-[80px] opacity-20 pointer-events-none translate-x-1/2",
+          "absolute -top-24 -right-24 w-64 h-64 blur-[120px] opacity-20 pointer-events-none",
           isRed ? "bg-rose-500" : "bg-amber-500"
         )} />
 
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center gap-6">
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center gap-8">
           <div className={clsx(
-            "w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 shadow-lg border",
+            "w-16 h-16 rounded-2xl flex items-center justify-center shrink-0 shadow-2xl border transition-transform duration-700 hover:rotate-6",
             isRed 
-              ? "bg-rose-500/20 text-rose-400 border-rose-500/30" 
-              : "bg-amber-500/20 text-amber-400 border-amber-500/30"
+              ? "bg-rose-500/20 text-rose-400 border-rose-500/40" 
+              : "bg-amber-500/20 text-amber-400 border-amber-500/40"
           )}>
-            {isRed ? <ShieldAlert className="w-7 h-7 animate-pulse" /> : <AlertTriangle className="w-7 h-7 animate-pulse" />}
+            {isRed ? <ShieldAlert className="w-8 h-8 animate-pulse" /> : <AlertTriangle className="w-8 h-8 animate-pulse" />}
           </div>
           
           <div className="flex-1">
-            <div className="flex items-center gap-3 mb-2">
+            <div className="flex items-center gap-4 mb-3">
               <span className={clsx(
-                "px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-[0.2em]",
-                isRed ? "bg-rose-500/20 text-rose-400" : "bg-amber-500/20 text-amber-400"
+                "px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-[0.3em] border",
+                isRed ? "bg-rose-500/10 text-rose-400 border-rose-500/20" : "bg-amber-500/10 text-amber-400 border-amber-500/20"
               )}>
                 National Grid Warning
               </span>
-              <div className="flex items-center gap-2 px-2 py-1 rounded-full bg-white/[0.03] border border-white/5">
-                <Zap className="w-3 h-3 text-cyan-400" />
-                <span className="text-[10px] font-black text-slate-300 uppercase tracking-tighter">Higher Rates Active</span>
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/[0.03] border border-white/5">
+                <Zap className="w-3.5 h-3.5 text-cyan-400" />
+                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Higher Rates Active</span>
               </div>
             </div>
-            <h4 className="text-lg font-black text-white tracking-tight leading-tight">
+            <h4 className="text-2xl font-black text-white tracking-tighter leading-none mb-2">
               {isRed 
                 ? "Grid Critical: Power interruptions may occur. Turn off non-essentials now." 
                 : "Energy Alert: Demand is extremely high. High electricity rates are currently active."
               }
             </h4>
-            <p className="text-xs text-slate-500 mt-1 font-medium italic">Source: NGCP Public Feed</p>
+            <p className="text-[10px] text-slate-500 font-black uppercase tracking-[0.2em]">Source: NGCP Public Feed</p>
           </div>
 
-          <div className="shrink-0 flex items-center gap-4">
-            <div className="text-right hidden sm:block">
-              <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">User Action</p>
-              <p className={clsx("text-sm font-black uppercase", isRed ? "text-rose-400" : "text-amber-400")}>
+          <div className="shrink-0 flex items-center gap-6">
+            <div className="text-right hidden lg:block">
+              <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] mb-1">User Action</p>
+              <p className={clsx("text-lg font-black uppercase tracking-tighter", isRed ? "text-rose-400" : "text-amber-400")}>
                 {isRed ? 'Unplug Appliances' : 'Reduce Usage'}
               </p>
             </div>
-            <button className="flex items-center gap-2 px-6 py-3 rounded-xl bg-white/[0.05] border border-white/10 text-white text-xs font-black uppercase tracking-widest hover:bg-white/[0.08] transition-all group">
+            <button className="flex items-center gap-3 px-8 py-4 rounded-2xl bg-white/[0.05] border border-white/10 text-white text-[10px] font-black uppercase tracking-[0.2em] hover:bg-white/[0.08] transition-all duration-500 group shadow-xl">
               <Info className="w-4 h-4 group-hover:rotate-12 transition-transform" />
               How to Save
             </button>
