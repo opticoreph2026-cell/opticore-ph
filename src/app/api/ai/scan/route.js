@@ -1,69 +1,92 @@
 import { NextResponse } from 'next/server';
 import { getCurrentUser } from '@/lib/auth';
 
-// ─── PDF TEXT EXTRACTION ────────────────────────────────
+// ─── PDF TEXT EXTRACTION (pdf-parse) ────────────────────
 async function extractTextFromPDF(buffer) {
-  // Dynamic import to avoid SSR issues
-  const pdfjsLib = await import('pdfjs-dist/legacy/build/pdf.mjs');
+  const pdfParse = (await import('pdf-parse/lib/pdf-parse.js')).default;
   
-  const bytes = new Uint8Array(buffer);
-  const loadingTask = pdfjsLib.getDocument({ data: bytes });
-  const pdf = await loadingTask.promise;
-  
-  let fullText = '';
-  
-  // Extract text from all pages with position data
-  for (let pageNum = 1; pageNum <= Math.min(pdf.numPages, 3); pageNum++) {
-    const page = await pdf.getPage(pageNum);
-    const textContent = await page.getTextContent();
-    
-    // Sort text items by vertical position (y), then horizontal (x)
-    // This reconstructs reading order for multi-column layouts
-    const items = textContent.items
-      .filter(item => item.str && item.str.trim())
-      .map(item => ({
-        str: item.str,
-        x: Math.round(item.transform[4]),
-        y: Math.round(item.transform[5]),
-      }))
-      .sort((a, b) => {
-        // Group into rows (within 5px vertical tolerance)
-        const yDiff = b.y - a.y;
-        if (Math.abs(yDiff) > 5) return yDiff;
-        return a.x - b.x;
-      });
-    
-    // Build text preserving spatial structure
-    let lastY = null;
-    for (const item of items) {
-      if (lastY !== null && Math.abs(item.y - lastY) > 5) {
-        fullText += '\n';
+  try {
+    const data = await pdfParse(buffer, {
+      // Only parse first 3 pages
+      max: 3,
+      // Custom page renderer to preserve spacing and basic layout
+      pagerender: async function(pageData) {
+        const renderOptions = {
+          normalizeWhitespace: false,
+          disableCombineTextItems: false,
+        };
+        const textContent = await pageData.getTextContent(renderOptions);
+        
+        let lastY = null;
+        let text = '';
+        
+        for (const item of textContent.items) {
+          if (lastY !== null && lastY !== item.transform[5]) {
+            text += '\n';
+          }
+          text += item.str + ' ';
+          lastY = item.transform[5];
+        }
+        return text;
       }
-      fullText += item.str + ' ';
-      lastY = item.y;
-    }
-    fullText += '\n\n';
+    });
+    
+    console.log('[Scan API] pdf-parse extracted, chars:', data.text.length);
+    console.log('[Scan API] Text sample:', data.text.substring(0, 400));
+    return data.text;
+    
+  } catch (parseError) {
+    console.error('[Scan API] pdf-parse failed:', parseError.message);
+    throw new Error('Could not read PDF. Ensure it is a valid PDF file.');
   }
-  
-  console.log('[Scan API] PDF text extracted, length:', fullText.length);
-  console.log('[Scan API] Text sample:', fullText.substring(0, 300));
-  return fullText;
 }
 
-// ─── IMAGE OCR EXTRACTION ───────────────────────────────
-async function extractTextFromImage(buffer) {
-  const { createWorker } = await import('tesseract.js');
-  
-  const worker = await createWorker('eng', 1, {
-    logger: () => {}, // silence progress logs
+// ─── IMAGE OCR EXTRACTION (Gemini Vision) ───────────────
+async function extractTextFromImage(mimeType, base64string) {
+  // Use Gemini vision just for raw OCR text extraction
+  // NOT for parsing — we still use regex for that to save quota
+  const { GoogleGenAI } = await import('@google/genai');
+  const ai = new GoogleGenAI({ 
+    apiKey: process.env.GEMINI_API_KEY 
   });
   
-  const { data: { text } } = await worker.recognize(buffer);
-  await worker.terminate();
-  
-  console.log('[Scan API] OCR text extracted, length:', text.length);
-  console.log('[Scan API] OCR sample:', text.substring(0, 300));
-  return text;
+  try {
+    const result = await ai.models.generateContent({
+      model: 'gemini-2.0-flash',
+      contents: [
+        {
+          parts: [
+            {
+              inlineData: {
+                mimeType: mimeType,
+                data: base64string,
+              }
+            },
+            {
+              text: 'Read all text from this utility bill image. ' +
+                    'Output ONLY the raw text you see on the bill. ' +
+                    'Preserve numbers exactly as shown. ' +
+                    'Do not summarize, interpret, or add any commentary. ' +
+                    'Just output all the text you can read.'
+            }
+          ]
+        }
+      ]
+    });
+    
+    const extractedText = result.candidates?.[0]
+      ?.content?.parts?.[0]?.text || '';
+    
+    console.log('[Scan API] Gemini OCR extracted, chars:', extractedText.length);
+    console.log('[Scan API] OCR sample:', extractedText.substring(0, 400));
+    return extractedText;
+    
+  } catch (geminiError) {
+    console.error('[Scan API] Gemini OCR failed:', geminiError.message);
+    throw new Error(
+      'Could not read image. Ensure photo is clear and well-lit.'
+    );
+  }
 }
 
 // ─── REGEX BILL PARSER ──────────────────────────────────
@@ -173,16 +196,7 @@ function parseBillText(text) {
 
   // ── Billing date extraction ───────────────────────────
   let billingDate = null;
-  const datePatterns = [
-    // DD/MM/YYYY or MM/DD/YYYY
-    /(\d{1,2})[\/\-](\d{1,2})[\/\-](20\d{2})/g,
-    // Month DD, YYYY
-    /(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)[A-Z]*\.?\s+(\d{1,2}),?\s+(20\d{2})/gi,
-    // YYYY-MM-DD
-    /(20\d{2})[\/\-](\d{1,2})[\/\-](\d{1,2})/g,
-  ];
-  
-  const monthMap = {
+  const MONTHS = {
     JAN: '01', FEB: '02', MAR: '03', APR: '04',
     MAY: '05', JUN: '06', JUL: '07', AUG: '08',
     SEP: '09', OCT: '10', NOV: '11', DEC: '12'
@@ -193,7 +207,7 @@ function parseBillText(text) {
     /(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)[A-Z]*\.?\s+(\d{1,2}),?\s+(20\d{2})/i
   );
   if (namedMatch) {
-    const month = monthMap[namedMatch[1].toUpperCase().substring(0, 3)];
+    const month = MONTHS[namedMatch[1].toUpperCase().substring(0, 3)];
     const day = namedMatch[2].padStart(2, '0');
     const year = namedMatch[3];
     billingDate = `${year}-${month}-${day}`;
@@ -268,7 +282,9 @@ export async function POST(req) {
     if (mimeType === 'application/pdf') {
       extractedText = await extractTextFromPDF(buffer);
     } else {
-      extractedText = await extractTextFromImage(buffer);
+      // Convert image buffer to base64 for Gemini vision
+      const base64string = buffer.toString('base64');
+      extractedText = await extractTextFromImage(mimeType, base64string);
     }
 
     if (!extractedText || extractedText.trim().length < 20) {

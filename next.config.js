@@ -2,7 +2,7 @@
 const nextConfig = {
   reactStrictMode: true,
   experimental: {
-    serverComponentsExternalPackages: ['@prisma/client', '@prisma/adapter-libsql', '@libsql/client'],
+    serverComponentsExternalPackages: ['@prisma/client', '@prisma/adapter-libsql', '@libsql/client', 'pdf-parse'],
   },
   images: {
     remotePatterns: [
@@ -20,9 +20,12 @@ const nextConfig = {
       }
     ],
   },
-  webpack: (config) => {
-    config.resolve.alias.canvas = false;
-    config.resolve.alias.encoding = false;
+  webpack: (config, { isServer }) => {
+    if (isServer) {
+      // pdf-parse uses canvas — tell webpack to ignore it
+      config.resolve.alias.canvas = false;
+      config.resolve.alias.encoding = false;
+    }
     return config;
   },
 };
