@@ -5,37 +5,38 @@ import { extractText } from 'unpdf';
 
 // ── Regex extraction engine ──────────────────────────
 function extractBillData(rawText) {
-  // ── Step 1: Normalize character-spaced PDF text ──────
-  // Meralco and most Philippine utility PDFs insert a space
-  // between every character: "M E R A L C O", "1 8 3  k W h"
-  // We collapse single-char tokens separated by spaces into words.
-  
-  // First pass: collapse spaced-out words
-  // Pattern: sequences of (single char + space) followed by single char
-  const collapsed = rawText
-    .replace(/(?<![^\s])(\S) (?=\S )/g, '$1')  // collapse char-spaced sequences
+  // ── Step 1: Deduplicate doubled characters ─────────
+  // This PDF has two overlapping text layers. Every character
+  // appears twice: "kk WW hh" = "kWh", "11 88 33" = "183"
+  // Fix: collapse any character immediately repeated (with 
+  // optional space between) into a single character.
+
+  let deduped = rawText
+    // Collapse doubled chars with space: "k k" → "k", "1 1" → "1"
+    .replace(/(\S) \1/g, '$1')
+    // Collapse directly doubled chars: "kk" → "k", "11" → "1"  
+    .replace(/(.)\1+/g, '$1')
+    // Now collapse whitespace
     .replace(/\r\n/g, '\n')
     .replace(/[ \t]+/g, ' ')
     .trim();
 
-  // Second pass: more aggressive collapse using sliding window
-  // Split into tokens, detect character-spacing, rejoin
+  // ── Step 2: Collapse remaining character-spaced words ─
+  // After dedup, some words may still be space-separated chars
+  // "k W h" → "kWh", "M E R A L C O" → "MERALCO"
   function collapseSpacedText(text) {
     const lines = text.split('\n');
     return lines.map(line => {
       const tokens = line.trim().split(' ');
       if (tokens.length < 3) return line;
-      
       let result = '';
       let i = 0;
       while (i < tokens.length) {
-        // Detect a run of single characters (spaced-out word)
         let runEnd = i;
         while (runEnd < tokens.length && tokens[runEnd].length === 1) {
           runEnd++;
         }
         if (runEnd - i >= 3) {
-          // 3+ single chars in a row = spaced-out word, collapse them
           result += tokens.slice(i, runEnd).join('') + ' ';
           i = runEnd;
         } else {
@@ -47,14 +48,13 @@ function extractBillData(rawText) {
     }).join('\n');
   }
 
-  const normalized = collapseSpacedText(collapsed);
+  const normalized = collapseSpacedText(deduped);
   const upper = normalized.toUpperCase();
   const spaceless = upper.replace(/\s+/g, '');
 
-  // Log normalized sample for verification
   console.log('[Scan API] Normalized sample:', normalized.substring(0, 300));
 
-  // ── Step 2: Provider detection ───────────────────────
+  // ── Step 3: Provider detection ───────────────────────
   let providerName = null;
   if (upper.includes('MERALCO')) providerName = 'MERALCO';
   else if (upper.includes('VECO')) providerName = 'VECO';
@@ -64,7 +64,7 @@ function extractBillData(rawText) {
   else if (upper.includes('MANILA WATER')) providerName = 'Manila Water';
   else if (upper.includes('MAYNILAD')) providerName = 'Maynilad';
 
-  // ── Step 3: Bill type ────────────────────────────────
+  // ── Step 4: Bill type ────────────────────────────────
   const isWater = upper.includes('CUBIC METER') ||
                   upper.includes('CU.M') ||
                   spaceless.includes('CUBICMETER') ||
@@ -72,7 +72,7 @@ function extractBillData(rawText) {
                    !upper.includes('MERALCO'));
   const type = isWater ? 'water' : 'electricity';
 
-  // ── Step 4: kWh extraction ───────────────────────────
+  // ── Step 5: kWh extraction ───────────────────────────
   // Target: "183 kWh" or "183kWh" or "183 KWH"
   // Also: metering info line "183 kWh" appears multiple times
   let kwhUsed = null;
@@ -100,7 +100,7 @@ function extractBillData(rawText) {
     }
   }
 
-  // ── Step 5: m³ extraction (water bills) ─────────────
+  // ── Step 6: m³ extraction (water bills) ─────────────
   let m3Used = null;
   if (isWater) {
     const m3Patterns = [
@@ -117,7 +117,7 @@ function extractBillData(rawText) {
     }
   }
 
-  // ── Step 6: Total amount extraction ─────────────────
+  // ── Step 7: Total amount extraction ─────────────────
   // Target: "Total Amount Due ₱ 2,179.63" or "Please Pay 2,179.63"
   // Meralco uses "Charges for this billing period ₱ 2,179.63"
   let totalAmount = null;
@@ -147,7 +147,7 @@ function extractBillData(rawText) {
     }
   }
 
-  // ── Step 7: Billing date extraction ─────────────────
+  // ── Step 8: Billing date extraction ─────────────────
   // Target: "Billing Period: 11 Dec 2024 to 10 Jan 2025"
   // We want the END date (10 Jan 2025 = due date)
   let billingDate = null;
@@ -196,7 +196,7 @@ function extractBillData(rawText) {
     }
   }
 
-  // ── Step 8: Confidence score ─────────────────────────
+  // ── Step 9: Confidence score ─────────────────────────
   const fields = [kwhUsed ?? m3Used, totalAmount, billingDate, providerName];
   const extracted = fields.filter(Boolean).length;
   const confidence = Math.round((extracted / 4) * 100);
