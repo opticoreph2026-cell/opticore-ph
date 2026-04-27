@@ -12,25 +12,33 @@ async function callVisionAI(mimeType, base64string, prompt) {
     ? base64string.split(',')[1]
     : base64string;
 
-  const response = await ai.models.generateContent({
-    model: 'gemini-2.0-flash',
-    contents: [
-      {
-        parts: [
-          {
-            inlineData: {
-              mimeType,
-              data: rawBase64,
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-1.5-flash',
+      contents: [
+        {
+          parts: [
+            {
+              inlineData: {
+                mimeType,
+                data: rawBase64,
+              },
             },
-          },
-          { text: prompt },
-        ],
-      },
-    ],
-  });
+            { text: prompt },
+          ],
+        },
+      ],
+    });
 
-  console.log('[Scan API] Used model: gemini-2.0-flash');
-  return response.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    console.log('[Scan API] Used model: gemini-1.5-flash');
+    return response.candidates?.[0]?.content?.parts?.[0]?.text || '';
+  } catch (err) {
+    if (err.status === 429) {
+      console.error('[Scan API] Quota exhausted on this API key.');
+      throw new Error('QUOTA_EXHAUSTED');
+    }
+    throw err;
+  }
 }
 
 /**
@@ -88,7 +96,21 @@ Rules:
 - If any field cannot be found, use null
 - Return ONLY the JSON. Nothing else.`;
 
-    const rawText = await callVisionAI(mimeType, base64string, prompt);
+    let rawText;
+    try {
+      rawText = await callVisionAI(mimeType, base64string, prompt);
+    } catch (err) {
+      if (err.message === 'QUOTA_EXHAUSTED') {
+        return NextResponse.json(
+          {
+            error: 'AI_QUOTA_EXHAUSTED',
+            message: 'Bill scanning is temporarily unavailable. Please use manual entry for now.'
+          },
+          { status: 503 }
+        );
+      }
+      throw err;
+    }
     console.log('[Scan API] AI raw response:', rawText);
 
     // Track usage in background
