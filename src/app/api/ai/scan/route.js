@@ -36,7 +36,7 @@ export async function POST(request) {
       }
     }
 
-    const { image, mimeType: providedMimeType } = await request.json(); // base64 encoded image
+    const { image, mimeType = 'image/jpeg', fileName } = await request.json(); // base64 encoded image
     if (!image) {
       return NextResponse.json({ error: 'No image data provided.' }, { status: 400 });
     }
@@ -68,9 +68,6 @@ export async function POST(request) {
       If a field cannot be found, set it to null.
     `;
 
-    // Extract mime type dynamically or use provided
-    const mimeMatch = image.match(/^data:([a-zA-Z0-9-]+\/[a-zA-Z0-9-.]+);base64,/);
-    const mimeType = providedMimeType || (mimeMatch ? mimeMatch[1] : 'image/jpeg');
     const base64Data = image.split(',')[1] || image;
 
     const result = await ai.models.generateContent({

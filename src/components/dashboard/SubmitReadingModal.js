@@ -76,8 +76,18 @@ export default function SubmitReadingModal({ isOpen, onClose, user, appliances =
     const file = e.target.files[0];
     if (!file) return;
 
+    // 1. Pre-read Validation
+    const isPDF = file.type === 'application/pdf';
+    const isImage = file.type.startsWith('image/');
+
+    if (!isPDF && !isImage) {
+      setError('Only JPG, PNG, WebP, or PDF files are supported.');
+      e.target.value = '';
+      return;
+    }
+
     if (file.size > 4 * 1024 * 1024) {
-      setError('File is too large. Max 4MB allowed.');
+      setError('File must be under 4MB. Please compress and retry.');
       e.target.value = '';
       return;
     }
@@ -86,21 +96,44 @@ export default function SubmitReadingModal({ isOpen, onClose, user, appliances =
     setStep('processing');
     setStatusText('Initiating Neural Scan...');
 
-    const reader = new FileReader();
-    reader.onloadend = async () => {
-      await scanBill(reader.result, file.type);
-    };
-    reader.readAsDataURL(file);
+    try {
+      const reader = new FileReader();
+      reader.onloadend = async () => {
+        try {
+          const result = reader.result;
+          const base64 = result?.split(',')[1];
+          if (!base64) throw new Error('FileReader returned empty result');
+
+          await scanBill(base64, file.type, file.name);
+        } catch (err) {
+          console.error('[Scan] FileReader onloadend error:', err);
+          setError('Failed to read file. Please try again.');
+          setStep('choose');
+        }
+      };
+
+      reader.onerror = () => {
+        setError('File system error. Could not read file.');
+        setStep('choose');
+      };
+
+      reader.readAsDataURL(file);
+    } catch (err) {
+      console.error('[Scan] File upload trigger error:', err);
+      setError('Something went wrong. Please try again.');
+      setStep('choose');
+    }
   }
 
-  async function scanBill(base64, mimeType) {
+  async function scanBill(base64, mimeType, fileName) {
     try {
-      const res  = await fetch('/api/ai/scan', {
-        method:  'POST',
+      const res = await fetch('/api/ai/scan', {
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ 
-          image: base64,
-          mimeType: mimeType 
+        body: JSON.stringify({ 
+          image: base64, 
+          mimeType, 
+          fileName 
         }),
       });
       
