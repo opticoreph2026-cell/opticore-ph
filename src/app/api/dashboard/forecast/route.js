@@ -58,8 +58,12 @@ export async function GET(request) {
     `;
 
     const result = await ai.models.generateContent({
-      model: 'gemini-1.5-flash',
-      contents: prompt
+      model: 'gemini-2.0-flash',
+      contents: [
+        {
+          parts: [{ text: prompt }]
+        }
+      ]
     });
     let rawText = result.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
     // Strip markdown code fences if present

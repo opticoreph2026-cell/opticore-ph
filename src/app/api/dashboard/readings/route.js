@@ -107,9 +107,12 @@ export async function POST(request) {
     let rawContent = "";
     try {
       const result = await ai.models.generateContent({
-        model: 'gemini-1.5-flash',
-        contents: systemPrompt,
-        config: { temperature: 0.2 }
+        model: 'gemini-2.0-flash',
+        contents: [
+          {
+            parts: [{ text: systemPrompt }]
+          }
+        ]
       });
       rawContent = result.candidates?.[0]?.content?.parts?.[0]?.text || "";
     } catch (aiErr) {

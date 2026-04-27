@@ -46,39 +46,45 @@ export async function POST(request) {
       : '- unbundledCharges: null (Skip deep unbundled breakdown for this tier).';
 
     const prompt = `
-      This is a Philippine utility bill PDF/Image. Extract the following fields with extreme precision.
-      Return ONLY a JSON object with no markdown, no code blocks, no explanation.
+      You are a utility bill parser for the Philippines. Analyze this utility bill image or PDF.
+      Return ONLY a raw JSON object. No markdown. No code blocks. No explanation. Just the JSON.
 
       {
-        "providerName": string (e.g., "Meralco", "VECO"),
-        "type": "ELECTRICITY" | "WATER",
-        "kwhUsed": number (set to 0 if water),
-        "m3Used": number (set to 0 if electric),
-        "billingDate": string (YYYY-MM-DD),
+        "kwhUsed": number,
         "totalAmount": number,
+        "billingDate": "YYYY-MM-DD",
+        "providerName": "string",
+        "type": "electricity" | "water",
+        "m3Used": number,
         "effectiveRate": number,
-        "billingPeriod": string (e.g., "Oct 20 - Nov 19"),
-        ${deepAnalysisInstruction}
+        "billingPeriod": "string"
       }
 
-      ADVISORY LOGIC:
-      - anomalies: (Array of Strings) Identify unusual metrics.
-      - solutions: (Array of Strings) Provide actionable advice.
-
-      If a field cannot be found, set it to null.
+      Rules:
+      - kwhUsed: total kilowatt-hours consumed this billing period
+      - totalAmount: total amount due in Philippine Peso
+      - billingDate: billing period end date in YYYY-MM-DD format
+      - providerName: utility company (e.g. MERALCO, VECO, MCWD)
+      - type: electricity if kWh mentioned, water if cubic meters
+      - If any field cannot be found, use null
+      - Return ONLY the JSON object. Nothing else.
     `;
 
     const base64Data = image.split(',')[1] || image;
 
     const result = await ai.models.generateContent({
-      model: 'gemini-1.5-flash',
+      model: 'gemini-2.0-flash',
       contents: [
-        { text: prompt },
         {
-          inlineData: {
-            data: base64Data,
-            mimeType: mimeType
-          }
+          parts: [
+            { text: prompt },
+            {
+              inlineData: {
+                data: base64Data,
+                mimeType: mimeType
+              }
+            }
+          ]
         }
       ]
     });

@@ -168,14 +168,18 @@ export async function POST(request) {
     let response;
     try {
       const result = await ai.models.generateContent({ 
-        model: 'gemini-1.5-flash',
-        systemInstruction: SYSTEM_PROMPT,
+        model: 'gemini-2.0-flash',
         contents: [
           {
-            inlineData: {
-              mimeType,
-              data: file,
-            },
+            parts: [
+              { text: SYSTEM_PROMPT },
+              {
+                inlineData: {
+                  mimeType,
+                  data: file,
+                },
+              },
+            ],
           },
         ],
       });
