@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getCurrentUser } from '@/lib/auth';
 import { db as prisma } from '@/lib/db';
-import pdfParse from 'pdf-parse';
+import PDFParser from 'pdf2json';
 import Tesseract from 'tesseract.js';
 
 // ── Regex extraction engine ──────────────────────────
@@ -105,9 +105,18 @@ function extractBillData(rawText) {
 
 // ── PDF extraction ───────────────────────────────────
 async function extractFromPDF(buffer) {
-  const data = await pdfParse(buffer);
-  console.log('[Scan API] PDF text extracted, length:', data.text.length);
-  return extractBillData(data.text);
+  return new Promise((resolve, reject) => {
+    const pdfParser = new PDFParser(null, 1); // 1 = text only mode
+
+    pdfParser.on('pdfParser_dataError', err => reject(err.parserError));
+    pdfParser.on('pdfParser_dataReady', () => {
+      const rawText = pdfParser.getRawTextContent();
+      console.log('[Scan API] PDF text extracted, length:', rawText.length);
+      resolve(extractBillData(rawText));
+    });
+
+    pdfParser.parseBuffer(buffer);
+  });
 }
 
 // ── Image OCR extraction ─────────────────────────────
