@@ -465,9 +465,10 @@ export async function createAlert(data) {
   return db.alert.create({
     data: {
       clientId: data.client_id,
-      title: data.title,
-      message: data.message,
+      title:    data.title,
+      message:  data.message,
       severity: data.severity || 'info',
+      type:     data.type || 'rate',
     },
   });
 }

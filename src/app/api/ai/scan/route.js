@@ -221,22 +221,12 @@ export async function POST(req) {
         console.warn('[Scan API] pdf-parse failed:', pdfError.message);
       }
 
-      // PATH 1B: Fallback to Groq vision
+      // NO FALLBACK TO VISION FOR PDF (Groq vision only supports images)
       if (!billData || billData.confidence < 40) {
-        console.log('[Scan API] Switching to Groq vision for PDF');
-        try {
-          const groqResponse = await extractTextWithGroq(mimeType, base64string);
-          try {
-            const directJSON = extractBillJSON(groqResponse);
-            billData = { ...directJSON, confidence: directJSON.totalAmount ? 95 : 45 };
-            console.log('[Scan API] Groq vision parsed directly:', billData);
-          } catch {
-            billData = parseBillText(groqResponse);
-            console.log('[Scan API] Groq text parsed via regex:', billData);
-          }
-        } catch (groqError) {
-          console.error('[Scan API] Groq vision failed:', groqError.message);
-        }
+        return NextResponse.json({
+          error: 'PDF_GARBLED',
+          message: 'This PDF has a complex layout (e.g. MERALCO). Please take a photo of the bill instead for AI scanning.',
+        }, { status: 422 });
       }
     } else {
       // PATH 2: Image → always use Groq vision

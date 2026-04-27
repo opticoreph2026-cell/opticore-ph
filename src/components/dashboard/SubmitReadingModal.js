@@ -120,12 +120,25 @@ export default function SubmitReadingModal({ isOpen, onClose, user, appliances =
       const data = await res.json();
 
       if (!res.ok) {
-        if (res.status === 422) {
-          setError('Could not read this file. Switched to manual entry.');
+        if (data.error === 'PDF_GARBLED') {
+          setError('This PDF is too complex for text extraction. Please take a clear photo of your bill instead.');
+          setStep('choose');
+          return;
+        }
+        if (data.error === 'WATER_BILL_NOT_SUPPORTED') {
+          setError('Water bills cannot be scanned. Please enter water data manually below.');
           setTimeout(() => {
             setStep('manual');
             setError('');
-          }, 2000);
+          }, 2500);
+          return;
+        }
+        if (res.status === 422) {
+          setError('The AI could not confidently read this bill. Switching to manual mode...');
+          setTimeout(() => {
+            setStep('manual');
+            setError('');
+          }, 2500);
           return;
         }
         throw new Error(data.message || data.error || 'Scan failed');
