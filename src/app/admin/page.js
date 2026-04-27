@@ -10,6 +10,7 @@ import { getAdminKPIs, listAllClients, listAllTransactions, getSystemTelemetry }
 import AdminClientTable from '@/components/admin/AdminClientTable';
 import AdminNotificationFeed from '@/components/admin/AdminNotificationFeed';
 import { getAdminNotifications } from '@/lib/db';
+import SpotlightCard from '@/components/ui/SpotlightCard';
 
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'Admin Command — OptiCore PH' };
@@ -38,17 +39,20 @@ export default async function AdminDashboard() {
   return (
     <div className="space-y-8 animate-fade-up max-w-7xl pb-10">
       {/* ── KPI Grid ── */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* ── KPI Grid ── */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {statCards.map((s) => (
-          <div key={s.label} className="bento-card p-6 flex items-center gap-5">
-            <div className={`w-12 h-12 rounded-2xl ${s.bg} flex items-center justify-center shrink-0`}>
-              <s.icon className={`w-6 h-6 ${s.color}`} />
+          <SpotlightCard key={s.label} className="p-6 bg-surface-1000/20 backdrop-blur-md border-white/5 group hover:border-white/20 transition-all">
+            <div className="flex items-center gap-5">
+              <div className={`w-14 h-14 rounded-3xl ${s.bg} border border-white/5 flex items-center justify-center shrink-0 transition-transform group-hover:scale-110`}>
+                <s.icon className={`w-7 h-7 ${s.color}`} />
+              </div>
+              <div>
+                <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-1">{s.label}</p>
+                <p className="text-2xl font-black text-white tracking-tighter leading-none">{s.value}</p>
+              </div>
             </div>
-            <div>
-              <p className="text-[10px] font-black text-text-faint uppercase tracking-widest mb-1">{s.label}</p>
-              <p className="text-2xl font-bold text-text-primary tracking-tight">{s.value}</p>
-            </div>
-          </div>
+          </SpotlightCard>
         ))}
       </div>
 

@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
 import { getCurrentUser } from '@/lib/auth';
-import Groq from 'groq-sdk';
+import { GoogleGenAI } from '@google/genai';
 
-const groqClient = new Groq({
-  apiKey: process.env.GROQ_API_KEY,
+const ai = new GoogleGenAI({
+  apiKey: process.env.GEMINI_API_KEY,
 });
 
 // ─── PDF TEXT EXTRACTION (pdf-parse) ────────────────────
@@ -42,25 +42,16 @@ async function extractTextFromPDF(buffer) {
   }
 }
 
-// ─── GROQ VISION OCR ────────────────────────────────────
-async function extractTextWithGroq(mimeType, base64string) {
+// ─── GEMINI VISION OCR ────────────────────────────────────
+async function extractTextWithGemini(mimeType, base64string) {
   try {
-    const response = await groqClient.chat.completions.create({
-      model: 'meta-llama/llama-4-scout-17b-16e-instruct',
-      messages: [
+    const result = await ai.models.generateContent({
+      model: 'gemini-1.5-flash',
+      contents: [
         {
-          role: 'user',
-          content: [
+          parts: [
             {
-              type: 'image_url',
-              image_url: {
-                url: `data:${mimeType};base64,${base64string}`,
-              },
-            },
-            {
-              type: 'text',
               text: `You are a utility bill parser for the Philippines. Look at this utility bill image carefully.
-
 This may be a MERALCO, VECO, CEBECO, or DLPC bill.
 
 Extract these exact values and return ONLY a JSON object.
@@ -81,22 +72,27 @@ Lookup guide:
 - providerName: company name at top (MERALCO, VECO, etc.)
 - type: electricity if kWh shown, water if cubic meters shown
 
-Return ONLY the JSON. Nothing else.`,
+IF THE IMAGE IS NOT A PHILIPPINE UTILITY BILL:
+Return {"error": "INVALID_IMAGE", "reason": "Not a valid Philippine utility bill"}`
+            },
+            {
+              inlineData: {
+                mimeType,
+                data: base64string,
+              },
             },
           ],
         },
       ],
-      max_tokens: 300,
-      temperature: 0.1,
     });
 
-    const rawText = response.choices[0]?.message?.content || '';
-    console.log('[Scan API] Groq vision response:', rawText.substring(0, 300));
+    const rawText = result.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    console.log('[Scan API] Gemini vision response:', rawText.substring(0, 300));
     return rawText;
 
-  } catch (groqError) {
-    console.error('[Scan API] Groq vision failed:', groqError.message);
-    throw new Error('Groq scan failed: ' + groqError.message);
+  } catch (err) {
+    console.error('[Scan API] Gemini vision failed:', err.message);
+    throw new Error('Gemini scan failed: ' + err.message);
   }
 }
 
@@ -106,7 +102,7 @@ function extractBillJSON(text) {
     const cleaned = text.replace(/```json/gi, '').replace(/```/g, '').trim();
     return JSON.parse(cleaned);
   } catch (err) {
-    throw new Error('Failed to parse Groq JSON');
+    throw new Error('Failed to parse Gemini JSON');
   }
 }
 
@@ -229,15 +225,18 @@ export async function POST(req) {
         }, { status: 422 });
       }
     } else {
-      // PATH 2: Image → always use Groq vision
-      console.log('[Scan API] Image file, using Groq vision OCR');
+      // PATH 2: Image → always use Gemini vision
+      console.log('[Scan API] Image file, using Gemini vision OCR');
       try {
-        const groqResponse = await extractTextWithGroq(mimeType, base64string);
+        const geminiResponse = await extractTextWithGemini(mimeType, base64string);
         try {
-          const directJSON = extractBillJSON(groqResponse);
+          const directJSON = extractBillJSON(geminiResponse);
+          if (directJSON.error === 'INVALID_IMAGE') {
+            return NextResponse.json({ error: 'INVALID_IMAGE', message: directJSON.reason }, { status: 422 });
+          }
           billData = { ...directJSON, confidence: directJSON.totalAmount ? 95 : 45 };
         } catch {
-          billData = parseBillText(groqResponse);
+          billData = parseBillText(geminiResponse);
         }
       } catch (imageError) {
         return NextResponse.json({ error: 'SCAN_FAILED', message: 'Could not read image.' }, { status: 422 });

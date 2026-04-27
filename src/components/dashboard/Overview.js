@@ -2,7 +2,8 @@
 
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid,
-  Tooltip, ResponsiveContainer, BarChart, Bar
+  Tooltip, ResponsiveContainer, BarChart, Bar,
+  PieChart, Pie, Cell
 } from 'recharts';
 import { 
   Zap, TrendingDown, Plus, 
@@ -12,7 +13,7 @@ import {
 } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import Link from 'next/link';
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { clsx } from 'clsx';
@@ -46,6 +47,26 @@ export default function DashboardOverview({ user, readings = [], alerts = [], ap
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [toastMsg, setToastMsg] = useState(null);
   const [toastType, setToastType] = useState('success');
+
+  const [attribution, setAttribution] = useState(null);
+  const [loadingAttribution, setLoadingAttribution] = useState(false);
+
+  const fetchAttribution = useCallback(async () => {
+    setLoadingAttribution(true);
+    try {
+      const res = await fetch('/api/dashboard/attribution');
+      const json = await res.json();
+      if (json.success) setAttribution(json.data);
+    } catch (e) {
+      console.error('Failed to fetch attribution:', e);
+    } finally {
+      setLoadingAttribution(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchAttribution();
+  }, [fetchAttribution]);
 
   useEffect(() => {
     if (searchParams?.upgraded === 'true') {
@@ -272,11 +293,11 @@ export default function DashboardOverview({ user, readings = [], alerts = [], ap
         <motion.div variants={itemVariants}>
           <KpiCard 
             label="Ghost Load"
-            value="ANALYSIS PENDING"
-            delta="ANALYSIS PENDING"
-            isPositive={true}
+            value={attribution?.electric?.discrepancy?.percentage != null ? `${attribution.electric.discrepancy.percentage}%` : "CALCULATING..."}
+            delta={attribution?.electric?.severity || "MONITORING"}
+            isPositive={attribution?.electric?.severity === 'NORMAL'}
             icon={Activity}
-            color="purple"
+            color={attribution?.electric?.severity === 'CRITICAL' ? "rose" : "purple"}
           />
         </motion.div>
 
@@ -293,7 +314,146 @@ export default function DashboardOverview({ user, readings = [], alerts = [], ap
         </motion.div>
       </div>
 
-      {/* ── Consumption Visualizer ── */}
+      {/* ── Visual Insights Grid ── */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Load Attribution Donut */}
+        <motion.div variants={itemVariants} className="lg:col-span-1">
+          <SpotlightCard className="p-8 h-full bg-surface-1000/20 backdrop-blur-md">
+            <div className="flex items-center justify-between mb-8">
+              <h3 className="text-lg font-black text-white tracking-tighter">Load Attribution</h3>
+              <Sparkles className="w-4 h-4 text-cyan-400" />
+            </div>
+            <div className="h-64 w-full relative">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={attribution?.electric?.categories ? Object.entries(attribution.electric.categories).map(([name, obj]) => ({
+                      name, value: obj.value
+                    })) : [{name: 'Loading', value: 100}]}
+                    innerRadius={60}
+                    outerRadius={80}
+                    paddingAngle={5}
+                    dataKey="value"
+                  >
+                    {(attribution?.electric?.categories ? Object.keys(attribution.electric.categories) : ['#333']).map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={['#22d3ee', '#818cf8', '#a78bfa', '#f472b6', '#fb7185'][index % 5]} />
+                    ))}
+                  </Pie>
+                  <Tooltip 
+                    content={({ active, payload }) => {
+                      if (!active || !payload?.length) return null;
+                      return (
+                        <div className="bg-surface-900 border border-white/10 rounded-xl p-3 shadow-2xl">
+                          <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{payload[0].name}</p>
+                          <p className="text-sm font-black text-white">{payload[0].value.toFixed(1)} kWh</p>
+                        </div>
+                      );
+                    }}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+              <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Theoretical</p>
+                <p className="text-xl font-black text-white">{attribution?.electric?.totalEstimated || 0}</p>
+              </div>
+            </div>
+            <div className="mt-4 space-y-2">
+               <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-widest">
+                 <span className="text-slate-500">Unexplained (Ghost)</span>
+                 <span className="text-rose-400">{attribution?.electric?.discrepancy?.value || 0} kWh</span>
+               </div>
+               <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden">
+                 <div 
+                   className="h-full bg-rose-500 transition-all duration-1000" 
+                   style={{ width: `${attribution?.electric?.discrepancy?.percentage || 0}%` }}
+                 />
+               </div>
+            </div>
+          </SpotlightCard>
+        </motion.div>
+
+        {/* Water Pulse BarChart */}
+        <motion.div variants={itemVariants} className="lg:col-span-1">
+          <SpotlightCard className="p-8 h-full bg-surface-1000/20 backdrop-blur-md">
+             <div className="flex items-center justify-between mb-8">
+              <h3 className="text-lg font-black text-white tracking-tighter">Water Pulse</h3>
+              <Droplets className="w-4 h-4 text-blue-400" />
+            </div>
+            <div className="h-64 w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={chartData.slice(-6)}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" vertical={false} />
+                  <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 10}} />
+                  <YAxis hide />
+                  <Tooltip 
+                    cursor={{fill: 'rgba(255,255,255,0.03)'}}
+                    content={({ active, payload }) => {
+                      if (!active || !payload?.length) return null;
+                      return (
+                        <div className="bg-surface-900 border border-white/10 rounded-xl p-3 shadow-2xl">
+                          <p className="text-sm font-black text-white">{payload[0].value} m³</p>
+                        </div>
+                      );
+                    }}
+                  />
+                  <Bar dataKey="water" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+            <p className="text-center text-[10px] font-black text-slate-500 uppercase tracking-widest mt-4">
+              6-Month Consumption Trend
+            </p>
+          </SpotlightCard>
+        </motion.div>
+
+        {/* LPG Depletion Gauge */}
+        <motion.div variants={itemVariants} className="lg:col-span-1">
+          <SpotlightCard className="p-8 h-full bg-surface-1000/20 backdrop-blur-md">
+            <div className="flex items-center justify-between mb-8">
+              <h3 className="text-lg font-black text-white tracking-tighter">LPG Depletion</h3>
+              <Activity className="w-4 h-4 text-orange-400" />
+            </div>
+            <div className="h-64 w-full relative">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={[
+                      { value: lpgStatus?.percentLeft || 0 },
+                      { value: 100 - (lpgStatus?.percentLeft || 0) }
+                    ]}
+                    cx="50%"
+                    cy="80%"
+                    startAngle={180}
+                    endAngle={0}
+                    innerRadius={70}
+                    outerRadius={90}
+                    paddingAngle={0}
+                    dataKey="value"
+                  >
+                    <Cell fill={lpgStatus?.percentLeft < 15 ? '#fb7185' : '#f59e0b'} />
+                    <Cell fill="rgba(255,255,255,0.05)" />
+                  </Pie>
+                </PieChart>
+              </ResponsiveContainer>
+              <div className="absolute inset-0 flex flex-col items-center justify-center pt-16 pointer-events-none">
+                <p className="text-4xl font-black text-white leading-none">{lpgStatus?.percentLeft?.toFixed(0) || 0}%</p>
+                <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mt-2">Inventory Left</p>
+              </div>
+            </div>
+            <div className="flex items-center justify-between p-4 rounded-2xl bg-white/[0.03] border border-white/5">
+              <div>
+                <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Est. Refill</p>
+                <p className="text-sm font-black text-white">{lpgStatus?.daysLeft || 0} Days</p>
+              </div>
+              <div className="text-right">
+                <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Burn Rate</p>
+                <p className="text-sm font-black text-white">{lpgStatus?.dailyBurnRate?.toFixed(2) || 0} kg/d</p>
+              </div>
+            </div>
+          </SpotlightCard>
+        </motion.div>
+      </div>
+
       <motion.div variants={itemVariants}>
         <SpotlightCard className="p-8 bg-surface-1000/20 backdrop-blur-md">
           <div className="flex items-center justify-between mb-10">

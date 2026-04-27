@@ -18,6 +18,7 @@ import {
 import { formatDistanceToNow } from 'date-fns';
 import { motion, AnimatePresence } from 'framer-motion';
 import Spinner from '@/components/ui/Spinner';
+import SpotlightCard from '@/components/ui/SpotlightCard';
 
 const SEVERITY_CONFIG = {
   critical: {
@@ -255,9 +256,11 @@ function AlertItem({ alert, onMarkRead }) {
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, scale: 0.95 }}
       className={`relative bento-card p-0 overflow-hidden group flex items-stretch transition-all duration-500 ${alert.isRead ? 'opacity-60' : 'opacity-100 shadow-lg shadow-black/20'}`}
+      style={{ 
+        borderLeft: `6px solid ${cfg.barColor}`,
+        borderColor: cfg.accentBorder
+      }}
     >
-      {/* Left severity bar */}
-      <div className="w-1.5 shrink-0" style={{ background: cfg.barColor }} />
 
       <div className="flex items-start gap-4 flex-1 p-5">
         {/* Icon Cluster */}
@@ -313,15 +316,17 @@ function AlertItem({ alert, onMarkRead }) {
 
 function KPIItem({ label, value, icon: Icon, color, bg, isTime }) {
   return (
-    <div className="bento-card p-5 flex items-center gap-4 group hover:border-white/20 transition-all">
-      <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110`} style={{ background: bg }}>
-        <Icon className={`w-6 h-6 ${color}`} />
+    <SpotlightCard className="p-6 h-full border-white/5 bg-surface-1000/20 backdrop-blur-md group hover:border-white/20 transition-all">
+      <div className="flex items-center gap-4">
+        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110`} style={{ background: bg }}>
+          <Icon className={`w-6 h-6 ${color}`} />
+        </div>
+        <div>
+          <p className="text-[10px] font-black uppercase tracking-widest text-white/30 mb-1">{label}</p>
+          <p className={`text-xl font-black ${isTime ? 'text-lg' : 'text-2xl'} text-white`}>{value}</p>
+        </div>
       </div>
-      <div>
-        <p className="text-[10px] font-black uppercase tracking-widest text-white/30 mb-1">{label}</p>
-        <p className={`text-xl font-black ${isTime ? 'text-lg' : 'text-2xl'} text-white`}>{value}</p>
-      </div>
-    </div>
+    </SpotlightCard>
   );
 }
 

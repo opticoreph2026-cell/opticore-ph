@@ -26,16 +26,16 @@ export default async function ReportsPage() {
     <PlanGate userPlan={clientPlan} requiredPlan="pro">
       <div className="space-y-6 animate-fade-up print:space-y-4">
         {/* ── Page Header ── */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-          <div>
-            <p className="section-label mb-1">Intelligence</p>
-            <h1 className="text-2xl font-bold text-white flex items-center gap-2.5 print:text-black">
-              <FileText className="w-6 h-6 text-brand-400 print:hidden" />
-              Reports
-            </h1>
-            <p className="text-sm text-white/40 mt-1 print:hidden">
-              Your monthly AI-generated utility analysis reports.
-            </p>
+        {/* ── Page Header ── */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-8">
+          <div className="flex items-center gap-5">
+            <div className="w-14 h-14 rounded-3xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center shadow-xl shadow-amber-500/5">
+              <Brain className="w-7 h-7 text-amber-400" />
+            </div>
+            <div>
+              <h1 className="text-display text-2xl font-bold text-white tracking-tight">Intelligence Reports</h1>
+              <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mt-0.5">Automated AI Insights & Historical Data</p>
+            </div>
           </div>
           <div className="print:hidden">
             <ExportButtons plan={clientPlan} />
@@ -46,55 +46,65 @@ export default async function ReportsPage() {
         <BillBreakdownChart readings={readings} />
 
         {reports.length > 0 ? (
-          <div className="space-y-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {reports.map((r, i) => (
-              <div key={r.id} className={`bento-card relative overflow-hidden group transition-all duration-300 ${i === 0 ? 'hover:-translate-y-1' : ''}`} style={i === 0 ? { boxShadow: '0 1px 0 rgba(255,255,255,0.05) inset, 0 16px 40px rgba(0,0,0,0.4), inset 0 0 40px rgba(245,158,11,0.03)' } : {}}>
-                {i === 0 && <div className="absolute inset-0 bg-amber-glow opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>}
-                {i === 0 && <div className="absolute inset-x-0 -top-px h-px bg-gradient-to-r from-transparent via-brand-500/20 to-transparent"></div>}
+              <div 
+                key={r.id} 
+                className={`relative group bento-card p-6 overflow-hidden transition-all duration-500 hover:border-white/20 ${i === 0 ? 'lg:col-span-2 bg-gradient-to-br from-amber-500/5 to-transparent border-amber-500/10' : 'bg-surface-1000/20'}`}
+              >
+                {i === 0 && (
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 blur-[80px] -mr-16 -mt-16 group-hover:bg-amber-500/10 transition-all duration-700" />
+                )}
                 
-                <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 relative z-10">
-                  <div className="flex items-start gap-4 min-w-0">
-                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${i === 0 ? 'bg-brand-500/15 border border-brand-500/25 shadow-lg shadow-brand-500/10' : 'bg-surface-800 border border-white/5'
-                      }`}>
-                      <Brain className={`w-5 h-5 ${i === 0 ? 'text-brand-400' : 'text-text-muted'}`} />
+                <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-6 relative z-10">
+                  <div className="flex items-start gap-5 min-w-0">
+                    <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 ${i === 0 ? 'bg-amber-500/10 border border-amber-500/20 shadow-xl shadow-amber-500/5' : 'bg-white/5 border border-white/10'}`}>
+                      <FileText className={`w-6 h-6 ${i === 0 ? 'text-amber-400' : 'text-slate-500'}`} />
                     </div>
                     <div>
-                      <div className="flex items-center gap-2 mb-1">
-                        <p className="font-bold tracking-wide text-text-primary">
-                          {r.generatedAt
-                            ? format(new Date(r.generatedAt), "MMMM yyyy 'Report'")
-                            : 'AI Report'}
-                        </p>
+                      <div className="flex items-center gap-3 mb-2">
+                        <h3 className="text-lg font-black text-white tracking-tight">
+                          {r.generatedAt ? format(new Date(r.generatedAt), "MMMM yyyy") : 'Monthly Insight'}
+                        </h3>
                         {i === 0 && (
-                          <span className="stat-badge stat-badge-amber text-[10px] px-2 py-0.5">Latest</span>
+                          <span className="text-[10px] font-black bg-amber-500/20 text-amber-400 px-2 py-0.5 rounded-full border border-amber-500/30 uppercase tracking-widest">
+                            Latest Report
+                          </span>
                         )}
                       </div>
-                      <p className="text-[10px] text-text-muted mb-3 font-semibold uppercase tracking-wider">
-                        Generated {r.generatedAt
-                          ? format(new Date(r.generatedAt), 'MMM d, yyyy')
-                          : 'recently'}
+                      <p className="text-[10px] text-slate-500 mb-4 font-black uppercase tracking-[0.2em]">
+                        ID: {r.id.slice(-8).toUpperCase()} • {r.generatedAt ? format(new Date(r.generatedAt), 'MMM d, yyyy') : 'Recent'}
                       </p>
-                      <p className="text-sm text-text-secondary leading-relaxed line-clamp-2">
+                      <p className="text-sm text-slate-400 leading-relaxed line-clamp-3 font-medium">
                         {r.summary ?? 'AI-generated analysis of your utility consumption and savings opportunities.'}
                       </p>
-                      {r.estimatedSavings && (
-                        <p className="text-[11px] font-bold tracking-wider text-emerald-400 mt-3 flex items-center gap-1">
-                          <Zap className="w-3.5 h-3.5" /> EST. SAVINGS: ₱{Number(r.estimatedSavings).toLocaleString()}/mo
-                        </p>
-                      )}
+                      
+                      <div className="flex flex-wrap gap-4 mt-6">
+                        {r.estimatedSavings && (
+                          <div className="flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 rounded-xl">
+                            <Zap className="w-3.5 h-3.5 text-emerald-400" />
+                            <span className="text-[11px] font-black text-emerald-400 uppercase tracking-widest">₱{Number(r.estimatedSavings).toLocaleString()} Savings</span>
+                          </div>
+                        )}
+                        <div className="flex items-center gap-2 bg-cyan-500/10 border border-cyan-500/20 px-3 py-1.5 rounded-xl">
+                          <Brain className="w-3.5 h-3.5 text-cyan-400" />
+                          <span className="text-[11px] font-black text-cyan-400 uppercase tracking-widest">AI Verified</span>
+                        </div>
+                      </div>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-3 shrink-0 self-end sm:self-start">
                     <ShareReportButton reportId={r.id} isBusiness={clientPlan === 'business'} />
                     {r.pdfUrl && (
                       <a
                         href={r.pdfUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="btn-ghost text-xs px-4 py-2 shrink-0 flex items-center gap-1.5 font-bold hover:text-brand-400 transition-colors"
+                        className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 hover:border-white/20 transition-all group/btn"
+                        title="Download PDF"
                       >
-                        <Download className="w-4 h-4" /> PDF
+                        <Download className="w-4 h-4 text-slate-400 group-hover/btn:text-white transition-colors" />
                       </a>
                     )}
                   </div>

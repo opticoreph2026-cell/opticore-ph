@@ -1,11 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Plus, X, ServerCrash, Save, Calculator, AlertTriangle, Trash2 } from 'lucide-react';
+import { Plus, X, ServerCrash, Save, Calculator, AlertTriangle, Trash2, Search, Filter, Cpu, Zap, Wallet } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ApplianceCard from './ApplianceCard';
 import ApplianceSearch from './ApplianceSearch';
 import Spinner from '@/components/ui/Spinner';
+import SpotlightCard from '@/components/ui/SpotlightCard';
 
 export default function AppliancesManager({ effectiveRate = 11.5 }) {
   const [appliances, setAppliances] = useState([]);
@@ -23,6 +24,8 @@ export default function AppliancesManager({ effectiveRate = 11.5 }) {
 
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState('all');
 
   useEffect(() => {
     fetchAppliances();
@@ -39,6 +42,28 @@ export default function AppliancesManager({ effectiveRate = 11.5 }) {
       setLoading(false);
     }
   };
+
+  const filteredAppliances = useMemo(() => {
+    return appliances.filter(a => {
+      const matchesSearch = (a.name || '').toLowerCase().includes(searchTerm.toLowerCase()) || 
+                            (a.brand || '').toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesCategory = categoryFilter === 'all' || a.category === categoryFilter;
+      return matchesSearch && matchesCategory;
+    });
+  }, [appliances, searchTerm, categoryFilter]);
+
+  const stats = useMemo(() => {
+    const totalLoad = appliances.reduce((sum, a) => sum + (Number(a.wattage || 0) * (a.quantity || 1)), 0);
+    const totalKwh = appliances.reduce((sum, a) => {
+      if (!a.wattage || !a.hoursPerDay) return sum;
+      return sum + ((a.wattage * a.hoursPerDay * 30 * (a.quantity || 1)) / 1000);
+    }, 0);
+    return {
+      totalLoad,
+      estMonthlyCost: totalKwh * effectiveRate,
+      count: appliances.length
+    };
+  }, [appliances, effectiveRate]);
 
   const resetForm = () => {
     setForm({
@@ -142,20 +167,99 @@ export default function AppliancesManager({ effectiveRate = 11.5 }) {
     <div className="space-y-12">
       
       {!isFormOpen && (
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-8">
-          <div className="flex items-center gap-5">
-            <div className="w-14 h-14 rounded-3xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center shadow-xl shadow-cyan-500/5">
-              <Calculator className="w-7 h-7 text-cyan-400" />
+        <>
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-8">
+            <div className="flex items-center gap-5">
+              <div className="w-14 h-14 rounded-3xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center shadow-xl shadow-cyan-500/5">
+                <Calculator className="w-7 h-7 text-cyan-400" />
+              </div>
+              <div>
+                <h2 className="text-display text-2xl font-bold text-white tracking-tight">Inventory Profiling</h2>
+                <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mt-0.5">Manage your property's appliance footprint</p>
+              </div>
             </div>
-            <div>
-              <h2 className="text-display text-2xl font-bold text-white tracking-tight">Inventory Profiling</h2>
-              <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mt-0.5">Manage your property's appliance footprint</p>
+            <button onClick={() => setIsFormOpen(true)} className="btn-primary min-w-[160px] group">
+              <Plus className="w-4 h-4 transition-transform group-hover:rotate-90" /> Add Asset
+            </button>
+          </div>
+
+          {/* KPI Row */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+            <SpotlightCard className="p-6 bg-surface-1000/20 backdrop-blur-md border-white/5">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center">
+                  <Zap className="w-6 h-6 text-cyan-400" />
+                </div>
+                <div>
+                  <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Total Peak Load</p>
+                  <p className="text-2xl font-black text-white tracking-tighter">{stats.totalLoad.toLocaleString()} W</p>
+                </div>
+              </div>
+            </SpotlightCard>
+            
+            <SpotlightCard className="p-6 bg-surface-1000/20 backdrop-blur-md border-white/5">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-2xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center">
+                  <Wallet className="w-6 h-6 text-purple-400" />
+                </div>
+                <div>
+                  <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Est. Monthly Cost</p>
+                  <p className="text-2xl font-black text-white tracking-tighter">₱{stats.estMonthlyCost.toLocaleString(undefined, {maximumFractionDigits: 0})}</p>
+                </div>
+              </div>
+            </SpotlightCard>
+
+            <SpotlightCard className="p-6 bg-surface-1000/20 backdrop-blur-md border-white/5">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center">
+                  <Cpu className="w-6 h-6 text-amber-400" />
+                </div>
+                <div>
+                  <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Active Assets</p>
+                  <p className="text-2xl font-black text-white tracking-tighter">{stats.count} Devices</p>
+                </div>
+              </div>
+            </SpotlightCard>
+          </div>
+
+          {/* Search & Filter Bar */}
+          <div className="flex flex-col md:flex-row gap-4 mb-8 bg-white/[0.02] border border-white/5 p-4 rounded-2xl">
+            <div className="relative flex-1 group">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 group-focus-within:text-cyan-400 transition-colors" />
+              <input 
+                type="text" 
+                placeholder="Search appliances by name or brand..." 
+                className="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-12 pr-4 text-sm text-white focus:outline-none focus:ring-1 focus:ring-cyan-500/50 transition-all"
+                value={searchTerm}
+                onChange={e => setSearchTerm(e.target.value)}
+              />
+            </div>
+            <div className="relative min-w-[200px]">
+              <Filter className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+              <select 
+                className="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-12 pr-4 text-sm text-white appearance-none focus:outline-none focus:ring-1 focus:ring-cyan-500/50 transition-all cursor-pointer"
+                value={categoryFilter}
+                onChange={e => setCategoryFilter(e.target.value)}
+              >
+                <option value="all">All Categories</option>
+                <option value="aircon">Air Conditioners</option>
+                <option value="refrigerator">Refrigerators</option>
+                <option value="washing_machine">Washing Machines</option>
+                <option value="water_heater">Water Heaters</option>
+                <option value="electric_fan">Electric Fans</option>
+                <option value="tv">Televisions</option>
+                <option value="rice_cooker">Rice Cookers</option>
+                <option value="microwave">Microwaves</option>
+                <option value="electric_stove">Electric Stoves</option>
+                <option value="iron">Irons</option>
+                <option value="water_dispenser">Water Dispensers</option>
+                <option value="heater">Heaters</option>
+                <option value="pump">Pumps</option>
+                <option value="other">Others</option>
+              </select>
             </div>
           </div>
-          <button onClick={() => setIsFormOpen(true)} className="btn-primary min-w-[160px] group">
-            <Plus className="w-4 h-4 transition-transform group-hover:rotate-90" /> Add Asset
-          </button>
-        </div>
+        </>
       )}
 
       {isFormOpen && (
@@ -270,9 +374,9 @@ export default function AppliancesManager({ effectiveRate = 11.5 }) {
         </div>
       )}
 
-      {appliances.length > 0 ? (
+      {filteredAppliances.length > 0 ? (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {appliances.map(a => (
+          {filteredAppliances.map(a => (
             <ApplianceCard
               key={a.id}
               appliance={a}
