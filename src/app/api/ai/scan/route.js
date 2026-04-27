@@ -4,101 +4,168 @@ import { db as prisma } from '@/lib/db';
 
 // ── Regex extraction engine ──────────────────────────
 function extractBillData(rawText) {
-  const text = rawText.toUpperCase();
+  // Normalize: collapse all whitespace variants, 
+  // but also create a spaceless version for concatenated text
+  const text = rawText
+    .replace(/\r\n/g, '\n')
+    .replace(/\r/g, '\n')
+    .replace(/[ \t]+/g, ' ')
+    .trim();
+  
+  const upper = text.toUpperCase();
+  // Spaceless version catches concatenated tokens like "MERALCO123KWH"
+  const spaceless = upper.replace(/\s+/g, '');
 
-  // Provider detection
+  // ── Provider detection ──────────────────────────────
   let providerName = null;
-  if (text.includes('MERALCO')) providerName = 'MERALCO';
-  else if (text.includes('VECO')) providerName = 'VECO';
-  else if (text.includes('CEBU ELECTRIC')) providerName = 'VECO';
-  else if (text.includes('MCWD')) providerName = 'MCWD';
-  else if (text.includes('METRO CEBU WATER')) providerName = 'MCWD';
-  else if (text.includes('MANILA WATER')) providerName = 'Manila Water';
-  else if (text.includes('MAYNILAD')) providerName = 'Maynilad';
+  if (upper.includes('MERALCO')) providerName = 'MERALCO';
+  else if (upper.includes('VECO')) providerName = 'VECO';
+  else if (upper.includes('CEBUELECTRIC')) providerName = 'VECO';
+  else if (upper.includes('MCWD')) providerName = 'MCWD';
+  else if (upper.includes('METROCEBUWATER')) providerName = 'MCWD';
+  else if (upper.includes('MANILAWATER')) providerName = 'Manila Water';
+  else if (upper.includes('MAYNILAD')) providerName = 'Maynilad';
 
-  // Bill type
-  const isWater = text.includes('CUBIC METER') || 
-                  text.includes('CU.M') || 
-                  text.includes('M3') ||
-                  text.includes('WATER');
+  // ── Bill type ───────────────────────────────────────
+  const isWater = upper.includes('CUBICMETER') ||
+                  upper.includes('CUBIC METER') ||
+                  spaceless.includes('CUM') ||
+                  upper.includes('M3') ||
+                  (upper.includes('WATER') && !upper.includes('WATERMARK'));
   const type = isWater ? 'water' : 'electricity';
 
-  // kWh extraction (electricity)
+  // ── kWh extraction ──────────────────────────────────
   let kwhUsed = null;
   const kwhPatterns = [
-    /(\d[\d,]*\.?\d*)\s*KWH/,
-    /KWH\s*[:\-]?\s*(\d[\d,]*\.?\d*)/,
-    /KILOWATT[- ]HOUR[S]?\s*[:\-]?\s*(\d[\d,]*\.?\d*)/,
-    /CONSUMPTION[:\s]*(\d[\d,]*\.?\d*)\s*KWH/,
-    /PRESENT\s+READING.*?(\d{4,6})/,
+    // Standard spaced: 350 KWH or 350KWH
+    /(\d[\d,]*\.?\d*)\s*KWH/i,
+    // Label before: KWH: 350 or KWH 350
+    /KWH\s*[:\-]?\s*(\d[\d,]*\.?\d*)/i,
+    // Consumption label
+    /CONSUMPTION\s*[:\-]?\s*(\d[\d,]*\.?\d*)\s*KWH/i,
+    // Concatenated: TOTALCONSUMPTION350KWH
+    /CONSUMPTION(\d[\d,]*\.?\d*)KWH/i,
+    // Electric usage label
+    /ELECTRICUSAGE\s*[:\-]?\s*(\d[\d,]*\.?\d*)/i,
+    // kWh anywhere near a 3-6 digit number
+    /(\d{3,6})\s*KWH/i,
+    // Present/Previous reading difference
+    /(?:PRESENT|CURRENT)READING\D{0,20}?(\d{4,7})/i,
   ];
   for (const pattern of kwhPatterns) {
-    const match = rawText.toUpperCase().match(pattern);
+    const match = upper.match(pattern);
     if (match) {
-      kwhUsed = parseFloat(match[1].replace(/,/g, ''));
-      break;
+      const val = parseFloat(match[1].replace(/,/g, ''));
+      if (val > 0 && val < 99999) { kwhUsed = val; break; }
     }
   }
 
-  // m³ extraction (water)
+  // ── m³ extraction ───────────────────────────────────
   let m3Used = null;
   if (isWater) {
     const m3Patterns = [
-      /(\d[\d,]*\.?\d*)\s*(?:CU\.?M|M3|CUBIC)/,
-      /CONSUMPTION[:\s]*(\d[\d,]*\.?\d*)/,
-      /VOLUME[:\s]*(\d[\d,]*\.?\d*)/,
+      /(\d[\d,]*\.?\d*)\s*(?:CU\.?M|M3|CUBIC)/i,
+      /CONSUMPTION\s*[:\-]?\s*(\d[\d,]*\.?\d*)/i,
+      /VOLUME\s*[:\-]?\s*(\d[\d,]*\.?\d*)/i,
+      /WATERUSED\s*[:\-]?\s*(\d[\d,]*\.?\d*)/i,
+      /(\d{1,4})\s*CUM/i,
     ];
     for (const pattern of m3Patterns) {
-      const match = rawText.toUpperCase().match(pattern);
+      const match = upper.match(pattern);
       if (match) {
-        m3Used = parseFloat(match[1].replace(/,/g, ''));
-        break;
+        const val = parseFloat(match[1].replace(/,/g, ''));
+        if (val > 0 && val < 9999) { m3Used = val; break; }
       }
     }
   }
 
-  // Total amount extraction
+  // ── Total amount extraction ─────────────────────────
   let totalAmount = null;
   const amountPatterns = [
-    /(?:AMOUNT DUE|TOTAL AMOUNT DUE|TOTAL DUE|AMOUNT PAYABLE)[:\s]*(?:PHP|₱)?\s*([\d,]+\.?\d*)/,
-    /(?:PHP|₱)\s*([\d,]+\.\d{2})\s*(?:TOTAL|DUE|PAYABLE)/,
-    /PLEASE PAY[:\s]*(?:PHP|₱)?\s*([\d,]+\.?\d*)/,
-    /TOTAL[:\s]*(?:PHP|₱)?\s*([\d,]+\.\d{2})/,
+    // Most specific first — labeled amount due
+    /AMOUNT\s*DUE\s*[:\-]?\s*(?:PHP|₱)?\s*([\d,]+\.?\d*)/i,
+    /TOTAL\s*AMOUNT\s*DUE\s*[:\-]?\s*(?:PHP|₱)?\s*([\d,]+\.?\d*)/i,
+    /PLEASE\s*PAY\s*[:\-]?\s*(?:PHP|₱)?\s*([\d,]+\.?\d*)/i,
+    /AMOUNTDUE\s*(?:PHP|₱)?\s*([\d,]+\.?\d*)/i,
+    /TOTALDUE\s*(?:PHP|₱)?\s*([\d,]+\.?\d*)/i,
+    // PHP/₱ followed by amount
+    /(?:PHP|₱)\s*([\d,]+\.\d{2})/i,
+    // Amount payable
+    /(?:AMOUNT|TOTAL)\s*PAYABLE\s*[:\-]?\s*(?:PHP|₱)?\s*([\d,]+\.?\d*)/i,
+    // Concatenated: AMOUNTDUE1234.56
+    /AMOUNTDUE([\d,]+\.?\d*)/i,
+    // Total followed by PHP amount (3+ digits + decimal)
+    /TOTAL\s*(?:PHP|₱)?\s*([\d,]{3,}\.?\d*)/i,
   ];
   for (const pattern of amountPatterns) {
-    const match = rawText.toUpperCase().match(pattern);
+    const match = upper.match(pattern);
     if (match) {
-      totalAmount = parseFloat(match[1].replace(/,/g, ''));
-      if (totalAmount > 50) break; // ignore suspiciously small amounts
+      const val = parseFloat(match[1].replace(/,/g, ''));
+      if (val > 50 && val < 999999) { totalAmount = val; break; }
     }
   }
 
-  // Billing date extraction
+  // ── Billing date extraction ─────────────────────────
   let billingDate = null;
+  const MONTHS = {
+    JAN:0,FEB:1,MAR:2,APR:3,MAY:4,JUN:5,
+    JUL:6,AUG:7,SEP:8,OCT:9,NOV:10,DEC:11
+  };
   const datePatterns = [
-    /(?:BILL(?:ING)?\s+DATE|DUE DATE|READING DATE)[:\s]*(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4})/i,
-    /(\d{1,2})\s+(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)[A-Z]*[\s,]+(\d{4})/i,
-    /(?:JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)[A-Z]*\s+(\d{1,2}),?\s+(\d{4})/i,
+    // BILLING DATE: 03/15/2025 or 03-15-2025
+    /(?:BILLING|BILL|DUE|READING)\s*DATE\s*[:\-]?\s*(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})/i,
+    // 15 MAR 2025 or MAR 15 2025
+    /(\d{1,2})\s*(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)[A-Z]*[\s,]+(\d{4})/i,
+    /(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)[A-Z]*[\s\.\-]+(\d{1,2})[\s\,]+(\d{4})/i,
+    // Concatenated: BILLINGDATE03152025
+    /BILLINGDATE(\d{2})(\d{2})(\d{4})/i,
+    // YYYY-MM-DD
+    /(\d{4})[\/\-](\d{2})[\/\-](\d{2})/,
   ];
   for (const pattern of datePatterns) {
-    const match = rawText.match(pattern);
+    const match = upper.match(pattern);
     if (match) {
       try {
-        const parsed = new Date(match[0].replace(/[A-Z]+:/i, '').trim());
-        if (!isNaN(parsed)) {
-          billingDate = parsed.toISOString().split('T')[0];
+        let year, month, day;
+        const m = match;
+        // Check if match[2] is a month name
+        if (m[2] && isNaN(m[2]) && MONTHS[m[2].substring(0,3)] !== undefined) {
+          day = parseInt(m[1]);
+          month = MONTHS[m[2].substring(0,3)];
+          year = parseInt(m[3]);
+        } else if (m[1] && isNaN(m[1]) && MONTHS[m[1].substring(0,3)] !== undefined) {
+          month = MONTHS[m[1].substring(0,3)];
+          day = parseInt(m[2]);
+          year = parseInt(m[3]);
+        } else {
+          // Numeric: assume MM/DD/YYYY or YYYY/MM/DD
+          const a = parseInt(m[1]), b = parseInt(m[2]), c = parseInt(m[3]);
+          if (a > 31) { year=a; month=b-1; day=c; }
+          else { month=a-1; day=b; year=c < 100 ? 2000+c : c; }
+        }
+        if (year >= 2020 && year <= 2030 && month >= 0 && day >= 1) {
+          const d = new Date(year, month, day);
+          billingDate = d.toISOString().split('T')[0];
           break;
         }
       } catch {}
     }
   }
 
-  // Confidence score — how many fields were extracted
-  const extractedFields = [kwhUsed, m3Used, totalAmount, billingDate, providerName]
-    .filter(Boolean).length;
-  const confidence = Math.round((extractedFields / 5) * 100);
+  // ── Confidence score ────────────────────────────────
+  const fields = [kwhUsed ?? m3Used, totalAmount, billingDate, providerName];
+  const extracted = fields.filter(Boolean).length;
+  const confidence = Math.round((extracted / 4) * 100);
 
-  return { kwhUsed, m3Used, totalAmount, billingDate, providerName, type, confidence };
+  if (confidence < 40) {
+    console.log('[Scan API] Low confidence. Text sample for debug:', 
+      upper.substring(0, 300));
+  }
+
+  return { 
+    kwhUsed, m3Used, totalAmount, billingDate, 
+    providerName, type, confidence 
+  };
 }
 
 // ── Raw PDF buffer extraction ─────────────────────────
@@ -157,6 +224,7 @@ function extractTextFromPDFBuffer(buffer) {
 
 async function extractFromPDF(buffer) {
   const text = extractTextFromPDFBuffer(buffer);
+  console.log('[Scan API] Text sample:', text.substring(0, 500));
   return extractBillData(text);
 }
 
