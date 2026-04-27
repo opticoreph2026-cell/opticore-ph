@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
 import { getCurrentUser } from '@/lib/auth';
-import { GoogleGenAI } from '@google/genai';
+import Groq from 'groq-sdk';
 
-const ai = new GoogleGenAI({ 
-  apiKey: process.env.GEMINI_API_KEY 
+const groqClient = new Groq({
+  apiKey: process.env.GROQ_API_KEY,
 });
 
 // ─── PDF TEXT EXTRACTION (pdf-parse) ────────────────────
@@ -42,62 +42,71 @@ async function extractTextFromPDF(buffer) {
   }
 }
 
-// ─── GEMINI VISION OCR ──────────────────────────────────
-async function extractTextWithGemini(mimeType, base64string) {
+// ─── GROQ VISION OCR ────────────────────────────────────
+async function extractTextWithGroq(mimeType, base64string) {
   try {
-    const result = await ai.models.generateContent({
-      model: 'gemini-2.0-flash',
-      contents: [
+    const response = await groqClient.chat.completions.create({
+      model: 'meta-llama/llama-4-scout-17b-16e-instruct',
+      messages: [
         {
-          parts: [
+          role: 'user',
+          content: [
             {
-              inlineData: {
-                mimeType: mimeType,
-                data: base64string,
-              }
+              type: 'image_url',
+              image_url: {
+                url: `data:${mimeType};base64,${base64string}`,
+              },
             },
             {
-              text: `Read this Philippine utility bill carefully.
-Extract ONLY these specific values and return ONLY 
-a JSON object. No markdown, no explanation, just JSON.
+              type: 'text',
+              text: `You are a utility bill parser for the Philippines. Look at this utility bill image carefully.
+
+This may be a MERALCO, VECO, CEBECO, or DLPC bill.
+
+Extract these exact values and return ONLY a JSON object.
+No markdown. No code blocks. No explanation. Just JSON.
 
 {
-  "kwhUsed": <the total kWh consumed this period, number or null>,
-  "totalAmount": <total amount due in pesos, number or null>,
-  "billingDate": <billing period end date YYYY-MM-DD or null>,
-  "providerName": <utility company name string or null>,
+  "kwhUsed": <total kWh consumed this period, number or null>,
+  "totalAmount": <total amount due in Philippine Pesos, number or null>,
+  "billingDate": <billing end date in YYYY-MM-DD format or null>,
+  "providerName": <utility company name or null>,
   "type": <"electricity" or "water">
 }
 
-For MERALCO bills specifically:
-- kwhUsed is labeled "kWh" near the consumption summary
-- totalAmount is labeled "Amount Due" or "Total Amount Due"
-- providerName is "MERALCO"
+Lookup guide:
+- kwhUsed: find "kWh" label near a number (e.g. 183 kWh)
+- totalAmount: find "Amount Due" or "Total Amount Due" (e.g. 1,782.50 → return as 1782.50)
+- billingDate: find "Due Date" or billing period end date
+- providerName: company name at top (MERALCO, VECO, etc.)
+- type: electricity if kWh shown, water if cubic meters shown
 
-Return ONLY the JSON object.`
-            }
-          ]
-        }
-      ]
+Return ONLY the JSON. Nothing else.`,
+            },
+          ],
+        },
+      ],
+      max_tokens: 300,
+      temperature: 0.1,
     });
 
-    const rawText = result.candidates?.[0]?.content?.parts?.[0]?.text || '';
-    console.log('[Scan API] Gemini OCR response:', rawText.substring(0, 300));
+    const rawText = response.choices[0]?.message?.content || '';
+    console.log('[Scan API] Groq vision response:', rawText.substring(0, 300));
     return rawText;
-  } catch (geminiError) {
-    console.error('[Scan API] Gemini OCR failed:', geminiError.message);
-    throw new Error('Visual scan failed: ' + geminiError.message);
+
+  } catch (groqError) {
+    console.error('[Scan API] Groq vision failed:', groqError.message);
+    throw new Error('Groq scan failed: ' + groqError.message);
   }
 }
 
 // ─── JSON EXTRACTION HELPER ─────────────────────────────
 function extractBillJSON(text) {
   try {
-    // Attempt to clean markdown backticks if present
     const cleaned = text.replace(/```json/gi, '').replace(/```/g, '').trim();
     return JSON.parse(cleaned);
   } catch (err) {
-    throw new Error('Failed to parse Gemini JSON');
+    throw new Error('Failed to parse Groq JSON');
   }
 }
 
@@ -212,33 +221,33 @@ export async function POST(req) {
         console.warn('[Scan API] pdf-parse failed:', pdfError.message);
       }
 
-      // PATH 1B: Fallback to Gemini vision
+      // PATH 1B: Fallback to Groq vision
       if (!billData || billData.confidence < 40) {
-        console.log('[Scan API] Low confidence or failure from pdf-parse, switching to Gemini vision OCR');
+        console.log('[Scan API] Switching to Groq vision for PDF');
         try {
-          const geminiResponse = await extractTextWithGemini(mimeType, base64string);
+          const groqResponse = await extractTextWithGroq(mimeType, base64string);
           try {
-            const directJSON = extractBillJSON(geminiResponse);
-            billData = { ...directJSON, confidence: directJSON.totalAmount ? 95 : 40 };
-            console.log('[Scan API] Gemini vision parsed directly:', billData);
+            const directJSON = extractBillJSON(groqResponse);
+            billData = { ...directJSON, confidence: directJSON.totalAmount ? 95 : 45 };
+            console.log('[Scan API] Groq vision parsed directly:', billData);
           } catch {
-            billData = parseBillText(geminiResponse);
-            console.log('[Scan API] Gemini text parsed via regex:', billData);
+            billData = parseBillText(groqResponse);
+            console.log('[Scan API] Groq text parsed via regex:', billData);
           }
-        } catch (geminiError) {
-          console.error('[Scan API] Gemini vision also failed:', geminiError.message);
+        } catch (groqError) {
+          console.error('[Scan API] Groq vision failed:', groqError.message);
         }
       }
     } else {
-      // PATH 2: Image → always use Gemini vision
-      console.log('[Scan API] Image file, using Gemini vision OCR');
+      // PATH 2: Image → always use Groq vision
+      console.log('[Scan API] Image file, using Groq vision OCR');
       try {
-        const geminiResponse = await extractTextWithGemini(mimeType, base64string);
+        const groqResponse = await extractTextWithGroq(mimeType, base64string);
         try {
-          const directJSON = extractBillJSON(geminiResponse);
-          billData = { ...directJSON, confidence: directJSON.totalAmount ? 95 : 40 };
+          const directJSON = extractBillJSON(groqResponse);
+          billData = { ...directJSON, confidence: directJSON.totalAmount ? 95 : 45 };
         } catch {
-          billData = parseBillText(geminiResponse);
+          billData = parseBillText(groqResponse);
         }
       } catch (imageError) {
         return NextResponse.json({ error: 'SCAN_FAILED', message: 'Could not read image.' }, { status: 422 });
@@ -253,9 +262,24 @@ export async function POST(req) {
       }, { status: 422 });
     }
 
+    // ENFORCE ELECTRICITY-ONLY SCANNING
+    if (billData.type === 'water') {
+      return NextResponse.json({
+        error: 'WATER_BILL_NOT_SUPPORTED',
+        message: 'Water bills cannot be scanned. Please enter your water consumption manually in the Water Usage section.',
+      }, { status: 400 });
+    }
+
     return NextResponse.json({
       success: true,
-      ...billData
+      data: {
+        kwhUsed: billData.kwhUsed ?? null,
+        totalAmount: billData.totalAmount ?? null,
+        billingDate: billData.billingDate ?? null,
+        providerName: billData.providerName ?? null,
+        type: 'electricity',
+        confidence: billData.confidence ?? 0,
+      }
     });
 
   } catch (error) {

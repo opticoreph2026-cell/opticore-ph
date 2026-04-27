@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 export default function SubmitReadingModal({ isOpen, onClose, user, appliances = [] }) {
   const [loading, setLoading]       = useState(false);
   const [step, setStep]             = useState('choose'); // 'choose' | 'manual' | 'processing'
+  const [isScan, setIsScan]         = useState(false);
   const [statusText, setStatusText] = useState('');
   const [error, setError]           = useState('');
 
@@ -131,21 +132,21 @@ export default function SubmitReadingModal({ isOpen, onClose, user, appliances =
       }
 
       if (data.warning) {
-        // We'll show this via status text since we don't have a toast lib easily accessible here 
-        // without knowing the project structure, but we can update the UI.
         setError(data.warning);
       }
 
+      const scanResult = data.data || {};
+
       setFormData({
         ...formData,
-        kwhUsed:            data.kwhUsed || '',
-        m3Used:             data.m3Used || '',
-        billAmountElectric: data.totalAmount || '',
-        readingDate:        data.billingDate || formData.readingDate,
-        providerDetected:   data.providerName || '',
+        kwhUsed:            scanResult.kwhUsed ? scanResult.kwhUsed.toString() : '',
+        billAmountElectric: scanResult.totalAmount ? scanResult.totalAmount.toString() : '',
+        readingDate:        scanResult.billingDate || formData.readingDate,
+        providerDetected:   scanResult.providerName || '',
       });
 
-      setStatusText(`Scan Complete: ${data.providerName || 'Detected'}`);
+      setIsScan(true);
+      setStatusText(`Scan Complete: ${scanResult.providerName || 'Detected'}`);
       setTimeout(() => setStep('manual'), 1200);
 
     } catch (err) {
@@ -156,6 +157,7 @@ export default function SubmitReadingModal({ isOpen, onClose, user, appliances =
 
   function handleBack() {
     setStep('choose');
+    setIsScan(false);
     setError('');
   }
 
@@ -243,7 +245,11 @@ export default function SubmitReadingModal({ isOpen, onClose, user, appliances =
                     </div>
                     <div>
                       <h3 className="text-lg font-black text-white group-hover:text-cyan-400 transition-colors">Neural Bill Scan</h3>
-                      <p className="text-xs text-slate-500 mt-1 leading-relaxed">Extract metrics using Gemini Vision AI</p>
+                      <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                        📷 Electricity bills only (MERALCO, VECO, CEBECO)
+                        <br />
+                        Water & LPG are entered manually.
+                      </p>
                     </div>
                   </div>
                 </button>
