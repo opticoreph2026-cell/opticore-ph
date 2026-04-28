@@ -217,12 +217,27 @@ export async function POST(req) {
         console.warn('[Scan API] pdf-parse failed:', pdfError.message);
       }
 
-      // NO FALLBACK TO VISION FOR PDF (Groq vision only supports images)
+      // PATH 1B: Fallback to Gemini Multimodal for complex PDFs
       if (!billData || billData.confidence < 40) {
-        return NextResponse.json({
-          error: 'PDF_GARBLED',
-          message: 'This PDF has a complex layout (e.g. MERALCO). Please take a photo of the bill instead for AI scanning.',
-        }, { status: 422 });
+        console.log('[Scan API] pdf-parse failed or low confidence, falling back to Gemini Vision for PDF');
+        try {
+          const geminiResponse = await extractTextWithGemini(mimeType, base64string);
+          try {
+            const directJSON = extractBillJSON(geminiResponse);
+            if (directJSON.error === 'INVALID_IMAGE') {
+              return NextResponse.json({ error: 'INVALID_IMAGE', message: directJSON.reason }, { status: 422 });
+            }
+            billData = { ...directJSON, confidence: directJSON.totalAmount ? 95 : 45 };
+          } catch {
+            billData = parseBillText(geminiResponse);
+          }
+        } catch (pdfVisionError) {
+          console.warn('[Scan API] Gemini PDF vision failed:', pdfVisionError.message);
+          return NextResponse.json({
+            error: 'PDF_GARBLED',
+            message: 'This PDF has a highly complex layout. Please enter values manually or upload a clear image instead.',
+          }, { status: 422 });
+        }
       }
     } else {
       // PATH 2: Image → always use Gemini vision
