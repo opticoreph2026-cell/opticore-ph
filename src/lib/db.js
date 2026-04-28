@@ -115,6 +115,13 @@ export async function listAllTransactions(options = {}) {
   });
 }
 
+export async function getTransactionByReferenceId(referenceId) {
+  if (!referenceId) return null;
+  return db.transaction.findFirst({
+    where: { referenceId }
+  });
+}
+
 export async function logTransaction(data) {
   return db.transaction.create({
     data: {

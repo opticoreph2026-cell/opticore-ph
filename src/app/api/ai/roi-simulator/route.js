@@ -223,7 +223,7 @@ export async function POST(request) {
     let recommendation = "Calculating recommendation...";
     try {
       const result = await ai.models.generateContent({
-        model: 'gemini-2.0-flash',
+        model: 'gemini-1.5-flash',
         contents: [{ role: 'user', parts: [{ text: prompt }] }],
       });
       recommendation = result.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || recommendation;

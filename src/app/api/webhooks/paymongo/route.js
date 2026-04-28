@@ -4,7 +4,7 @@
  */
 import { NextResponse }           from 'next/server';
 import { verifyWebhookSignature } from '@/lib/paymongo';
-import { setClientPlanTier, createAdminNotification, getClientById } from '@/lib/db';
+import { setClientPlanTier, createAdminNotification, getClientById, getTransactionByReferenceId } from '@/lib/db';
 
 export async function POST(request) {
   const signature = request.headers.get('paymongo-signature');
@@ -46,6 +46,12 @@ export async function POST(request) {
     }
 
     try {
+      // Idempotency check: Ensure we don't process the same webhook event multiple times
+      const existingTx = await getTransactionByReferenceId(event.data.id);
+      if (existingTx) {
+        return NextResponse.json({ received: true, note: 'Already processed' }, { status: 200 });
+      }
+
       await setClientPlanTier(clientId, plan, event.data.id);
 
       // Fetch client details for the notification
