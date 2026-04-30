@@ -34,7 +34,7 @@ async function extractTextFromPDF(buffer) {
       }
     });
     
-    console.log('[Scan API] pdf-parse extracted, chars:', data.text.length);
+    
     return data.text;
   } catch (parseError) {
     console.error('[Scan API] pdf-parse failed:', parseError.message);
@@ -87,7 +87,6 @@ Return {"error": "INVALID_IMAGE", "reason": "Not a valid Philippine utility bill
     });
 
     const rawText = result.candidates?.[0]?.content?.parts?.[0]?.text || '';
-    console.log('[Scan API] Gemini vision response:', rawText.substring(0, 300));
     return rawText;
 
   } catch (err) {
@@ -208,7 +207,6 @@ export async function POST(req) {
         const pdfText = await extractTextFromPDF(buffer);
         if (pdfText && pdfText.trim().length > 50) {
           const parsed = parseBillText(pdfText);
-          console.log('[Scan API] pdf-parse confidence:', parsed.confidence);
           if (parsed.confidence >= 40) {
             billData = parsed;
           }
@@ -219,7 +217,6 @@ export async function POST(req) {
 
       // PATH 1B: Fallback to Gemini Multimodal for complex PDFs
       if (!billData || billData.confidence < 40) {
-        console.log('[Scan API] pdf-parse failed or low confidence, falling back to Gemini Vision for PDF');
         try {
           const geminiResponse = await extractTextWithGemini(mimeType, base64string);
           try {
@@ -241,7 +238,6 @@ export async function POST(req) {
       }
     } else {
       // PATH 2: Image → always use Gemini vision
-      console.log('[Scan API] Image file, using Gemini vision OCR');
       try {
         const geminiResponse = await extractTextWithGemini(mimeType, base64string);
         try {
