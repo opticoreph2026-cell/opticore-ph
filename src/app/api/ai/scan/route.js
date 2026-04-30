@@ -267,7 +267,7 @@ export async function POST(req) {
       return NextResponse.json({
         error: 'WATER_BILL_NOT_SUPPORTED',
         message: 'Water bills cannot be scanned. Please enter your water consumption manually in the Water Usage section.',
-      }, { status: 400 });
+      }, { status: 422 });
     }
 
     return NextResponse.json({

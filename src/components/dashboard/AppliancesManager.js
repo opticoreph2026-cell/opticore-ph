@@ -3,14 +3,20 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Plus, X, ServerCrash, Save, Calculator, AlertTriangle, Trash2, Search, Filter, Cpu, Zap, Wallet } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import useSWR from 'swr';
 import ApplianceCard from './ApplianceCard';
 import ApplianceSearch from './ApplianceSearch';
 import Spinner from '@/components/ui/Spinner';
 import SpotlightCard from '@/components/ui/SpotlightCard';
 
+const fetcher = (url) => fetch(url).then(res => res.json());
+
 export default function AppliancesManager({ effectiveRate = 11.5 }) {
-  const [appliances, setAppliances] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { data: swrData, error: swrError, mutate } = useSWR('/api/dashboard/appliances', fetcher);
+  
+  const appliances = swrData?.appliances || [];
+  const loading = !swrData && !swrError;
+
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(null);
   // Fix: replace native confirm() with React state-based confirmation
@@ -27,21 +33,7 @@ export default function AppliancesManager({ effectiveRate = 11.5 }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
 
-  useEffect(() => {
-    fetchAppliances();
-  }, []);
-
-  const fetchAppliances = async () => {
-    try {
-      const res = await fetch('/api/dashboard/appliances');
-      const data = await res.json();
-      setAppliances(data.appliances || []);
-    } catch {
-      setError('Failed to load appliances.');
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Removed manual fetchAppliances and useEffect
 
   const filteredAppliances = useMemo(() => {
     return appliances.filter(a => {
@@ -116,7 +108,7 @@ export default function AppliancesManager({ effectiveRate = 11.5 }) {
     try {
       const res = await fetch(`/api/dashboard/appliances?id=${id}`, { method: 'DELETE' });
       if (res.ok) {
-        setAppliances(prev => prev.filter(a => a.id !== id));
+        mutate({ ...swrData, appliances: appliances.filter(a => a.id !== id) }, false);
       }
     } catch {
       // silently fail — toast will be added in Sprint 1
@@ -148,9 +140,9 @@ export default function AppliancesManager({ effectiveRate = 11.5 }) {
         setError(data.error || 'Failed to save appliance.');
       } else {
         if (isEditing) {
-          setAppliances(prev => prev.map(a => a.id === isEditing ? data.appliance : a));
+          mutate({ ...swrData, appliances: appliances.map(a => a.id === isEditing ? data.appliance : a) }, false);
         } else {
-          setAppliances([data.appliance, ...appliances]);
+          mutate({ ...swrData, appliances: [data.appliance, ...appliances] }, false);
         }
         resetForm();
       }

@@ -21,6 +21,7 @@ import SubmitReadingModal from '@/components/dashboard/SubmitReadingModal';
 import GridStatusBanner from '@/components/dashboard/GridStatusBanner';
 import Toast from '@/components/ui/Toast';
 import SpotlightCard from '@/components/ui/SpotlightCard';
+import { Skeleton } from '@/components/ui/Skeleton';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -597,7 +598,7 @@ export default function DashboardOverview({ user, readings = [], alerts = [], ap
   );
 }
 
-function KpiCard({ label, value, delta, isPositive, icon: Icon, color, sparklineData, dataKey }) {
+function KpiCard({ label, value, delta, isPositive, icon: Icon, color, sparklineData, dataKey, isLoading }) {
   const colorMap = {
     cyan:    'text-cyan-400 bg-cyan-500/10 border-cyan-500/20',
     blue:    'text-blue-400 bg-blue-500/10 border-blue-500/20',
@@ -633,10 +634,14 @@ function KpiCard({ label, value, delta, isPositive, icon: Icon, color, sparkline
         </div>
         <div className={clsx(
           "flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-[0.2em] border transition-all duration-700",
-          isPositive ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" : "bg-rose-500/10 text-rose-400 border-rose-500/20"
+          isLoading ? "bg-white/5 border-white/10" : (isPositive ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" : "bg-rose-500/10 text-rose-400 border-rose-500/20")
         )}>
-          {isPositive ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
-          {delta}
+          {isLoading ? <Skeleton className="h-3 w-16" /> : (
+            <>
+              {isPositive ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
+              {delta}
+            </>
+          )}
         </div>
       </div>
       
@@ -644,7 +649,7 @@ function KpiCard({ label, value, delta, isPositive, icon: Icon, color, sparkline
         <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">{label}</p>
         <div className="flex items-end justify-between gap-4">
           <p className="text-4xl font-black text-white tracking-tighter leading-none group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-white/50 transition-all duration-700">
-            {value}
+            {isLoading ? <Skeleton className="h-9 w-24" /> : value}
           </p>
           
           {sparklineData && (
