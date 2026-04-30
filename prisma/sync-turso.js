@@ -47,6 +47,28 @@ async function sync() {
       }
     }
 
+    // 3. Add Missing Indexes
+    console.log('Checking missing indexes...');
+    const indexes = [
+      'CREATE INDEX IF NOT EXISTS "UtilityReading_clientId_idx" ON "UtilityReading"("clientId");',
+      'CREATE INDEX IF NOT EXISTS "UtilityReading_propertyId_idx" ON "UtilityReading"("propertyId");',
+      'CREATE INDEX IF NOT EXISTS "AIReport_clientId_idx" ON "AIReport"("clientId");',
+      'CREATE INDEX IF NOT EXISTS "AIReport_propertyId_idx" ON "AIReport"("propertyId");',
+      'CREATE INDEX IF NOT EXISTS "Alert_clientId_idx" ON "Alert"("clientId");',
+      'CREATE INDEX IF NOT EXISTS "Alert_isRead_idx" ON "Alert"("isRead");',
+      'CREATE INDEX IF NOT EXISTS "Appliance_clientId_idx" ON "Appliance"("clientId");',
+      'CREATE INDEX IF NOT EXISTS "Appliance_propertyId_idx" ON "Appliance"("propertyId");',
+      'CREATE INDEX IF NOT EXISTS "ApplianceCatalog_category_brand_idx" ON "ApplianceCatalog"("category", "brand");',
+      'CREATE INDEX IF NOT EXISTS "LPGReading_clientId_idx" ON "LPGReading"("clientId");',
+      'CREATE INDEX IF NOT EXISTS "LPGReading_propertyId_idx" ON "LPGReading"("propertyId");',
+      'CREATE INDEX IF NOT EXISTS "Transaction_clientId_idx" ON "Transaction"("clientId");'
+    ];
+
+    for (const sql of indexes) {
+      await client.execute(sql);
+    }
+    console.log('✅ Missing indexes added.');
+
     console.log('🚀 Turso schema sync complete!');
   } catch (err) {
     console.error('❌ Sync failed:', err.message);
