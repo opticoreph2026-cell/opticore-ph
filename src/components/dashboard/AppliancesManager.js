@@ -367,17 +367,35 @@ export default function AppliancesManager({ effectiveRate = 11.5 }) {
       )}
 
       {filteredAppliances.length > 0 ? (
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <motion.div 
+          className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"
+          variants={{
+            hidden: { opacity: 0 },
+            visible: {
+              opacity: 1,
+              transition: { staggerChildren: 0.05 }
+            }
+          }}
+          initial="hidden"
+          animate="visible"
+        >
           {filteredAppliances.map(a => (
-            <ApplianceCard
+            <motion.div 
               key={a.id}
-              appliance={a}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
-              rate={effectiveRate}
-            />
+              variants={{
+                hidden: { opacity: 0, y: 20 },
+                visible: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 300, damping: 24 } }
+              }}
+            >
+              <ApplianceCard
+                appliance={a}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+                rate={effectiveRate}
+              />
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       ) : (
         !isFormOpen && (
           <div className="bento-card py-24 text-center group cursor-pointer hover:bg-white/[0.01]" onClick={() => setIsFormOpen(true)}>

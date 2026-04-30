@@ -598,6 +598,62 @@ export default function DashboardOverview({ user, readings = [], alerts = [], ap
   );
 }
 
+function AnimatedValue({ value }) {
+  // Try to parse the numeric part and string parts
+  const match = typeof value === 'string' ? value.match(/^([^\d-]*)([-]?\d+(?:,\d+)*(?:\.\d+)?)(.*)$/) : null;
+  
+  const [displayValue, setDisplayValue] = useState(value);
+
+  useEffect(() => {
+    if (!match) {
+      setDisplayValue(value);
+      return;
+    }
+    const prefix = match[1];
+    const numStr = match[2].replace(/,/g, '');
+    const suffix = match[3];
+    const num = parseFloat(numStr);
+    
+    if (isNaN(num)) {
+      setDisplayValue(value);
+      return;
+    }
+
+    const startValue = 0;
+    const duration = 1.5;
+    
+    // Quick custom animation using requestAnimationFrame
+    let startTimestamp = null;
+    const step = (timestamp) => {
+      if (!startTimestamp) startTimestamp = timestamp;
+      const progress = Math.min((timestamp - startTimestamp) / (duration * 1000), 1);
+      
+      // easeOutExpo
+      const easeProgress = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+      const currentNum = startValue + easeProgress * (num - startValue);
+      
+      // format appropriately
+      let formattedNum = currentNum.toFixed(numStr.includes('.') ? numStr.split('.')[1].length : 0);
+      if (match[2].includes(',')) {
+        formattedNum = parseFloat(formattedNum).toLocaleString(undefined, {
+          minimumFractionDigits: numStr.includes('.') ? numStr.split('.')[1].length : 0,
+          maximumFractionDigits: numStr.includes('.') ? numStr.split('.')[1].length : 0
+        });
+      }
+      
+      setDisplayValue(`${prefix}${formattedNum}${suffix}`);
+      if (progress < 1) {
+        window.requestAnimationFrame(step);
+      } else {
+        setDisplayValue(value); // Ensure exact final value
+      }
+    };
+    window.requestAnimationFrame(step);
+  }, [value, match]);
+
+  return <span>{displayValue}</span>;
+}
+
 function KpiCard({ label, value, delta, isPositive, icon: Icon, color, sparklineData, dataKey, isLoading }) {
   const colorMap = {
     cyan:    'text-cyan-400 bg-cyan-500/10 border-cyan-500/20',
@@ -649,7 +705,7 @@ function KpiCard({ label, value, delta, isPositive, icon: Icon, color, sparkline
         <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">{label}</p>
         <div className="flex items-end justify-between gap-4">
           <p className="text-4xl font-black text-white tracking-tighter leading-none group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-white/50 transition-all duration-700">
-            {isLoading ? <Skeleton className="h-9 w-24" /> : value}
+            {isLoading ? <Skeleton className="h-9 w-24" /> : <AnimatedValue value={value} />}
           </p>
           
           {sparklineData && (
