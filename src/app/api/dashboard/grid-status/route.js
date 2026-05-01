@@ -21,9 +21,8 @@ export async function GET() {
     penalty = 100;
   }
   
-  // For demonstration/investor pitch purposes, if it's NOT peak hours, we will force a YELLOW alert 
-  // with 50% probability so they can see it working regardless of the time of day they test it.
-  if (status === 'NORMAL') {
+  // For demonstration/investor pitch purposes, only force alert if specifically enabled
+  if (status === 'NORMAL' && process.env.FEATURE_DEMO_MODE === 'true') {
      const forceDemoAlert = Math.random() > 0.5;
      if (forceDemoAlert) {
         status = 'YELLOW';

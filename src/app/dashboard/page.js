@@ -27,7 +27,7 @@ export default async function DashboardPage({ searchParams }) {
     const [readings, alerts, appliances, clientRecord, latestReport] = await Promise.all([
       db.utilityReading.findMany({
         where: { clientId: jwtUser.sub, propertyId: activeProperty.id },
-        orderBy: { readingDate: 'desc' },
+        orderBy: [{ readingDate: 'desc' }, { id: 'desc' }],
         take: 12,
         select: {
           id: true, readingDate: true,

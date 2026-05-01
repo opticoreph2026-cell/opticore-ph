@@ -1,9 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 
 export default function AnimatedKPI({ value }) {
-  const match = typeof value === 'string' ? value.match(/^([^\d-]*)([-]?\d+(?:,\d+)*(?:\.\d+)?)(.*)$/) : null;
+  const match = useMemo(() => {
+    if (typeof value !== 'string') return null;
+    return value.match(/^([^\d-]*)([-]?\d+(?:,\d+)*(?:\.\d+)?)(.*)$/);
+  }, [value]);
   
   const [displayValue, setDisplayValue] = useState(value);
 
