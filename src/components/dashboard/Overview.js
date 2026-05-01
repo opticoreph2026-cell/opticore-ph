@@ -18,10 +18,14 @@ import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { clsx } from 'clsx';
 import SubmitReadingModal from '@/components/dashboard/SubmitReadingModal';
-import GridStatusBanner from '@/components/dashboard/GridStatusBanner';
 import Toast from '@/components/ui/Toast';
 import SpotlightCard from '@/components/ui/SpotlightCard';
 import { Skeleton } from '@/components/ui/Skeleton';
+import ErrorBoundary from '@/components/providers/ErrorBoundary';
+import WhatIfSimulator from '@/components/dashboard/WhatIfSimulator';
+import BillNarrativeCard from '@/components/dashboard/BillNarrativeCard';
+import HeroStrip from '@/components/dashboard/HeroStrip';
+import AnimatedKPI from '@/components/ui/AnimatedKPI';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -180,35 +184,15 @@ export default function DashboardOverview({ user, readings = [], alerts = [], ap
       className="p-4 lg:p-0 space-y-8 pb-20"
     >
       {/* ── Welcome Header ── */}
-      <motion.div variants={itemVariants} className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 pb-4">
-        <div className="relative">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-[10px] font-black text-cyan-400 uppercase tracking-[0.3em] animate-pulse">
-              Live Neural Feedback
-            </div>
-            <span className="text-[10px] text-slate-500 font-black uppercase tracking-widest">{format(new Date(), 'MMMM d, yyyy')}</span>
-          </div>
-          <h1 className="text-5xl lg:text-6xl font-black text-white tracking-tighter leading-none">
-            Welcome Back, <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400">{user?.name?.split(' ')[0] || 'User'}</span>
-          </h1>
-          <p className="text-slate-500 font-bold mt-4 text-lg">
-            Analyzing telemetry for <span className="text-white">{appliances.length} appliances</span> at <span className="text-white underline decoration-cyan-500/30 underline-offset-4">{user.activeProperty?.name || 'Main Home'}</span>.
-          </p>
-        </div>
-        <div className="flex items-center gap-4">
-          <button 
-            onClick={() => setIsModalOpen(true)}
-            className="flex items-center gap-3 px-10 py-5 rounded-2xl bg-white text-surface-1000 font-black text-sm uppercase tracking-[0.2em] hover:scale-105 hover:shadow-[0_0_50px_rgba(255,255,255,0.2)] transition-all duration-500 group shadow-2xl"
-          >
-            <Plus className="w-5 h-5 group-hover:rotate-90 transition-transform" /> 
-            Add Bill Reading
-          </button>
-        </div>
+      <motion.div variants={itemVariants}>
+        <HeroStrip 
+          user={user} 
+          appliancesCount={appliances.length} 
+          onAddReading={() => setIsModalOpen(true)} 
+        />
       </motion.div>
 
-      <motion.div variants={itemVariants}>
-        <GridStatusBanner />
-      </motion.div>
+
 
       {/* ── KPI Grid ── */}
       <div className="space-y-10 lg:space-y-20">
@@ -417,52 +401,53 @@ export default function DashboardOverview({ user, readings = [], alerts = [], ap
           </SpotlightCard>
         </motion.div>
 
-        {/* LPG Depletion Gauge */}
-        <motion.div variants={itemVariants} className="lg:col-span-1">
-          <SpotlightCard className="p-8 h-full bg-surface-1000/20 backdrop-blur-md">
-            <div className="flex items-center justify-between mb-8">
-              <h3 className="text-lg font-black text-white tracking-tighter">LPG Depletion</h3>
-              <Activity className="w-4 h-4 text-orange-400" />
-            </div>
-            <div className="h-64 w-full relative">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={[
-                      { value: lpgStatus?.percentLeft || 0 },
-                      { value: 100 - (lpgStatus?.percentLeft || 0) }
-                    ]}
-                    cx="50%"
-                    cy="80%"
-                    startAngle={180}
-                    endAngle={0}
-                    innerRadius={70}
-                    outerRadius={90}
-                    paddingAngle={0}
-                    dataKey="value"
-                  >
-                    <Cell fill={lpgStatus?.percentLeft < 15 ? '#fb7185' : '#f59e0b'} />
-                    <Cell fill="rgba(255,255,255,0.05)" />
-                  </Pie>
-                </PieChart>
-              </ResponsiveContainer>
-              <div className="absolute inset-0 flex flex-col items-center justify-center pt-16 pointer-events-none">
-                <p className="text-4xl font-black text-white leading-none">{lpgStatus?.percentLeft?.toFixed(0) || 0}%</p>
-                <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mt-2">Inventory Left</p>
+        {lpgStatus && (
+          <motion.div variants={itemVariants} className="lg:col-span-1">
+            <SpotlightCard className="p-8 h-full bg-surface-1000/20 backdrop-blur-md">
+              <div className="flex items-center justify-between mb-8">
+                <h3 className="text-lg font-black text-white tracking-tighter">LPG Depletion</h3>
+                <Activity className="w-4 h-4 text-orange-400" />
               </div>
-            </div>
-            <div className="flex items-center justify-between p-4 rounded-2xl bg-white/[0.03] border border-white/5">
-              <div>
-                <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Est. Refill</p>
-                <p className="text-sm font-black text-white">{lpgStatus?.daysLeft || 0} Days</p>
+              <div className="h-64 w-full relative">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={[
+                        { value: lpgStatus.percentLeft || 0 },
+                        { value: 100 - (lpgStatus.percentLeft || 0) }
+                      ]}
+                      cx="50%"
+                      cy="80%"
+                      startAngle={180}
+                      endAngle={0}
+                      innerRadius={70}
+                      outerRadius={90}
+                      paddingAngle={0}
+                      dataKey="value"
+                    >
+                      <Cell fill={lpgStatus.percentLeft < 15 ? '#fb7185' : '#f59e0b'} />
+                      <Cell fill="rgba(255,255,255,0.05)" />
+                    </Pie>
+                  </PieChart>
+                </ResponsiveContainer>
+                <div className="absolute inset-0 flex flex-col items-center justify-center pt-16 pointer-events-none">
+                  <p className="text-4xl font-black text-white leading-none">{lpgStatus.percentLeft?.toFixed(0) || 0}%</p>
+                  <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mt-2">Inventory Left</p>
+                </div>
               </div>
-              <div className="text-right">
-                <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Burn Rate</p>
-                <p className="text-sm font-black text-white">{lpgStatus?.dailyBurnRate?.toFixed(2) || 0} kg/d</p>
+              <div className="flex items-center justify-between p-4 rounded-2xl bg-white/[0.03] border border-white/5">
+                <div>
+                  <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Est. Refill</p>
+                  <p className="text-sm font-black text-white">{lpgStatus.daysLeft || 0} Days</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Burn Rate</p>
+                  <p className="text-sm font-black text-white">{lpgStatus.dailyBurnRate?.toFixed(2) || 0} kg/d</p>
+                </div>
               </div>
-            </div>
-          </SpotlightCard>
-        </motion.div>
+            </SpotlightCard>
+          </motion.div>
+        )}
       </div>
 
       <motion.div variants={itemVariants}>
@@ -532,54 +517,45 @@ export default function DashboardOverview({ user, readings = [], alerts = [], ap
 
       {/* ── Intelligence Row ── */}
       <div className="grid grid-cols-12 gap-6">
-        <motion.div variants={itemVariants} className="col-span-12 lg:col-span-8">
-          <SpotlightCard className="p-8 h-full bg-surface-1000/20 backdrop-blur-md">
-            <div className="flex items-center justify-between mb-10">
-              <h3 className="text-xl font-black text-white tracking-tighter flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center">
-                  <Sparkles className="w-5 h-5 text-cyan-400" />
+        <motion.div variants={itemVariants} className="col-span-12 lg:col-span-7">
+          <ErrorBoundary>
+            {latestReport?.narrativeSummary ? (
+              <BillNarrativeCard report={latestReport} />
+            ) : (
+              <SpotlightCard className="p-8 h-full bg-surface-1000/20 backdrop-blur-md">
+                <div className="flex items-center justify-between mb-10">
+                  <h3 className="text-xl font-black text-white tracking-tighter flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center">
+                      <Sparkles className="w-5 h-5 text-cyan-400" />
+                    </div>
+                    AI Savings Coach
+                  </h3>
+                  <Link href="/dashboard/alerts" className="text-[10px] font-black text-cyan-400 uppercase tracking-widest hover:text-white transition-colors flex items-center gap-2 group">
+                    Review My Advice <ChevronRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+                  </Link>
                 </div>
-                AI Savings Coach
-              </h3>
-              <Link href="/dashboard/alerts" className="text-[10px] font-black text-cyan-400 uppercase tracking-widest hover:text-white transition-colors flex items-center gap-2 group">
-                Review My Advice <ChevronRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
-              </Link>
-            </div>
-            
-            <div className="flex flex-col items-center justify-center py-10 text-center relative">
-              <div className="absolute inset-0 bg-cyan-500/5 blur-[60px] rounded-full pointer-events-none" />
-              <p className="text-xl font-bold text-white max-w-md relative z-10 leading-snug">
-                "{intelligenceSummary}"
-              </p>
-              <div className="mt-6 flex items-center gap-3 bg-white/[0.03] border border-white/5 px-4 py-2 rounded-full relative z-10">
-                <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
-                <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">
-                  Gemini Pro Auditing System
-                </p>
-              </div>
-            </div>
-          </SpotlightCard>
+                
+                <div className="flex flex-col items-center justify-center py-10 text-center relative">
+                  <div className="absolute inset-0 bg-cyan-500/5 blur-[60px] rounded-full pointer-events-none" />
+                  <p className="text-xl font-bold text-white max-w-md relative z-10 leading-snug">
+                    "{intelligenceSummary}"
+                  </p>
+                  <div className="mt-6 flex items-center gap-3 bg-white/[0.03] border border-white/5 px-4 py-2 rounded-full relative z-10">
+                    <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+                    <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">
+                      Gemini Pro Auditing System
+                    </p>
+                  </div>
+                </div>
+              </SpotlightCard>
+            )}
+          </ErrorBoundary>
         </motion.div>
 
-        <motion.div variants={itemVariants} className="col-span-12 lg:col-span-4">
-          <div className="bento-card p-10 bg-gradient-to-br from-cyan-600/20 via-blue-600/10 to-transparent border-white/10 h-full relative overflow-hidden group">
-            <div className="absolute top-0 right-0 w-80 h-80 bg-cyan-500/10 blur-[120px] rounded-full -translate-y-1/2 translate-x-1/2 group-hover:bg-cyan-500/20 transition-all duration-1000" />
-            
-            <div className="relative z-10 flex flex-col h-full">
-              <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-8 shadow-2xl">
-                <Calendar className="w-6 h-6 text-cyan-400" />
-              </div>
-              <h3 className="text-3xl font-black text-white mb-4 leading-tight tracking-tighter">Your Financial Reports</h3>
-              <p className="text-slate-400 text-sm leading-relaxed mb-10 font-medium">
-                Deep-dive into your spending habits and find exactly where you can save more money this month.
-              </p>
-              <div className="mt-auto">
-                <Link href="/dashboard/reports" className="flex items-center justify-center gap-3 w-full py-4 rounded-2xl bg-white text-surface-1000 font-black text-sm uppercase tracking-widest hover:bg-cyan-400 transition-all">
-                  Open Analysis
-                </Link>
-              </div>
-            </div>
-          </div>
+        <motion.div variants={itemVariants} className="col-span-12 lg:col-span-5">
+          <ErrorBoundary>
+            <WhatIfSimulator appliances={appliances} effectiveRate={effectiveRate} />
+          </ErrorBoundary>
         </motion.div>
       </div>
 
@@ -596,62 +572,6 @@ export default function DashboardOverview({ user, readings = [], alerts = [], ap
       <Toast message={toastMsg} type={toastType} onClose={() => setToastMsg(null)} />
     </motion.div>
   );
-}
-
-function AnimatedValue({ value }) {
-  // Try to parse the numeric part and string parts
-  const match = typeof value === 'string' ? value.match(/^([^\d-]*)([-]?\d+(?:,\d+)*(?:\.\d+)?)(.*)$/) : null;
-  
-  const [displayValue, setDisplayValue] = useState(value);
-
-  useEffect(() => {
-    if (!match) {
-      setDisplayValue(value);
-      return;
-    }
-    const prefix = match[1];
-    const numStr = match[2].replace(/,/g, '');
-    const suffix = match[3];
-    const num = parseFloat(numStr);
-    
-    if (isNaN(num)) {
-      setDisplayValue(value);
-      return;
-    }
-
-    const startValue = 0;
-    const duration = 1.5;
-    
-    // Quick custom animation using requestAnimationFrame
-    let startTimestamp = null;
-    const step = (timestamp) => {
-      if (!startTimestamp) startTimestamp = timestamp;
-      const progress = Math.min((timestamp - startTimestamp) / (duration * 1000), 1);
-      
-      // easeOutExpo
-      const easeProgress = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
-      const currentNum = startValue + easeProgress * (num - startValue);
-      
-      // format appropriately
-      let formattedNum = currentNum.toFixed(numStr.includes('.') ? numStr.split('.')[1].length : 0);
-      if (match[2].includes(',')) {
-        formattedNum = parseFloat(formattedNum).toLocaleString(undefined, {
-          minimumFractionDigits: numStr.includes('.') ? numStr.split('.')[1].length : 0,
-          maximumFractionDigits: numStr.includes('.') ? numStr.split('.')[1].length : 0
-        });
-      }
-      
-      setDisplayValue(`${prefix}${formattedNum}${suffix}`);
-      if (progress < 1) {
-        window.requestAnimationFrame(step);
-      } else {
-        setDisplayValue(value); // Ensure exact final value
-      }
-    };
-    window.requestAnimationFrame(step);
-  }, [value, match]);
-
-  return <span>{displayValue}</span>;
 }
 
 function KpiCard({ label, value, delta, isPositive, icon: Icon, color, sparklineData, dataKey, isLoading }) {
@@ -705,7 +625,7 @@ function KpiCard({ label, value, delta, isPositive, icon: Icon, color, sparkline
         <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">{label}</p>
         <div className="flex items-end justify-between gap-4">
           <p className="text-4xl font-black text-white tracking-tighter leading-none group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-white/50 transition-all duration-700">
-            {isLoading ? <Skeleton className="h-9 w-24" /> : <AnimatedValue value={value} />}
+            {isLoading ? <Skeleton className="h-9 w-24" /> : <AnimatedKPI value={value} />}
           </p>
           
           {sparklineData && (

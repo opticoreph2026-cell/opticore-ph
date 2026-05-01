@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { usePathname } from 'next/navigation';
 import DashboardSidebar from '@/components/dashboard/Sidebar';
 import DashboardHeader from '@/components/dashboard/Header';
 import MeshGradient from '@/components/ui/MeshGradient';
@@ -12,6 +13,7 @@ import MeshGradient from '@/components/ui/MeshGradient';
  */
 export default function DashboardShell({ children, user }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const pathname = usePathname();
 
   return (
     <div className="flex min-h-screen bg-surface-1000 text-white overflow-x-hidden selection:bg-cyan-500/30">
@@ -33,7 +35,7 @@ export default function DashboardShell({ children, user }) {
         <main className="flex-1 w-full max-w-[1600px] mx-auto py-8">
           <AnimatePresence mode="wait">
             <motion.div
-              key="dashboard-content"
+              key={pathname}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}

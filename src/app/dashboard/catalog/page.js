@@ -10,6 +10,10 @@ export default async function CatalogPage() {
   const jwtUser = await getCurrentUser();
   if (!jwtUser) redirect('/login');
 
+  if (process.env.FEATURE_APPLIANCE_CATALOG !== 'true') {
+    redirect('/dashboard');
+  }
+
   let catalog = [];
   try {
     catalog = await db.applianceCatalog.findMany({

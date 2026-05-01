@@ -125,8 +125,13 @@ export default function SubmitReadingModal({ isOpen, onClose, user, appliances =
           setStep('choose');
           return;
         }
-        if (data.error === 'WATER_BILL_NOT_SUPPORTED') {
-          setError('Water bills cannot be scanned. Please enter water data manually below.');
+        if (res.status === 422 && data.action === 'OPEN_MANUAL_MODAL') {
+          setError(data.message || 'Switching to manual entry...');
+          setFormData({
+            ...formData,
+            readingDate: data.prefill?.period || formData.readingDate,
+            billAmountWater: data.prefill?.totalAmount ? data.prefill.totalAmount.toString() : ''
+          });
           setTimeout(() => {
             setStep('manual');
             setError('');

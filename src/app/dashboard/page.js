@@ -29,29 +29,45 @@ export default async function DashboardPage({ searchParams }) {
         where: { clientId: jwtUser.sub, propertyId: activeProperty.id },
         orderBy: { readingDate: 'desc' },
         take: 12,
+        select: {
+          id: true, readingDate: true,
+          kwhUsed: true, m3Used: true,
+          billAmountElectric: true, billAmountWater: true,
+          effectiveRate: true, generationCharge: true, distributionCharge: true
+        }
       }),
       db.alert.findMany({
         where: { clientId: jwtUser.sub, isRead: false },
         orderBy: { createdAt: 'desc' },
         take: 5,
+        select: { id: true, type: true, message: true, createdAt: true }
       }),
       db.appliance.findMany({
         where: { clientId: jwtUser.sub, propertyId: activeProperty.id },
         orderBy: { createdAt: 'desc' },
+        select: {
+          id: true, name: true, wattage: true, hoursPerDay: true, 
+          category: true, energyRating: true, quantity: true
+        }
       }),
-      db.client.findUnique({ where: { id: jwtUser.sub } }),
+      db.client.findUnique({ 
+        where: { id: jwtUser.sub },
+        select: { id: true, name: true, email: true, planTier: true, role: true }
+      }),
       db.aIReport.findFirst({
         where: { clientId: jwtUser.sub, propertyId: activeProperty.id },
         orderBy: { generatedAt: 'desc' },
+        select: { id: true, summary: true, narrativeSummary: true, potentialSavings: true }
       }),
     ]);
 
-    // Individual Algorithm try/catch
     let lpgStatus = null;
-    try {
-      lpgStatus = await predictLPGDepletion(jwtUser.sub, activeProperty.id);
-    } catch (e) {
-      console.error('[Dashboard Page] predictLPGDepletion non-fatal error:', e.message);
+    if (process.env.FEATURE_LPG_TRACKING === 'true') {
+      try {
+        lpgStatus = await predictLPGDepletion(jwtUser.sub, activeProperty.id);
+      } catch (e) {
+        console.error('[Dashboard Page] predictLPGDepletion non-fatal error:', e.message);
+      }
     }
 
     let waterAnalysis = null;

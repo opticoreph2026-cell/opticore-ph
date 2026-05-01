@@ -265,8 +265,14 @@ export async function POST(req) {
     // ENFORCE ELECTRICITY-ONLY SCANNING
     if (billData.type === 'water') {
       return NextResponse.json({
-        error: 'WATER_BILL_NOT_SUPPORTED',
-        message: 'Water bills cannot be scanned. Please enter your water consumption manually in the Water Usage section.',
+        code: 'MANUAL_ENTRY_REQUIRED',
+        type: 'water',
+        message: 'Water bills require manual entry for now.',
+        action: 'OPEN_MANUAL_MODAL',
+        prefill: {
+          period: billData.billingDate ?? null,
+          totalAmount: billData.totalAmount ?? null
+        }
       }, { status: 422 });
     }
 

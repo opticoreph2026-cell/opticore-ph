@@ -61,7 +61,9 @@ async function sync() {
       'CREATE INDEX IF NOT EXISTS "ApplianceCatalog_category_brand_idx" ON "ApplianceCatalog"("category", "brand");',
       'CREATE INDEX IF NOT EXISTS "LPGReading_clientId_idx" ON "LPGReading"("clientId");',
       'CREATE INDEX IF NOT EXISTS "LPGReading_propertyId_idx" ON "LPGReading"("propertyId");',
-      'CREATE INDEX IF NOT EXISTS "Transaction_clientId_idx" ON "Transaction"("clientId");'
+      'CREATE INDEX IF NOT EXISTS "Transaction_clientId_idx" ON "Transaction"("clientId");',
+      'CREATE INDEX IF NOT EXISTS "Property_clientId_idx" ON "Property"("clientId");',
+      'CREATE INDEX IF NOT EXISTS "DailyMeterReading_clientId_idx" ON "DailyMeterReading"("clientId");'
     ];
 
     for (const sql of indexes) {
