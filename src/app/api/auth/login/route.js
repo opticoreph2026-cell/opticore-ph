@@ -86,9 +86,47 @@ export async function POST(request) {
   try {
     await db.client.update({
       where: { id: client.id },
-      data: { lastLoginAt: new Date() },
+      data: { 
+        lastLoginAt: new Date(),
+        lastSignedInAt: new Date(),
+      },
     });
-  } catch (e) {}
+
+    // Log successful sign-in
+    await db.signInEvent.create({
+      data: {
+        clientId: client.id,
+        provider: 'PASSWORD',
+        ipAddress: ip,
+        userAgent: request.headers.get('user-agent'),
+        success: true,
+      }
+    });
+
+    // Ensure AuthProvider(PASSWORD) exists and update lastUsedAt
+    const existingProvider = await db.authProvider.findFirst({
+      where: { clientId: client.id, provider: 'PASSWORD' }
+    });
+
+    if (existingProvider) {
+      await db.authProvider.update({
+        where: { id: existingProvider.id },
+        data: { lastUsedAt: new Date() }
+      });
+    } else {
+      await db.authProvider.create({
+        data: {
+          clientId: client.id,
+          provider: 'PASSWORD',
+          providerId: client.id,
+          email: client.email,
+          emailVerified: !!client.emailVerified
+        }
+      });
+    }
+  } catch (e) {
+    console.error('[Login API] Auth metadata update failed:', e);
+  }
 
   const payload = {
     sub:                client.id,

@@ -1,40 +1,36 @@
 import { NextResponse } from 'next/server';
 
+/**
+ * GET /api/dashboard/grid-status
+ *
+ * Returns a deterministic grid status based on Philippine grid peak-hour heuristics.
+ * This is a best-effort local estimate — NOT a live NGCP/ERC feed.
+ * Peak hours: 1–4 PM daily, especially April–June (summer AC load).
+ */
 export async function GET() {
   const currentHour = new Date().getHours();
   
-  // Philippine Grid Peak Hours: Yellow/Red Alerts typically happen around 1-4PM during summer
   let status = 'NORMAL';
-  let message = 'Power Grid is Stable. Utility rates are normal. Safe to run heavy appliances.';
-  let penalty = 0;
+  let message = 'Power grid is stable. Safe to run heavy appliances.';
+  let surgePenaltyPercent = 0;
   
-  // Simulate Yellow Alert during 2PM-4PM (14-16)
-  if (currentHour >= 14 && currentHour <= 16) {
-    status = 'YELLOW';
-    message = '⚠️ Grid Alert: High Demand. Rates are currently higher. Turn off heavy cooling to save money today.';
-    penalty = 40; // 40% price surge
-  }
-  // Simulate Red Alert during 1PM (13)
-  else if (currentHour === 13) {
+  // Red Alert: Critical peak (1 PM — hottest load hour in PH summer)
+  if (currentHour === 13) {
     status = 'RED';
-    message = '🚨 Grid Alert: Critical Supply. Power interruptions may occur. Please unplug non-essential high-power devices.';
-    penalty = 100;
+    message = 'Grid Critical: Supply is very tight. Unplug non-essential high-power devices to avoid interruptions.';
+    surgePenaltyPercent = 100;
   }
-  
-  // For demonstration/investor pitch purposes, only force alert if specifically enabled
-  if (status === 'NORMAL' && process.env.FEATURE_DEMO_MODE === 'true') {
-     const forceDemoAlert = Math.random() > 0.5;
-     if (forceDemoAlert) {
-        status = 'YELLOW';
-        message = '⚠️ Grid Alert: High Demand. Rates are slightly higher right now. Reducing usage now helps lower your next bill.';
-        penalty = 35;
-     }
+  // Yellow Alert: High demand period (2–4 PM)
+  else if (currentHour >= 14 && currentHour <= 16) {
+    status = 'YELLOW';
+    message = 'Grid Alert: High demand period. Electricity rates may be elevated. Reduce heavy appliance use to lower your next bill.';
+    surgePenaltyPercent = 40;
   }
 
   return NextResponse.json({
     status,
     message,
-    surgePenaltyPercent: penalty,
-    timestamp: new Date().toISOString()
+    surgePenaltyPercent,
+    timestamp: new Date().toISOString(),
   });
 }

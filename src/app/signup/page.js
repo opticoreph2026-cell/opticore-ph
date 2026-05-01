@@ -7,6 +7,7 @@ import { Check, TriangleAlert, ArrowRight, Eye, EyeOff, Sparkles, Loader2 } from
 import Spinner from '@/components/ui/Spinner';
 import Logo from '@/components/ui/Logo';
 import Captcha from '@/components/ui/Captcha';
+import { GoogleButton } from '@/components/auth/GoogleButton';
 
 
 
@@ -167,6 +168,18 @@ function SignupForm() {
             <div className="p-7 space-y-5">
 
 
+
+              {/* ── Google Sign-In ── */}
+              <div className="mb-5">
+                <GoogleButton redirect="/onboarding" />
+              </div>
+
+              {/* Divider */}
+              <div className="flex items-center gap-3 mb-5">
+                <div className="flex-1 h-px bg-white/8" />
+                <span className="text-[10px] font-black uppercase tracking-widest text-text-faint">or use email</span>
+                <div className="flex-1 h-px bg-white/8" />
+              </div>
 
               {/* Email/Password Form */}
               <form onSubmit={handleSubmit} className="space-y-4">

@@ -5,7 +5,7 @@
 
 import { NextResponse }        from 'next/server';
 import { getSession }         from '@/lib/auth';
-import { getClientById }       from '@/lib/db';
+import { getClientById, db }       from '@/lib/db';
 
 export const dynamic = 'force-dynamic';
 
@@ -17,7 +17,10 @@ export async function GET() {
 
   let profile = null;
   try {
-    const record = await getClientById(jwtUser.sub);
+    const record = await db.client.findUnique({
+      where: { id: jwtUser.sub },
+      include: { authProviders: true }
+    });
     if (record) {
       profile = {
         id:               record.id,
@@ -29,6 +32,10 @@ export async function GET() {
         waterProvider:    record.waterProviderId       ?? '',
         role:             record.role             ?? 'client',
         emailAlertsEnabled: record.emailAlertsEnabled ?? true,
+        linkedProviders:  record.authProviders?.map(p => ({
+          provider: p.provider,
+          lastUsedAt: p.lastUsedAt,
+        })) || [],
       };
     } else {
       // User exists in token but not in DB (e.g. deleted)

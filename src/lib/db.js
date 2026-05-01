@@ -101,7 +101,8 @@ export async function setClientPlanTier(id, tier, subscriptionId = null, logType
     planTier: tier,
     type: logType,
     referenceId: subscriptionId || (logType === 'manual_override' ? 'Admin Override' : null),
-    amount: tier === 'pro' ? 499 : (tier === 'business' ? 2499 : 0)
+    // Values in centavos: ₱499 = 49900, ₱2499 = 249900
+    amount: tier === 'pro' ? 49900 : (tier === 'negosyo' ? 249900 : 0)
   });
 
   return client;
@@ -170,19 +171,6 @@ export async function updateClientPasswordByEmail(email, passwordHash) {
   });
 }
 
-export async function incrementClientScanQuota(id) {
-  return db.client.update({
-    where: { id },
-    data: { scanCount: { increment: 1 } },
-  });
-}
-
-export async function resetClientScanQuota(id) {
-  return db.client.update({
-    where: { id },
-    data: { scanCount: 0, lastScanReset: new Date() },
-  });
-}
 
 export async function createNewClientRecord(data) {
   return db.client.create({
@@ -192,11 +180,19 @@ export async function createNewClientRecord(data) {
       passwordHash: data.password_hash,
       electricityProviderId: data.electricity_provider_id || '',
       waterProviderId: data.water_provider_id || '',
-      applianceCount: data.appliance_count || 0,
       consentGiven: true,
       onboardingComplete: false,
       role: 'client',
       planTier: data.plan_tier || 'starter',
+      lastSignedInAt: new Date(),
+      authProviders: {
+        create: {
+          provider: 'PASSWORD',
+          providerId: data.email.toLowerCase().trim(),
+          email: data.email.toLowerCase().trim(),
+          emailVerified: false,
+        }
+      }
     },
   });
 }
@@ -207,7 +203,6 @@ export async function deleteClient(id) {
 
 export async function updateClientProfile(id, data) {
   const fields = {};
-  if (data.applianceCount !== undefined) fields.applianceCount = Number(data.applianceCount);
   if (data.name !== undefined) fields.name = data.name;
   if (data.avatar !== undefined) fields.avatar = data.avatar;
   
@@ -365,13 +360,12 @@ export async function getSystemTelemetry() {
   const clients = await db.client.findMany({
     select: {
       totalTokensUsed: true,
-      scanCount: true,
       subscriptionId: true,
     }
   });
 
   const totalTokens = clients.reduce((acc, c) => acc + (c.totalTokensUsed || 0), 0);
-  const totalScans = clients.reduce((acc, c) => acc + (c.scanCount || 0), 0);
+  const totalScans  = await db.utilityReading.count({ where: { sourceType: 'AI_SCAN' } });
   const googleLogins = await db.client.count(); 
 
   return {
@@ -641,25 +635,6 @@ export async function deleteVerificationTokens(email) {
 export async function deleteVerificationTokenById(id) {
   return db.verificationToken.delete({ 
     where: { id } 
-  });
-}
-
-export async function getDailyReadingsByUser(clientId) {
-  return db.dailyMeterReading.findMany({
-    where: { clientId },
-    orderBy: { date: 'desc' },
-    take: 31,
-  });
-}
-
-export async function createDailyReading(data) {
-  return db.dailyMeterReading.create({
-    data: {
-      clientId:   data.clientId,
-      meterValue: Number(data.meterValue),
-      date:       data.date,
-      kwhDelta:   data.kwhDelta != null ? Number(data.kwhDelta) : null,
-    },
   });
 }
 

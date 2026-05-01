@@ -1,0 +1,19 @@
+{
+  "timestamp": "2026-05-01T09:46:49.767Z",
+  "environment": "development",
+  "database": "turso",
+  "before": {
+    "utilityReadings": 1,
+    "utilityProviders": 15,
+    "aiReports": 1,
+    "transactions": 2
+  },
+  "after": {
+    "utilityReadings": 1,
+    "utilityProviders": 15,
+    "aiReports": 1,
+    "transactions": 2
+  },
+  "dataLoss": false,
+  "status": "SUCCESS"
+}

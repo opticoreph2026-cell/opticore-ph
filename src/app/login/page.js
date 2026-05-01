@@ -7,6 +7,7 @@ import { Eye, EyeOff, CircleAlert, ArrowRight, Loader2 } from 'lucide-react';
 import Spinner from '@/components/ui/Spinner';
 import Logo from '@/components/ui/Logo';
 import Captcha from '@/components/ui/Captcha';
+import { GoogleButton } from '@/components/auth/GoogleButton';
 
 // Google icon SVG (official brand mark)
 function GoogleIcon() {
@@ -38,11 +39,13 @@ function LoginForm() {
     const messages = {
       SessionExpired:   'Your session has expired. Please sign in again.',
       Unauthorized:     'You need to sign in to access that page.',
-      AccountNotFound:  'No OptiCore account found for your Google account. Please sign up first.',
-      SyncError:        'Google sign-in sync failed. Please try again or use email/password.',
-      OAuthSignin:      'Google sign-in was cancelled or failed. Please try again.',
-      OAuthCallback:    'Google authentication failed. Please try again.',
-      OAuthAccountNotLinked: 'This email is already registered. Sign in with email/password instead.',
+      OAUTH_CANCELLED: 'Google sign-in was cancelled.',
+      OAUTH_STATE_MISSING: 'Session expired. Please try again.',
+      OAUTH_STATE_EXPIRED: 'Sign-in took too long. Please try again.',
+      OAUTH_STATE_MISMATCH: 'Security check failed. Please try again.',
+      OAUTH_STATE_INVALID: 'Invalid session. Please try again.',
+      OAUTH_EMAIL_UNVERIFIED: 'Your Google email is not verified. Please verify with Google first.',
+      OAUTH_INTERNAL_ERROR: 'Something went wrong. Please try again or use email.',
     };
     if (errCode && messages[errCode]) setError(messages[errCode]);
   }, [searchParams]);
@@ -74,10 +77,6 @@ function LoginForm() {
       setError('Network error. Please check your connection.');
       setLoading(false);
     }
-  };
-
-  const handleGoogleSignIn = async () => {
-    setError('Social login is currently being updated. Please use email and password.');
   };
 
   return (
@@ -134,22 +133,9 @@ function LoginForm() {
             )}
 
             {/* ── Google Sign-In ── */}
-            <button
-              type="button"
-              onClick={handleGoogleSignIn}
-              disabled={googleLoad || loading}
-              className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-xl font-semibold text-sm transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed mb-5"
-              style={{
-                background: 'rgba(255,255,255,0.06)',
-                border: '1px solid rgba(255,255,255,0.12)',
-                color: 'rgba(255,255,255,0.88)',
-              }}
-              onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}
-              onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.06)'}
-            >
-              {googleLoad ? <Loader2 className="w-4 h-4 animate-spin" /> : <GoogleIcon />}
-              {googleLoad ? 'Redirecting to Google…' : 'Continue with Google'}
-            </button>
+            <div className="mb-5">
+              <GoogleButton redirect={from} />
+            </div>
 
             {/* Divider */}
             <div className="flex items-center gap-3 mb-5">

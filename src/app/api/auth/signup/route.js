@@ -117,6 +117,21 @@ export async function POST(request) {
     return NextResponse.json({ error: 'Failed to create account. Please try again.' }, { status: 500 });
   }
 
+  // Log successful sign-in (signup counts as first sign-in)
+  try {
+    await db.signInEvent.create({
+      data: {
+        clientId: client.id,
+        provider: 'PASSWORD',
+        ipAddress: ip,
+        userAgent: request.headers.get('user-agent'),
+        success: true,
+      }
+    });
+  } catch (e) {
+    console.error('[signup] SignInEvent log failed:', e);
+  }
+
   // ── Issue JWT ─────────────────────────────────────────────────────────────
   const payload = {
     sub:                 client.id,

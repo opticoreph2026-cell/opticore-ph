@@ -7,7 +7,9 @@
     ],
     "allowJs": true,
     "skipLibCheck": true,
-    "strict": false,
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "checkJs": false,
     "noEmit": true,
     "incremental": true,
     "module": "esnext",
@@ -33,7 +35,6 @@
     "**/*.tsx"
   ],
   "exclude": [
-    "node_modules",
-    "scripts"
+    "node_modules"
   ]
 }

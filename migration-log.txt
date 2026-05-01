@@ -1,0 +1,109 @@
+[2026-05-01T09:46:40.717Z] ══════════════════════════════════════════════════════
+[2026-05-01T09:46:40.952Z] OptiCore PH — Phase 1 Migration
+[2026-05-01T09:46:40.953Z] Environment: development
+[2026-05-01T09:46:40.954Z] Database: Turso (LibSQL)
+[2026-05-01T09:46:40.955Z] ══════════════════════════════════════════════════════
+[2026-05-01T09:46:40.956Z] --- Pre-migration record counts ---
+[2026-05-01T09:46:45.877Z] {
+  "utilityReadings": 1,
+  "utilityProviders": 15,
+  "aiReports": 1,
+  "transactions": 2
+}
+[2026-05-01T09:46:45.878Z] === STEP 1: UtilityReading migration ===
+[2026-05-01T09:46:46.224Z] New columns might already exist. Proceeding...
+[2026-05-01T09:46:46.741Z] Found 1 UtilityReading records to migrate
+[2026-05-01T09:46:46.899Z] UtilityReading: 1 converted, 0 errors
+[2026-05-01T09:46:46.900Z] === STEP 2: UtilityProvider migration ===
+[2026-05-01T09:46:47.106Z] New provider columns might already exist. Proceeding...
+[2026-05-01T09:46:47.282Z] Found 15 UtilityProvider records
+[2026-05-01T09:46:47.412Z] ERROR: UtilityProvider id=meralco: PrismaClientKnownRequestError: 
+Invalid `prisma.$executeRawUnsafe()` invocation:
+
+
+SQLITE_UNKNOWN: SQLite error: no such column: isSupported
+[2026-05-01T09:46:47.515Z] ERROR: UtilityProvider id=veco: PrismaClientKnownRequestError: 
+Invalid `prisma.$executeRawUnsafe()` invocation:
+
+
+SQLITE_UNKNOWN: SQLite error: no such column: isSupported
+[2026-05-01T09:46:47.618Z] ERROR: UtilityProvider id=davao-light: PrismaClientKnownRequestError: 
+Invalid `prisma.$executeRawUnsafe()` invocation:
+
+
+SQLITE_UNKNOWN: SQLite error: no such column: isSupported
+[2026-05-01T09:46:47.720Z] ERROR: UtilityProvider id=beneco: PrismaClientKnownRequestError: 
+Invalid `prisma.$executeRawUnsafe()` invocation:
+
+
+SQLITE_UNKNOWN: SQLite error: no such column: isSupported
+[2026-05-01T09:46:47.824Z] ERROR: UtilityProvider id=manila-water: PrismaClientKnownRequestError: 
+Invalid `prisma.$executeRawUnsafe()` invocation:
+
+
+SQLITE_UNKNOWN: SQLite error: no such column: isSupported
+[2026-05-01T09:46:47.925Z] ERROR: UtilityProvider id=maynilad: PrismaClientKnownRequestError: 
+Invalid `prisma.$executeRawUnsafe()` invocation:
+
+
+SQLITE_UNKNOWN: SQLite error: no such column: isSupported
+[2026-05-01T09:46:48.027Z] ERROR: UtilityProvider id=subic-enerzone: PrismaClientKnownRequestError: 
+Invalid `prisma.$executeRawUnsafe()` invocation:
+
+
+SQLITE_UNKNOWN: SQLite error: no such column: isSupported
+[2026-05-01T09:46:48.130Z] ERROR: UtilityProvider id=cotabato-light: PrismaClientKnownRequestError: 
+Invalid `prisma.$executeRawUnsafe()` invocation:
+
+
+SQLITE_UNKNOWN: SQLite error: no such column: isSupported
+[2026-05-01T09:46:48.232Z] ERROR: UtilityProvider id=cebu-water: PrismaClientKnownRequestError: 
+Invalid `prisma.$executeRawUnsafe()` invocation:
+
+
+SQLITE_UNKNOWN: SQLite error: no such column: isSupported
+[2026-05-01T09:46:48.335Z] ERROR: UtilityProvider id=davao-water: PrismaClientKnownRequestError: 
+Invalid `prisma.$executeRawUnsafe()` invocation:
+
+
+SQLITE_UNKNOWN: SQLite error: no such column: isSupported
+[2026-05-01T09:46:48.435Z] ERROR: UtilityProvider id=leyeco-1: PrismaClientKnownRequestError: 
+Invalid `prisma.$executeRawUnsafe()` invocation:
+
+
+SQLITE_UNKNOWN: SQLite error: no such column: isSupported
+[2026-05-01T09:46:48.539Z] ERROR: UtilityProvider id=leyeco-2: PrismaClientKnownRequestError: 
+Invalid `prisma.$executeRawUnsafe()` invocation:
+
+
+SQLITE_UNKNOWN: SQLite error: no such column: isSupported
+[2026-05-01T09:46:48.641Z] ERROR: UtilityProvider id=leyeco-3: PrismaClientKnownRequestError: 
+Invalid `prisma.$executeRawUnsafe()` invocation:
+
+
+SQLITE_UNKNOWN: SQLite error: no such column: isSupported
+[2026-05-01T09:46:48.744Z] ERROR: UtilityProvider id=leyeco-4: PrismaClientKnownRequestError: 
+Invalid `prisma.$executeRawUnsafe()` invocation:
+
+
+SQLITE_UNKNOWN: SQLite error: no such column: isSupported
+[2026-05-01T09:46:48.845Z] ERROR: UtilityProvider id=leyeco-5: PrismaClientKnownRequestError: 
+Invalid `prisma.$executeRawUnsafe()` invocation:
+
+
+SQLITE_UNKNOWN: SQLite error: no such column: isSupported
+[2026-05-01T09:46:48.847Z] UtilityProvider: 0 converted, 15 errors
+[2026-05-01T09:46:48.848Z] === STEP 3: AIReport migration ===
+[2026-05-01T09:46:48.948Z] Found 1 AIReport records
+[2026-05-01T09:46:49.051Z] AIReport: 1 converted, 0 errors
+[2026-05-01T09:46:49.052Z] === STEP 4: Transaction migration ===
+[2026-05-01T09:46:49.152Z] Found 2 Transaction records
+[2026-05-01T09:46:49.357Z] Transaction: 2 converted, 0 errors
+[2026-05-01T09:46:49.358Z] --- Post-migration record counts ---
+[2026-05-01T09:46:49.766Z] {
+  "utilityReadings": 1,
+  "utilityProviders": 15,
+  "aiReports": 1,
+  "transactions": 2
+}
+[2026-05-01T09:46:49.772Z] ✅ Migration complete. See migration-summary.json for full report.

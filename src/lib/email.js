@@ -332,3 +332,51 @@ export async function sendAnomalyAlertEmail({ email, name, title, message, sever
   });
 }
 
+export async function sendAccountLinkedEmail(email, providerName) {
+  const safeProvider = escapeHtml(providerName);
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://opticoreph.com';
+
+  const html = `
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><title>Account Linked — OptiCore PH</title></head>
+<body style="margin:0;padding:0;background:#0a0a0f;font-family:Arial,sans-serif;color:#f1f0ef;">
+  <table role="presentation" cellspacing="0" cellpadding="0" width="100%" style="background:#0a0a0f;">
+    <tr><td align="center" style="padding:40px 16px;">
+      <table role="presentation" cellspacing="0" cellpadding="0" width="560" style="background:#171720;border-radius:20px;border:1px solid rgba(255,255,255,0.08);overflow:hidden;">
+        <tr>
+          <td style="padding:36px 40px;">
+            <div style="display:inline-block;padding:12px;background:rgba(59,130,246,0.1);border-radius:12px;margin-bottom:20px;">
+               <span style="color:#60a5fa;font-size:24px;font-weight:bold;">🔗</span>
+            </div>
+            <h1 style="margin:0 0 10px;color:#f1f0ef;font-size:22px;">A ${safeProvider} account was linked to your OptiCore PH account</h1>
+            <p style="margin:0 0 24px;color:#d6d3d1;font-size:14px;line-height:1.6;">
+              This is a security notice to let you know that a ${safeProvider} account was just used to sign in and was automatically linked to your OptiCore profile.
+            </p>
+            <div style="padding-top:20px;">
+              <p style="margin:0 0 10px;color:#d6d3d1;font-size:14px;"><strong>Was this you?</strong></p>
+              <p style="margin:0 0 24px;color:#d6d3d1;font-size:14px;line-height:1.6;">
+                If you just signed in with ${safeProvider}, you can safely ignore this email.
+              </p>
+            </div>
+            <div style="padding-top:10px;">
+              <p style="margin:0 0 10px;color:#d6d3d1;font-size:14px;"><strong>If not, secure your account:</strong></p>
+              <a href="${appUrl}/dashboard/settings" style="display:inline-block;background:#3b82f6;color:#ffffff;text-decoration:none;padding:13px 26px;border-radius:12px;font-size:14px;font-weight:700;">
+                Review Account Security
+              </a>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>
+  `.trim();
+
+  return sendGmailApiEmail({
+    to: email,
+    subject: `Security Alert: ${safeProvider} account linked`,
+    html,
+  });
+}

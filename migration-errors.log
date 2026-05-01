@@ -1,0 +1,75 @@
+[2026-05-01T09:46:47.412Z] ERROR: UtilityProvider id=meralco: PrismaClientKnownRequestError: 
+Invalid `prisma.$executeRawUnsafe()` invocation:
+
+
+SQLITE_UNKNOWN: SQLite error: no such column: isSupported
+[2026-05-01T09:46:47.515Z] ERROR: UtilityProvider id=veco: PrismaClientKnownRequestError: 
+Invalid `prisma.$executeRawUnsafe()` invocation:
+
+
+SQLITE_UNKNOWN: SQLite error: no such column: isSupported
+[2026-05-01T09:46:47.618Z] ERROR: UtilityProvider id=davao-light: PrismaClientKnownRequestError: 
+Invalid `prisma.$executeRawUnsafe()` invocation:
+
+
+SQLITE_UNKNOWN: SQLite error: no such column: isSupported
+[2026-05-01T09:46:47.720Z] ERROR: UtilityProvider id=beneco: PrismaClientKnownRequestError: 
+Invalid `prisma.$executeRawUnsafe()` invocation:
+
+
+SQLITE_UNKNOWN: SQLite error: no such column: isSupported
+[2026-05-01T09:46:47.824Z] ERROR: UtilityProvider id=manila-water: PrismaClientKnownRequestError: 
+Invalid `prisma.$executeRawUnsafe()` invocation:
+
+
+SQLITE_UNKNOWN: SQLite error: no such column: isSupported
+[2026-05-01T09:46:47.925Z] ERROR: UtilityProvider id=maynilad: PrismaClientKnownRequestError: 
+Invalid `prisma.$executeRawUnsafe()` invocation:
+
+
+SQLITE_UNKNOWN: SQLite error: no such column: isSupported
+[2026-05-01T09:46:48.027Z] ERROR: UtilityProvider id=subic-enerzone: PrismaClientKnownRequestError: 
+Invalid `prisma.$executeRawUnsafe()` invocation:
+
+
+SQLITE_UNKNOWN: SQLite error: no such column: isSupported
+[2026-05-01T09:46:48.130Z] ERROR: UtilityProvider id=cotabato-light: PrismaClientKnownRequestError: 
+Invalid `prisma.$executeRawUnsafe()` invocation:
+
+
+SQLITE_UNKNOWN: SQLite error: no such column: isSupported
+[2026-05-01T09:46:48.232Z] ERROR: UtilityProvider id=cebu-water: PrismaClientKnownRequestError: 
+Invalid `prisma.$executeRawUnsafe()` invocation:
+
+
+SQLITE_UNKNOWN: SQLite error: no such column: isSupported
+[2026-05-01T09:46:48.335Z] ERROR: UtilityProvider id=davao-water: PrismaClientKnownRequestError: 
+Invalid `prisma.$executeRawUnsafe()` invocation:
+
+
+SQLITE_UNKNOWN: SQLite error: no such column: isSupported
+[2026-05-01T09:46:48.435Z] ERROR: UtilityProvider id=leyeco-1: PrismaClientKnownRequestError: 
+Invalid `prisma.$executeRawUnsafe()` invocation:
+
+
+SQLITE_UNKNOWN: SQLite error: no such column: isSupported
+[2026-05-01T09:46:48.539Z] ERROR: UtilityProvider id=leyeco-2: PrismaClientKnownRequestError: 
+Invalid `prisma.$executeRawUnsafe()` invocation:
+
+
+SQLITE_UNKNOWN: SQLite error: no such column: isSupported
+[2026-05-01T09:46:48.641Z] ERROR: UtilityProvider id=leyeco-3: PrismaClientKnownRequestError: 
+Invalid `prisma.$executeRawUnsafe()` invocation:
+
+
+SQLITE_UNKNOWN: SQLite error: no such column: isSupported
+[2026-05-01T09:46:48.744Z] ERROR: UtilityProvider id=leyeco-4: PrismaClientKnownRequestError: 
+Invalid `prisma.$executeRawUnsafe()` invocation:
+
+
+SQLITE_UNKNOWN: SQLite error: no such column: isSupported
+[2026-05-01T09:46:48.845Z] ERROR: UtilityProvider id=leyeco-5: PrismaClientKnownRequestError: 
+Invalid `prisma.$executeRawUnsafe()` invocation:
+
+
+SQLITE_UNKNOWN: SQLite error: no such column: isSupported
