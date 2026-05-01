@@ -13,15 +13,15 @@ async function main() {
 
   try {
     console.log('Adding emailVerified to Client...');
-    try { await client.execute(`ALTER TABLE "Client" ADD COLUMN "emailVerified" DATETIME;`); } catch (e) {
+    try { await client.execute(`ALTER TABLE "Client" ADD COLUMN "emailVerified" DATETIME;`); } catch (e: any) {
       if (!e.message.includes('duplicate column name')) console.error(e);
     }
     
     console.log('Adding lastSignedInAt and locale to Client...');
-    try { await client.execute(`ALTER TABLE "Client" ADD COLUMN "lastSignedInAt" DATETIME;`); } catch (e) {
+    try { await client.execute(`ALTER TABLE "Client" ADD COLUMN "lastSignedInAt" DATETIME;`); } catch (e: any) {
       if (!e.message.includes('duplicate column name')) console.error(e);
     }
-    try { await client.execute(`ALTER TABLE "Client" ADD COLUMN "locale" TEXT DEFAULT 'en';`); } catch (e) {
+    try { await client.execute(`ALTER TABLE "Client" ADD COLUMN "locale" TEXT DEFAULT 'en';`); } catch (e: any) {
       if (!e.message.includes('duplicate column name')) console.error(e);
     }
 

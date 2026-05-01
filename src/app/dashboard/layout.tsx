@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
 import { getCurrentUser } from '@/lib/auth';
-import { getUserById }  from '@/lib/db';
+import { getClientById } from '@/lib/db';
 import DashboardShell from '@/components/dashboard/DashboardShell';
 
 export const metadata = {
@@ -18,7 +18,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
   // Load full profile from DB
   let profile = null;
   try {
-    const record = await getUserById(jwtUser.sub);
+    const record = await getClientById(jwtUser.sub);
     if (record) {
       profile = {
         name:  record.name  ?? jwtUser.name,

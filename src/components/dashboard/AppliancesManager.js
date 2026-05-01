@@ -14,7 +14,7 @@ const fetcher = (url) => fetch(url).then(res => res.json());
 export default function AppliancesManager({ effectiveRate = 11.5 }) {
   const { data: swrData, error: swrError, mutate } = useSWR('/api/dashboard/appliances', fetcher);
   
-  const appliances = swrData?.appliances || [];
+  const appliances = useMemo(() => swrData?.appliances || [], [swrData]);
   const loading = !swrData && !swrError;
 
   const [isFormOpen, setIsFormOpen] = useState(false);

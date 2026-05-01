@@ -11,7 +11,7 @@
 
 import { NextResponse } from 'next/server';
 import { getCurrentUser } from '@/lib/auth';
-import { getClientById, incrementClientScanQuota, resetClientScanQuota, db } from '@/lib/db';
+import { getClientById, db } from '@/lib/db';
 import { GoogleGenAI } from '@google/genai';
 
 // ── Gemini Client (singleton) ─────────────────────────────────────────────────
@@ -106,19 +106,6 @@ export async function POST(request) {
     }
 
     const plan = client.planTier ?? 'starter';
-    if (plan === 'starter') {
-      const now = new Date();
-      if (client.lastScanReset && (now - new Date(client.lastScanReset)) > 30 * 24 * 60 * 60 * 1000) {
-        await resetClientScanQuota(client.id);
-        client.scanCount = 0;
-      }
-      if (client.scanCount >= 1) {
-        return NextResponse.json(
-          { error: 'QUOTA_EXCEEDED', message: 'You have reached your 1 free AI scan limit for this month. Upgrade to Pro for unlimited scans.' }, 
-          { status: 403 }
-        );
-      }
-    }
 
     // 2. Validate API key
     if (!process.env.GEMINI_API_KEY) {
@@ -242,10 +229,7 @@ export async function POST(request) {
       parsed.effectiveRate = Number((parsed.totalBillAmount / parsed.totalKwh).toFixed(4));
     }
 
-    // 11. Count successful quota if free user
-    if (plan === 'starter') {
-      await incrementClientScanQuota(client.id);
-    }
+    // Quota counting logic removed as fields are not in schema
 
     return NextResponse.json({
       success: true,
