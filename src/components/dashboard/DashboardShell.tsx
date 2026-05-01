@@ -7,16 +7,12 @@ import DashboardSidebar from '@/components/dashboard/Sidebar';
 import DashboardHeader from '@/components/dashboard/Header';
 import MeshGradient from '@/components/ui/MeshGradient';
 
-/**
- * DashboardShell - Client-side wrapper for the dashboard layout.
- * Manages responsive sidebar state and global background aesthetics.
- */
-export default function DashboardShell({ children, user }) {
+export default function DashboardShell({ children, user }: { children: React.ReactNode, user: any }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const pathname = usePathname();
 
   return (
-    <div className="flex min-h-screen bg-surface-1000 text-white overflow-x-hidden selection:bg-cyan-500/30">
+    <div className="flex min-h-screen bg-surface-1000 text-white overflow-x-hidden selection:bg-cyan-500/30 pb-20 lg:pb-0">
       <MeshGradient />
 
       <DashboardSidebar 
@@ -25,21 +21,21 @@ export default function DashboardShell({ children, user }) {
         onClose={() => setIsSidebarOpen(false)} 
       />
 
-      {/* Main content — offset by sidebar width (300px) + gap (24px) */}
-      <div className="lg:pl-[348px] lg:pr-12 flex flex-col min-h-screen relative z-10 w-full transition-all duration-500">
+      {/* Main content — offset by sidebar width on desktop */}
+      <div className="lg:pl-[328px] lg:pr-8 flex flex-col min-h-screen relative z-10 w-full transition-all duration-500">
         <DashboardHeader 
           user={user} 
           onMenuClick={() => setIsSidebarOpen(true)} 
         />
         
-        <main className="flex-1 w-full max-w-[1600px] mx-auto py-8">
+        <main className="flex-1 w-full max-w-[1600px] mx-auto py-6 px-4 sm:px-6 lg:px-8">
           <AnimatePresence mode="wait">
             <motion.div
               key={pathname}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
               className="w-full h-full"
             >
               {children}

@@ -1,27 +1,22 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Bell, Menu, LogOut, User, ChevronDown } from 'lucide-react';
+import { Bell, Menu, LogOut, User, ChevronDown, Zap } from 'lucide-react';
 import { clsx } from 'clsx';
 import NotificationPopover from './NotificationPopover';
 
-/**
- * DashboardHeader - Optimized for professional looks and zero redundancy.
- * Integrates system status and profile management into a clean obsidian hub.
- */
-export default function DashboardHeader({ user, onMenuClick }) {
+export default function DashboardHeader({ user, onMenuClick }: { user: any, onMenuClick: () => void }) {
   const router = useRouter();
-  const pathname = usePathname();
   const [showUserMenu, setShowUserMenu] = useState(false);
-  const menuRef = useRef(null);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
         setShowUserMenu(false);
       }
     };
@@ -39,39 +34,48 @@ export default function DashboardHeader({ user, onMenuClick }) {
     }
   };
 
+  // Extract provider from user's primary property, or default to generic
+  const providerName = user?.properties?.[0]?.provider?.name || 'Meralco'; // Assume Meralco for MVP
+
   return (
-    <header className="h-20 px-6 lg:px-12 flex items-center justify-between gap-8 z-50 sticky top-0 bg-surface-1000/60 backdrop-blur-xl border-b border-white/[0.04]">
+    <header className="h-16 lg:h-20 px-4 lg:px-12 flex items-center justify-between gap-4 lg:gap-8 z-50 sticky top-0 bg-surface-1000/80 backdrop-blur-xl border-b border-white/[0.04] safe-area-pt">
       
-      <div className="flex items-center gap-6">
+      <div className="flex items-center gap-4 lg:gap-6">
         <motion.button 
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={onMenuClick}
-          className="lg:hidden w-12 h-12 rounded-2xl bg-white/[0.03] border border-white/10 flex items-center justify-center text-slate-400 hover:text-white hover:border-cyan-500/30 transition-all shadow-2xl"
+          className="lg:hidden w-10 h-10 lg:w-12 lg:h-12 rounded-xl lg:rounded-2xl bg-white/[0.03] border border-white/10 flex items-center justify-center text-slate-400 hover:text-white hover:border-cyan-500/30 transition-all shadow-2xl"
         >
-          <Menu className="w-6 h-6" />
+          <Menu className="w-5 h-5 lg:w-6 lg:h-6" />
         </motion.button>
+
+        {/* Provider Badge */}
+        <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/[0.03] border border-white/[0.05]">
+          <Zap className="w-4 h-4 text-amber-500" />
+          <span className="text-xs font-bold text-slate-300 tracking-tight">{providerName} Connected</span>
+        </div>
       </div>
 
       {/* ── Right: Integrated Hub ── */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-3 lg:gap-4">
 
         {/* Notifications */}
         <NotificationPopover />
         
         {/* Divider */}
-        <div className="w-px h-6 bg-white/[0.08]" />
+        <div className="hidden sm:block w-px h-6 bg-white/[0.08]" />
 
         {/* User Hub */}
         <div className="relative" ref={menuRef}>
           <button 
             onClick={() => setShowUserMenu(!showUserMenu)}
             className={clsx(
-              "flex items-center gap-3 p-1 rounded-full transition-all duration-300",
+              "flex items-center gap-2 lg:gap-3 p-1 rounded-full transition-all duration-300",
               showUserMenu ? "bg-white/[0.1] ring-1 ring-white/20" : "hover:bg-white/5"
             )}
           >
-            <div className="w-8 h-8 rounded-full overflow-hidden border border-white/10 relative shadow-2xl">
+            <div className="w-7 h-7 lg:w-8 lg:h-8 rounded-full overflow-hidden border border-white/10 relative shadow-2xl">
               <Image 
                 src={user?.avatar || user?.image || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.name || 'Opti'}`} 
                 alt="Avatar" 
@@ -80,7 +84,7 @@ export default function DashboardHeader({ user, onMenuClick }) {
                 unoptimized
               />
             </div>
-            <ChevronDown className={clsx("w-4 h-4 text-slate-500 mr-2 transition-transform", showUserMenu && "rotate-180")} />
+            <ChevronDown className={clsx("hidden sm:block w-4 h-4 text-slate-500 mr-2 transition-transform", showUserMenu && "rotate-180")} />
           </button>
 
           {/* User Dropdown */}
@@ -106,7 +110,7 @@ export default function DashboardHeader({ user, onMenuClick }) {
                     </div>
                     <div className="min-w-0">
                       <p className="text-sm font-black text-white truncate">{user?.name ?? 'Valued User'}</p>
-                      <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{user?.plan ?? 'Free'} Plan</p>
+                      <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{user?.planTier ?? 'Free'} Plan</p>
                     </div>
                   </div>
                 </div>
