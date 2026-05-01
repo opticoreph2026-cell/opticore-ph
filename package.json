@@ -13,6 +13,7 @@
     "@libsql/client": "0.8.0",
     "@prisma/adapter-libsql": "6.2.1",
     "@prisma/client": "6.2.1",
+    "@vercel/analytics": "^2.0.1",
     "bcryptjs": "^3.0.3",
     "build": "^0.1.4",
     "clsx": "^2.1.1",

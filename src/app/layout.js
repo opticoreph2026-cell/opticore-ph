@@ -4,6 +4,8 @@ import AuthProvider from '@/components/ui/AuthProvider';
 
 
 
+import { Analytics } from "@vercel/analytics/next"
+
 // Optimize and load fonts
 const inter = Inter({ 
   subsets: ['latin'], 
@@ -53,6 +55,7 @@ export default function RootLayout({ children }) {
         <AuthProvider>
           {children}
         </AuthProvider>
+        <Analytics />
       </body>
     </html>
   );
