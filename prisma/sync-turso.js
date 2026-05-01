@@ -43,11 +43,48 @@ async function sync() {
       if (e.message.includes('duplicate column name')) {
         console.log('ℹ️ "type" column already exists in "Alert" table.');
       } else {
-        throw e;
+        console.error('Error adding Alert.type:', e.message);
       }
     }
 
-    // 3. Add Missing Indexes
+    // 3. Add 'narrativeSummary' and 'potentialSavings' to 'AIReport'
+    console.log('Checking AIReport columns...');
+    try {
+      await client.execute(`ALTER TABLE "AIReport" ADD COLUMN "narrativeSummary" TEXT;`);
+      console.log('✅ Added "narrativeSummary" to "AIReport".');
+    } catch (e) {
+      if (!e.message.includes('duplicate column name')) console.error('Error adding narrativeSummary:', e.message);
+    }
+    try {
+      await client.execute(`ALTER TABLE "AIReport" ADD COLUMN "potentialSavings" REAL;`);
+      console.log('✅ Added "potentialSavings" to "AIReport".');
+    } catch (e) {
+      if (!e.message.includes('duplicate column name')) console.error('Error adding potentialSavings:', e.message);
+    }
+
+    // 4. Migrate UtilityReading.readingDate from String to DATETIME
+    console.log('Checking UtilityReading.readingDate type...');
+    try {
+      // Check if the column is already DATETIME or needs migration
+      // In SQLite, we can't easily check column type via SQL without pragma, 
+      // but we can try to add the new column and migrate if it fails/succeeds.
+      await client.execute(`ALTER TABLE "UtilityReading" ADD COLUMN "readingDate_new" DATETIME;`);
+      console.log('Migrating UtilityReading.readingDate to DATETIME...');
+      await client.execute(`UPDATE "UtilityReading" SET "readingDate_new" = datetime("readingDate") WHERE "readingDate" IS NOT NULL;`);
+      await client.execute(`ALTER TABLE "UtilityReading" DROP COLUMN "readingDate";`);
+      await client.execute(`ALTER TABLE "UtilityReading" RENAME COLUMN "readingDate_new" TO "readingDate";`);
+      console.log('✅ UtilityReading.readingDate migrated to DATETIME.');
+    } catch (e) {
+      if (e.message.includes('duplicate column name')) {
+        console.log('ℹ️ readingDate migration already in progress or completed.');
+      } else if (e.message.includes('no such column')) {
+        console.log('ℹ️ readingDate already migrated.');
+      } else {
+        console.error('Error migrating readingDate:', e.message);
+      }
+    }
+
+    // 5. Add Missing Indexes
     console.log('Checking missing indexes...');
     const indexes = [
       'CREATE INDEX IF NOT EXISTS "UtilityReading_clientId_idx" ON "UtilityReading"("clientId");',
