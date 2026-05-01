@@ -343,7 +343,7 @@ export async function createReading(data) {
       m3Used:              Number(data.m3_used || 0),
       billAmountElectric:  bill,
       billAmountWater:     Number(data.bill_amount_water || 0),
-      readingDate:         data.reading_date,
+      readingDate:         new Date(data.reading_date),
       generationCharge:    data.generation_charge   != null ? Number(data.generation_charge)   : null,
       transmissionCharge:  data.transmission_charge != null ? Number(data.transmission_charge) : null,
       systemLoss:          data.system_loss         != null ? Number(data.system_loss)         : null,

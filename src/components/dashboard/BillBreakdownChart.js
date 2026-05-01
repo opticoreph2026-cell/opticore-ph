@@ -67,7 +67,7 @@ export default function BillBreakdownChart({ readings }) {
 
   // Build chart data — last 5 scanned readings
   const chartData = scanned.slice(0, 5).reverse().map(r => ({
-    name: r.readingDate?.slice(0, 7) ?? 'Unknown',
+    name: r.readingDate ? new Date(r.readingDate).toISOString().slice(0, 7) : 'Unknown',
     'Generation':   r.generationCharge   ?? 0,
     'Transmission': r.transmissionCharge ?? 0,
     'System Loss':  r.systemLoss         ?? 0,

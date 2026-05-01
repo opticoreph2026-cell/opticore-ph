@@ -15,7 +15,7 @@ export default function UsageHeatmap({ readings = [], plan }) {
     const map = {};
     readings.forEach(r => {
       if (r.readingDate) {
-        const key = r.readingDate.slice(0, 7); // "YYYY-MM"
+        const key = new Date(r.readingDate).toISOString().slice(0, 7); // "YYYY-MM"
         map[key] = (map[key] || 0) + (r.kwhUsed || 0);
       }
     });

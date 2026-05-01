@@ -48,7 +48,7 @@ export async function POST(request) {
     // 0. Check for existing reading for this date to prevent duplicates
     const activeProperty = await getActiveProperty(user.sub);
     const existingReadings = await getReadingsByClient(user.sub, activeProperty?.id);
-    const isDuplicate = existingReadings.some(r => r.readingDate === readingDate);
+    const isDuplicate = existingReadings.some(r => new Date(r.readingDate).toISOString().substring(0, 10) === readingDate);
 
     if (isDuplicate) {
       return NextResponse.json({ 

@@ -116,7 +116,7 @@ export default function DashboardOverview({ user, readings = [], alerts = [], ap
     
     const groups = {};
     [...readings].forEach(r => {
-      const date = parseISO(r.readingDate);
+      const date = new Date(r.readingDate);
       const monthKey = format(date, 'yyyy-MM');
       if (!groups[monthKey]) {
         groups[monthKey] = { 

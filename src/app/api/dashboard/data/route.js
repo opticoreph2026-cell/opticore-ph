@@ -101,7 +101,7 @@ export async function GET(request) {
     const deduplicatedReadings = [];
     const seenMonths = new Set();
     for (const r of readings) {
-      const month = r.readingDate.substring(0, 7); // YYYY-MM
+      const month = new Date(r.readingDate).toISOString().substring(0, 7); // YYYY-MM
       if (!seenMonths.has(month)) {
         deduplicatedReadings.push(r);
         seenMonths.add(month);
