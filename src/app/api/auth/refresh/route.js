@@ -66,8 +66,18 @@ async function handleRefresh() {
     }
 
     const client = dbToken.client;
+    
+    // 3. Block suspended accounts
+    if (client.suspended) {
+      // Clear tokens and return error
+      await db.refreshToken.delete({ where: { token: refreshToken } }).catch(() => {});
+      const response = NextResponse.json({ error: 'ACCOUNT_SUSPENDED' }, { status: 403 });
+      response.cookies.delete('access_token');
+      response.cookies.delete('refresh_token');
+      return response;
+    }
 
-    // 3. Prepare new payload (synchronizes with latest DB state like planTier)
+    // 4. Prepare new payload (synchronizes with latest DB state like planTier)
     const newPayload = {
       sub:                 client.id,
       email:               client.email,
@@ -75,6 +85,7 @@ async function handleRefresh() {
       role:                client.role ?? 'client',
       plan:                client.planTier ?? 'starter',
       onboarding_complete: client.onboardingComplete ?? false,
+      suspended:           client.suspended ?? false,
     };
 
     // 4. Generate fresh pair

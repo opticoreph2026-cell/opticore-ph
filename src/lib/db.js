@@ -76,8 +76,21 @@ export async function getClientById(id) {
 
 export async function listAllClients(options = {}) {
   const { maxRecords = 100 } = options;
-  // ULTIMATE DEBUG: Return every single record in the Client table
   return db.client.findMany({
+    select: {
+      id: true,
+      email: true,
+      name: true,
+      role: true,
+      planTier: true,
+      onboardingComplete: true,
+      suspended: true,
+      lastLoginAt: true,
+      createdAt: true,
+      electricityProviderId: true,
+      waterProviderId: true,
+      avatar: true,
+    },
     orderBy: { createdAt: 'desc' },
     take: maxRecords,
   });

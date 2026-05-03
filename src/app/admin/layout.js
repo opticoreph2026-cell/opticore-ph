@@ -1,16 +1,24 @@
-import { redirect }   from 'next/navigation';
-import { getCurrentUser } from '@/lib/auth';
-import AdminShell from '@/components/admin/AdminShell';
+export const metadata = {
+  title: 'Admin Command — OptiCore PH',
+  robots: {
+    index: false,
+    follow: false,
+    nocache: true,
+    googleBot: {
+      index: false,
+      follow: false,
+      noimageindex: true,
+    },
+  },
+};
 
-export const metadata = { title: 'Admin — OptiCore PH' };
-
-export default async function AdminLayout({ children }) {
-  const user = await getCurrentUser();
-  if (!user || user.role !== 'admin') redirect('/login');
-
+export default function AdminLayout({ children }) {
   return (
-    <AdminShell user={user}>
-      {children}
-    </AdminShell>
+    <div className="min-h-screen bg-surface-1000 text-text-primary font-body selection:bg-brand-500/30">
+      {/* Admin specific shell elements could go here if needed */}
+      <main className="container mx-auto px-4 py-8 max-w-7xl">
+        {children}
+      </main>
+    </div>
   );
 }

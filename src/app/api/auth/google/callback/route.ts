@@ -164,7 +164,12 @@ export async function GET(req: NextRequest) {
       return { client: newClient, isNewUser: true, isNewLink: false };
     });
 
-    // 4. Log the Sign-In Event
+    // 4. Block suspended accounts
+    if (client.suspended) {
+      return ERROR_REDIRECT('ACCOUNT_SUSPENDED');
+    }
+
+    // 5. Log the Sign-In Event
     await db.signInEvent.create({
       data: {
         clientId: client.id,
@@ -175,23 +180,15 @@ export async function GET(req: NextRequest) {
       }
     });
     
-    // 5. Sign tokens
+    // 6. Sign tokens
     const accessToken = await signAccessToken({
       sub: client.id,
       email: client.email,
       role: client.role,
       onboarding_complete: client.onboardingComplete,
+      suspended: client.suspended ?? false,
     });
     const refreshToken = await signRefreshToken({ sub: client.id });
-    
-    // 6. Store refresh token in DB
-    await db.refreshToken.create({
-      data: {
-        clientId: client.id,
-        token: refreshToken,
-        expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-      },
-    });
     
     // 7. Determine redirect destination
     const finalRedirect = isNewUser || !client.onboardingComplete ? '/onboarding' : redirect;
@@ -200,7 +197,7 @@ export async function GET(req: NextRequest) {
       new URL(finalRedirect, process.env.NEXT_PUBLIC_APP_URL!)
     );
     
-    setAuthCookies(response, { accessToken, refreshToken });
+    await setAuthCookies(client, accessToken, refreshToken);
     response.cookies.delete('oauth_state');
     
     if (isNewLink) {

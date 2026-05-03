@@ -80,6 +80,13 @@ export async function POST(request) {
     }
   }
 
+  // ── Block suspended accounts ─────────────────────────────────────────────
+  if (client.suspended) {
+    return NextResponse.json({ 
+      error: 'Your account has been suspended. Please contact support if you believe this is an error.' 
+    }, { status: 403 });
+  }
+
   // ── Issue JWT ─────────────────────────────────────────────────────────────
   const role  = client.role ?? 'client';
   
@@ -136,6 +143,7 @@ export async function POST(request) {
     plan:               client.planTier ?? 'starter',
     avatar:             client.avatar,
     onboarding_complete: client.onboardingComplete ?? false,
+    suspended:          client.suspended ?? false,
   };
 
   const accessToken = await signAccessToken(payload);

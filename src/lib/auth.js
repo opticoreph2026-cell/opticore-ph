@@ -188,6 +188,7 @@ export async function getSession() {
             role:                client.role ?? 'client',
             plan:                client.planTier ?? 'starter',
             onboarding_complete: client.onboardingComplete ?? false,
+            suspended:           client.suspended ?? false,
           };
 
           const newAccessToken = await signAccessToken(newPayload);

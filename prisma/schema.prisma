@@ -80,6 +80,7 @@ model Client {
   lastSignedInAt  DateTime? // Updates on every successful sign-in
   lastScanReset   DateTime  @default(now())
   locale          String    @default("en") // e.g. "en", "tl"
+  suspended       Boolean   @default(false) // Admin-set: blocks login when true
 
   readings      UtilityReading[]
   reports       AIReport[]
@@ -310,11 +311,27 @@ model RefreshToken {
 
 model AdminNotification {
   id        String   @id @default(uuid())
-  // Valid types: new_user | payment | ai_scan | report | system | ai_forecast | solar
+  // Valid types: new_user | payment | ai_scan | report | system | ai_forecast | solar | provider_request
   type      String
   title     String
   message   String
   meta      String?  // JSON blob: { clientId, clientName, email, plan, amount, ... }
   isRead    Boolean  @default(false)
   createdAt DateTime @default(now())
+}
+
+// ── Admin Audit Log ───────────────────────────────────────────────────────────
+
+model AdminAuditLog {
+  id         String   @id @default(cuid())
+  adminId    String   // Client.id of the admin who performed the action
+  action     String   // e.g. DELETE_CLIENT, SUSPEND_CLIENT, UPGRADE_PLAN, DELETE_PROVIDER
+  targetId   String?  // ID of the affected record
+  targetType String?  // e.g. "Client", "Provider"
+  metadata   String?  // JSON blob with extra context
+  ipAddress  String?
+  createdAt  DateTime @default(now())
+
+  @@index([adminId, createdAt(sort: Desc)])
+  @@index([targetId])
 }

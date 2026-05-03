@@ -97,6 +97,14 @@ export async function middleware(request) {
     return NextResponse.redirect(new URL('/dashboard', request.url));
   }
 
+  // 7. Block suspended accounts
+  if (user?.suspended && !isAuthRoute && pathname !== '/') {
+    const response = NextResponse.redirect(new URL('/login?error=AccountSuspended', request.url));
+    response.cookies.delete(ACCESS_COOKIE);
+    response.cookies.delete(REFRESH_COOKIE);
+    return response;
+  }
+
   return NextResponse.next();
 }
 
