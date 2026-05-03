@@ -122,7 +122,7 @@ export async function POST() {
 
   } catch (error) {
     console.error('[API Report] Generation Error:', error);
-    if (error.status === 429) {
+    if ((error as any).status === 429) {
       return NextResponse.json({ error: 'AI_LIMIT', message: 'Service busy.' }, { status: 429 });
     }
     return NextResponse.json({ error: 'GEN_ERROR' }, { status: 500 });

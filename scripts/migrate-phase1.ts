@@ -272,7 +272,7 @@ async function migrateUtilityProviders() {
 
       // Backfill code if missing
       const nameStr = String(row.name || '').toUpperCase();
-      const code = row.code || nameStr.replace(/[^A-Z0-9]/g, '').slice(0, 16);
+      const code = String(row.code || nameStr.replace(/[^A-Z0-9]/g, '').slice(0, 16));
 
       // Heuristic type detection if missing
       let type = row.type || 'PRIVATE_DU';

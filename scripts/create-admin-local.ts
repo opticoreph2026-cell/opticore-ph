@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client';
-import { PrismaLibSql } from '@prisma/adapter-libsql';
+import { PrismaLibSQL } from '@prisma/adapter-libsql';
+import { createClient } from '@libsql/client';
 import path from 'path';
 import bcrypt from 'bcryptjs';
 import { randomUUID } from 'crypto';
@@ -7,7 +8,8 @@ import { randomUUID } from 'crypto';
 const dbPath = path.join(process.cwd(), 'dev.db');
 const dbUrl = `file:${dbPath}`;
 
-const adapter = new PrismaLibSql({ url: dbUrl });
+const libsql = createClient({ url: dbUrl });
+const adapter = new PrismaLibSQL(libsql);
 const prisma = new PrismaClient({ adapter });
 
 async function main() {

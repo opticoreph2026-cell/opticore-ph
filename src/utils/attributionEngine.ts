@@ -71,7 +71,7 @@ export function calculateAttribution(
     if (!categories[app.category]) {
       categories[app.category] = { value: 0, percentageOfTotal: 0, percentageOfEstimated: 0 };
     }
-    categories[app.category].value += totalApplianceKwh;
+    categories[app.category]!.value += totalApplianceKwh;
   });
 
   // 2. Calculate Percentages and Ghost Load
@@ -80,12 +80,12 @@ export function calculateAttribution(
 
   // Finalize category summaries
   Object.keys(categories).forEach((cat) => {
-    categories[cat].percentageOfTotal = actualKwh > 0 
-      ? Number(((categories[cat].value / actualKwh) * 100).toFixed(1))
+    categories[cat]!.percentageOfTotal = actualKwh > 0 
+      ? Number(((categories[cat]!.value / actualKwh) * 100).toFixed(1))
       : 0;
     
-    categories[cat].percentageOfEstimated = totalEstimatedKwh > 0
-      ? Number(((categories[cat].value / totalEstimatedKwh) * 100).toFixed(1))
+    categories[cat]!.percentageOfEstimated = totalEstimatedKwh > 0
+      ? Number(((categories[cat]!.value / totalEstimatedKwh) * 100).toFixed(1))
       : 0;
   });
 

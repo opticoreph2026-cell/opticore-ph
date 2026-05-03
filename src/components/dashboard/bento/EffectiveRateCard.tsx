@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion';
 import MouseSpotlightCard from '@/components/ui/MouseSpotlightCard';
 import { Zap } from 'lucide-react';
-import { formatRateUnits } from '@/lib/money';
+
 
 const item = {
   hidden: { opacity: 0, y: 20 },

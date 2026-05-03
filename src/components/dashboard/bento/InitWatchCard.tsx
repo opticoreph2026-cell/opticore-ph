@@ -23,7 +23,7 @@ export default function InitWatchCard({ gridStatus }: { gridStatus: any }) {
     RED: 'bg-rose-500/10 border-rose-500/20'
   };
 
-  const status = gridStatus?.status || 'NORMAL';
+  const status = (gridStatus?.status || 'NORMAL') as keyof typeof statusColors;
   const penalty = gridStatus?.penalty || 0;
 
   return (

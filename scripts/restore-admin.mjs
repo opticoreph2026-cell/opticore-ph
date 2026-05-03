@@ -1,11 +1,11 @@
 import { PrismaClient } from '@prisma/client';
-import { PrismaLibSql } from '@prisma/adapter-libsql';
+import { PrismaLibSQL } from '@prisma/adapter-libsql';
 import bcrypt from 'bcryptjs';
 import * as process from 'process';
 
 // Force use of local SQLite path for reliability
 const dbUrl = 'file:./dev.db';
-const adapter = new PrismaLibSql({
+const adapter = new PrismaLibSQL({
   url: dbUrl,
 });
 

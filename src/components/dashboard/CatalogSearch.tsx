@@ -11,9 +11,25 @@ import { clsx } from 'clsx';
  * Premium fuzzy-search component for linking real-world appliance specs 
  * to user profiles.
  */
-export default function CatalogSearch({ onSelect }) {
+interface CatalogItem {
+  id: string;
+  brand: string;
+  modelNumber: string;
+  category: string;
+  wattage?: number;
+  eerRating?: number;
+  coolingCapacityKjH?: number;
+  estimatedPricePhp?: number;
+  [key: string]: unknown;
+}
+
+interface CatalogSearchProps {
+  onSelect?: (item: CatalogItem) => void;
+}
+
+export default function CatalogSearch({ onSelect }: CatalogSearchProps) {
   const [query, setQuery] = useState('');
-  const [catalog, setCatalog] = useState([]);
+  const [catalog, setCatalog] = useState<CatalogItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isFocused, setIsFocused] = useState(false);
 
@@ -110,19 +126,19 @@ export default function CatalogSearch({ onSelect }) {
                     </div>
                     <div className="flex items-center gap-3 mt-1 text-[11px] text-text-muted font-mono uppercase tracking-tight">
                       <span className="text-amber-500/80">{item.wattage ? Number(item.wattage).toFixed(2) : '0.00'}W</span>
-                      {item.eerRating > 0 && (
+                      {(item.eerRating ?? 0) > 0 && (
                         <>
                           <span className="w-1 h-1 rounded-full bg-white/20" />
                           <span className="text-emerald-400/80">{Number(item.eerRating).toFixed(2)} EER</span>
                         </>
                       )}
-                      {item.coolingCapacityKjH > 0 && (
+                      {(item.coolingCapacityKjH ?? 0) > 0 && (
                         <>
                           <span className="w-1 h-1 rounded-full bg-white/20" />
                           <span className="text-blue-400/80">{Number(item.coolingCapacityKjH).toFixed(2)} kJ/h</span>
                         </>
                       )}
-                      {item.estimatedPricePhp > 0 && (
+                      {(item.estimatedPricePhp ?? 0) > 0 && (
                         <>
                           <span className="w-1 h-1 rounded-full bg-white/20" />
                           <span className="text-text-primary">₱{Number(item.estimatedPricePhp).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>

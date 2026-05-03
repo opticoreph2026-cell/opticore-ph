@@ -32,7 +32,7 @@ async function scrapeRetail() {
 
       // Generate 100 ACs
       for (let i = 1; i <= 100; i++) {
-        const brand = acBrands[Math.floor(Math.random() * acBrands.length)];
+        const brand = acBrands[Math.floor(Math.random() * acBrands.length)] || "Unknown";
         mockData.push({
           category: "AC",
           brand: brand,
@@ -43,7 +43,7 @@ async function scrapeRetail() {
 
       // Generate 100 Fridges
       for (let i = 1; i <= 100; i++) {
-        const brand = fridgeBrands[Math.floor(Math.random() * fridgeBrands.length)];
+        const brand = fridgeBrands[Math.floor(Math.random() * fridgeBrands.length)] || "Unknown";
         mockData.push({
           category: "Fridge",
           brand: brand,
@@ -57,7 +57,7 @@ async function scrapeRetail() {
 
       // Generate 50 Heaters
       for (let i = 1; i <= 50; i++) {
-        const brand = heaterBrands[Math.floor(Math.random() * heaterBrands.length)];
+        const brand = heaterBrands[Math.floor(Math.random() * heaterBrands.length)] || "Unknown";
         mockData.push({
           category: "Heater",
           brand: brand,
@@ -68,7 +68,7 @@ async function scrapeRetail() {
 
       // Generate 50 Pumps
       for (let i = 1; i <= 50; i++) {
-        const brand = pumpBrands[Math.floor(Math.random() * pumpBrands.length)];
+        const brand = pumpBrands[Math.floor(Math.random() * pumpBrands.length)] || "Unknown";
         mockData.push({
           category: "Pump",
           brand: brand,
@@ -82,7 +82,7 @@ async function scrapeRetail() {
 
       // Generate 50 TVs
       for (let i = 1; i <= 50; i++) {
-        const brand = tvBrands[Math.floor(Math.random() * tvBrands.length)];
+        const brand = tvBrands[Math.floor(Math.random() * tvBrands.length)] || "Unknown";
         mockData.push({
           category: "TV",
           brand: brand,
@@ -93,7 +93,7 @@ async function scrapeRetail() {
 
       // Generate 50 Washers
       for (let i = 1; i <= 50; i++) {
-        const brand = washerBrands[Math.floor(Math.random() * washerBrands.length)];
+        const brand = washerBrands[Math.floor(Math.random() * washerBrands.length)] || "Unknown";
         mockData.push({
           category: "Washer",
           brand: brand,

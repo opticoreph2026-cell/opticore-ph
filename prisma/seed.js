@@ -4,7 +4,7 @@
  */
 
 const { PrismaClient } = require('@prisma/client');
-const { PrismaLibSql } = require('@prisma/adapter-libsql');
+const { PrismaLibSQL } = require('@prisma/adapter-libsql');
 const { createClient } = require('@libsql/client');
 const fs = require('fs');
 const path = require('path');
@@ -76,8 +76,8 @@ console.log(`[Seed] Initializing with DB URL: ${dbUrl}`);
 // Force injection to satisfy internal Prisma checks
 process.env.DATABASE_URL = dbUrl;
 
-// In Prisma 7, we pass the config object to the PrismaLibSql factory
-const adapter = new PrismaLibSql({ 
+// In Prisma 7, we pass the config object to the PrismaLibSQL factory
+const adapter = new PrismaLibSQL({ 
   url: dbUrl,
   authToken: authToken 
 });

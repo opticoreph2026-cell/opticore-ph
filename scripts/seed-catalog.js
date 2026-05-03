@@ -1,5 +1,5 @@
 const { PrismaClient } = require('@prisma/client');
-const { PrismaLibSql } = require('@prisma/adapter-libsql');
+const { PrismaLibSQL } = require('@prisma/adapter-libsql');
 const fs = require('fs');
 const path = require('path');
 
@@ -10,7 +10,7 @@ const authToken = process.env.TURSO_AUTH_TOKEN;
 
 const cleanUrl = url.replace(/['"]/g, '').split('?')[0];
 
-const adapter = new PrismaLibSql({
+const adapter = new PrismaLibSQL({
   url: cleanUrl,
   authToken: authToken?.replace(/['"]/g, ''),
 });

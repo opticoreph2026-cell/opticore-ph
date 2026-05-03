@@ -30,7 +30,7 @@ const PROVIDERS = [
 async function main() {
   // Check current count
   const { rows } = await db.execute('SELECT COUNT(*) as c FROM UtilityProvider');
-  console.log(`Current provider count: ${rows[0].c}`);
+  console.log(`Current provider count: ${rows[0]?.c || 0}`);
 
   let added = 0;
   for (const p of PROVIDERS) {
@@ -49,7 +49,7 @@ async function main() {
   }
 
   const after = await db.execute('SELECT COUNT(*) as c FROM UtilityProvider');
-  console.log(`\nDone. Attempted ${added}. Total providers: ${after.rows[0].c}`);
+  console.log(`\nDone. Attempted ${added}. Total providers: ${after.rows[0]?.c || 0}`);
 }
 
 main().catch(console.error);

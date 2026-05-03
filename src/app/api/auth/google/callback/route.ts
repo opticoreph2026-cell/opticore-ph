@@ -59,7 +59,7 @@ export async function GET(req: NextRequest) {
     }
     
     // 3. Process identity in a transaction to prevent race conditions
-    const { client, isNewUser, isNewLink } = await db.$transaction(async (tx) => {
+    const { client, isNewUser, isNewLink } = await db.$transaction(async (tx: any) => {
       // Look up by Google provider ID first
       const existingProvider = await tx.authProvider.findUnique({
         where: {

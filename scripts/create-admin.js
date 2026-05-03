@@ -1,6 +1,6 @@
 const { PrismaClient } = require('@prisma/client');
 const { createClient } = require('@libsql/client');
-const { PrismaLibSql } = require('@prisma/adapter-libsql');
+const { PrismaLibSQL } = require('@prisma/adapter-libsql');
 const bcrypt = require('bcryptjs');
 
 const fs = require('fs');

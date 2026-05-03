@@ -27,7 +27,7 @@ export default function ScanBillPage() {
     e.preventDefault();
     setIsDragging(false);
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      handleFileSelection(e.dataTransfer.files[0]);
+      handleFileSelection(e.dataTransfer.files[0] as File);
     }
   }, []);
 

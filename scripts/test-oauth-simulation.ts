@@ -49,7 +49,7 @@ async function simulateOAuth() {
     include: { authProviders: true }
   });
   console.log(`✔ Success: Account now has ${updatedUser.authProviders.length} providers`);
-  console.log(`Providers: ${updatedUser.authProviders.map(p => p.provider).join(', ')}`);
+  console.log(`Providers: ${updatedUser.authProviders.map((p: any) => p.provider).join(', ')}`);
 
   // 4. Simulate SignInEvent Logging
   console.log('\nTesting SignInEvent logging...');
@@ -78,7 +78,7 @@ async function simulateOAuth() {
     include: { authProviders: true }
   });
   console.log(`✔ Success: Account now has ${finalUser.authProviders.length} providers`);
-  console.log(`Final Providers: ${finalUser.authProviders.map(p => p.provider).join(', ')}`);
+  console.log(`Final Providers: ${finalUser.authProviders.map((p: any) => p.provider).join(', ')}`);
 
   console.log('\n--- ALL TESTS PASSED ---');
 }
