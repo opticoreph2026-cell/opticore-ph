@@ -4,8 +4,6 @@ generator client {
 }
 
 datasource db {
-  // Always file: for prisma validate / prisma generate.
-  // Runtime: db.js overrides to LibSQL adapter when TURSO_DATABASE_URL is set.
   provider = "sqlite"
   url      = env("DATABASE_URL")
 }
@@ -16,77 +14,130 @@ enum PropertyType {
   RESIDENTIAL
   COMMERCIAL
   INDUSTRIAL
+  BOARDING_HOUSE
 }
 
 enum AuthProviderType {
-  PASSWORD       // traditional email/password
+  PASSWORD
   GOOGLE
-  APPLE          // future
-  FACEBOOK       // future
+  APPLE
+  FACEBOOK
 }
 
 enum ScanSource {
   MANUAL
-  AI_SCAN
+  OCR
+  API
   IMPORT
 }
 
-enum ProviderType {
-  PRIVATE_DU   // Private Distribution Utility (Meralco, VECO, Davao Light)
-  COOPERATIVE  // Electric Cooperative (BENECO, BATELEC, FLECO, etc.)
-  SUB_METER    // Sub-metering operator
+enum ProviderCategory {
+  ELECTRIC_DU
+  ELECTRIC_COOP
+  WATER_DISTRICT
+  WATER_CONCESSIONAIRE
 }
 
-// ── Models ────────────────────────────────────────────────────────────────────
+// ── Auth Models ───────────────────────────────────────────────────────────────
 
 model AuthProvider {
   id            String           @id @default(cuid())
   clientId      String
   provider      AuthProviderType
-  providerId    String           // Google's "sub" claim, Apple's user ID, etc.
-  email         String           // email reported by provider (may differ from primary)
+  providerId    String
+  email         String
   emailVerified Boolean          @default(false)
-  metadata      String?          // Store as String since SQLite doesn't have native JSON
+  metadata      String?
   createdAt     DateTime         @default(now())
   lastUsedAt    DateTime         @default(now())
-  
-  client        Client           @relation(fields: [clientId], references: [id], onDelete: Cascade)
-  
+
+  client Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
   @@unique([provider, providerId])
   @@index([clientId])
   @@index([email])
 }
 
+model SignInEvent {
+  id         String           @id @default(cuid())
+  clientId   String
+  provider   AuthProviderType
+  ipAddress  String?
+  userAgent  String?
+  success    Boolean
+  failReason String?
+  createdAt  DateTime         @default(now())
+
+  client Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@index([clientId, createdAt(sort: Desc)])
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  clientId  String
+  client    Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([clientId])
+}
+
+model VerificationToken {
+  id        String   @id @default(uuid())
+  email     String
+  token     String
+  expires   DateTime
+  createdAt DateTime @default(now())
+
+  @@unique([email, token])
+}
+
+// ── Core Models ───────────────────────────────────────────────────────────────
+
 model Client {
   id                    String    @id @default(uuid())
   email                 String    @unique
   name                  String?
-  passwordHash          String?   // Nullable if they sign up via Google
+  passwordHash          String?
   emailVerified         DateTime?
   googleId              String?   @unique
-  planTier              String    @default("starter") // starter, pro, negosyo
-  avatar                String?   // Profile picture URL (Google or custom)
-  role                  String    @default("client")  // client, admin
+  avatar                String?
+  role                  String    @default("client")
+  // Subscription
+  planTier              String    @default("free") // free, pro, business
+  planExpiry            DateTime?
+  subscriptionId        String?
+  // Profile
+  phone                 String?
+  city                  String?
+  barangay              String?
+  province              String?
+  region                String?
+  incomeClass           String?   // A, B, C, D, E
+  preferredLanguage     String    @default("taglish") // taglish, tagalog, english
+  // Settings
   electricityProviderId String?
   waterProviderId       String?
   consentGiven          Boolean   @default(true)
   onboardingComplete    Boolean   @default(false)
   emailAlertsEnabled    Boolean   @default(true)
-  planExpiry            DateTime?
-  subscriptionId        String?
+  // Usage tracking
+  totalTokensUsed       Int       @default(0)
+  lastLoginAt           DateTime?
+  lastSignedInAt        DateTime?
+  lastScanReset         DateTime  @default(now())
+  locale                String    @default("en")
+  suspended             Boolean   @default(false)
 
-  totalTokensUsed Int       @default(0)
-  lastLoginAt     DateTime?
-  lastSignedInAt  DateTime? // Updates on every successful sign-in
-  lastScanReset   DateTime  @default(now())
-  locale          String    @default("en") // e.g. "en", "tl"
-  suspended       Boolean   @default(false) // Admin-set: blocks login when true
-
-  readings      UtilityReading[]
+  // Relations
+  properties    Property[]
+  bills         Bill[]
+  fuelLogs      FuelLog[]
   reports       AIReport[]
   alerts        Alert[]
   appliances    Appliance[]
-  properties    Property[]
   transactions  Transaction[]
   refreshTokens RefreshToken[]
   authProviders AuthProvider[]
@@ -96,32 +147,31 @@ model Client {
   updatedAt DateTime @updatedAt
 }
 
-model SignInEvent {
-  id          String           @id @default(cuid())
-  clientId    String
-  provider    AuthProviderType
-  ipAddress   String?
-  userAgent   String?
-  success     Boolean
-  failReason  String?
-  createdAt   DateTime         @default(now())
-  
-  client      Client           @relation(fields: [clientId], references: [id], onDelete: Cascade)
-  @@index([clientId, createdAt(sort: Desc)])
-}
-
 model Property {
-  id       String @id @default(uuid())
-  clientId String
-  client   Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  id              String       @id @default(uuid())
+  clientId        String
+  client          Client       @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  name            String
+  propertyType    String       @default("RESIDENTIAL") // RESIDENTIAL, COMMERCIAL, INDUSTRIAL, BOARDING_HOUSE
+  streetAddress   String?
+  barangay        String?
+  city            String?
+  province        String?
+  region          String?
+  // Electric utility
+  electricDU      String?      // MERALCO, MORE_POWER, DLPC, CEPALCO, BENECO, etc.
+  electricAccountNo String?
+  // Water utility
+  waterUtility    String?      // MAYNILAD, MANILA_WATER, MCWD, CCWD, etc.
+  waterAccountNo  String?
+  // Fuel
+  trackFuel       Boolean      @default(false)
+  // Smart plug (Phase 2)
+  smartPlugDeviceId String?
+  isDefault       Boolean      @default(false)
 
-  name                  String  // e.g. "Main Home", "Condo Unit 4B"
-  address               String?
-  electricityProviderId String?
-  waterProviderId       String?
-  isDefault             Boolean @default(false)
-
-  readings   UtilityReading[]
+  bills      Bill[]
+  fuelLogs   FuelLog[]
   appliances Appliance[]
   reports    AIReport[]
 
@@ -131,92 +181,206 @@ model Property {
   @@index([clientId])
 }
 
+// ── Utility Provider Registry ─────────────────────────────────────────────────
+
 model UtilityProvider {
-  id   String @id @default(uuid())
-  code String @unique // e.g. MERALCO, VECO, DAVAOLIGHT
+  id              String   @id @default(uuid())
+  code            String   @unique // MERALCO, VECO, DLPC, MAYNILAD, etc.
+  name            String
+  shortName       String
+  category        String   @default("ELECTRIC_DU") // ELECTRIC_DU, ELECTRIC_COOP, WATER_DISTRICT, WATER_CONCESSIONAIRE
+  region          String?
+  isSupported     Boolean  @default(false)
+  bestEffortOnly  Boolean  @default(true)
+  parserVersion   String   @default("v1")
+  // Rate info (Int rate units: ₱/kWh × 10,000)
+  baseRate        Int      @default(0)
+  benchmarkAvg    Int      @default(0)
+  systemLossCap   Int      @default(850) // 8.5% × 10000 for DUs, 950 for coops
+  logoUrl         String?
+  website         String?
 
-  name         String
-  type         ProviderType @default(PRIVATE_DU)
-  region       String?
-  isSupported  Boolean      @default(false)   // true = live parsing supported
-  bestEffortOnly Boolean    @default(true)    // false = full unbundled parse guaranteed
-  parserVersion  String     @default("v1")
-
-  // Rates stored as integer rate units (₱/kWh × 10,000)
-  baseRate     Int     @default(0)
-  benchmarkAvg Int     @default(0)
-
-  logoUrl  String? // Official logo URL (admin-managed)
-  website  String? // Official website URL
+  ercRates   ERCRate[]
+  waterRates WaterRate[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([code])
-  @@index([type, isSupported])
+  @@index([category, isSupported])
 }
 
-model UtilityReading {
-  id String @id @default(uuid())
+// ── Bills (Electric + Water) ──────────────────────────────────────────────────
 
-  clientId String
-  client   Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
-
-  propertyId String?
-  property   Property? @relation(fields: [propertyId], references: [id], onDelete: Cascade)
-
-  // Primary consumption data
-  kwhUsed   Int @default(0) // stored as integer (whole Wh? No — keep kWh×100 = centikWh? Actually kWh can stay as Int rounded)
-                              // Decision: store as Int (rounded kWh, e.g. 200 = 200 kWh). Fractional kWh not needed for billing.
-
-  // Money fields — all stored as Int (centavos, ₱ × 100)
-  billAmountElectric Int @default(0)
-
-  // Unbundled charges as JSON blob (flexible, avoids column sprawl)
-  // Structure: { generation, transmission, systemLoss, distribution, subsidies, governmentTax, vat, otherCharges }
-  // All values in centavos (Int).
-  unbundledCharges String? // JSON blob
-
-  // Rate — stored as rate units (₱/kWh × 10,000). e.g. ₱11.4250 → 114250
-  effectiveRate Int?
-
+model Bill {
+  id                    String     @id @default(uuid())
+  clientId              String
+  client                Client     @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  propertyId            String
+  property              Property   @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  // Type
+  utilityType           String     // electric, water
   // Billing period
-  readingDate      DateTime @default(now())
-  billingPeriodStart DateTime?
-  billingPeriodEnd   DateTime?
+  billingPeriodStart    DateTime
+  billingPeriodEnd      DateTime
+  dueDate               DateTime?
+  // Amounts — stored as Int centavos (₱ × 100)
+  amountDue             Int        @default(0)
+  amountPaid            Int?
+  paidAt                DateTime?
+  // Consumption
+  consumption           Int        @default(0) // kWh (electric) or cu.m × 100 (water)
+  consumptionUnit       String     @default("kWh") // kWh, cu_m
+  previousReading       Int?
+  currentReading        Int?
+  // Rate — rate units (₱/kWh × 10,000)
+  ratePerUnit           Int?
+  distributionUtility   String?    // Snapshot of DU code at time of bill
+  // OCR data
+  billImageUrl          String?
+  billImageExpiresAt    DateTime?
+  ocrRawText            String?
+  ocrExtractedData      String?    // JSON
+  ocrConfidenceScore    Float?
+  inputMethod           String     @default("manual") // manual, ocr, api
+  // ERC verification
+  ercVerified           Boolean    @default(false)
+  ercVerificationResult String?    // JSON
+  notes                 String?
 
-  // Metadata
-  sourceType       ScanSource @default(MANUAL)
-  confidence       Float      @default(1.0) // AI scan confidence (0.0–1.0)
-  providerDetected String?
-  billingPeriod    String?                  // Legacy: human-readable period label
+  lineItems BillLineItem[]
 
-  submittedAt DateTime @default(now())
+  createdAt DateTime @default(now())
 
-  @@index([clientId, readingDate(sort: Desc)])
-  @@index([propertyId, readingDate(sort: Desc)])
-  @@index([clientId, billingPeriodStart])
+  @@index([clientId, billingPeriodStart(sort: Desc)])
+  @@index([propertyId, billingPeriodStart(sort: Desc)])
+  @@index([clientId, utilityType])
 }
+
+model BillLineItem {
+  id           String @id @default(uuid())
+  billId       String
+  bill         Bill   @relation(fields: [billId], references: [id], onDelete: Cascade)
+  // Charge details
+  chargeType   String // generation, transmission, distribution, supply, metering,
+                      // system_loss, universal, fit_all, franchise_tax, vat, lifeline_subsidy,
+                      // environmental, fcda, cera, other
+  label        String // Raw label as printed on bill
+  // Amounts in centavos (₱ × 100)
+  billedAmount Int    @default(0)
+  billedRate   Int?   // rate units (₱/kWh × 10,000)
+  ercAmount    Int?   // ERC-calculated expected amount
+  ercRate      Int?   // ERC-approved rate used
+  discrepancy  Int?   // billedAmount - ercAmount
+
+  @@index([billId])
+}
+
+// ── Fuel Logs ─────────────────────────────────────────────────────────────────
+
+model FuelLog {
+  id               String   @id @default(uuid())
+  clientId         String
+  client           Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  propertyId       String
+  property         Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  fuelType         String   // diesel, gasoline_91, gasoline_95, gasoline_97,
+                            // lpg_kg, lpg_tank_11kg, lpg_tank_50kg, kerosene
+  quantity         Int      @default(0) // liters × 100 or kg × 100
+  // Money in centavos
+  pricePerUnit     Int      @default(0)
+  totalCost        Int      @default(0)
+  purpose          String   @default("other") // generator, cooking, vehicle, other
+  doeReferencePrice Int?    // DOE weekly price at log date (centavos)
+  logDate          DateTime
+  receiptImageUrl  String?
+  notes            String?
+
+  createdAt DateTime @default(now())
+
+  @@index([clientId, logDate(sort: Desc)])
+  @@index([propertyId, logDate(sort: Desc)])
+}
+
+// ── ERC Rate Snapshots ────────────────────────────────────────────────────────
+
+model ERCRate {
+  id                   String   @id @default(uuid())
+  providerId           String
+  provider             UtilityProvider @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  duCode               String   // MERALCO, MORE_POWER, etc.
+  effectiveMonth       DateTime // First day of the month
+  // All rates as Int rate units (₱/kWh × 10,000)
+  generationRate       Int      @default(0)
+  transmissionRate     Int      @default(0)
+  distributionRate     Int      @default(0)
+  supplyCharge         Int      @default(0)
+  meteringCharge       Int      @default(0)
+  systemLossRate       Int      @default(0)
+  universalCharges     Int      @default(0) // sum of all UC components
+  fitAllCharge         Int      @default(0)
+  franchiseTaxRate     Int      @default(200) // 2% × 10,000
+  vatRate              Int      @default(1200) // 12% × 10,000
+  lifelineThreshold    Int      @default(0) // kWh ceiling
+  lifelineDiscount     Int      @default(0) // discount rate
+  // Source
+  ercResolutionNo      String?
+  sourceUrl            String?
+  notes                String?
+
+  createdAt DateTime @default(now())
+
+  @@unique([duCode, effectiveMonth])
+  @@index([duCode, effectiveMonth(sort: Desc)])
+}
+
+// ── Water Rate Schedules ──────────────────────────────────────────────────────
+
+model WaterRate {
+  id                String   @id @default(uuid())
+  providerId        String
+  provider          UtilityProvider @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  utilityCode       String   // MAYNILAD, MANILA_WATER, MCWD, etc.
+  effectiveDate     DateTime
+  // Block rates in centavos per cu.m (₱ × 100)
+  lifelineMax       Int      @default(10) // cu.m
+  lifelineRate      Int      @default(0)  // centavos per cu.m
+  block1Max         Int      @default(20)
+  block1Rate        Int      @default(0)
+  block2Max         Int      @default(40)
+  block2Rate        Int      @default(0)
+  block3Rate        Int      @default(0)  // above block2Max
+  // Surcharges in centavos
+  environmentalCharge Int    @default(0) // per cu.m
+  maintenanceCharge   Int    @default(0) // fixed monthly
+  vatRate             Int    @default(1200) // 12% × 10,000
+  // Source
+  nwrbResolutionNo    String?
+  sourceUrl           String?
+
+  createdAt DateTime @default(now())
+
+  @@unique([utilityCode, effectiveDate])
+  @@index([utilityCode, effectiveDate(sort: Desc)])
+}
+
+// ── AI Reports ────────────────────────────────────────────────────────────────
 
 model AIReport {
-  id String @id @default(uuid())
-
-  clientId String
-  client   Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
-
-  propertyId String?
-  property   Property? @relation(fields: [propertyId], references: [id], onDelete: Cascade)
-
+  id               String   @id @default(uuid())
+  clientId         String
+  client           Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  propertyId       String?
+  property         Property? @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  utilityType      String    @default("electric") // electric, water, fuel, all
   summary          String
   narrativeSummary String?
-  recommendations  String?
-
-  // Money fields — centavos (Int)
-  estimatedSavings Int @default(0)
+  recommendations  String?   // JSON array
+  // Savings in centavos
+  estimatedSavings Int       @default(0)
   potentialSavings Int?
-
-  providerContext String?
-  pdfUrl          String? // Pro: link to stored PDF export
+  providerContext  String?
+  pdfUrl           String?
 
   generatedAt DateTime @default(now())
 
@@ -224,15 +388,16 @@ model AIReport {
   @@index([propertyId])
 }
 
+// ── Alerts ────────────────────────────────────────────────────────────────────
+
 model Alert {
   id       String @id @default(uuid())
   clientId String
   client   Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
-
   title    String
   message  String
-  severity String  @default("info")  // info, warning, critical
-  type     String  @default("rate")  // ghost_load, water_leak, spike, rate
+  severity String @default("info")     // info, warning, critical
+  type     String @default("rate")     // spike, overdue, verify, recommendation, rate_change, system
   isRead   Boolean @default(false)
 
   createdAt DateTime @default(now())
@@ -242,24 +407,24 @@ model Alert {
   @@index([clientId, isRead])
 }
 
-model Appliance {
-  id       String @id @default(uuid())
-  clientId String
-  client   Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+// ── Appliances ────────────────────────────────────────────────────────────────
 
+model Appliance {
+  id         String    @id @default(uuid())
+  clientId   String
+  client     Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
   propertyId String?
   property   Property? @relation(fields: [propertyId], references: [id], onDelete: Cascade)
-
-  name         String
-  category     String @default("other")
-  brand        String?
-  model        String?
-  year         Int?
-  wattage      Int?   // whole watts (no fractional watt needed for billing)
-  hoursPerDay  Float? // kept as Float: 8.5h is meaningful, not money
-  energyRating String @default("not-rated")
-  notes        String?
-  quantity     Int    @default(1)
+  name       String
+  category   String    @default("other")
+  brand      String?
+  model      String?
+  year       Int?
+  wattage    Int?
+  hoursPerDay Float?
+  energyRating String  @default("not-rated")
+  notes      String?
+  quantity   Int       @default(1)
 
   createdAt DateTime @default(now())
 
@@ -267,68 +432,66 @@ model Appliance {
   @@index([propertyId])
 }
 
-model VerificationToken {
-  id        String   @id @default(uuid())
-  email     String
-  token     String   // 6-digit OTP
-  expires   DateTime
-  createdAt DateTime @default(now())
+// ── Marketplace ───────────────────────────────────────────────────────────────
 
-  @@unique([email, token])
+model MarketplaceProduct {
+  id              String @id @default(uuid())
+  name            String
+  category        String // smart_monitoring, appliances, lighting, water_fixtures, solar, backup_power
+  description     String?
+  // Prices in centavos
+  priceMin        Int    @default(0)
+  priceMax        Int    @default(0)
+  monthlySavingsMin Int  @default(0)
+  monthlySavingsMax Int  @default(0)
+  // Links
+  lazadaUrl       String?
+  shopeeUrl       String?
+  imageUrl        String?
+  // ROI
+  roiMonths       Int?
+  isActive        Boolean @default(true)
+
+  createdAt DateTime @default(now())
 }
 
-model Transaction {
-  id       String @id @default(uuid())
-  clientId String
-  client   Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+// ── Transactions ──────────────────────────────────────────────────────────────
 
-  // Money — centavos (Int)
-  amount      Int    @default(0)
-  currency    String @default("PHP")
-  planTier    String // starter, pro, negosyo
-  type        String @default("payment") // payment, manual_override
-  referenceId String? // PayMongo session ID or Admin Note
-  status      String @default("completed")
+model Transaction {
+  id          String   @id @default(uuid())
+  clientId    String
+  client      Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  amount      Int      @default(0) // centavos
+  currency    String   @default("PHP")
+  planTier    String   // free, pro, business
+  type        String   @default("payment") // payment, manual_override
+  referenceId String?
+  status      String   @default("completed")
 
   createdAt DateTime @default(now())
 
   @@index([clientId, createdAt(sort: Desc)])
 }
 
-model RefreshToken {
-  id       String @id @default(uuid())
-  token    String @unique
-  clientId String
-  client   Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
-
-  expiresAt DateTime
-  createdAt DateTime @default(now())
-
-  @@index([clientId])
-}
-
-// ── Admin Notification System ─────────────────────────────────────────────────
+// ── Admin ─────────────────────────────────────────────────────────────────────
 
 model AdminNotification {
   id        String   @id @default(uuid())
-  // Valid types: new_user | payment | ai_scan | report | system | ai_forecast | solar | provider_request
   type      String
   title     String
   message   String
-  meta      String?  // JSON blob: { clientId, clientName, email, plan, amount, ... }
+  meta      String?
   isRead    Boolean  @default(false)
   createdAt DateTime @default(now())
 }
 
-// ── Admin Audit Log ───────────────────────────────────────────────────────────
-
 model AdminAuditLog {
   id         String   @id @default(cuid())
-  adminId    String   // Client.id of the admin who performed the action
-  action     String   // e.g. DELETE_CLIENT, SUSPEND_CLIENT, UPGRADE_PLAN, DELETE_PROVIDER
-  targetId   String?  // ID of the affected record
-  targetType String?  // e.g. "Client", "Provider"
-  metadata   String?  // JSON blob with extra context
+  adminId    String
+  action     String
+  targetId   String?
+  targetType String?
+  metadata   String?
   ipAddress  String?
   createdAt  DateTime @default(now())
 

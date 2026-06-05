@@ -18,7 +18,7 @@ Target users: Filipino households, SMEs. Mobile-first (375px baseline).
 | Language | TypeScript (new code) · JS (legacy, `allowJs: true`) |
 | Database | Prisma 6.2.1 + Turso (LibSQL) via `@prisma/adapter-libsql` |
 | Auth | Custom jose JWT (`src/lib/auth.js`) — **NOT** NextAuth |
-| AI | Google Gemini 2.5 Flash (`@google/genai`) |
+| AI | Google Gemini (`@google/genai`) |
 | Payments | PayMongo |
 | Email | Gmail OAuth2 REST API (`googleapis`) |
 | Animations | Framer Motion |
