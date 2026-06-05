@@ -45,7 +45,7 @@ export async function POST(req: Request) {
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
     const data = await req.json();
-    const { propertyId, name, category, wattage, dailyHours, quantity } = data;
+    const { propertyId, name, category, wattage, hoursPerDay, quantity } = data;
 
     // Verify property
     const property = await db.property.findFirst({
@@ -56,11 +56,12 @@ export async function POST(req: Request) {
 
     const newAppliance = await db.appliance.create({
       data: {
+        clientId: user.sub as string,  // required field — was missing
         propertyId,
         name,
         category,
         wattage,
-        dailyHours,
+        hoursPerDay,  // schema field is 'hoursPerDay', not 'dailyHours'
         quantity: quantity || 1
       }
     });

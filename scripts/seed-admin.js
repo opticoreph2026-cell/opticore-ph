@@ -8,13 +8,19 @@ async function main() {
   const password = 'password123';
   const name = 'System Admin';
 
-  const passwordHash = await bcrypt.hash(password, 10);
+  // IMPORTANT: Must prefix with "bcrypt:" so verifyPassword() in auth.js
+  // knows to use bcryptjs.compare() instead of the legacy SHA-256 path.
+  const rawHash = await bcrypt.hash(password, 10);
+  const passwordHash = `bcrypt:${rawHash}`;
 
   const admin = await prisma.client.upsert({
     where: { email },
     update: {
       role: 'admin',
-      passwordHash
+      passwordHash,
+      suspended: false,
+      onboardingComplete: true,
+      planTier: 'business',
     },
     create: {
       email,
@@ -22,7 +28,8 @@ async function main() {
       passwordHash,
       role: 'admin',
       planTier: 'business',
-      onboardingComplete: true
+      onboardingComplete: true,
+      suspended: false,
     }
   });
 

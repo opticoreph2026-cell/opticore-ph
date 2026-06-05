@@ -10,7 +10,7 @@ export async function GET() {
     const alerts = await db.alert.findMany({
       where: { 
         clientId: user.sub as string,
-        resolved: false
+        isRead: false  // schema field is 'isRead', not 'resolved'
       },
       orderBy: { createdAt: 'desc' }
     });
@@ -28,7 +28,7 @@ export async function PUT(req: Request) {
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
     const data = await req.json();
-    const { id, resolved } = data;
+    const { id, isRead } = data;
 
     const alert = await db.alert.findFirst({
       where: { id, clientId: user.sub as string }
@@ -38,7 +38,7 @@ export async function PUT(req: Request) {
 
     const updated = await db.alert.update({
       where: { id },
-      data: { resolved }
+      data: { isRead: isRead ?? true }  // schema field is 'isRead'
     });
 
     return NextResponse.json({ alert: updated });
@@ -47,3 +47,4 @@ export async function PUT(req: Request) {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
+
