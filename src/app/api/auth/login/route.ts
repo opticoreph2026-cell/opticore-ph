@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { verifyPassword, setAuthCookies, signAccessToken, signRefreshToken } from '@/lib/auth';
+import { verifyPassword, signAccessToken, signRefreshToken } from '@/lib/auth';
+
+export const dynamic = 'force-dynamic';
 
 export async function POST(req: NextRequest) {
   try {
@@ -13,7 +15,6 @@ export async function POST(req: NextRequest) {
     // Find client
     const client = await db.client.findUnique({ where: { email } });
     if (!client || !client.passwordHash) {
-      // Record failed attempt
       if (client) {
         await db.signInEvent.create({
           data: {
@@ -62,13 +63,24 @@ export async function POST(req: NextRequest) {
     const accessToken = await signAccessToken(payload);
     const refreshToken = await signRefreshToken({ sub: client.id });
 
-    await setAuthCookies(client, accessToken, refreshToken);
+    // Persist refresh token to DB
+    try {
+      await db.refreshToken.create({
+        data: {
+          token: refreshToken,
+          clientId: client.id,
+          expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
+        }
+      });
+    } catch (e) {
+      console.error('[Login] Failed to persist refresh token:', e);
+    }
 
     // Update last login
     await db.client.update({
       where: { id: client.id },
       data: { lastLoginAt: new Date(), lastSignedInAt: new Date() }
-    });
+    }).catch(() => {});
 
     // Record success
     await db.signInEvent.create({
@@ -78,9 +90,31 @@ export async function POST(req: NextRequest) {
         success: true,
         ipAddress: req.headers.get('x-forwarded-for') || 'unknown',
       }
+    }).catch(() => {});
+
+    // ── Set cookies directly on NextResponse ─────────────────────────────────
+    // NOTE: In Next.js 14 Route Handlers, cookies MUST be set on NextResponse.
+    // Using cookies().set() from next/headers does NOT work in Route Handlers.
+    const isProduction = process.env.NODE_ENV === 'production';
+    const response = NextResponse.json({ user: payload });
+
+    response.cookies.set('access_token', accessToken, {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: 'lax',
+      maxAge: 15 * 60,          // 15 minutes
+      path: '/',
     });
 
-    return NextResponse.json({ user: payload });
+    response.cookies.set('refresh_token', refreshToken, {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: 'lax',
+      maxAge: 60 * 60 * 24 * 7, // 7 days
+      path: '/',
+    });
+
+    return response;
   } catch (error) {
     console.error('Login Error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

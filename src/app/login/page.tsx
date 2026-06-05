@@ -13,7 +13,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const { login } = useAuth();
+  const { refresh } = useAuth();
   const { error } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -25,6 +25,7 @@ export default function LoginPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
+        credentials: 'include',
       });
 
       const data = await res.json();
@@ -33,8 +34,8 @@ export default function LoginPage() {
         throw new Error(data.error || 'Failed to login');
       }
 
-      // Context will fetch new session via refresh/login call
-      login('logged-in');
+      // Refresh the session in the AuthContext then navigate
+      await refresh();
       router.push('/dashboard');
     } catch (err: any) {
       error(err.message);

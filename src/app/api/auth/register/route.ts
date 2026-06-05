@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
 import { db } from '@/lib/db';
-import { hashPassword, setAuthCookies, signAccessToken, signRefreshToken } from '@/lib/auth';
+import { hashPassword, signAccessToken, signRefreshToken } from '@/lib/auth';
+
+export const dynamic = 'force-dynamic';
 
 export async function POST(req: NextRequest) {
   try {
@@ -53,9 +56,36 @@ export async function POST(req: NextRequest) {
     const accessToken = await signAccessToken(payload);
     const refreshToken = await signRefreshToken({ sub: client.id });
 
-    await setAuthCookies(client, accessToken, refreshToken);
+    // Persist refresh token
+    await db.refreshToken.create({
+      data: {
+        token: refreshToken,
+        clientId: client.id,
+        expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
+      }
+    }).catch(() => {});
 
-    return NextResponse.json({ user: payload });
+    // ── Set cookies directly on NextResponse ─────────────────────────────────
+    const isProduction = process.env.NODE_ENV === 'production';
+    const response = NextResponse.json({ user: payload });
+
+    response.cookies.set('access_token', accessToken, {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: 'lax',
+      maxAge: 15 * 60,
+      path: '/',
+    });
+
+    response.cookies.set('refresh_token', refreshToken, {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: 'lax',
+      maxAge: 60 * 60 * 24 * 7,
+      path: '/',
+    });
+
+    return response;
   } catch (error) {
     console.error('Registration Error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
