@@ -48,7 +48,7 @@ export async function parseBillImage(imageBase64: string, mimeType: string, util
       }
     })
 
-    const text = response.text()
+    const text = response.text
     return JSON.parse(text || '{}')
   } catch (error) {
     console.error('OCR Parsing Error:', error)

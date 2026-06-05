@@ -1,8 +1,8 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { hashPassword, setAuthCookies, signAccessToken, signRefreshToken } from '@/lib/auth';
 
-export async function POST(req) {
+export async function POST(req: NextRequest) {
   try {
     const { email, password, name } = await req.json();
 

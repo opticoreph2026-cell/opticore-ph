@@ -45,7 +45,7 @@ export async function generateAdvisoryReport(
       }
     })
 
-    const text = response.text()
+    const text = response.text
     return JSON.parse(text || '{}')
   } catch (error) {
     console.error('Advisory Gen Error:', error)
