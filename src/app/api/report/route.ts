@@ -43,7 +43,7 @@ export async function GET(req: Request) {
       status: 200,
       headers: {
         'Content-Type': 'text/csv',
-        'Content-Disposition': `attachment; filename="tipidhub-report-${new Date().toISOString().split('T')[0]}.csv"`
+        'Content-Disposition': `attachment; filename="OptiCore-report-${new Date().toISOString().split('T')[0]}.csv"`
       }
     });
   } catch (error) {

@@ -51,7 +51,7 @@ export function Features() {
             Everything you need to master your bills
           </p>
           <p className="text-lg text-white/60">
-            TipidHub gives you unprecedented visibility into your utility expenses with enterprise-grade analytics built for the home.
+            OptiCore gives you unprecedented visibility into your utility expenses with enterprise-grade analytics built for the home.
           </p>
         </div>
 

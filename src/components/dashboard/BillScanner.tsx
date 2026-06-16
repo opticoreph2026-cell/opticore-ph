@@ -101,7 +101,7 @@ export function BillScanner({ onScanComplete }: BillScannerProps) {
       {isScanning ? (
         <div className="flex flex-col items-center justify-center space-y-4">
           <Spinner className="w-8 h-8" />
-          <p className="text-sm font-medium text-white/80 animate-pulse">TipidHub AI is analyzing your bill...</p>
+          <p className="text-sm font-medium text-white/80 animate-pulse">OptiCore AI is analyzing your bill...</p>
         </div>
       ) : (
         <div className="flex flex-col items-center justify-center space-y-4">

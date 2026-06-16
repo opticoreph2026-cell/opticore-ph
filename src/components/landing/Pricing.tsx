@@ -45,7 +45,7 @@ const tiers = [
       'Dedicated Account Manager',
     ],
     cta: 'Contact Sales',
-    href: 'mailto:sales@tipidhub.ph',
+    href: 'mailto:sales@OptiCore.ph',
     popular: false,
   },
 ];

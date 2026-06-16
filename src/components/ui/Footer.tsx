@@ -28,14 +28,14 @@ export function Footer() {
             <ul className="space-y-3">
               <li><Link href="/privacy" className="text-sm text-white/60 hover:text-white transition-colors">Privacy Policy</Link></li>
               <li><Link href="/terms" className="text-sm text-white/60 hover:text-white transition-colors">Terms of Service</Link></li>
-              <li><a href="mailto:support@tipidhub.ph" className="text-sm text-white/60 hover:text-white transition-colors">Contact Support</a></li>
+              <li><a href="mailto:support@OptiCore.ph" className="text-sm text-white/60 hover:text-white transition-colors">Contact Support</a></li>
             </ul>
           </div>
         </div>
         
         <div className="mt-12 pt-8 border-t border-border-subtle flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-sm text-white/40">
-            &copy; {new Date().getFullYear()} TipidHub (OptiCore PH). All rights reserved.
+            &copy; {new Date().getFullYear()} OptiCore (OptiCore PH). All rights reserved.
           </p>
         </div>
       </div>

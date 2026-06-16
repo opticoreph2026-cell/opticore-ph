@@ -70,7 +70,7 @@ export function calculateExpectedElectricBill(
   } else {
     // If not lifeline, you often pay a lifeline subsidy charge (simplified here)
     // Actually, lifeline subsidy rate is usually part of Universal Charges or a separate rate.
-    // For TipidHub phase 1, we'll keep it simple: 0 if not lifeline, unless provided in universal.
+    // For OptiCore phase 1, we'll keep it simple: 0 if not lifeline, unless provided in universal.
   }
 
   const taxableAmount = subtotal + lifelineSubsidy

@@ -10,7 +10,7 @@ const outfit = Outfit({ subsets: ['latin'], variable: '--font-outfit' });
 const jetbrainsMono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-jetbrains-mono' });
 
 export const metadata: Metadata = {
-  title: 'TipidHub | Philippine Utility Intelligence',
+  title: 'OptiCore | Philippine Utility Intelligence',
   description: 'Take control of your electric, water, and fuel expenses. Identify energy hogs and reduce your monthly spending with AI.',
 };
 

@@ -24,7 +24,7 @@ export function Calculator() {
               See how much you could save by finding ghost loads.
             </p>
             <p className="text-lg text-white/60 mb-8">
-              On average, our users discover that 10% to 15% of their electricity bill is wasted on inefficient appliances or standby power. Let TipidHub find them for you.
+              On average, our users discover that 10% to 15% of their electricity bill is wasted on inefficient appliances or standby power. Let OptiCore find them for you.
             </p>
             
             <div className="space-y-8 p-8 bg-surface-1000 border border-border-subtle rounded-2xl shadow-2xl">
