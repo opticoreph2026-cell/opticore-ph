@@ -1,14 +1,14 @@
 // Quick HTTP test for the login endpoint
-const http = require('http');
+const https = require('https');
 
 const data = JSON.stringify({
   email: 'admin@opticore.ph',
   password: 'password123'
 });
 
+const APP_URL = 'https://opticore-ph.vercel.app';
 const options = {
-  hostname: 'localhost',
-  port: 3000,
+  hostname: 'opticore-ph.vercel.app',
   path: '/api/auth/login',
   method: 'POST',
   headers: {
@@ -17,7 +17,7 @@ const options = {
   }
 };
 
-const req = http.request(options, (res) => {
+const req = https.request(options, (res) => {
   let body = '';
   res.on('data', (chunk) => body += chunk);
   res.on('end', () => {
