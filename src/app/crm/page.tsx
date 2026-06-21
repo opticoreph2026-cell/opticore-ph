@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 
 export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
 
 async function getStats() {
   const [newLeads, qualified, activeProjects, commissioned] = await Promise.all([
