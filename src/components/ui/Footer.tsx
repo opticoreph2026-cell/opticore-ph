@@ -10,16 +10,15 @@ export function Footer() {
           <div className="col-span-1 md:col-span-2">
             <Logo className="mb-4" />
             <p className="text-sm text-white/60 max-w-xs leading-relaxed">
-              The unified utility intelligence platform for Philippine households. Take control of your electric, water, and fuel expenses.
+              Premium Neovolt ESS solar installations tailored for Philippine homes and businesses. Engineering precision from first contact to turnover.
             </p>
           </div>
           
           <div>
             <h3 className="text-sm font-semibold text-white mb-4 uppercase tracking-wider">Product</h3>
             <ul className="space-y-3">
-              <li><Link href="#features" className="text-sm text-white/60 hover:text-white transition-colors">Features</Link></li>
-              <li><Link href="/pricing" className="text-sm text-white/60 hover:text-white transition-colors">Pricing</Link></li>
-              <li><Link href="#calculator" className="text-sm text-white/60 hover:text-white transition-colors">Savings Calculator</Link></li>
+              <li><Link href="#calculator" className="text-sm text-white/60 hover:text-white transition-colors">ROI Calculator</Link></li>
+              <li><Link href="/billtools" className="text-sm text-white/60 hover:text-white transition-colors">Bill Analytics (Legacy)</Link></li>
             </ul>
           </div>
 
@@ -28,14 +27,14 @@ export function Footer() {
             <ul className="space-y-3">
               <li><Link href="/privacy" className="text-sm text-white/60 hover:text-white transition-colors">Privacy Policy</Link></li>
               <li><Link href="/terms" className="text-sm text-white/60 hover:text-white transition-colors">Terms of Service</Link></li>
-              <li><a href="mailto:support@OptiCore.ph" className="text-sm text-white/60 hover:text-white transition-colors">Contact Support</a></li>
+              <li><a href="mailto:engineering@opticore.ph" className="text-sm text-white/60 hover:text-white transition-colors">Contact Engineering</a></li>
             </ul>
           </div>
         </div>
         
         <div className="mt-12 pt-8 border-t border-border-subtle flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-sm text-white/40">
-            &copy; {new Date().getFullYear()} OptiCore (OptiCore PH). All rights reserved.
+            &copy; {new Date().getFullYear()} OptiCore Energy Solutions. All rights reserved.
           </p>
         </div>
       </div>

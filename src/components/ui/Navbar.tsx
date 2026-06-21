@@ -20,9 +20,8 @@ export function Navbar() {
           <Logo />
           
           <nav className="hidden md:flex gap-8">
-            <Link href="#features" className="text-sm font-medium text-white/60 hover:text-white transition-colors">Features</Link>
-            <Link href="/pricing" className="text-sm font-medium text-white/60 hover:text-white transition-colors">Pricing</Link>
-            <Link href="#calculator" className="text-sm font-medium text-white/60 hover:text-white transition-colors">Savings Calculator</Link>
+            <Link href="/billtools" className="text-sm font-medium text-white/60 hover:text-white transition-colors">Bill Analytics (Legacy)</Link>
+            <Link href="#calculator" className="text-sm font-medium text-white/60 hover:text-white transition-colors">ROI Calculator</Link>
           </nav>
 
           <div className="flex items-center gap-4">
@@ -36,8 +35,8 @@ export function Navbar() {
                   <Link href="/login" className="text-sm font-medium text-white/60 hover:text-white transition-colors">
                     Log in
                   </Link>
-                  <Link href="/signup" className="px-4 py-2 text-sm font-medium rounded-lg bg-gradient-to-r from-accent-cyan to-accent-emerald text-white hover:opacity-90 transition-opacity">
-                    Start Free
+                  <Link href="#calculator" className="px-4 py-2 text-sm font-medium rounded-lg bg-[#F5A524] text-[#08080B] hover:bg-[#e0961f] transition-colors">
+                    Get a Quote
                   </Link>
                 </>
               )

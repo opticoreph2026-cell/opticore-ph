@@ -36,7 +36,17 @@ export default function LoginPage() {
 
       // Refresh the session in the AuthContext then navigate
       await refresh();
-      router.push('/dashboard');
+      
+      const role = data.user?.role;
+      if (role === 'opticore_owner') {
+        router.push('/crm');
+      } else if (role === 'partner_admin' || role === 'partner_agent') {
+        router.push('/partner');
+      } else if (role === 'customer') {
+        router.push('/customer');
+      } else {
+        router.push('/dashboard');
+      }
     } catch (err: any) {
       error(err.message);
     } finally {

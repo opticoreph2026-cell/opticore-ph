@@ -498,3 +498,666 @@ model AdminAuditLog {
   @@index([adminId, createdAt(sort: Desc)])
   @@index([targetId])
 }
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// OPTICORE ENERGY SOLUTIONS — Solar + ESS Platform Models
+// All additive — no existing models modified.
+// Money: Int centavos (₱ × 100). Rates: Int rate units (₱/kWh × 10,000).
+// Enums: String with comment (SQLite/LibSQL — no native enum support).
+// ═══════════════════════════════════════════════════════════════════════════════
+
+// ── Organizations (OptiCore + Partner entities) ───────────────────────────────
+
+model EnergyOrganization {
+  // type: "principal" | "partner"
+  // status: "active" | "inactive"
+  id              String   @id @default(uuid())
+  name            String
+  type            String   @default("partner")  // principal | partner
+  territory       String   @default("[]")        // JSON string: ["Cebu","Bohol"]
+  contactPerson   String?
+  contactPhone    String?
+  contactEmail    String?
+  commissionModel String?  // JSON: commission rules per role
+  status          String   @default("active")    // active | inactive
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  leads           EnergyLead[]
+  projects        EnergyProject[]
+  commissions     CommissionRecord[]
+  members         EnergyProfile[]
+
+  @@index([type, status])
+}
+
+model EnergyProfile {
+  // role: "opticore_owner" | "opticore_staff" | "partner_admin" | "partner_installer" | "customer"
+  // prcLicenseType: "RME" | "REE" | "PEE" | "ECE" | "ECT" | "TESDA_NCII" | "TESDA_NCIII" | "none"
+  id               String   @id @default(uuid())
+  clientId         String   @unique  // FK → Client.id
+  fullName         String
+  role             String   @default("customer")
+  organizationId   String?
+  organization     EnergyOrganization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+  prcLicenseNo     String?
+  prcLicenseType   String   @default("none")
+  phone            String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  // Relations
+  designedSystems   SystemDesign[]   @relation("DesignedBy")
+  sealedDesigns     SystemDesign[]   @relation("EngineerSeal")
+  assessments       LoadAssessment[]
+  surveyed          EnergySite[]
+  commissionsLed    EnergyProject[]  @relation("LeadInstaller")
+
+  @@index([clientId])
+  @@index([organizationId])
+}
+
+// ── CRM Core ─────────────────────────────────────────────────────────────────
+
+model EnergyLead {
+  // source: "website_calc" | "facebook" | "referral" | "developer_outreach" | "demo_unit" | "direct"
+  // customerType: "residential" | "small_commercial" | "medium_commercial" | "developer" | "eastern_visayas"
+  // status: "new" | "contacted" | "site_visit_scheduled" | "qualified" | "disqualified" | "converted"
+  id                   String   @id @default(uuid())
+  source               String   @default("website_calc")
+  fullName             String
+  phone                String?
+  email                String?
+  addressLine          String?
+  city                 String?
+  province             String?
+  customerType         String   @default("residential")
+  utilityCompanyId     String?
+  utilityCompany       EnergyUtilityCompany? @relation(fields: [utilityCompanyId], references: [id], onDelete: SetNull)
+  monthlyBillPhp       Int      @default(0)  // centavos
+  status               String   @default("new")
+  assignedOrgId        String?
+  assignedOrg          EnergyOrganization? @relation(fields: [assignedOrgId], references: [id], onDelete: SetNull)
+  assignedUserId       String?  // EnergyProfile.clientId
+  referralPartnerName  String?
+  referralFeeCentavos  Int      @default(0)
+  notes                String?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  customers EnergyCustomer[]
+
+  @@index([status])
+  @@index([assignedOrgId])
+  @@index([createdAt(sort: Desc)])
+}
+
+model EnergyCustomer {
+  id                    String   @id @default(uuid())
+  leadId                String?
+  lead                  EnergyLead? @relation(fields: [leadId], references: [id], onDelete: SetNull)
+  fullName              String
+  billingAddress        String?
+  siteAddress           String?
+  contactPhone          String?
+  contactEmail          String?
+  utilityCompanyId      String?
+  utilityCompany        EnergyUtilityCompany? @relation(fields: [utilityCompanyId], references: [id], onDelete: SetNull)
+  utilityAccountNo      String?
+  // customerType: "residential" | "small_commercial" | "medium_commercial" | "developer" | "eastern_visayas"
+  customerType          String   @default("residential")
+  organizationId        String?
+  profileId             String?  // EnergyProfile.clientId (once portal account created)
+  dataPrivacyConsentAt  DateTime?
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  sites         EnergySite[]
+  quotations    EnergyQuotation[]
+  maintenance   MaintenanceContract[]
+  commsLog      CommunicationsLog[]
+
+  @@index([organizationId])
+  @@index([profileId])
+}
+
+model EnergySite {
+  // roofType: "flat_concrete" | "corrugated_metal" | "clay_tile" | "asphalt_shingle" | "other"
+  id                   String   @id @default(uuid())
+  customerId           String
+  customer             EnergyCustomer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  address              String?
+  latitude             Float?
+  longitude            Float?
+  roofType             String?
+  roofOrientationDeg   Float?
+  roofTiltDeg          Float?
+  shadingNotes         String?
+  availableRoofAreaSqm Float?
+  structuralNotes      String?
+  siteVisitDate        DateTime?
+  surveyedById         String?  // EnergyProfile.clientId
+  surveyedBy           EnergyProfile? @relation(fields: [surveyedById], references: [id], onDelete: SetNull)
+  photosJson           String?  // JSON array of storage refs
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  assessments   LoadAssessment[]
+  designs       SystemDesign[]
+
+  @@index([customerId])
+}
+
+model CommunicationsLog {
+  // channel: "call" | "sms" | "email" | "facebook" | "site_visit" | "whatsapp"
+  id            String   @id @default(uuid())
+  customerId    String?
+  customer      EnergyCustomer? @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  relatedToType String?  // "lead" | "customer" | "project"
+  relatedToId   String?
+  channel       String   @default("call")
+  summary       String
+  loggedById    String?  // EnergyProfile.clientId
+  loggedAt      DateTime @default(now())
+
+  @@index([customerId])
+  @@index([relatedToType, relatedToId])
+}
+
+// ── Product Catalog ───────────────────────────────────────────────────────────
+
+model ProductInverter {
+  // family: "single_phase_aio" | "three_phase_split" | "ac_coupled_retrofit"
+  // phase: 1 | 3
+  id                  String   @id @default(uuid())
+  sku                 String   @unique
+  modelName           String
+  family              String   @default("single_phase_aio")
+  phase               Int      @default(1)
+  ratedAcKw           Float
+  maxPvInputKw        Float
+  backupSurgeKw       Float?
+  transferTimeMs      Int      @default(20)
+  maxParallelUnits    Int      @default(1)
+  peakEfficiencyPct   Float    @default(97.0)
+  ipRating            String   @default("IP65")
+  operatingTempMinC   Float    @default(-25)
+  operatingTempMaxC   Float    @default(60)
+  certificationNotes  String?
+  datasheetUrl        String?
+  // Pricing — centavos; isPriceConfirmed=false = placeholder
+  unitPriceCentavos   Int      @default(0)
+  isPriceConfirmed    Boolean  @default(false)
+  priceNote           String?  @default("Pending official Bytewatt distributor price list")
+  active              Boolean  @default(true)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  designs       SystemDesign[]
+  inventory     InventoryUnit[]
+
+  @@index([family, active])
+}
+
+model ProductBattery {
+  // chemistry: "LFP" | "NMC"
+  id                          String   @id @default(uuid())
+  sku                         String   @unique
+  modelName                   String
+  compatibleInverterFamily    String   // "single_phase_aio" | "three_phase_split" | "both"
+  nominalKwh                  Float
+  usableKwh                   Float
+  dodPct                      Float    @default(95.0)
+  chemistry                   String   @default("LFP")
+  cycleLife                   Int      @default(6000)
+  warrantyYears               Int      @default(10)
+  warrantyThroughputMwhPerKwh Float    @default(3.0)
+  roundTripEfficiencyPct      Float    @default(95.0)
+  dimensionsMm                String?  // "590x750x205"
+  weightKg                    Float?
+  ipRating                    String   @default("IP65")
+  datasheetUrl                String?
+  unitPriceCentavos           Int      @default(0)
+  isPriceConfirmed            Boolean  @default(false)
+  priceNote                   String?  @default("Pending official Bytewatt distributor price list")
+  active                      Boolean  @default(true)
+  createdAt                   DateTime @default(now())
+  updatedAt                   DateTime @updatedAt
+
+  designs     SystemDesign[]
+  inventory   InventoryUnit[]
+
+  @@index([compatibleInverterFamily, active])
+}
+
+// ── Design Engine ─────────────────────────────────────────────────────────────
+
+model LoadAssessment {
+  // gridConnectionType: "single_phase" | "three_phase"
+  id                     String   @id @default(uuid())
+  siteId                 String
+  site                   EnergySite @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  assessedById           String?  // EnergyProfile.clientId
+  assessedBy             EnergyProfile? @relation(fields: [assessedById], references: [id], onDelete: SetNull)
+  assessmentDate         DateTime @default(now())
+  hasExistingSolar       Boolean  @default(false)
+  existingSolarKwp       Float?
+  gridConnectionType     String   @default("single_phase")
+  contractedDemandKw     Float?
+  averageMonthlyKwh      Float
+  averageMonthlyBillPhp  Int      // centavos
+  peakDemandKw           Float?
+  criticalLoadsJson      String?  // JSON: [{name, watts, qty, hoursPerDay, mustBackup}]
+  backupAutonomyHours    Float    @default(8)
+  customerGoal           String   @default("both") // "bill_reduction" | "backup" | "both" | "off_grid"
+  notes                  String?
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+
+  applianceItems ApplianceLoadItem[]
+  designs        SystemDesign[]
+
+  @@index([siteId])
+}
+
+model ApplianceLoadItem {
+  // category: "lighting" | "hvac" | "kitchen" | "medical" | "server_it" | "other"
+  id               String   @id @default(uuid())
+  assessmentId     String
+  assessment       LoadAssessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  applianceName    String
+  quantity         Int      @default(1)
+  wattsEach        Float
+  hoursPerDayEach  Float
+  isCritical       Boolean  @default(false)
+  category         String   @default("other")
+
+  @@index([assessmentId])
+}
+
+model SystemDesign {
+  // designPathway: "grid_tied_net_metered" | "zero_export_hybrid" | "off_grid"
+  // recommendedTier: "starter_residential" | "standard_residential" | "small_commercial" | "medium_commercial" | "off_grid_custom"
+  // status: "draft" | "finalized" | "approved_by_customer"
+  id                      String   @id @default(uuid())
+  siteId                  String
+  site                    EnergySite @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  assessmentId            String?
+  assessment              LoadAssessment? @relation(fields: [assessmentId], references: [id], onDelete: SetNull)
+  designedById            String?
+  designedBy              EnergyProfile? @relation("DesignedBy", fields: [designedById], references: [id], onDelete: SetNull)
+  designPathway           String   @default("zero_export_hybrid")
+  recommendedTier         String   @default("standard_residential")
+  pvArrayKwp              Float
+  pvPanelCount            Int
+  pvPanelWattage          Int      @default(550)
+  inverterId              String?
+  inverter                ProductInverter? @relation(fields: [inverterId], references: [id], onDelete: SetNull)
+  inverterQuantity        Int      @default(1)
+  batteryId               String?
+  battery                 ProductBattery? @relation(fields: [batteryId], references: [id], onDelete: SetNull)
+  batteryQuantity         Int      @default(1)
+  totalUsableStorageKwh   Float
+  estimatedAnnualYieldKwh Float
+  systemLossFactorPct     Float    @default(0.78)
+  peakSunHours            Float    @default(5.1)
+  sldFileUrl              String?
+  sldDataJson             String?  // JSON for engineer to finalize in CAD
+  engineerSealById        String?
+  engineerSeal            EnergyProfile? @relation("EngineerSeal", fields: [engineerSealById], references: [id], onDelete: SetNull)
+  status                  String   @default("draft")
+  version                 Int      @default(1)
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+
+  bomItems      DesignBomItem[]
+  roiScenarios  RoiScenario[]
+  quotations    EnergyQuotation[]
+  compliance    ComplianceRecord[]
+  projects      EnergyProject[]
+
+  @@index([siteId])
+  @@index([status])
+}
+
+model DesignBomItem {
+  // itemType: "panel" | "mounting" | "cable" | "breaker" | "disconnect" | "labor" | "permit_fee" | "other"
+  // source: "neovolt_catalog" | "third_party"
+  id              String   @id @default(uuid())
+  designId        String
+  design          SystemDesign @relation(fields: [designId], references: [id], onDelete: Cascade)
+  itemType        String   @default("other")
+  description     String
+  quantity        Float    @default(1)
+  unit            String   @default("pc")
+  unitCostCentavos Int     @default(0)
+  source          String   @default("third_party")
+  notes           String?
+
+  @@index([designId])
+}
+
+// ── Regulatory / Utility Reference ────────────────────────────────────────────
+
+model EnergyUtilityCompany {
+  // code: "VECO" | "MERALCO" | "CEBECO_I" | "CEBECO_II" | "CEBECO_III" | "DLPC" | "other"
+  id                       String   @id @default(uuid())
+  code                     String   @unique
+  name                     String
+  territory                String?
+  netMeteringApplicationUrl String?
+  defaultProcessingDays    Int      @default(60)
+  dimcFeeCapCentavos       Int      @default(300000) // ₱3,000 cap × 100
+  createdAt                DateTime @default(now())
+
+  leads         EnergyLead[]
+  customers     EnergyCustomer[]
+  rateSchedules UtilityRateSchedule[]
+  complianceRecs ComplianceRecord[]
+
+  @@index([code])
+}
+
+model UtilityRateSchedule {
+  // customerClass: "residential" | "commercial" | "industrial"
+  // Never overwrite — always insert a new effective-dated row
+  id                      String   @id @default(uuid())
+  utilityCompanyId        String
+  utilityCompany          EnergyUtilityCompany @relation(fields: [utilityCompanyId], references: [id], onDelete: Cascade)
+  customerClass           String   @default("residential")
+  effectiveDate           DateTime
+  // All rates as Int rate units (₱/kWh × 10,000)
+  allInRateRu             Int      // e.g., 128800 = ₱12.88/kWh
+  blendedGenerationRateRu Int      // BGC — never conflate with all-in
+  transmissionRateRu      Int      @default(0)
+  distributionRateRu      Int      @default(0)
+  notes                   String?
+  sourceUrl               String?
+  createdAt               DateTime @default(now())
+
+  @@unique([utilityCompanyId, customerClass, effectiveDate])
+  @@index([utilityCompanyId, customerClass, effectiveDate(sort: Desc)])
+}
+
+model RegulatoryRule {
+  // Versioned — insert new row per change, never overwrite
+  // ruleKey examples: "net_metering_cap_kw_residential" | "net_metering_cap_kw_commercial"
+  //                   "dimc_fee_cap_php" | "credit_rollover_allowed" | "application_response_days"
+  id               String   @id @default(uuid())
+  ruleKey          String
+  value            String   // stored as string, cast by consumer
+  effectiveDate    DateTime
+  sourceReference  String?
+  notes            String?
+  createdAt        DateTime @default(now())
+
+  @@index([ruleKey, effectiveDate(sort: Desc)])
+}
+
+model ComplianceRecord {
+  // pathway: "net_metering" | "zero_export" | "off_grid"
+  // ercTypeApprovalStatus: "not_applicable" | "pending" | "submitted" | "approved" | "expired"
+  id                     String   @id @default(uuid())
+  designId               String
+  design                 SystemDesign @relation(fields: [designId], references: [id], onDelete: Cascade)
+  utilityCompanyId       String?
+  utilityCompany         EnergyUtilityCompany? @relation(fields: [utilityCompanyId], references: [id], onDelete: SetNull)
+  pathway                String   @default("zero_export")
+  checklistJson          String?  // JSON: [{doc, status: "pending"|"submitted"|"approved"}]
+  ercTypeApprovalStatus  String   @default("not_applicable")
+  assignedToId           String?
+  targetCompletionDate   DateTime?
+  actualCompletionDate   DateTime?
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+
+  @@index([designId])
+}
+
+// ── ROI / Financial Engine ────────────────────────────────────────────────────
+
+model RoiScenario {
+  // pathway: "grid_tied_net_metered" | "zero_export_hybrid" | "off_grid"
+  // financingType: "cash" | "loan"
+  id                    String   @id @default(uuid())
+  designId              String
+  design                SystemDesign @relation(fields: [designId], references: [id], onDelete: Cascade)
+  scenarioLabel         String   @default("Base Scenario")
+  pathway               String   @default("zero_export_hybrid")
+  selfConsumptionPct    Float    @default(70.0)
+  exportPct             Float    @default(0.0)
+  capexTotalCentavos    Int      // total CapEx in centavos
+  capexBreakdownJson    String?  // JSON: {hardware, installation, design_fee, permits, dimc, contingency}
+  financingType         String   @default("cash")
+  loanTermMonths        Int?
+  loanInterestRatePct   Float?
+  annualDegradationPct  Float    @default(0.6)
+  annualRateEscalationPct Float  @default(4.0)
+  discountRatePct       Float    @default(9.0)
+  omAnnualCostCentavos  Int      @default(0)
+  analysisHorizonYears  Int      @default(25)
+  resultsJson           String?  // JSON: {simplePayback, discountedPayback, npv, irr, lcoe, cashflowByYear[]}
+  generatedById         String?
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  quotations EnergyQuotation[]
+
+  @@index([designId])
+}
+
+// ── Commercial Pipeline ───────────────────────────────────────────────────────
+
+model EnergyQuotation {
+  // vatTreatment: "vat_inclusive" | "vat_exempt" | "percentage_tax"
+  // status: "draft" | "sent" | "accepted" | "rejected" | "expired"
+  id                      String   @id @default(uuid())
+  designId                String
+  design                  SystemDesign @relation(fields: [designId], references: [id], onDelete: Cascade)
+  roiScenarioId           String?
+  roiScenario             RoiScenario? @relation(fields: [roiScenarioId], references: [id], onDelete: SetNull)
+  customerId              String
+  customer                EnergyCustomer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  quoteNumber             String   @unique
+  issueDate               DateTime @default(now())
+  validUntil              DateTime
+  hardwareSubtotalCentavos     Int @default(0)
+  installationFeeCentavos      Int @default(0)
+  designFeeCentavos            Int @default(0)
+  maintenanceContractOfferCentavos Int @default(0)
+  vatTreatment            String   @default("vat_inclusive")
+  grandTotalCentavos      Int      @default(0)
+  depositRequiredPct      Float    @default(30.0)
+  status                  String   @default("draft")
+  pdfFileUrl              String?
+  sentAt                  DateTime?
+  respondedAt             DateTime?
+  notes                   String?
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+
+  contracts EnergyContract[]
+
+  @@index([customerId])
+  @@index([status])
+}
+
+model EnergyContract {
+  // paymentMethod: "cash" | "bank_transfer" | "gcash" | "maya" | "financing"
+  id                  String   @id @default(uuid())
+  quotationId         String
+  quotation           EnergyQuotation @relation(fields: [quotationId], references: [id], onDelete: Cascade)
+  signedDate          DateTime?
+  customerSigFileUrl  String?
+  depositAmountCentavos   Int   @default(0)
+  depositPaidAt       DateTime?
+  balanceDueCentavos  Int      @default(0)
+  balancePaidAt       DateTime?
+  paymentMethod       String   @default("bank_transfer")
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  payments EnergyPayment[]
+  projects EnergyProject[]
+
+  @@index([quotationId])
+}
+
+model EnergyPayment {
+  // paymentType: "deposit" | "balance" | "maintenance_fee"
+  id              String   @id @default(uuid())
+  contractId      String
+  contract        EnergyContract @relation(fields: [contractId], references: [id], onDelete: Cascade)
+  amountCentavos  Int
+  paymentType     String   @default("deposit")
+  method          String   @default("bank_transfer")
+  referenceNo     String?
+  paidAt          DateTime
+  recordedById    String?  // EnergyProfile.clientId
+  createdAt       DateTime @default(now())
+
+  @@index([contractId])
+}
+
+// ── Inventory & Consignment ───────────────────────────────────────────────────
+
+model InventoryUnit {
+  // ownershipStatus: "consigned_bytewatt" | "owned_opticore" | "reserved" | "sold_installed"
+  // consignmentRemitStatus: "not_applicable" | "pending_remit" | "remitted"
+  id                    String   @id @default(uuid())
+  inverterId            String?
+  inverter              ProductInverter? @relation(fields: [inverterId], references: [id], onDelete: SetNull)
+  batteryId             String?
+  battery               ProductBattery? @relation(fields: [batteryId], references: [id], onDelete: SetNull)
+  serialNumber          String   @unique
+  ownershipStatus       String   @default("consigned_bytewatt")
+  storageLocation       String?
+  receivedDate          DateTime
+  consignmentRemitStatus String  @default("not_applicable")
+  remitAmountCentavos   Int      @default(0)
+  remitDate             DateTime?
+  reservedForQuotationId String?
+  installedAtProjectId  String?
+  notes                 String?
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@index([ownershipStatus])
+  @@index([inverterId])
+  @@index([batteryId])
+}
+
+// ── Project Delivery & After-Sales ────────────────────────────────────────────
+
+model EnergyProject {
+  // status: "scheduled" | "in_progress" | "commissioned" | "warranty_registered" | "closed"
+  id                     String   @id @default(uuid())
+  contractId             String?
+  contract               EnergyContract? @relation(fields: [contractId], references: [id], onDelete: SetNull)
+  designId               String?
+  design                 SystemDesign? @relation(fields: [designId], references: [id], onDelete: SetNull)
+  organizationId         String?
+  organization           EnergyOrganization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+  leadInstallerId        String?
+  leadInstaller          EnergyProfile? @relation("LeadInstaller", fields: [leadInstallerId], references: [id], onDelete: SetNull)
+  scheduledInstallDate   DateTime?
+  actualInstallDate      DateTime?
+  commissioningDate      DateTime?
+  status                 String   @default("scheduled")
+  commissioningChecklistJson String?
+  commissioningPhotosJson    String?
+  warrantyRegisteredAt   DateTime?
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+
+  milestones   ProjectMilestone[]
+  commissions  CommissionRecord[]
+  maintenance  MaintenanceContract[]
+
+  @@index([organizationId])
+  @@index([status])
+}
+
+model ProjectMilestone {
+  // milestone: "deposit_received" | "unit_reserved" | "installation_scheduled" | "installed"
+  //            | "commissioned" | "net_metering_submitted" | "net_metering_approved"
+  //            | "warranty_registered" | "maintenance_contract_active"
+  id            String   @id @default(uuid())
+  projectId     String
+  project       EnergyProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  milestone     String
+  milestoneDate DateTime
+  notes         String?
+  createdAt     DateTime @default(now())
+
+  @@index([projectId])
+}
+
+model CommissionRecord {
+  // role: "hardware_margin" | "installation_fee" | "design_fee" | "sub_dealer_markup" | "referral_fee"
+  // status: "pending" | "paid"
+  id             String   @id @default(uuid())
+  projectId      String
+  project        EnergyProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  organizationId String
+  organization   EnergyOrganization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  roleInProject  String   @default("hardware_margin")
+  amountCentavos Int
+  status         String   @default("pending")
+  paidAt         DateTime?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([organizationId, status])
+  @@index([projectId])
+}
+
+model MaintenanceContract {
+  // status: "active" | "lapsed" | "cancelled"
+  id               String   @id @default(uuid())
+  customerId       String
+  customer         EnergyCustomer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  projectId        String?
+  project          EnergyProject? @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  annualFeeCentavos Int      @default(0)
+  startDate        DateTime
+  renewalDate      DateTime
+  status           String   @default("active")
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  visits MaintenanceVisit[]
+
+  @@index([customerId])
+  @@index([status])
+}
+
+model MaintenanceVisit {
+  id                        String   @id @default(uuid())
+  maintenanceContractId     String
+  maintenanceContract       MaintenanceContract @relation(fields: [maintenanceContractId], references: [id], onDelete: Cascade)
+  scheduledDate             DateTime
+  completedDate             DateTime?
+  technicianId              String?  // EnergyProfile.clientId
+  findings                  String?
+  systemPerformanceSnapshot String?  // JSON: {actualYieldKwh, expectedYieldKwh, ...}
+  createdAt                 DateTime @default(now())
+
+  @@index([maintenanceContractId])
+}
+
+model EnergyDocument {
+  // ownerType: "customer" | "project" | "system_design" | "organization"
+  // docType: "proposal_pdf" | "sld" | "coc" | "warranty_cert" | "prc_license"
+  //          | "datasheet" | "contract" | "invoice" | "receipt"
+  id           String   @id @default(uuid())
+  ownerType    String
+  ownerId      String
+  docType      String
+  fileUrl      String
+  uploadedById String?
+  uploadedAt   DateTime @default(now())
+
+  @@index([ownerType, ownerId])
+}

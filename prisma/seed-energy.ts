@@ -1,0 +1,500 @@
+/**
+ * @file prisma/seed-energy.ts
+ * @description Seed data for the OptiCore Energy platform.
+ *
+ * Seeded items:
+ *   - EnergyOrganization × 3 (OptiCore principal + 2 partner orgs)
+ *   - ProductInverter × 5 (Neovolt/Bytewatt catalog per Part B1.2)
+ *   - ProductBattery × 3 (Neovolt/Bytewatt catalog per Part B1.3)
+ *   - EnergyUtilityCompany × 5 (VECO, MERALCO, CEBECO I/II/III, DLPC)
+ *   - UtilityRateSchedule × 5 (May 2026 indicative rates)
+ *   - RegulatoryRule × 5 (ERC/DOE rules per Part B2)
+ *
+ * Prices are placeholder estimates (isPriceConfirmed: false).
+ * Swap to real figures once the official Bytewatt distributor price list arrives.
+ *
+ * Run: npx tsx prisma/seed-energy.ts
+ */
+
+import { PrismaClient } from '@prisma/client';
+
+const db = new PrismaClient();
+
+async function main() {
+  console.log('🌱 Seeding OptiCore Energy platform data...');
+
+  // ── 1. Organizations ────────────────────────────────────────────────────────
+
+  const opticore = await db.energyOrganization.upsert({
+    where: { id: 'org-opticore-principal' },
+    update: {},
+    create: {
+      id: 'org-opticore-principal',
+      name: 'OptiCore Energy Solutions',
+      type: 'principal',
+      territory: JSON.stringify(['Cebu', 'Bohol', 'Leyte', 'Samar', 'Nationwide']),
+      contactPerson: 'Julius Rey S. Gisto, RME',
+      contactPhone: '+639XXXXXXXXX',
+      contactEmail: 'julius@opticoreergy.ph',
+      commissionModel: JSON.stringify({
+        hardware_margin: 'variable',
+        installation_fee: 'per_project',
+        design_fee: 'per_project',
+      }),
+      status: 'active',
+    },
+  });
+
+  const jericOrg = await db.energyOrganization.upsert({
+    where: { id: 'org-jeric-cebu-bohol' },
+    update: {},
+    create: {
+      id: 'org-jeric-cebu-bohol',
+      name: "Engr. Jeric Inson's Installation Team",
+      type: 'partner',
+      territory: JSON.stringify(['Cebu', 'Bohol']),
+      contactPerson: 'Engr. Jeric Inson',
+      contactPhone: '+639XXXXXXXXX',
+      contactEmail: 'jeric@example.ph',
+      commissionModel: JSON.stringify({
+        installation_fee: 'shared',
+        sub_dealer_markup: 'per_unit',
+      }),
+      status: 'active',
+    },
+  });
+
+  const sidlakOrg = await db.energyOrganization.upsert({
+    where: { id: 'org-sidlakdev-leyte' },
+    update: {},
+    create: {
+      id: 'org-sidlakdev-leyte',
+      name: 'SidlakDev Leyte / Aldrean T. Polistico',
+      type: 'partner',
+      territory: JSON.stringify(['Leyte', 'Samar', 'Eastern Visayas']),
+      contactPerson: 'Aldrean T. Polistico, ECE',
+      contactPhone: '+639XXXXXXXXX',
+      contactEmail: 'aldrean@sidlakdev.ph',
+      commissionModel: JSON.stringify({
+        sub_dealer_markup: 'per_unit',
+        referral_fee: 'per_project',
+      }),
+      status: 'active',
+    },
+  });
+
+  console.log(`  ✅ Organizations: ${opticore.name}, ${jericOrg.name}, ${sidlakOrg.name}`);
+
+  // ── 2. Product Inverters ─────────────────────────────────────────────────────
+
+  const inverters = [
+    {
+      id: 'inv-bw-sph3600',
+      sku: 'BW-INV-SPH3.6K',
+      modelName: 'Neovolt ESS 3.6kW Single-Phase (BW-INV-SPH3.6K)',
+      family: 'single_phase_aio',
+      phase: 1,
+      ratedAcKw: 3.6,
+      maxPvInputKw: 10.0,
+      backupSurgeKw: 7.36,
+      transferTimeMs: 20,
+      maxParallelUnits: 6,
+      peakEfficiencyPct: 97.0,
+      ipRating: 'IP65',
+      operatingTempMinC: -25,
+      operatingTempMaxC: 60,
+      certificationNotes: 'DEKRA IEC 61727:2004 & IEC 62116:2014 (valid to March 2031). ERC Type Approval: Pending.',
+      // Placeholder price ~₱120,000 — UNCONFIRMED
+      unitPriceCentavos: 12000000,
+      isPriceConfirmed: false,
+      priceNote: 'Placeholder estimate ≈₱120,000. Pending official Bytewatt distributor price list.',
+      active: true,
+    },
+    {
+      id: 'inv-bw-sph5000',
+      sku: 'BW-INV-SPH5K',
+      modelName: 'Neovolt ESS 5kW Single-Phase (BW-INV-SPH5K)',
+      family: 'single_phase_aio',
+      phase: 1,
+      ratedAcKw: 5.0,
+      maxPvInputKw: 10.0,
+      backupSurgeKw: 10.0,
+      transferTimeMs: 20,
+      maxParallelUnits: 6,
+      peakEfficiencyPct: 97.3,
+      ipRating: 'IP65',
+      operatingTempMinC: -25,
+      operatingTempMaxC: 60,
+      certificationNotes: 'DEKRA IEC 61727:2004 & IEC 62116:2014 (valid to March 2031). ERC Type Approval: Pending.',
+      // Placeholder price ~₱145,000 — UNCONFIRMED
+      unitPriceCentavos: 14500000,
+      isPriceConfirmed: false,
+      priceNote: 'Placeholder estimate ≈₱145,000. Pending official Bytewatt distributor price list.',
+      active: true,
+    },
+    {
+      id: 'inv-bw-tph4000',
+      sku: 'BW-INV-TPH4K',
+      modelName: 'Neovolt ESS 4kW Three-Phase (BW-INV-TPH4K)',
+      family: 'three_phase_split',
+      phase: 3,
+      ratedAcKw: 4.0,
+      maxPvInputKw: 8.0,
+      backupSurgeKw: 8.0,
+      transferTimeMs: 20,
+      maxParallelUnits: 6,
+      peakEfficiencyPct: 97.5,
+      ipRating: 'IP65',
+      operatingTempMinC: -25,
+      operatingTempMaxC: 60,
+      certificationNotes: 'DEKRA IEC 61727:2004 & IEC 62116:2014. ERC Type Approval: Pending.',
+      unitPriceCentavos: 16000000,
+      isPriceConfirmed: false,
+      priceNote: 'Placeholder estimate ≈₱160,000. Pending official Bytewatt distributor price list.',
+      active: true,
+    },
+    {
+      id: 'inv-bw-tph10000',
+      sku: 'BW-INV-TPH10K',
+      modelName: 'Neovolt ESS 10kW Three-Phase (BW-INV-TPH10K)',
+      family: 'three_phase_split',
+      phase: 3,
+      ratedAcKw: 10.0,
+      maxPvInputKw: 20.0,
+      backupSurgeKw: 20.0,
+      transferTimeMs: 20,
+      maxParallelUnits: 6,
+      peakEfficiencyPct: 98.0,
+      ipRating: 'IP65',
+      operatingTempMinC: -25,
+      operatingTempMaxC: 60,
+      certificationNotes: 'DEKRA IEC 61727:2004 & IEC 62116:2014. ERC Type Approval: Pending.',
+      unitPriceCentavos: 28000000,
+      isPriceConfirmed: false,
+      priceNote: 'Placeholder estimate ≈₱280,000. Pending official Bytewatt distributor price list.',
+      active: true,
+    },
+    {
+      id: 'inv-bw-spb5000',
+      sku: 'BW-INV-SPB5K',
+      modelName: 'Neovolt AC-Coupled Retrofit 5kW (BW-INV-SPB5K)',
+      family: 'ac_coupled_retrofit',
+      phase: 1,
+      ratedAcKw: 5.0,
+      maxPvInputKw: 5.0,
+      backupSurgeKw: 10.0,
+      transferTimeMs: 20,
+      maxParallelUnits: 1,
+      peakEfficiencyPct: 96.5,
+      ipRating: 'IP65',
+      operatingTempMinC: -25,
+      operatingTempMaxC: 60,
+      certificationNotes: 'For retrofit of existing grid-tied solar. ERC Type Approval: Pending.',
+      unitPriceCentavos: 13000000,
+      isPriceConfirmed: false,
+      priceNote: 'Placeholder estimate ≈₱130,000. Pending official Bytewatt distributor price list.',
+      active: true,
+    },
+  ];
+
+  for (const inv of inverters) {
+    await db.productInverter.upsert({
+      where: { id: inv.id },
+      update: {},
+      create: inv,
+    });
+  }
+
+  console.log(`  ✅ Inverters: ${inverters.length} Neovolt models seeded`);
+
+  // ── 3. Product Batteries ──────────────────────────────────────────────────────
+
+  const batteries = [
+    {
+      id: 'bat-bw-bat101p',
+      sku: 'BW-BAT-10.1P',
+      modelName: 'Neovolt Battery 10.1kWh (BW-BAT-10.1P)',
+      compatibleInverterFamily: 'single_phase_aio',
+      nominalKwh: 10.1,
+      usableKwh: 9.6,
+      dodPct: 95.0,
+      chemistry: 'LFP',
+      cycleLife: 6000,
+      warrantyYears: 10,
+      warrantyThroughputMwhPerKwh: 3.0,
+      roundTripEfficiencyPct: 95.0,
+      dimensionsMm: '590x750x205',
+      weightKg: 90.0,
+      ipRating: 'IP65',
+      unitPriceCentavos: 9800000,
+      isPriceConfirmed: false,
+      priceNote: 'Placeholder estimate ≈₱98,000. Pending official Bytewatt distributor price list.',
+      active: true,
+    },
+    {
+      id: 'bat-bw-bat48s',
+      sku: 'BW-BAT-4.8S',
+      modelName: 'Neovolt Battery 4.8kWh (BW-BAT-4.8S)',
+      compatibleInverterFamily: 'three_phase_split',
+      nominalKwh: 4.8,
+      usableKwh: 4.56,
+      dodPct: 95.0,
+      chemistry: 'LFP',
+      cycleLife: 6000,
+      warrantyYears: 10,
+      warrantyThroughputMwhPerKwh: 3.0,
+      roundTripEfficiencyPct: 95.0,
+      dimensionsMm: null,
+      weightKg: null,
+      ipRating: 'IP65',
+      unitPriceCentavos: 5500000,
+      isPriceConfirmed: false,
+      priceNote: 'Placeholder estimate ≈₱55,000. Pending official Bytewatt distributor price list.',
+      active: true,
+    },
+    {
+      id: 'bat-bw-bat96p',
+      sku: 'BW-BAT-9.6P',
+      modelName: 'Neovolt Battery 9.6kWh (BW-BAT-9.6P)',
+      compatibleInverterFamily: 'three_phase_split',
+      nominalKwh: 9.6,
+      usableKwh: 9.12,
+      dodPct: 95.0,
+      chemistry: 'LFP',
+      cycleLife: 6000,
+      warrantyYears: 10,
+      warrantyThroughputMwhPerKwh: 3.0,
+      roundTripEfficiencyPct: 95.0,
+      dimensionsMm: null,
+      weightKg: null,
+      ipRating: 'IP65',
+      unitPriceCentavos: 9500000,
+      isPriceConfirmed: false,
+      priceNote: 'Placeholder estimate ≈₱95,000. Pending official Bytewatt distributor price list.',
+      active: true,
+    },
+  ];
+
+  for (const bat of batteries) {
+    await db.productBattery.upsert({
+      where: { id: bat.id },
+      update: {},
+      create: bat,
+    });
+  }
+
+  console.log(`  ✅ Batteries: ${batteries.length} Neovolt models seeded`);
+
+  // ── 4. Utility Companies ─────────────────────────────────────────────────────
+
+  const utilities = [
+    {
+      id: 'util-veco',
+      code: 'VECO',
+      name: 'Visayas Electric Company',
+      territory: 'Cebu City and surroundings',
+      netMeteringApplicationUrl: 'https://veco.com.ph/net-metering',
+      defaultProcessingDays: 60,
+      dimcFeeCapCentavos: 300000,
+    },
+    {
+      id: 'util-meralco',
+      code: 'MERALCO',
+      name: 'Manila Electric Company',
+      territory: 'Metro Manila and neighboring provinces',
+      netMeteringApplicationUrl: 'https://www.meralco.com.ph/net-metering',
+      defaultProcessingDays: 60,
+      dimcFeeCapCentavos: 300000,
+    },
+    {
+      id: 'util-cebeco1',
+      code: 'CEBECO_I',
+      name: 'Cebu Electric Cooperative I',
+      territory: 'Northern Cebu',
+      netMeteringApplicationUrl: null,
+      defaultProcessingDays: 90,
+      dimcFeeCapCentavos: 300000,
+    },
+    {
+      id: 'util-cebeco2',
+      code: 'CEBECO_II',
+      name: 'Cebu Electric Cooperative II',
+      territory: 'Central Cebu (outside Cebu City)',
+      netMeteringApplicationUrl: null,
+      defaultProcessingDays: 90,
+      dimcFeeCapCentavos: 300000,
+    },
+    {
+      id: 'util-dlpc',
+      code: 'DLPC',
+      name: 'Davao Light and Power Company / LEYTE Electric Cooperative',
+      territory: 'Eastern Visayas (Leyte, Samar)',
+      netMeteringApplicationUrl: null,
+      defaultProcessingDays: 90,
+      dimcFeeCapCentavos: 300000,
+    },
+  ];
+
+  for (const util of utilities) {
+    await db.energyUtilityCompany.upsert({
+      where: { id: util.id },
+      update: {},
+      create: util,
+    });
+  }
+
+  console.log(`  ✅ Utility companies: ${utilities.length} seeded`);
+
+  // ── 5. Utility Rate Schedules (May 2026 indicative — versioned) ──────────────
+
+  const effectiveMay2026 = new Date('2026-05-01T00:00:00.000Z');
+  const rateSchedules = [
+    {
+      id: 'rate-veco-res-may2026',
+      utilityCompanyId: 'util-veco',
+      customerClass: 'residential',
+      effectiveDate: effectiveMay2026,
+      // VECO residential ≈ ₱12.88/kWh all-in (May 2026) → × 10,000 = 128800
+      allInRateRu: 128800,
+      // VECO BGC ≈ ₱5.00/kWh → × 10,000 = 50000
+      blendedGenerationRateRu: 50000,
+      transmissionRateRu: 16000,
+      distributionRateRu: 22000,
+      notes: 'Indicative May 2026 rates. Verify against latest VECO billing statement.',
+      sourceUrl: 'https://veco.com.ph',
+    },
+    {
+      id: 'rate-veco-com-may2026',
+      utilityCompanyId: 'util-veco',
+      customerClass: 'commercial',
+      effectiveDate: effectiveMay2026,
+      allInRateRu: 131000,
+      blendedGenerationRateRu: 52000,
+      transmissionRateRu: 16000,
+      distributionRateRu: 24000,
+      notes: 'Indicative May 2026 commercial rates. Verify against latest VECO billing statement.',
+      sourceUrl: 'https://veco.com.ph',
+    },
+    {
+      id: 'rate-meralco-res-may2026',
+      utilityCompanyId: 'util-meralco',
+      customerClass: 'residential',
+      effectiveDate: effectiveMay2026,
+      // Meralco ≈ ₱13.00/kWh residential → 130000 RU
+      allInRateRu: 130000,
+      // Meralco BGC ≈ ₱6.50/kWh → 65000 RU
+      blendedGenerationRateRu: 65000,
+      transmissionRateRu: 14000,
+      distributionRateRu: 18000,
+      notes: 'Indicative May 2026 Meralco residential. For Metro Manila reference projects.',
+      sourceUrl: 'https://www.meralco.com.ph',
+    },
+    {
+      id: 'rate-cebeco1-res-may2026',
+      utilityCompanyId: 'util-cebeco1',
+      customerClass: 'residential',
+      effectiveDate: effectiveMay2026,
+      // CEBECO ≈ ₱13.37/kWh → 133700 RU
+      allInRateRu: 133700,
+      blendedGenerationRateRu: 50000,
+      transmissionRateRu: 16000,
+      distributionRateRu: 25000,
+      notes: 'Indicative May 2026 CEBECO I residential.',
+      sourceUrl: null,
+    },
+    {
+      id: 'rate-dlpc-res-may2026',
+      utilityCompanyId: 'util-dlpc',
+      customerClass: 'residential',
+      effectiveDate: effectiveMay2026,
+      // Eastern Visayas — higher rates due to weak grid dependency
+      allInRateRu: 135000,
+      blendedGenerationRateRu: 50000,
+      transmissionRateRu: 18000,
+      distributionRateRu: 26000,
+      notes: 'Indicative May 2026 Eastern Visayas rates. Verify locally — frequent adjustments.',
+      sourceUrl: null,
+    },
+  ];
+
+  for (const schedule of rateSchedules) {
+    await db.utilityRateSchedule.upsert({
+      where: { id: schedule.id },
+      update: {},
+      create: schedule,
+    });
+  }
+
+  console.log(`  ✅ Rate schedules: ${rateSchedules.length} seeded`);
+
+  // ── 6. Regulatory Rules ──────────────────────────────────────────────────────
+
+  const rulesEffective2026 = new Date('2026-04-01T00:00:00.000Z');
+  const rules = [
+    {
+      id: 'rule-nm-cap-residential',
+      ruleKey: 'net_metering_cap_kw_residential',
+      value: '100',
+      effectiveDate: rulesEffective2026,
+      sourceReference: 'RA 9513, ERC Resolution No. 09 Series of 2013',
+      notes: 'Residential customers: effectively capped near 100 kW in practice.',
+    },
+    {
+      id: 'rule-nm-cap-commercial',
+      ruleKey: 'net_metering_cap_kw_commercial',
+      value: '1000',
+      effectiveDate: rulesEffective2026,
+      sourceReference: 'April 2026 DOE Circular — 100 kW cap removed for commercial/industrial',
+      notes: 'Commercial/industrial: new cap = contracted capacity or 1 MW, whichever is lower.',
+    },
+    {
+      id: 'rule-dimc-fee-cap',
+      ruleKey: 'dimc_fee_cap_php',
+      value: '3000',
+      effectiveDate: new Date('2025-09-22T00:00:00.000Z'),
+      sourceReference: 'ERC Advisory September 22, 2025',
+      notes: 'Difference-in-Meter-Cost fee capped at ₱3,000 for residential consumers.',
+    },
+    {
+      id: 'rule-credit-rollover',
+      ruleKey: 'credit_rollover_allowed',
+      value: 'true',
+      effectiveDate: rulesEffective2026,
+      sourceReference: 'ERC 2025–2026 Net Metering Amendments',
+      notes: 'Net metering credits may be banked and rolled over to future bills.',
+    },
+    {
+      id: 'rule-application-response-days',
+      ruleKey: 'application_response_days',
+      value: '10',
+      effectiveDate: rulesEffective2026,
+      sourceReference: 'April 2026 DOE Mandate',
+      notes: 'DU must respond within 10 working days of a complete net metering application.',
+    },
+  ];
+
+  for (const rule of rules) {
+    await db.regulatoryRule.upsert({
+      where: { id: rule.id },
+      update: {},
+      create: rule,
+    });
+  }
+
+  console.log(`  ✅ Regulatory rules: ${rules.length} seeded`);
+  console.log('');
+  console.log('✨ OptiCore Energy seed complete!');
+  console.log('');
+  console.log('⚠️  REMINDER: Product prices are placeholder estimates (isPriceConfirmed: false).');
+  console.log('   Update via Admin → Energy → Product Catalog once the official Bytewatt');
+  console.log('   distributor price list is received.');
+}
+
+main()
+  .catch((e) => {
+    console.error('❌ Seed failed:', e);
+    process.exit(1);
+  })
+  .finally(async () => {
+    await db.$disconnect();
+  });

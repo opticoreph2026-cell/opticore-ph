@@ -12,8 +12,11 @@ const secret = new TextEncoder().encode(process.env.JWT_SECRET || 'fallback-secr
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Protect /dashboard and /api/dashboard routes
-  if (pathname.startsWith('/dashboard') || pathname.startsWith('/api/dashboard')) {
+  // Protect authenticated routes
+  const protectedRoutes = ['/dashboard', '/api/dashboard', '/crm', '/partner', '/customer', '/api/energy'];
+  const isProtected = protectedRoutes.some(route => pathname.startsWith(route));
+
+  if (isProtected) {
     const token = request.cookies.get(ACCESS_COOKIE)?.value;
 
     if (!token) {
@@ -60,6 +63,10 @@ export const config = {
   matcher: [
     '/dashboard/:path*',
     '/api/dashboard/:path*',
+    '/crm/:path*',
+    '/partner/:path*',
+    '/customer/:path*',
+    '/api/energy/:path*',
     '/login',
     '/signup'
   ],
