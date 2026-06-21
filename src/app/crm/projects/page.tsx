@@ -18,7 +18,7 @@ export default async function ProjectsPage() {
           quotation: {
             select: {
               customer: {
-                select: { fullName: true, city: true }
+                select: { fullName: true, siteAddress: true }
               }
             }
           }
@@ -75,7 +75,7 @@ export default async function ProjectsPage() {
                   return (
                     <tr key={project.id} className="hover:bg-white/5 transition-colors cursor-pointer">
                       <td className="px-6 py-4 font-medium text-white">{customer?.fullName || 'Unknown'}</td>
-                      <td className="px-6 py-4 text-gray-400">{customer?.city || 'N/A'}</td>
+                      <td className="px-6 py-4 text-gray-400">{customer?.siteAddress || 'N/A'}</td>
                       <td className="px-6 py-4">
                         <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium capitalize ${statusColors[project.status] ?? 'bg-white/5 text-gray-400'}`}>
                           {project.status.replace(/_/g, ' ')}

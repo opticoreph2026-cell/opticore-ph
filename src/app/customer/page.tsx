@@ -15,13 +15,13 @@ export default async function CustomerDashboard() {
 
   if (email) {
     customer = await db.energyCustomer.findFirst({
-      where: { email },
+      where: { contactEmail: email },
       select: {
         id: true,
         fullName: true,
-        email: true,
-        phone: true,
-        city: true,
+        contactEmail: true,
+        contactPhone: true,
+        siteAddress: true,
         quotations: {
           select: {
             id: true,
@@ -208,9 +208,9 @@ export default async function CustomerDashboard() {
               <h3 className="text-white font-bold mb-4">Account Info</h3>
               <div className="space-y-1.5 text-sm text-gray-400">
                 <p><span className="text-white">Name:</span> {customer.fullName}</p>
-                <p><span className="text-white">Email:</span> {customer.email}</p>
-                {customer.phone && <p><span className="text-white">Phone:</span> {customer.phone}</p>}
-                {customer.city && <p><span className="text-white">City:</span> {customer.city}</p>}
+                <p><span className="text-white">Email:</span> {customer.contactEmail}</p>
+                {customer.contactPhone && <p><span className="text-white">Phone:</span> {customer.contactPhone}</p>}
+                {customer.siteAddress && <p><span className="text-white">Address:</span> {customer.siteAddress}</p>}
               </div>
             </div>
           </div>
