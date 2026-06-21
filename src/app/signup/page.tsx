@@ -36,7 +36,7 @@ export default function SignupPage() {
 
       // Automatically login
       login('registered');
-      router.push('/dashboard');
+      router.push('/onboarding');
     } catch (err: any) {
       error(err.message);
     } finally {
