@@ -40,7 +40,7 @@ export default async function LeadsPage() {
                   </td>
                 </tr>
               ) : (
-                leads.map((lead) => (
+                leads.map((lead: any) => (
                   <tr key={lead.id} className="hover:bg-white/5 transition-colors cursor-pointer">
                     <td className="px-6 py-4 font-medium text-white">{lead.name}</td>
                     <td className="px-6 py-4">

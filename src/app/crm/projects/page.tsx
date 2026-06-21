@@ -39,7 +39,7 @@ export default async function ProjectsPage() {
                   </td>
                 </tr>
               ) : (
-                projects.map((project) => (
+                projects.map((project: any) => (
                   <tr key={project.id} className="hover:bg-white/5 transition-colors cursor-pointer">
                     <td className="px-6 py-4 font-medium text-white">{project.lead?.name || 'Unknown'}</td>
                     <td className="px-6 py-4 text-gray-400">{project.lead?.address || 'N/A'}</td>

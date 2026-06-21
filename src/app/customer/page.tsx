@@ -6,7 +6,7 @@ export const runtime = 'nodejs';
 
 export default async function CustomerDashboard() {
   const session = await getSession();
-  const userId = session?.userId as string;
+  const userId = session?.sub as string;
 
   // Find their project
   // In a real app we'd map lead to user, or link user directly to project

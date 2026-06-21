@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /**
  * @file src/lib/sms.ts
  * @description SMS notification provider — stub for Phase 1.
