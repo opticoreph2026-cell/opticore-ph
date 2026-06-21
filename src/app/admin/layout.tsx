@@ -2,67 +2,131 @@ import React from 'react';
 import { redirect } from 'next/navigation';
 import { getCurrentUser } from '@/lib/auth';
 import Link from 'next/link';
-import { LayoutDashboard, Users, Zap, FileText, Bell, LogOut, ShieldCheck } from 'lucide-react';
+import {
+  LayoutDashboard,
+  Users,
+  Zap,
+  Package,
+  Building2,
+  ShieldCheck,
+  LogOut,
+  ArrowLeft,
+  Bell,
+} from 'lucide-react';
+import { Logo } from '@/components/ui/Logo';
+import { NotificationBell } from '@/components/ui/NotificationBell';
+
+const adminNavItems = [
+  { href: '/admin', label: 'System Overview', icon: LayoutDashboard },
+  { href: '/admin/clients', label: 'Users & Clients', icon: Users },
+  { href: '/admin/providers', label: 'Utility Companies', icon: Zap },
+  { href: '/admin/energy/catalog', label: 'Product Catalog', icon: Package },
+  { href: '/admin/energy/organizations', label: 'Organizations', icon: Building2 },
+  { href: '/admin/alerts', label: 'System Alerts', icon: Bell },
+];
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const user = await getCurrentUser();
 
-  // Strict Admin Authorization
   if (!user || user.role !== 'opticore_owner') {
     redirect('/crm');
   }
 
+  const initials = ((user as any).name || user.email || 'JG').slice(0, 2).toUpperCase();
+
   return (
     <div className="min-h-screen bg-[#08080B] text-white flex">
       {/* Admin Sidebar */}
-      <aside className="w-64 border-r border-border-subtle bg-surface-900 hidden md:flex flex-col sticky top-0 h-screen">
-        <div className="p-6 border-b border-border-subtle flex items-center gap-3">
-          <ShieldCheck className="w-8 h-8 text-accent-rose" />
+      <aside className="w-64 border-r border-white/5 bg-[#0F0F14] hidden md:flex flex-col h-screen sticky top-0">
+        {/* Brand */}
+        <div className="h-16 flex items-center px-5 border-b border-white/5 flex-shrink-0">
+          <Logo />
+        </div>
+
+        {/* Admin badge */}
+        <div className="px-5 py-3 flex items-center gap-2 bg-[#F43F5E]/5 border-b border-[#F43F5E]/10">
+          <ShieldCheck className="w-4 h-4 text-[#F43F5E] flex-shrink-0" />
           <div>
-            <h1 className="font-display font-bold text-lg leading-tight">OptiCore Admin</h1>
-            <p className="text-[10px] text-white/40 uppercase tracking-widest font-mono">Command Center</p>
+            <p className="text-xs font-semibold text-[#F43F5E] uppercase tracking-widest">Admin Panel</p>
+            <p className="text-[10px] text-white/30">Full system access</p>
           </div>
         </div>
 
-        <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
-          <Link href="/admin" className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-colors text-sm font-medium text-white/80 hover:text-white">
-            <LayoutDashboard className="w-5 h-5 text-white/60" /> System Overview
-          </Link>
-          <Link href="/admin/clients" className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-colors text-sm font-medium text-white/80 hover:text-white">
-            <Users className="w-5 h-5 text-white/60" /> Users
-          </Link>
-          <Link href="/admin/providers" className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-colors text-sm font-medium text-white/80 hover:text-white">
-            <Zap className="w-5 h-5 text-white/60" /> Utility Companies
-          </Link>
-          <Link href="/admin/energy/catalog" className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-colors text-sm font-medium text-white/80 hover:text-white">
-            <FileText className="w-5 h-5 text-white/60" /> Product Catalog
-          </Link>
-          <Link href="/admin/energy/organizations" className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-colors text-sm font-medium text-white/80 hover:text-white">
-            <Bell className="w-5 h-5 text-white/60" /> Organizations
-          </Link>
+        {/* Nav */}
+        <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-0.5">
+          {adminNavItems.map((item) => {
+            const Icon = item.icon;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-white/50 hover:text-white hover:bg-white/5 transition-all duration-150 group"
+              >
+                <Icon className="w-4 h-4 flex-shrink-0 text-white/30 group-hover:text-[#F43F5E] transition-colors" />
+                {item.label}
+              </Link>
+            );
+          })}
+
+          <div className="pt-4 mt-2 border-t border-white/5">
+            <Link
+              href="/crm"
+              className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-white/50 hover:text-white hover:bg-white/5 transition-all duration-150 group"
+            >
+              <ArrowLeft className="w-4 h-4 flex-shrink-0 text-white/30 group-hover:text-[#06B6D4] transition-colors" />
+              Back to CRM
+            </Link>
+          </div>
         </nav>
 
-        <div className="p-4 border-t border-border-subtle">
-          <Link href="/crm" className="flex items-center justify-center gap-2 px-4 py-3 bg-surface-800 hover:bg-surface-800/80 rounded-xl transition-colors text-sm font-medium border border-border-subtle">
-            <LogOut className="w-4 h-4" /> Back to CRM
-          </Link>
+        {/* User footer */}
+        <div className="p-3 border-t border-white/5 flex-shrink-0">
+          <div className="flex items-center gap-3 px-2 py-2 rounded-xl hover:bg-white/5 transition-colors">
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#F43F5E]/40 to-[#F5A524]/40 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+              {initials}
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-semibold text-white truncate">
+                {(user as any).name || user.email}
+              </p>
+              <p className="text-[10px] text-[#F43F5E]/70">Owner · Full Access</p>
+            </div>
+            <form action="/api/auth/logout" method="POST">
+              <button
+                type="submit"
+                title="Sign out"
+                className="p-1.5 text-white/30 hover:text-[#F43F5E] transition-colors rounded-lg hover:bg-[#F43F5E]/10"
+              >
+                <LogOut className="w-4 h-4" />
+              </button>
+            </form>
+          </div>
         </div>
       </aside>
 
-      {/* Main Content Area */}
-      <main className="flex-1 overflow-x-hidden">
-        {/* Mobile Header */}
-        <header className="md:hidden flex items-center justify-between p-4 border-b border-border-subtle bg-surface-900">
+      {/* Main */}
+      <main className="flex-1 overflow-x-hidden flex flex-col">
+        {/* Top header */}
+        <header className="h-14 flex items-center justify-between px-8 bg-[#0F0F14]/60 backdrop-blur border-b border-white/5 flex-shrink-0">
+          <div className="flex items-center gap-2 text-sm text-white/40">
+            <ShieldCheck className="w-4 h-4 text-[#F43F5E]" />
+            <span>Admin Command Center</span>
+          </div>
+          <NotificationBell />
+        </header>
+
+        {/* Mobile header */}
+        <header className="md:hidden flex items-center justify-between p-4 border-b border-white/5 bg-[#0F0F14]">
           <div className="flex items-center gap-2">
-            <ShieldCheck className="w-6 h-6 text-accent-rose" />
-            <h1 className="font-display font-bold text-lg">OptiCore Admin</h1>
+            <ShieldCheck className="w-5 h-5 text-[#F43F5E]" />
+            <span className="font-display font-bold">Admin Panel</span>
           </div>
           <Link href="/crm" className="text-white/60 hover:text-white p-2">
-            <LogOut className="w-5 h-5" />
+            <ArrowLeft className="w-5 h-5" />
           </Link>
         </header>
-        
-        <div className="p-6 md:p-10 max-w-7xl mx-auto h-full">
+
+        <div className="p-6 md:p-10 max-w-7xl mx-auto w-full">
           {children}
         </div>
       </main>

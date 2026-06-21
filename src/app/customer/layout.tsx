@@ -3,6 +3,21 @@ import Link from 'next/link';
 import { getSession } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import { canAccessCustomerPortal } from '@/lib/energy-auth';
+import { NotificationBell } from '@/components/ui/NotificationBell';
+import { Logo } from '@/components/ui/Logo';
+import {
+  Sun,
+  FileText,
+  Wrench,
+  LogOut,
+  LayoutDashboard,
+} from 'lucide-react';
+
+const navItems = [
+  { href: '/customer', label: 'My System', icon: LayoutDashboard },
+  { href: '/customer/documents', label: 'Documents & Manuals', icon: FileText },
+  { href: '/customer/support', label: 'Support & Maintenance', icon: Wrench },
+];
 
 export default async function CustomerLayout({
   children,
@@ -14,53 +29,72 @@ export default async function CustomerLayout({
     redirect('/login');
   }
 
+  const email = session.email as string;
+  const name = (session as any).name as string | undefined;
+  const initials = (name || email || 'C').slice(0, 2).toUpperCase();
+
   return (
     <div className="flex min-h-screen bg-[#08080B] text-white">
       {/* Sidebar */}
-      <aside className="w-64 bg-[#0F0F14] border-r border-white/5 flex flex-col hidden md:flex">
-        <div className="h-16 flex items-center px-6 border-b border-white/5">
-          <Link href="/customer" className="font-display font-bold text-xl tracking-tight text-white flex items-center">
-            <svg className="w-6 h-6 mr-2 text-[#06B6D4]" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-            </svg>
-            My <span className="text-[#06B6D4] ml-1">OptiCore</span>
-          </Link>
+      <aside className="w-64 bg-[#0F0F14] border-r border-white/5 flex flex-col h-screen sticky top-0 hidden md:flex">
+        <div className="h-16 flex items-center px-5 border-b border-white/5 flex-shrink-0">
+          <Logo />
         </div>
 
-        <nav className="flex-1 overflow-y-auto py-6 px-4 space-y-1 text-sm font-medium">
-          <Link href="/customer" className="flex items-center px-3 py-2 rounded-lg text-gray-300 hover:bg-white/5 hover:text-white transition-colors">
-            My System
-          </Link>
-          <Link href="/customer/documents" className="flex items-center px-3 py-2 rounded-lg text-gray-300 hover:bg-white/5 hover:text-white transition-colors">
-            Documents & Manuals
-          </Link>
-          <Link href="/customer/support" className="flex items-center px-3 py-2 rounded-lg text-gray-300 hover:bg-white/5 hover:text-white transition-colors">
-            Support & Maintenance
-          </Link>
-          {/* Link back to old bill analytics if they want it */}
-          <Link href="/dashboard" className="flex items-center px-3 py-2 rounded-lg text-gray-500 hover:bg-white/5 hover:text-gray-300 transition-colors mt-8">
-            Legacy Bill Analytics
-          </Link>
+        <div className="px-4 pt-5 pb-2">
+          <p className="text-[10px] font-semibold text-white/25 uppercase tracking-widest font-mono px-3">
+            Customer Portal
+          </p>
+        </div>
+
+        <nav className="flex-1 overflow-y-auto px-3 space-y-0.5 pb-4">
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-white/50 hover:text-white hover:bg-white/5 transition-all duration-150 group"
+              >
+                <Icon className="w-4 h-4 flex-shrink-0 text-white/40 group-hover:text-[#06B6D4] transition-colors" />
+                {item.label}
+              </Link>
+            );
+          })}
         </nav>
 
-        <div className="p-4 border-t border-white/5">
-          <div className="flex items-center">
-            <div className="w-8 h-8 rounded-full bg-[#06B6D4]/20 flex items-center justify-center text-[#06B6D4] font-bold">
-              {session.email?.charAt(0).toUpperCase() || 'C'}
+        <div className="p-3 border-t border-white/5 flex-shrink-0">
+          <div className="flex items-center gap-3 px-2 py-2 rounded-xl hover:bg-white/5 transition-colors">
+            <div className="w-8 h-8 rounded-xl bg-[#06B6D4]/20 flex items-center justify-center text-[#06B6D4] text-xs font-bold flex-shrink-0">
+              {initials}
             </div>
-            <div className="ml-3">
-              <p className="text-sm font-medium text-white truncate max-w-[150px]">{session.email}</p>
-              <p className="text-xs text-[#06B6D4]">Customer</p>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-semibold text-white truncate">{name || email}</p>
+              <p className="text-[10px] text-[#06B6D4]/70 truncate">Customer</p>
             </div>
+            <form action="/api/auth/logout" method="POST">
+              <button
+                type="submit"
+                title="Sign out"
+                className="p-1.5 text-white/30 hover:text-[#F43F5E] transition-colors rounded-lg hover:bg-[#F43F5E]/10"
+              >
+                <LogOut className="w-4 h-4" />
+              </button>
+            </form>
           </div>
         </div>
       </aside>
 
-      {/* Main Content */}
-      <main className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        <header className="h-16 flex items-center justify-between px-6 bg-[#0F0F14] border-b border-white/5 md:hidden">
-          <Link href="/customer" className="font-display font-bold text-xl text-white">My OptiCore</Link>
+      {/* Main content */}
+      <main className="flex-1 flex flex-col min-w-0">
+        <header className="h-14 flex items-center justify-between px-6 bg-[#0F0F14]/60 backdrop-blur border-b border-white/5 flex-shrink-0">
+          <div className="flex items-center gap-2 text-sm text-white/40">
+            <Sun className="w-4 h-4 text-[#F5A524]" />
+            <span className="font-medium">My OptiCore System</span>
+          </div>
+          <NotificationBell />
         </header>
+
         <div className="flex-1 overflow-auto p-6 md:p-8">
           {children}
         </div>
