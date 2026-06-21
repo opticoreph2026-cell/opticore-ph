@@ -9,7 +9,7 @@ export default async function PartnerDashboard() {
   
   // Note: In a production app, the JWT would contain the partner's orgId
   // For this prototype, we'll fetch all commissions if we don't have orgId
-  const orgId = session?.orgId as string | undefined;
+  const orgId = (session as any)?.orgId as string | undefined;
 
   const commissions = await db.commissionRecord.findMany({
     where: orgId ? { payeeOrgId: orgId } : undefined,
@@ -24,12 +24,12 @@ export default async function PartnerDashboard() {
   });
 
   const totalEarned = commissions
-    .filter(c => c.status === 'paid')
-    .reduce((sum, c) => sum + c.amountCentavos, 0);
+    .filter((c: any) => c.status === 'paid')
+    .reduce((sum, c: any) => sum + c.amountCentavos, 0);
 
   const pendingEarned = commissions
-    .filter(c => c.status === 'pending')
-    .reduce((sum, c) => sum + c.amountCentavos, 0);
+    .filter((c: any) => c.status === 'pending')
+    .reduce((sum, c: any) => sum + c.amountCentavos, 0);
 
   return (
     <div className="space-y-8">
@@ -72,7 +72,7 @@ export default async function PartnerDashboard() {
                   </td>
                 </tr>
               ) : (
-                commissions.map((comm) => (
+                commissions.map((comm: any) => (
                   <tr key={comm.id} className="hover:bg-white/5 transition-colors cursor-pointer">
                     <td className="px-6 py-4 font-medium text-white">{comm.project?.lead?.name || 'Unknown'}</td>
                     <td className="px-6 py-4 capitalize">{comm.commissionType.replace('_', ' ')}</td>
