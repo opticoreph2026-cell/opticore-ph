@@ -6,10 +6,26 @@ export const dynamic = 'force-dynamic';
 
 export async function POST(req: NextRequest) {
   try {
-    const { email, password } = await req.json();
+    const { email, password, turnstileToken } = await req.json();
 
     if (!email || !password) {
       return NextResponse.json({ error: 'Email and password are required' }, { status: 400 });
+    }
+
+    // Turnstile Verification
+    if (process.env.TURNSTILE_SECRET_KEY) {
+      if (!turnstileToken) {
+        return NextResponse.json({ error: 'Security verification required' }, { status: 400 });
+      }
+      const verifyRes = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `secret=${process.env.TURNSTILE_SECRET_KEY}&response=${turnstileToken}`,
+      });
+      const outcome = await verifyRes.json();
+      if (!outcome.success) {
+        return NextResponse.json({ error: 'Security check failed' }, { status: 403 });
+      }
     }
 
     // Find client
@@ -101,7 +117,7 @@ export async function POST(req: NextRequest) {
     response.cookies.set('access_token', accessToken, {
       httpOnly: true,
       secure: isProduction,
-      sameSite: 'lax',
+      sameSite: 'strict',
       maxAge: 15 * 60,          // 15 minutes
       path: '/',
     });
@@ -109,7 +125,7 @@ export async function POST(req: NextRequest) {
     response.cookies.set('refresh_token', refreshToken, {
       httpOnly: true,
       secure: isProduction,
-      sameSite: 'lax',
+      sameSite: 'strict',
       maxAge: 60 * 60 * 24 * 7, // 7 days
       path: '/',
     });

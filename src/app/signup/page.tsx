@@ -7,11 +7,13 @@ import { Logo } from '@/components/ui/Logo';
 import { Spinner } from '@/components/ui/Spinner';
 import { useAuth } from '@/components/ui/AuthProvider';
 import { useToast } from '@/components/ui/Toast';
+import { Turnstile } from '@marsidev/react-turnstile';
 
 export default function SignupPage() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [turnstileToken, setTurnstileToken] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { login } = useAuth();
@@ -25,7 +27,7 @@ export default function SignupPage() {
       const res = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, password }),
+        body: JSON.stringify({ name, email, password, turnstileToken }),
       });
 
       const data = await res.json();
@@ -117,6 +119,15 @@ export default function SignupPage() {
                 />
               </div>
             </div>
+
+            {process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY && (
+              <div className="flex justify-center">
+                <Turnstile
+                  siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
+                  onSuccess={(token) => setTurnstileToken(token)}
+                />
+              </div>
+            )}
 
             <div>
               <button

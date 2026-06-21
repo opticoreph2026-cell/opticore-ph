@@ -7,10 +7,12 @@ import { Logo } from '@/components/ui/Logo';
 import { Spinner } from '@/components/ui/Spinner';
 import { useAuth } from '@/components/ui/AuthProvider';
 import { useToast } from '@/components/ui/Toast';
+import { Turnstile } from '@marsidev/react-turnstile';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [turnstileToken, setTurnstileToken] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { refresh } = useAuth();
@@ -24,7 +26,7 @@ export default function LoginPage() {
       const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, turnstileToken }),
         credentials: 'include',
       });
 
@@ -130,6 +132,15 @@ export default function LoginPage() {
                 </a>
               </div>
             </div>
+
+            {process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY && (
+              <div className="flex justify-center">
+                <Turnstile
+                  siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
+                  onSuccess={(token) => setTurnstileToken(token)}
+                />
+              </div>
+            )}
 
             <div>
               <button

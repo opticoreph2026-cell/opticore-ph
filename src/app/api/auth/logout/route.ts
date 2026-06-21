@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
     }
 
     // ── Clear cookies on NextResponse ─────────────────────────────────────────
-    const response = NextResponse.json({ success: true });
+    const response = NextResponse.redirect(new URL('/login', req.url));
     response.cookies.set('access_token', '', { maxAge: 0, path: '/' });
     response.cookies.set('refresh_token', '', { maxAge: 0, path: '/' });
     return response;
