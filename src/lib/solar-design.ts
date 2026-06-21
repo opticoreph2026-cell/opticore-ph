@@ -364,7 +364,7 @@ export function selectNeovoltConfiguration(params: {
     return null;
   }
 
-  const preferredBattery = eligibleBatteries[0];
+  const preferredBattery = eligibleBatteries[0]!;
   const batteryQty = Math.ceil(requiredBatteryUsableKwh / preferredBattery.usableKwh);
   const totalUsableStorageKwh = batteryQty * preferredBattery.usableKwh;
 
@@ -451,11 +451,11 @@ export function computeCableSizing(params: {
 
   const ocpdRatingA =
     STANDARD_OCPD_RATINGS.find((r) => r >= minAmpacityA) ??
-    STANDARD_OCPD_RATINGS[STANDARD_OCPD_RATINGS.length - 1];
+    STANDARD_OCPD_RATINGS[STANDARD_OCPD_RATINGS.length - 1]!;
 
   const cableEntry =
     CABLE_AMPACITY_TABLE.find((c) => c.ampacity >= minAmpacityA) ??
-    CABLE_AMPACITY_TABLE[CABLE_AMPACITY_TABLE.length - 1];
+    CABLE_AMPACITY_TABLE[CABLE_AMPACITY_TABLE.length - 1]!;
 
   return {
     continuousCurrentA: Math.round(continuousCurrentA * 10) / 10,

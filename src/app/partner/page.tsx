@@ -25,11 +25,11 @@ export default async function PartnerDashboard() {
 
   const totalEarned = commissions
     .filter((c: any) => c.status === 'paid')
-    .reduce((sum, c: any) => sum + c.amountCentavos, 0);
+    .reduce((sum: number, c: any) => sum + c.amountCentavos, 0);
 
   const pendingEarned = commissions
     .filter((c: any) => c.status === 'pending')
-    .reduce((sum, c: any) => sum + c.amountCentavos, 0);
+    .reduce((sum: number, c: any) => sum + c.amountCentavos, 0);
 
   return (
     <div className="space-y-8">
