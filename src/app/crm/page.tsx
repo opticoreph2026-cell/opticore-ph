@@ -10,8 +10,8 @@ export default async function CrmDashboard() {
   const isOwner = role === 'opticore_owner';
 
   // Fetch some basic stats
-  const activeLeads = await db.lead.count({ where: { status: 'new' } });
-  const activeProjects = await db.project.count({ where: { status: 'installation_scheduled' } });
+  const activeLeads = await db.energyLead.count({ where: { status: 'new' } });
+  const activeProjects = await db.energyProject.count({ where: { status: 'scheduled' } });
   
   return (
     <div className="space-y-8">

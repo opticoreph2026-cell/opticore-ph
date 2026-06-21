@@ -38,14 +38,14 @@ export default function LoginPage() {
       await refresh();
       
       const role = data.user?.role;
-      if (role === 'opticore_owner') {
+      if (role === 'opticore_owner' || role === 'opticore_staff') {
         router.push('/crm');
-      } else if (role === 'partner_admin' || role === 'partner_agent') {
+      } else if (role === 'partner_admin' || role === 'partner_agent' || role === 'partner_installer') {
         router.push('/partner');
       } else if (role === 'customer') {
         router.push('/customer');
       } else {
-        router.push('/dashboard');
+        router.push('/crm');
       }
     } catch (err: any) {
       error(err.message);

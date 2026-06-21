@@ -10,8 +10,8 @@ const outfit = Outfit({ subsets: ['latin'], variable: '--font-outfit' });
 const jetbrainsMono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-jetbrains-mono' });
 
 export const metadata: Metadata = {
-  title: 'OptiCore | Philippine Utility Intelligence',
-  description: 'Take control of your electric, water, and fuel expenses. Identify energy hogs and reduce your monthly spending with AI.',
+  title: 'OptiCore Energy Solutions | Solar & ESS Intelligence',
+  description: 'Enterprise CRM and system design engine for solar and ESS installers in the Philippines.',
 };
 
 export default function RootLayout({

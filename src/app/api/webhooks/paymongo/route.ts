@@ -3,7 +3,6 @@ import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import crypto from 'crypto';
 
-// Replace with your actual PayMongo webhook secret
 const PAYMONGO_WEBHOOK_SECRET = process.env.PAYMONGO_WEBHOOK_SECRET;
 
 export async function POST(req: Request) {
@@ -15,11 +14,12 @@ export async function POST(req: Request) {
 
     const payload = await req.text();
 
-    // Verify signature
-    // The signature header format: t=timestamp,te=test_signature,li=live_signature
+    // Verify signature: format t=timestamp,te=test,li=live
     const signatures = signature.split(',');
     const timestamp = signatures[0]?.replace('t=', '') || '';
-    const liveSignature = signatures.find(s => s.startsWith('li='))?.replace('li=', '') || signatures.find(s => s.startsWith('te='))?.replace('te=', '');
+    const liveSignature =
+      signatures.find((s) => s.startsWith('li='))?.replace('li=', '') ||
+      signatures.find((s) => s.startsWith('te='))?.replace('te=', '');
 
     const expectedSignature = crypto
       .createHmac('sha256', PAYMONGO_WEBHOOK_SECRET)
@@ -31,31 +31,32 @@ export async function POST(req: Request) {
     }
 
     const event = JSON.parse(payload);
-    
-    // Process successful payment
+
+    // Process successful payment — record against EnergyContract
     if (event.data.attributes.type === 'payment.paid') {
       const paymentData = event.data.attributes.data.attributes;
-      const amount = paymentData.amount;
-      const metadata = paymentData.metadata; // Expecting clientId and plan in metadata
+      const amountCentavos: number = paymentData.amount ?? 0;
+      const metadata = paymentData.metadata as Record<string, string> | undefined;
 
-      if (metadata?.clientId) {
-        let role = 'FREE';
-        if (amount >= 79900) role = 'BUSINESS';
-        else if (amount >= 14900) role = 'PRO';
-
-        await db.client.update({
-          where: { id: metadata.clientId },
-          data: { role }
+      if (metadata?.contractId) {
+        const payment = await db.energyPayment.create({
+          data: {
+            contractId: metadata.contractId,
+            amountCentavos,
+            paymentType: metadata.paymentType ?? 'deposit',
+            method: 'gcash',
+            referenceNo: paymentData.id ?? null,
+            paidAt: new Date(),
+          },
         });
 
-        // Add subscription record (assuming you add a Subscription model later or just log it)
-        console.log(`Upgraded user ${metadata.clientId} to ${role}`);
+        console.log(`[PayMongo] Recorded payment ${payment.id} (₱${(amountCentavos / 100).toFixed(2)}) for contract ${metadata.contractId}`);
       }
     }
 
     return NextResponse.json({ received: true });
   } catch (error) {
-    console.error('Webhook Error:', error);
+    console.error('[PayMongo Webhook] Error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

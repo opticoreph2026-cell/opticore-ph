@@ -8,8 +8,8 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const user = await getCurrentUser();
 
   // Strict Admin Authorization
-  if (!user || (user.role !== 'admin' && user.email !== 'opticoreph2026@gmail.com')) {
-    redirect('/dashboard');
+  if (!user || user.role !== 'opticore_owner') {
+    redirect('/crm');
   }
 
   return (
@@ -29,22 +29,22 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             <LayoutDashboard className="w-5 h-5 text-white/60" /> System Overview
           </Link>
           <Link href="/admin/clients" className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-colors text-sm font-medium text-white/80 hover:text-white">
-            <Users className="w-5 h-5 text-white/60" /> Households (Clients)
+            <Users className="w-5 h-5 text-white/60" /> Users
           </Link>
           <Link href="/admin/providers" className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-colors text-sm font-medium text-white/80 hover:text-white">
-            <Zap className="w-5 h-5 text-white/60" /> Utility Providers
+            <Zap className="w-5 h-5 text-white/60" /> Utility Companies
           </Link>
-          <Link href="/admin/reports" className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-colors text-sm font-medium text-white/80 hover:text-white">
-            <FileText className="w-5 h-5 text-white/60" /> Telemetry Reports
+          <Link href="/admin/energy/catalog" className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-colors text-sm font-medium text-white/80 hover:text-white">
+            <FileText className="w-5 h-5 text-white/60" /> Product Catalog
           </Link>
-          <Link href="/admin/alerts" className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-colors text-sm font-medium text-white/80 hover:text-white">
-            <Bell className="w-5 h-5 text-white/60" /> Global Alerts
+          <Link href="/admin/energy/organizations" className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-colors text-sm font-medium text-white/80 hover:text-white">
+            <Bell className="w-5 h-5 text-white/60" /> Organizations
           </Link>
         </nav>
 
         <div className="p-4 border-t border-border-subtle">
-          <Link href="/dashboard" className="flex items-center justify-center gap-2 px-4 py-3 bg-surface-800 hover:bg-surface-800/80 rounded-xl transition-colors text-sm font-medium border border-border-subtle">
-            <LogOut className="w-4 h-4" /> Exit to Client Dashboard
+          <Link href="/crm" className="flex items-center justify-center gap-2 px-4 py-3 bg-surface-800 hover:bg-surface-800/80 rounded-xl transition-colors text-sm font-medium border border-border-subtle">
+            <LogOut className="w-4 h-4" /> Back to CRM
           </Link>
         </div>
       </aside>
@@ -57,7 +57,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             <ShieldCheck className="w-6 h-6 text-accent-rose" />
             <h1 className="font-display font-bold text-lg">OptiCore Admin</h1>
           </div>
-          <Link href="/dashboard" className="text-white/60 hover:text-white p-2">
+          <Link href="/crm" className="text-white/60 hover:text-white p-2">
             <LogOut className="w-5 h-5" />
           </Link>
         </header>

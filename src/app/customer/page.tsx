@@ -6,89 +6,212 @@ export const runtime = 'nodejs';
 
 export default async function CustomerDashboard() {
   const session = await getSession();
-  const userId = session?.sub as string;
-
-  // Find their project
-  // In a real app we'd map lead to user, or link user directly to project
-  // For this prototype, let's just fetch the first project they are linked to.
-  // Actually, wait, the schema doesn't link Project directly to User.
-  // It links Project -> Lead -> ... Lead has email.
-  // We can query lead by email.
   const email = session?.email as string;
+
+  // Find the EnergyCustomer record matching this email
+  let customer = null;
   let project = null;
+  let quotations: any[] = [];
 
   if (email) {
-    const lead = await db.lead.findFirst({
+    customer = await db.energyCustomer.findFirst({
       where: { email },
-      include: {
-        projects: true
-      }
+      select: {
+        id: true,
+        fullName: true,
+        email: true,
+        phone: true,
+        city: true,
+        quotations: {
+          select: {
+            id: true,
+            quoteNumber: true,
+            status: true,
+            grandTotalCentavos: true,
+            issueDate: true,
+            validUntil: true,
+          },
+          orderBy: { issueDate: 'desc' },
+          take: 3,
+        },
+      },
     });
-    if (lead && lead.projects.length > 0) {
-      project = lead.projects[0];
+
+    if (customer) {
+      quotations = customer.quotations;
+
+      // Find associated project via contract > quotation > customer
+      project = await db.energyProject.findFirst({
+        where: {
+          contract: {
+            quotation: {
+              customerId: customer.id,
+            },
+          },
+        },
+        select: {
+          id: true,
+          status: true,
+          scheduledInstallDate: true,
+          commissioningDate: true,
+          milestones: {
+            select: { milestone: true, milestoneDate: true },
+            orderBy: { milestoneDate: 'desc' },
+            take: 5,
+          },
+        },
+      });
     }
   }
+
+  const statusBadge: Record<string, string> = {
+    scheduled: 'bg-accent-amber/10 text-accent-amber',
+    in_progress: 'bg-accent-cyan/10 text-accent-cyan',
+    commissioned: 'bg-accent-emerald/10 text-accent-emerald',
+    warranty_registered: 'bg-purple-400/10 text-purple-400',
+    closed: 'bg-white/5 text-gray-400',
+  };
 
   return (
     <div className="space-y-8">
       <div>
         <h1 className="text-3xl font-bold text-white mb-2">My System</h1>
-        <p className="text-gray-400">Track your installation and system performance.</p>
+        <p className="text-gray-400">Track your Neovolt ESS installation and manage your documents.</p>
       </div>
 
-      {!project ? (
+      {!customer ? (
         <div className="bg-[#16161D] p-8 rounded-2xl border border-white/5 text-center">
-          <div className="w-16 h-16 bg-[#F5A524]/20 text-[#F5A524] rounded-full flex items-center justify-center mx-auto mb-4">
+          <div className="w-16 h-16 bg-accent-amber/20 text-accent-amber rounded-full flex items-center justify-center mx-auto mb-4">
             <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
-          <h2 className="text-xl font-bold text-white mb-2">No Active Projects Found</h2>
+          <h2 className="text-xl font-bold text-white mb-2">No Active Account Found</h2>
           <p className="text-gray-400 mb-6 max-w-md mx-auto">
-            We couldn't find any active Neovolt ESS installations linked to your email ({email}). If you've recently signed a contract, your project will appear here shortly.
+            We couldn&apos;t find a customer record linked to <strong className="text-white">{email}</strong>.
+            If you&apos;ve recently signed a contract, your portal will activate within 24 hours.
           </p>
-          <a href="mailto:support@opticore.ph" className="px-6 py-3 bg-white/5 text-white font-medium rounded-lg hover:bg-white/10 transition-colors inline-block">
+          <a
+            href="mailto:support@opticore.ph"
+            className="px-6 py-3 bg-white/5 text-white font-medium rounded-lg hover:bg-white/10 transition-colors inline-block"
+          >
             Contact Support
           </a>
         </div>
       ) : (
         <div className="space-y-6">
-          <div className="bg-[#16161D] p-6 rounded-2xl border border-white/5">
-            <h2 className="text-lg font-bold text-white mb-4">Installation Status</h2>
-            <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 bg-[#10B981]/20 text-[#10B981] rounded-full flex items-center justify-center font-bold">
-                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-              </div>
-              <div>
-                <p className="text-white font-medium capitalize">{project.status.replace(/_/g, ' ')}</p>
-                <p className="text-sm text-gray-400">Target Install: {project.targetInstallDate ? new Date(project.targetInstallDate).toLocaleDateString() : 'TBD'}</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Project Status */}
+          {project ? (
             <div className="bg-[#16161D] p-6 rounded-2xl border border-white/5">
-              <h3 className="text-white font-bold mb-4">System Details</h3>
-              <p className="text-sm text-gray-400 mb-2">Detailed technical specs will appear here once commissioned.</p>
+              <h2 className="text-lg font-bold text-white mb-4">Installation Status</h2>
+              <div className="flex flex-wrap gap-4 items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-accent-emerald/20 text-accent-emerald rounded-full flex items-center justify-center">
+                    <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium capitalize ${statusBadge[project.status] ?? 'bg-white/5 text-gray-400'}`}>
+                      {project.status.replace(/_/g, ' ')}
+                    </span>
+                    <p className="text-sm text-gray-400 mt-1">
+                      Scheduled: {project.scheduledInstallDate
+                        ? new Date(project.scheduledInstallDate).toLocaleDateString('en-PH', { month: 'long', day: 'numeric', year: 'numeric' })
+                        : 'TBD'}
+                    </p>
+                  </div>
+                </div>
+                {project.commissioningDate && (
+                  <div className="text-right">
+                    <p className="text-xs text-gray-500">Commissioned</p>
+                    <p className="text-sm text-accent-emerald font-medium">
+                      {new Date(project.commissioningDate).toLocaleDateString('en-PH', { month: 'long', day: 'numeric', year: 'numeric' })}
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              {/* Milestones */}
+              {project.milestones.length > 0 && (
+                <div className="mt-6 space-y-2">
+                  <h3 className="text-sm font-medium text-gray-400 uppercase tracking-wide">Recent Milestones</h3>
+                  {project.milestones.map((m: any, i: number) => (
+                    <div key={i} className="flex items-center justify-between py-2 border-b border-white/5 last:border-0">
+                      <div className="flex items-center gap-2">
+                        <div className="w-1.5 h-1.5 rounded-full bg-accent-emerald" />
+                        <span className="text-sm text-white capitalize">{m.milestone.replace(/_/g, ' ')}</span>
+                      </div>
+                      <span className="text-xs text-gray-500">
+                        {new Date(m.milestoneDate).toLocaleDateString('en-PH', { month: 'short', day: 'numeric' })}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
+          ) : (
+            <div className="bg-[#16161D] p-6 rounded-2xl border border-white/5 text-center text-gray-500">
+              <p>Your installation project will appear here once a contract has been signed.</p>
+            </div>
+          )}
+
+          {/* Quotations */}
+          {quotations.length > 0 && (
+            <div className="bg-[#16161D] p-6 rounded-2xl border border-white/5">
+              <h2 className="text-lg font-bold text-white mb-4">My Proposals</h2>
+              <div className="space-y-3">
+                {quotations.map((q: any) => (
+                  <div key={q.id} className="flex items-center justify-between py-3 border-b border-white/5 last:border-0">
+                    <div>
+                      <p className="text-sm font-medium text-white">Quote #{q.quoteNumber}</p>
+                      <p className="text-xs text-gray-500">
+                        Issued {new Date(q.issueDate).toLocaleDateString('en-PH', { month: 'short', day: 'numeric', year: 'numeric' })}
+                        {' · '}Valid until {new Date(q.validUntil).toLocaleDateString('en-PH', { month: 'short', day: 'numeric', year: 'numeric' })}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm font-bold text-white">₱{(q.grandTotalCentavos / 100).toLocaleString('en-PH')}</p>
+                      <span className={`text-xs capitalize ${
+                        q.status === 'accepted' ? 'text-accent-emerald' :
+                        q.status === 'rejected' ? 'text-accent-rose' :
+                        q.status === 'sent' ? 'text-accent-cyan' :
+                        'text-gray-400'
+                      }`}>{q.status}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Quick Links */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="bg-[#16161D] p-6 rounded-2xl border border-white/5">
               <h3 className="text-white font-bold mb-4">Quick Links</h3>
               <ul className="space-y-3">
                 <li>
-                  <a href="#" className="text-sm text-[#06B6D4] hover:underline flex items-center">
-                    <svg className="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-                    View Contract & Proposal
+                  <a href="mailto:support@opticore.ph" className="text-sm text-accent-cyan hover:underline flex items-center gap-2">
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                    Contact Support
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="text-sm text-[#06B6D4] hover:underline flex items-center">
-                    <svg className="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
-                    Open Monitoring App
+                  <a href="https://wa.me/639XXXXXXXXX" target="_blank" rel="noreferrer" className="text-sm text-accent-cyan hover:underline flex items-center gap-2">
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
+                    WhatsApp Us
                   </a>
                 </li>
               </ul>
+            </div>
+            <div className="bg-[#16161D] p-6 rounded-2xl border border-white/5">
+              <h3 className="text-white font-bold mb-4">Account Info</h3>
+              <div className="space-y-1.5 text-sm text-gray-400">
+                <p><span className="text-white">Name:</span> {customer.fullName}</p>
+                <p><span className="text-white">Email:</span> {customer.email}</p>
+                {customer.phone && <p><span className="text-white">Phone:</span> {customer.phone}</p>}
+                {customer.city && <p><span className="text-white">City:</span> {customer.city}</p>}
+              </div>
             </div>
           </div>
         </div>

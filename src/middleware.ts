@@ -13,7 +13,7 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Protect authenticated routes
-  const protectedRoutes = ['/dashboard', '/api/dashboard', '/crm', '/partner', '/customer', '/api/energy'];
+  const protectedRoutes = ['/crm', '/partner', '/customer', '/admin', '/api/energy'];
   const isProtected = protectedRoutes.some(route => pathname.startsWith(route));
 
   if (isProtected) {
@@ -49,7 +49,7 @@ export async function middleware(request: NextRequest) {
     if (token) {
       try {
         await jwtVerify(token, secret, { issuer: 'opticore-ph' });
-        return NextResponse.redirect(new URL('/dashboard', request.url));
+        return NextResponse.redirect(new URL('/crm', request.url));
       } catch {
         // Token invalid — allow through to login/signup
       }
@@ -61,11 +61,10 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    '/dashboard/:path*',
-    '/api/dashboard/:path*',
     '/crm/:path*',
     '/partner/:path*',
     '/customer/:path*',
+    '/admin/:path*',
     '/api/energy/:path*',
     '/login',
     '/signup'
