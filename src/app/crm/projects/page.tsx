@@ -2,8 +2,7 @@ import React from 'react';
 import { db } from '@/lib/db';
 
 export const runtime = 'nodejs';
-
-export default async function ProjectsPage() {
+export const dynamic = 'force-dynamic';
   const projects = await db.energyProject.findMany({
     orderBy: { createdAt: 'desc' },
     select: {

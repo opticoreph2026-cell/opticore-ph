@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from '@/i18n/routing';
+import Link from 'next/link';
 
 interface LogoProps {
   className?: string;

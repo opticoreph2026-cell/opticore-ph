@@ -4,8 +4,7 @@ import { getSession } from '@/lib/session';
 import { redirect } from 'next/navigation';
 
 export const runtime = 'nodejs';
-
-export default async function InventoryPage() {
+export const dynamic = 'force-dynamic';
   const session = await getSession();
   const role = session?.role as string;
   if (role !== 'opticore_owner') {
