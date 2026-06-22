@@ -1,6 +1,6 @@
 import React from 'react';
 import { db } from '@/lib/db';
-import { getSession } from '@/lib/auth';
+import { getSession } from '@/lib/session';
 import { redirect } from 'next/navigation';
 
 export const runtime = 'nodejs';

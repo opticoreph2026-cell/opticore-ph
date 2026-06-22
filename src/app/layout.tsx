@@ -10,8 +10,9 @@ const outfit = Outfit({ subsets: ['latin'], variable: '--font-outfit' });
 const jetbrainsMono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-jetbrains-mono' });
 
 export const metadata: Metadata = {
-  title: 'OptiCore Energy Solutions | Solar & ESS Intelligence',
-  description: 'Enterprise CRM and system design engine for solar and ESS installers in the Philippines.',
+  title: 'OptiCore Energy Solutions | Solar & ESS for Cebu, Bohol & Leyte',
+  description:
+    'Authorized Neovolt ESS distributor and installer. Solar PV + battery storage sizing, ROI analysis, and professional installation across Eastern Visayas.',
 };
 
 export default function RootLayout({

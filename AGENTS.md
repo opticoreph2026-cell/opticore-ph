@@ -7,8 +7,8 @@
 
 ## Project
 
-**OptiCore PH** — Electricity bill intelligence SaaS for the Philippine market.
-Target users: Filipino households, SMEs. Mobile-first (375px baseline).
+**OptiCore Energy Solutions** — Solar + ESS CRM and engineering platform for Cebu, Bohol, and Leyte.
+Target users: households, SMEs, installation partners. Mobile-first (375px baseline). Bilingual EN/Fil.
 
 ## Stack
 
@@ -16,8 +16,9 @@ Target users: Filipino households, SMEs. Mobile-first (375px baseline).
 |---|---|
 | Framework | Next.js 14 (App Router) |
 | Language | TypeScript (new code) · JS (legacy, `allowJs: true`) |
-| Database | Prisma 6.2.1 + Turso (LibSQL) via `@prisma/adapter-libsql` |
-| Auth | Custom jose JWT (`src/lib/auth.js`) — **NOT** NextAuth |
+| Database | Prisma 6.2.1 + **Supabase PostgreSQL** |
+| Auth | **NextAuth v5** (`src/auth.ts`) — Credentials + Resend magic link |
+| i18n | **next-intl** — English + Filipino (`messages/en.json`, `messages/fil.json`) |
 | AI | Google Gemini (`@google/genai`) |
 | Payments | PayMongo |
 | Email | Gmail OAuth2 REST API (`googleapis`) |
@@ -64,22 +65,23 @@ font-mono:      JetBrains Mono
 ## Database Quick Reference
 
 ```
-prisma validate  →  needs DATABASE_URL=file:./dev.db in .env
+prisma validate  →  needs DATABASE_URL + DIRECT_URL (Supabase) in .env
 prisma generate  →  run after schema changes
-prisma db push   →  applies schema to Turso in production
-Runtime:         →  db.js auto-selects LibSQL adapter when TURSO_DATABASE_URL is set
+prisma db push   →  applies schema to Supabase PostgreSQL
+Runtime:         →  src/lib/db.js PrismaClient singleton
 ```
 
 ## Key Files
 
 | File | Purpose |
 |---|---|
-| `src/lib/db.js` | DB singleton + all query helpers |
-| `src/lib/auth.js` | JWT sign/verify, cookie helpers |
+| `src/lib/db.js` | DB singleton + query helpers |
+| `src/auth.ts` | NextAuth v5 config (Credentials + Resend) |
+| `src/lib/session.ts` | Server-side `getSession()` for API routes & layouts |
 | `src/lib/money.ts` | Money conversion utilities (centavos, rate units) |
 | `src/lib/email.js` | Gmail OAuth2 transactional email |
 | `src/lib/paymongo.js` | PayMongo API wrapper |
-| `src/middleware.js` | JWT auth guard for `/dashboard` and `/api/dashboard` routes |
+| `src/middleware.ts` | NextAuth + next-intl combined middleware |
 | `prisma/schema.prisma` | Database schema |
 | `prisma/seed.ts` | Provider seed data |
 
@@ -96,9 +98,9 @@ Runtime:         →  db.js auto-selects LibSQL adapter when TURSO_DATABASE_URL 
 See `.env.example` for full documentation. Critical runtime vars:
 
 ```
-TURSO_DATABASE_URL + TURSO_AUTH_TOKEN  →  Production DB
-GEMINI_API_KEY                         →  AI features
-PAYMONGO_SECRET_KEY                    →  Payments
-JWT_SECRET + JWT_REFRESH_SECRET        →  Auth tokens
-GMAIL_CLIENT_ID/SECRET/REFRESH_TOKEN  →  Transactional email
+DATABASE_URL + DIRECT_URL  →  Supabase PostgreSQL
+AUTH_SECRET + AUTH_URL     →  NextAuth v5
+RESEND_API_KEY             →  Magic link + transactional email
+GEMINI_API_KEY             →  AI features
+PAYMONGO_SECRET_KEY        →  Payments
 ```

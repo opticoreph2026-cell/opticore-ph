@@ -1,7 +1,7 @@
 import 'server-only';
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { getSession } from '@/lib/auth';
+import { getSession } from '@/lib/session';
 import { canAccessCrm } from '@/lib/energy-auth';
 
 export const runtime = 'nodejs';

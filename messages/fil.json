@@ -1,0 +1,115 @@
+{
+  "meta": {
+    "title": "OptiCore Energy Solutions | Solar at ESS para sa Cebu, Bohol at Leyte",
+    "description": "Awtorisadong Neovolt ESS distributor at installer. Solar PV + battery storage sizing, ROI analysis, at propesyonal na installation sa Eastern Visayas."
+  },
+  "nav": {
+    "products": "Mga Produkto",
+    "calculator": "ROI Calculator",
+    "about": "Tungkol sa Amin",
+    "contact": "Makipag-ugnayan",
+    "signIn": "Mag-sign In",
+    "getQuote": "Kumuha ng Libreng Quote",
+    "dashboard": "Dashboard"
+  },
+  "hero": {
+    "badge": "Awtorisadong Neovolt ESS Distributor — Cebu City",
+    "title": "Palakasin ang Bahay at Negosyo gamit ang",
+    "titleHighlight": "OptiCore Energy Solutions",
+    "subtitle": "Licensed RME-led na solar + ESS design, Neovolt battery systems, at zero-export hybrid installation para sa Cebu, Bohol, at Leyte.",
+    "ctaPrimary": "Libreng Assessment",
+    "ctaSecondary": "Kalkulahin ang Savings"
+  },
+  "features": {
+    "eyebrow": "Bakit OptiCore",
+    "title": "Engineering-grade na solusyon sa enerhiya.",
+    "subtitle": "Mula site visit hanggang commissioning — kami ang bahala sa sizing, permit, installation, at after-sales support.",
+    "loadAssessment": {
+      "title": "Tumpak na Load Assessment",
+      "description": "Bill analysis at appliance survey para sa PH households at SMEs — VECO, BOHECO, at Leyte utilities."
+    },
+    "sizing": {
+      "title": "Neovolt ESS Sizing",
+      "description": "Grid-tied, zero-export hybrid, at backup systems gamit ang certified Bytewatt Neovolt inverters at LFP batteries."
+    },
+    "roi": {
+      "title": "Philippine ROI Modeling",
+      "description": "Payback analysis gamit ang tunay na DU rates, 5% annual escalation, at 25-taong projection."
+    },
+    "coverage": {
+      "title": "Sakop sa Eastern Visayas",
+      "description": "Cebu, Bohol, at Leyte — local partners, ERC-compliant designs, at field support na matatawagan."
+    }
+  },
+  "calculator": {
+    "title": "Mabilis na Solar at ESS Estimate",
+    "subtitle": "Tingnan ang posibleng savings sa loob ng isang minuto. Full engineering proposal pagkatapos ng site visit.",
+    "monthlyBill": "Average na Buwanang Bill sa Kuryente (₱)",
+    "estimatedUsage": "Tinatayang Buwanang Gamit",
+    "rateNote": "Base sa VECO all-in rate na ₱{rate}/kWh",
+    "recommended": "Inirerekomendang System",
+    "pvSize": "Laki ng Solar PV Array",
+    "monthlySavings": "Tinatayang Buwanang Savings",
+    "getProposal": "Humiling ng Detalyadong Proposal",
+    "pageTitle": "ROI Calculator",
+    "pageSubtitle": "I-check muna ang solar + ESS investment bago ang site visit."
+  },
+  "products": {
+    "title": "Neovolt Product Catalog",
+    "subtitle": "Bytewatt-certified energy storage systems — single-phase residential at three-phase commercial.",
+    "singlePhase": "Single-Phase (Residential)",
+    "threePhase": "Three-Phase (Commercial)",
+    "viewSpecs": "Tingnan ang Specs",
+    "contactCta": "Hindi sigurado kung aling system ang bagay? Mag-book ng libreng consultation."
+  },
+  "about": {
+    "title": "Tungkol sa OptiCore Energy Solutions",
+    "subtitle": "Cebu-based solar + ESS integrator na naglilingkod sa Eastern Visayas.",
+    "founderTitle": "Pinamumunuan ng Licensed Electrical Engineer",
+    "founderName": "Julius Rey S. Gisto, RME",
+    "founderBio": "Registered Master Electrician na may expertise sa PV system design, ESS sizing, at Philippine grid interconnection. Ang OptiCore ay awtorisadong Neovolt ESS distributor sa Cebu, Bohol, at Leyte.",
+    "missionTitle": "Aming Misyon",
+    "mission": "Gawing abot-kaya at maaasahan ang solar + battery storage para sa mga Pilipinong bahay at negosyo — may tapat na engineering, transparent na presyo, at local after-sales support.",
+    "territories": "Mga Lugar na Sinasakupan",
+    "territoryCebu": "Cebu — VECO",
+    "territoryBohol": "Bohol — BOHECO",
+    "territoryLeyte": "Leyte — LEYECO / DOMELCO"
+  },
+  "contact": {
+    "title": "Makipag-ugnayan",
+    "subtitle": "Mag-book ng site visit o magtanong tungkol sa Neovolt systems. Sumasagot kami sa loob ng 24 oras.",
+    "form": {
+      "name": "Buong Pangalan",
+      "phone": "Mobile Number",
+      "email": "Email (opsyonal)",
+      "province": "Probinsya",
+      "city": "Lungsod / Munisipyo",
+      "address": "Address",
+      "bill": "Buwanang Bill sa Kuryente (₱)",
+      "customerType": "Uri ng Property",
+      "residential": "Residential",
+      "commercial": "Commercial",
+      "message": "Mensahe (opsyonal)",
+      "submit": "Ipadala ang Inquiry",
+      "submitting": "Ipinapadala...",
+      "success": "Salamat! Natanggap na namin ang inyong inquiry at makikipag-ugnayan kami sa inyo.",
+      "error": "May nangyaring mali. Subukan ulit o tawagan kami direkta."
+    },
+    "info": {
+      "phone": "Telepono",
+      "email": "Email",
+      "hours": "Oras ng Opisina",
+      "hoursValue": "Lun–Sab, 8:00 AM – 6:00 PM"
+    }
+  },
+  "footer": {
+    "tagline": "Awtorisadong Neovolt ESS distributor — Cebu, Bohol, Leyte.",
+    "rights": "Lahat ng karapatan ay nakalaan.",
+    "privacy": "Privacy",
+    "terms": "Terms"
+  },
+  "locale": {
+    "en": "English",
+    "fil": "Filipino"
+  }
+}

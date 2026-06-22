@@ -1,5 +1,5 @@
 import React from 'react';
-import { getSession } from '@/lib/auth';
+import { getSession } from '@/lib/session';
 import { canAccessCrm } from '@/lib/energy-auth';
 import { redirect } from 'next/navigation';
 import CrmSidebarWrapper from '@/components/crm/CrmSidebar';

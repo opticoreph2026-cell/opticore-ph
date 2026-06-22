@@ -137,6 +137,6 @@ export function getPostLoginRedirect(role: string): string {
       return '/admin';
     case 'client':
     default:
-      return '/dashboard';
+      return '/crm';
   }
 }

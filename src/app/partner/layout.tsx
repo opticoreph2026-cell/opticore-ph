@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { getSession } from '@/lib/auth';
+import { getSession } from '@/lib/session';
 import { redirect } from 'next/navigation';
 import { canAccessPartnerPortal } from '@/lib/energy-auth';
 import { NotificationBell } from '@/components/ui/NotificationBell';

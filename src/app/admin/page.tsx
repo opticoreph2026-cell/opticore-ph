@@ -1,6 +1,6 @@
 import React from 'react';
 import { db } from '@/lib/db';
-import { getSession } from '@/lib/auth';
+import { getSession } from '@/lib/session';
 import { SpotlightCard } from '@/components/ui/SpotlightCard';
 import { Users, Zap, Package, TrendingUp } from 'lucide-react';
 

@@ -1,7 +1,7 @@
-import 'server-only';
+﻿import 'server-only';
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { getSession } from '@/lib/auth';
+import { getSession } from '@/lib/session';
 import { canAccessCrm } from '@/lib/energy-auth';
 
 export const runtime = 'nodejs';
@@ -15,19 +15,29 @@ export async function GET(request: Request, context: { params: Promise<{ id: str
 
     const { id } = await context.params;
 
-    const roi = await db.rOIComputation.findUnique({
+    const scenario = await db.roiScenario.findUnique({
       where: { id },
       include: {
-        design: true,
-        rateSchedule: true,
+        design: {
+          include: {
+            site: { include: { customer: true } },
+            inverter: true,
+            battery: true,
+          },
+        },
       },
     });
 
-    if (!roi) {
+    if (!scenario) {
       return NextResponse.json({ error: 'Not found' }, { status: 404 });
     }
 
-    return NextResponse.json({ data: roi });
+    return NextResponse.json({
+      data: {
+        ...scenario,
+        parsedResults: scenario.resultsJson ? JSON.parse(scenario.resultsJson) : null,
+      },
+    });
   } catch (err) {
     console.error('[GET /api/energy/roi/[id]]', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
@@ -44,12 +54,12 @@ export async function PATCH(request: Request, context: { params: Promise<{ id: s
     const { id } = await context.params;
     const body = await request.json();
 
-    const roi = await db.rOIComputation.update({
+    const scenario = await db.roiScenario.update({
       where: { id },
       data: body,
     });
 
-    return NextResponse.json({ data: roi });
+    return NextResponse.json({ data: scenario });
   } catch (err) {
     console.error('[PATCH /api/energy/roi/[id]]', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
@@ -64,10 +74,7 @@ export async function DELETE(request: Request, context: { params: Promise<{ id: 
     }
 
     const { id } = await context.params;
-
-    await db.rOIComputation.delete({
-      where: { id },
-    });
+    await db.roiScenario.delete({ where: { id } });
 
     return NextResponse.json({ success: true });
   } catch (err) {

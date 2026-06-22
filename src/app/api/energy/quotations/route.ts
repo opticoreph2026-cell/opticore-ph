@@ -1,10 +1,17 @@
 import 'server-only';
+
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { getSession } from '@/lib/auth';
+import { getSession } from '@/lib/session';
 import { canAccessCrm } from '@/lib/energy-auth';
 
 export const runtime = 'nodejs';
+
+function generateQuoteNumber(): string {
+  const year = new Date().getFullYear();
+  const seq = Math.floor(Math.random() * 9000) + 1000;
+  return `OCE-${year}-${seq}`;
+}
 
 export async function GET(request: Request) {
   try {
@@ -15,17 +22,19 @@ export async function GET(request: Request) {
 
     const { searchParams } = new URL(request.url);
     const customerId = searchParams.get('customerId');
+    const designId = searchParams.get('designId');
 
-    const where: any = {};
+    const where: { customerId?: string; designId?: string } = {};
     if (customerId) where.customerId = customerId;
+    if (designId) where.designId = designId;
 
     const quotations = await db.energyQuotation.findMany({
       where,
       orderBy: { createdAt: 'desc' },
       include: {
         customer: { select: { fullName: true } },
-        design: { select: { versionName: true } },
-        preparedBy: { select: { fullName: true } },
+        design: { select: { pvArrayKwp: true, designPathway: true } },
+        roiScenario: { select: { scenarioLabel: true } },
       },
     });
 
@@ -47,14 +56,13 @@ export async function POST(request: Request) {
     const {
       customerId,
       designId,
-      roiId,
+      roiScenarioId,
+      hardwareSubtotalCentavos,
+      installationFeeCentavos,
+      designFeeCentavos,
+      grandTotalCentavos,
       validUntil,
-      subtotalCentavos,
-      discountCentavos,
-      totalCentavos,
-      paymentTerms, // JSON string
-      termsAndConditions,
-      status,
+      notes,
     } = body;
 
     if (!customerId || !designId) {
@@ -65,15 +73,18 @@ export async function POST(request: Request) {
       data: {
         customerId,
         designId,
-        roiId,
-        preparedById: session.sub,
-        validUntil: validUntil ? new Date(validUntil) : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // Default 30 days
-        subtotalCentavos: subtotalCentavos || 0,
-        discountCentavos: discountCentavos || 0,
-        totalCentavos: totalCentavos || 0,
-        paymentTerms: paymentTerms ? JSON.stringify(paymentTerms) : '[]',
-        termsAndConditions: termsAndConditions || '',
-        status: status || 'draft',
+        roiScenarioId: roiScenarioId ?? null,
+        quoteNumber: generateQuoteNumber(),
+        validUntil: validUntil
+          ? new Date(validUntil)
+          : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+        hardwareSubtotalCentavos: hardwareSubtotalCentavos ?? 0,
+        installationFeeCentavos: installationFeeCentavos ?? 0,
+        designFeeCentavos: designFeeCentavos ?? 0,
+        grandTotalCentavos: grandTotalCentavos ?? 0,
+        depositRequiredPct: 50,
+        status: 'draft',
+        notes: notes ?? null,
       },
     });
 

@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Logo } from '@/components/ui/Logo';
 import { Spinner } from '@/components/ui/Spinner';
-import { useAuth } from '@/components/ui/AuthProvider';
+import { signIn } from 'next-auth/react';
 import { useToast } from '@/components/ui/Toast';
 import { Turnstile } from '@marsidev/react-turnstile';
 
@@ -16,8 +16,7 @@ export default function SignupPage() {
   const [turnstileToken, setTurnstileToken] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const { login } = useAuth();
-  const { error } = useToast();
+  const { error, success } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,8 +35,8 @@ export default function SignupPage() {
         throw new Error(data.error || 'Failed to create account');
       }
 
-      // Automatically login
-      login('registered');
+      await signIn('credentials', { email, password, redirect: false });
+      success('Account created!');
       router.push('/onboarding');
     } catch (err: any) {
       error(err.message);

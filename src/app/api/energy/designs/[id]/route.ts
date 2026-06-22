@@ -1,7 +1,7 @@
-import 'server-only';
+﻿import 'server-only';
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { getSession } from '@/lib/auth';
+import { getSession } from '@/lib/session';
 import { canAccessCrm } from '@/lib/energy-auth';
 
 export const runtime = 'nodejs';
@@ -18,13 +18,14 @@ export async function GET(request: Request, context: { params: Promise<{ id: str
     const design = await db.systemDesign.findUnique({
       where: { id },
       include: {
-        customer: true,
+        site: { include: { customer: true } },
         designedBy: true,
         inverter: true,
         battery: true,
-        roiComputations: {
-          orderBy: { createdAt: 'desc' }
-        }
+        bomItems: true,
+        assessment: true,
+        roiScenarios: { orderBy: { createdAt: 'desc' } },
+        quotations: { orderBy: { createdAt: 'desc' } },
       },
     });
 
@@ -69,10 +70,7 @@ export async function DELETE(request: Request, context: { params: Promise<{ id: 
     }
 
     const { id } = await context.params;
-
-    await db.systemDesign.delete({
-      where: { id },
-    });
+    await db.systemDesign.delete({ where: { id } });
 
     return NextResponse.json({ success: true });
   } catch (err) {

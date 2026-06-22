@@ -1,37 +1,44 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { useTranslations } from 'next-intl';
+import { Link, usePathname } from '@/i18n/routing';
 import { Logo } from './Logo';
 import { useAuth } from './AuthProvider';
+import { LocaleSwitcher } from './LocaleSwitcher';
 import { Menu, X } from 'lucide-react';
 
-const navLinks = [
-  { href: '/#solutions', label: 'Solutions' },
-  { href: '/#how-it-works', label: 'How It Works' },
-  { href: '/#calculator', label: 'ROI Calculator' },
-  { href: '/#about', label: 'About' },
-];
-
 export function Navbar() {
+  const t = useTranslations('nav');
   const pathname = usePathname();
   const { user, loading } = useAuth();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  // Scroll shadow
+  const navLinks = [
+    { href: '/products' as const, label: t('products') },
+    { href: '/calculator' as const, label: t('calculator') },
+    { href: '/about' as const, label: t('about') },
+    { href: '/contact' as const, label: t('contact') },
+  ];
+
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handler);
     return () => window.removeEventListener('scroll', handler);
   }, []);
 
-  // Don't show public navbar on application pages
   const isAppRoute = ['/customer', '/admin', '/crm', '/partner', '/login', '/signup', '/onboarding'].some(
-    (route) => pathname.startsWith(route)
+    (route) => pathname.startsWith(route),
   );
   if (isAppRoute) return null;
+
+  const dashboardHref =
+    user?.role === 'customer'
+      ? '/customer'
+      : user?.role === 'partner_admin' || user?.role === 'partner_installer'
+        ? '/partner'
+        : '/crm';
 
   return (
     <>
@@ -46,7 +53,6 @@ export function Navbar() {
           <div className="flex justify-between items-center h-16">
             <Logo />
 
-            {/* Desktop nav */}
             <nav className="hidden md:flex items-center gap-1">
               {navLinks.map((link) => (
                 <Link
@@ -59,21 +65,15 @@ export function Navbar() {
               ))}
             </nav>
 
-            {/* CTA */}
             <div className="hidden md:flex items-center gap-3">
-              {!loading && (
-                user ? (
+              <LocaleSwitcher />
+              {!loading &&
+                (user ? (
                   <Link
-                    href={
-                      user.role === 'customer'
-                        ? '/customer'
-                        : user.role === 'partner_admin' || user.role === 'partner_agent'
-                        ? '/partner'
-                        : '/crm'
-                    }
+                    href={dashboardHref}
                     className="px-4 py-2 text-sm font-medium rounded-xl bg-white/8 hover:bg-white/12 text-white border border-white/10 transition-all"
                   >
-                    Dashboard →
+                    {t('dashboard')} →
                   </Link>
                 ) : (
                   <>
@@ -81,31 +81,31 @@ export function Navbar() {
                       href="/login"
                       className="px-4 py-2 text-sm font-medium text-white/70 hover:text-white transition-colors"
                     >
-                      Sign In
+                      {t('signIn')}
                     </Link>
                     <Link
-                      href="/onboarding"
+                      href="/contact"
                       className="px-5 py-2 text-sm font-semibold rounded-xl bg-[#F5A524] text-[#08080B] hover:bg-[#F5A524]/90 transition-all shadow-lg shadow-[#F5A524]/20"
                     >
-                      Get Started Free
+                      {t('getQuote')}
                     </Link>
                   </>
-                )
-              )}
+                ))}
             </div>
 
-            {/* Mobile menu button */}
-            <button
-              className="md:hidden p-2 text-white/60 hover:text-white rounded-lg hover:bg-white/5 transition-colors"
-              onClick={() => setMobileOpen(!mobileOpen)}
-              aria-label="Toggle menu"
-            >
-              {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-            </button>
+            <div className="md:hidden flex items-center gap-2">
+              <LocaleSwitcher />
+              <button
+                className="p-2 text-white/60 hover:text-white rounded-lg hover:bg-white/5 transition-colors"
+                onClick={() => setMobileOpen(!mobileOpen)}
+                aria-label="Toggle menu"
+              >
+                {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              </button>
+            </div>
           </div>
         </div>
 
-        {/* Mobile menu */}
         {mobileOpen && (
           <div className="md:hidden bg-[#0F0F14] border-t border-white/5 px-4 py-4 space-y-1">
             {navLinks.map((link) => (
@@ -124,21 +124,20 @@ export function Navbar() {
                 onClick={() => setMobileOpen(false)}
                 className="block px-4 py-3 text-sm font-medium text-center text-white/70 hover:text-white hover:bg-white/5 rounded-xl transition-colors border border-white/10"
               >
-                Sign In
+                {t('signIn')}
               </Link>
               <Link
-                href="/onboarding"
+                href="/contact"
                 onClick={() => setMobileOpen(false)}
                 className="block px-4 py-3 text-sm font-semibold text-center rounded-xl bg-[#F5A524] text-[#08080B] hover:bg-[#F5A524]/90 transition-all"
               >
-                Get Started Free
+                {t('getQuote')}
               </Link>
             </div>
           </div>
         )}
       </header>
 
-      {/* Spacer for non-hero pages */}
       {pathname !== '/' && <div className="h-16" />}
     </>
   );
