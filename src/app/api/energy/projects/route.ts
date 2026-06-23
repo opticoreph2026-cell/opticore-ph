@@ -15,19 +15,21 @@ export async function GET(request: Request) {
     }
 
     const { searchParams } = new URL(request.url);
-    const customerId = searchParams.get('customerId');
-    const leadInstallerOrgId = searchParams.get('leadInstallerOrgId');
+    const organizationId = searchParams.get('organizationId');
+    const status = searchParams.get('status');
 
-    const where: any = {};
-    if (customerId) where.customerId = customerId;
-    if (leadInstallerOrgId) where.leadInstallerOrgId = leadInstallerOrgId;
+    const where: Record<string, unknown> = {};
+    if (organizationId) where.organizationId = organizationId;
+    if (status) where.status = status;
 
     const projects = await db.energyProject.findMany({
       where,
       orderBy: { createdAt: 'desc' },
       include: {
-        customer: { select: { fullName: true } },
-        leadInstallerOrg: { select: { name: true } },
+        contract: { select: { quotation: { select: { customer: { select: { fullName: true } } } } } },
+        organization: { select: { name: true } },
+        leadInstaller: { select: { client: { select: { name: true } } } },
+        milestones: { orderBy: { milestoneDate: 'desc' }, take: 5 },
       },
     });
 
@@ -47,32 +49,40 @@ export async function POST(request: Request) {
 
     const body = await request.json();
     const {
-      customerId,
-      quotationId,
+      contractId,
       designId,
-      leadInstallerOrgId,
-      leadInstallerUserId,
-      targetInstallDate,
+      organizationId,
+      leadInstallerId,
+      scheduledInstallDate,
       status,
-      milestones, // JSON string
+      milestones,
     } = body;
 
-    if (!customerId || !quotationId || !designId) {
-      return NextResponse.json({ error: 'customerId, quotationId, and designId are required' }, { status: 400 });
+    if (!contractId || !designId) {
+      return NextResponse.json({ error: 'contractId and designId are required' }, { status: 400 });
     }
 
     const project = await db.energyProject.create({
       data: {
-        customerId,
-        quotationId,
+        contractId,
         designId,
-        leadInstallerOrgId,
-        leadInstallerUserId,
-        targetInstallDate: targetInstallDate ? new Date(targetInstallDate) : null,
-        status: status || 'planning',
-        milestones: milestones ? JSON.stringify(milestones) : '[]',
+        organizationId: organizationId || null,
+        leadInstallerId: leadInstallerId || null,
+        scheduledInstallDate: scheduledInstallDate ? new Date(scheduledInstallDate) : null,
+        status: status || 'scheduled',
       },
     });
+
+    if (milestones && Array.isArray(milestones)) {
+      await db.projectMilestone.createMany({
+        data: milestones.map((m: { milestone: string; milestoneDate?: string; notes?: string }) => ({
+          projectId: project.id,
+          milestone: m.milestone,
+          milestoneDate: m.milestoneDate ? new Date(m.milestoneDate) : new Date(),
+          notes: m.notes || null,
+        })),
+      });
+    }
 
     return NextResponse.json({ data: project }, { status: 201 });
   } catch (err) {

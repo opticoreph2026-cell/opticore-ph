@@ -16,10 +16,11 @@ export async function GET(request: Request, context: { params: Promise<{ id: str
 
     const { id } = await context.params;
 
-    const inventory = await db.inventoryItem.findUnique({
+    const inventory = await db.inventoryUnit.findUnique({
       where: { id },
       include: {
-        allocatedTo: true,
+        inverter: { select: { modelName: true, sku: true } },
+        battery: { select: { modelName: true, sku: true } },
       },
     });
 
@@ -44,7 +45,7 @@ export async function PATCH(request: Request, context: { params: Promise<{ id: s
     const { id } = await context.params;
     const body = await request.json();
 
-    const inventory = await db.inventoryItem.update({
+    const inventory = await db.inventoryUnit.update({
       where: { id },
       data: body,
     });
@@ -65,7 +66,7 @@ export async function DELETE(request: Request, context: { params: Promise<{ id: 
 
     const { id } = await context.params;
 
-    await db.inventoryItem.delete({
+    await db.inventoryUnit.delete({
       where: { id },
     });
 

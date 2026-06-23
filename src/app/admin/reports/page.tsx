@@ -1,7 +1,7 @@
 import React from 'react';
 import { db } from '@/lib/db';
 import { SpotlightCard } from '@/components/ui/SpotlightCard';
-import { FileText, Download, TrendingUp, Cpu } from 'lucide-react';
+import { FileText, Download, TrendingUp, Cpu, Users } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
@@ -86,5 +86,4 @@ export default async function AdminReportsPage() {
   );
 }
 
-// Ensure Users icon is imported 
-import { Users } from 'lucide-react';
+

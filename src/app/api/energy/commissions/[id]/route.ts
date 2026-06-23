@@ -20,7 +20,7 @@ export async function GET(request: Request, context: { params: Promise<{ id: str
       where: { id },
       include: {
         project: true,
-        payeeOrg: true,
+        organization: { select: { name: true } },
       },
     });
 

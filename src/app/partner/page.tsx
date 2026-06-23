@@ -12,22 +12,24 @@ export default async function PartnerDashboard() {
   const orgId = (session as any)?.orgId as string | undefined;
 
   const commissions = await db.commissionRecord.findMany({
-    where: orgId ? { payeeOrgId: orgId } : undefined,
+    where: orgId ? { organizationId: orgId } : undefined,
     orderBy: { createdAt: 'desc' },
     include: {
+      organization: { select: { name: true } },
       project: {
-        include: {
-          lead: true,
-        }
-      }
-    }
+        select: {
+          id: true,
+          contract: { select: { quotation: { select: { customer: { select: { fullName: true } } } } } },
+        },
+      },
+    },
   });
 
-  const totalEarned = commissions
+  const totalEarned = (commissions as any[])
     .filter((c: any) => c.status === 'paid')
     .reduce((sum: number, c: any) => sum + c.amountCentavos, 0);
 
-  const pendingEarned = commissions
+  const pendingEarned = (commissions as any[])
     .filter((c: any) => c.status === 'pending')
     .reduce((sum: number, c: any) => sum + c.amountCentavos, 0);
 
@@ -74,8 +76,8 @@ export default async function PartnerDashboard() {
               ) : (
                 commissions.map((comm: any) => (
                   <tr key={comm.id} className="hover:bg-white/5 transition-colors cursor-pointer">
-                    <td className="px-6 py-4 font-medium text-white">{comm.project?.lead?.name || 'Unknown'}</td>
-                    <td className="px-6 py-4 capitalize">{comm.commissionType.replace('_', ' ')}</td>
+                    <td className="px-6 py-4 font-medium text-white">{comm.project?.contract?.quotation?.customer?.fullName || 'Unknown'}</td>
+                    <td className="px-6 py-4 capitalize">{comm.roleInProject.replace(/_/g, ' ')}</td>
                     <td className="px-6 py-4">₱{(comm.amountCentavos / 100).toLocaleString()}</td>
                     <td className="px-6 py-4">
                       <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${

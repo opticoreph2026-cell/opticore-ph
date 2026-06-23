@@ -26,8 +26,7 @@ export async function GET(request: Request, context: { params: Promise<{ id: str
             battery: true
           }
         },
-        roi: true,
-        preparedBy: true,
+        roiScenario: true,
       },
     });
 

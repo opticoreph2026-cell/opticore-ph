@@ -15,19 +15,19 @@ export async function GET(request: Request) {
     }
 
     const { searchParams } = new URL(request.url);
-    const payeeOrgId = searchParams.get('payeeOrgId');
+    const organizationId = searchParams.get('organizationId');
     const status = searchParams.get('status');
 
-    const where: any = {};
-    if (payeeOrgId) where.payeeOrgId = payeeOrgId;
+    const where: Record<string, unknown> = {};
+    if (organizationId) where.organizationId = organizationId;
     if (status) where.status = status;
 
     const commissions = await db.commissionRecord.findMany({
       where,
       orderBy: { createdAt: 'desc' },
       include: {
-        payeeOrg: { select: { name: true } },
-        project: { select: { id: true, status: true, targetInstallDate: true } },
+        organization: { select: { name: true } },
+        project: { select: { id: true, status: true, scheduledInstallDate: true } },
       },
     });
 
@@ -48,23 +48,23 @@ export async function POST(request: Request) {
     const body = await request.json();
     const {
       projectId,
-      payeeOrgId,
-      commissionType,
+      organizationId,
+      roleInProject,
       amountCentavos,
       status,
       paidAt,
       notes,
     } = body;
 
-    if (!projectId || !payeeOrgId || !amountCentavos) {
-      return NextResponse.json({ error: 'projectId, payeeOrgId, and amountCentavos are required' }, { status: 400 });
+    if (!projectId || !organizationId || !amountCentavos) {
+      return NextResponse.json({ error: 'projectId, organizationId, and amountCentavos are required' }, { status: 400 });
     }
 
     const commission = await db.commissionRecord.create({
       data: {
         projectId,
-        payeeOrgId,
-        commissionType: commissionType || 'hardware_margin',
+        organizationId,
+        roleInProject: roleInProject || 'hardware_margin',
         amountCentavos,
         status: status || 'pending',
         paidAt: paidAt ? new Date(paidAt) : null,

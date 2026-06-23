@@ -61,6 +61,17 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Full name is required' }, { status: 400 });
     }
 
+    if (email) {
+      const existing = await db.energyLead.findFirst({
+        where: { email },
+        select: { id: true, fullName: true, status: true, createdAt: true },
+        orderBy: { createdAt: 'desc' },
+      });
+      if (existing) {
+        return NextResponse.json({ data: existing, duplicate: true }, { status: 200 });
+      }
+    }
+
     const lead = await db.energyLead.create({
       data: {
         fullName,

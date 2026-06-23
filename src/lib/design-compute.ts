@@ -79,8 +79,8 @@ export interface DesignComputeResult {
   trace: Record<string, unknown>;
 }
 
-function resolveUnitPrice(spec: { sku: string; unitPriceCentavos: number }): number {
-  if (spec.unitPriceCentavos > 0) return spec.unitPriceCentavos;
+function resolveUnitPrice(spec: { sku: string; unitPriceCentavos: number; isPriceConfirmed: boolean }): number {
+  if (spec.isPriceConfirmed && spec.unitPriceCentavos > 0) return spec.unitPriceCentavos;
   return ESTIMATED_UNIT_PRICES_CENTAVOS[spec.sku] ?? 0;
 }
 

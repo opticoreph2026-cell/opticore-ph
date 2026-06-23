@@ -49,7 +49,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     ...(process.env.RESEND_API_KEY
       ? [
           Resend({
-            from: process.env.EMAIL_FROM ?? 'OptiCore <noreply@opticore.ph>',
+            from: process.env.EMAIL_FROM ?? 'OptiCore PH <opticoreph2026@gmail.com>',
           }),
         ]
       : []),

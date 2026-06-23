@@ -1,18 +1,26 @@
 import React from 'react';
 import { db } from '@/lib/db';
 import { getCurrentUser } from '@/lib/session';
+import { canAccessAdminEnergy } from '@/lib/energy-auth';
 import { redirect } from 'next/navigation';
+import type { EnergyUtilityCompany } from '@prisma/client';
 
 export const runtime = 'nodejs';
 
 export default async function AdminEnergyRules() {
   const user = await getCurrentUser();
-  if (!user || (user.role !== 'admin' && user.email !== 'opticoreph2026@gmail.com')) {
-    redirect('/dashboard');
+  if (!user || !canAccessAdminEnergy(user)) {
+    redirect('/crm');
   }
 
-  const rates = await db.utilityRate.findMany({
-    orderBy: { duCode: 'asc' },
+  const utilities = await db.energyUtilityCompany.findMany({
+    orderBy: { code: 'asc' },
+    include: {
+      rateSchedules: {
+        orderBy: { effectiveDate: 'desc' },
+        take: 1,
+      },
+    },
   });
 
   return (
@@ -31,26 +39,32 @@ export default async function AdminEnergyRules() {
         <table className="w-full text-left text-sm">
           <thead className="bg-surface-900 border-b border-border-subtle text-white/60">
             <tr>
-              <th className="px-6 py-4 font-medium">DU Code</th>
+              <th className="px-6 py-4 font-medium">Code</th>
               <th className="px-6 py-4 font-medium">Name</th>
               <th className="px-6 py-4 font-medium">Res. Rate (₱/kWh)</th>
-              <th className="px-6 py-4 font-medium">Net Metering Support</th>
+              <th className="px-6 py-4 font-medium">Net Metering</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border-subtle text-white/80">
-            {rates.map((r: any) => (
-              <tr key={r.id} className="hover:bg-white/5 transition-colors">
-                <td className="px-6 py-4 font-bold text-accent-cyan">{r.duCode}</td>
-                <td className="px-6 py-4">{r.duName}</td>
-                <td className="px-6 py-4">₱{(r.blendedRateRes / 10000).toFixed(4)}</td>
+            {utilities.map((u: EnergyUtilityCompany & { rateSchedules: { allInRateRu: number }[] }) => (
+              <tr key={u.id} className="hover:bg-white/5 transition-colors">
+                <td className="px-6 py-4 font-bold text-accent-cyan">{u.code}</td>
+                <td className="px-6 py-4">{u.name}</td>
                 <td className="px-6 py-4">
-                  <span className={`inline-flex px-2 py-1 rounded text-xs ${
-                    r.isSupported 
-                      ? r.bestEffortOnly ? 'bg-amber-500/20 text-amber-500' : 'bg-green-500/20 text-green-500' 
-                      : 'bg-red-500/20 text-red-500'
-                  }`}>
-                    {r.isSupported ? (r.bestEffortOnly ? 'Beta' : 'Supported') : 'Coming Soon'}
-                  </span>
+                  {u.rateSchedules[0]
+                    ? `₱${(u.rateSchedules[0].allInRateRu / 10000).toFixed(4)}`
+                    : '—'}
+                </td>
+                <td className="px-6 py-4">
+                  {u.netMeteringApplicationUrl ? (
+                    <span className="inline-flex px-2 py-1 rounded text-xs bg-green-500/20 text-green-500">
+                      Supported
+                    </span>
+                  ) : (
+                    <span className="inline-flex px-2 py-1 rounded text-xs bg-red-500/20 text-red-500">
+                      Coming Soon
+                    </span>
+                  )}
                 </td>
               </tr>
             ))}

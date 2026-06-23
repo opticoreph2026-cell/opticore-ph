@@ -69,7 +69,7 @@ async function sendGmailApiEmail({ to, subject, html }) {
 
   const gmail = google.gmail({ version: 'v1', auth });
   const fromName = 'OptiCore PH';
-  const fromEmail = process.env.GMAIL_USER || 'noreply@gmail.com';
+  const fromEmail = process.env.GMAIL_USER || 'opticoreph2026@gmail.com';
 
   // Construct the MIME message
   const str = [

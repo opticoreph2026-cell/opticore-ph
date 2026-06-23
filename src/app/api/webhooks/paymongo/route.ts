@@ -16,7 +16,7 @@ export async function POST(req: Request) {
 
     // Verify signature: format t=timestamp,te=test,li=live
     const signatures = signature.split(',');
-    const timestamp = signatures[0]?.replace('t=', '') || '';
+    const timestamp = signatures.find((s) => s.startsWith('t='))?.replace('t=', '') || '';
     const liveSignature =
       signatures.find((s) => s.startsWith('li='))?.replace('li=', '') ||
       signatures.find((s) => s.startsWith('te='))?.replace('te=', '');
@@ -39,15 +39,23 @@ export async function POST(req: Request) {
       const metadata = paymentData.metadata as Record<string, string> | undefined;
 
       if (metadata?.contractId) {
+        const paymentType = metadata.paymentType ?? 'deposit';
         const payment = await db.energyPayment.create({
           data: {
             contractId: metadata.contractId,
             amountCentavos,
-            paymentType: metadata.paymentType ?? 'deposit',
+            paymentType,
             method: 'gcash',
             referenceNo: paymentData.id ?? null,
             paidAt: new Date(),
           },
+        });
+
+        await db.energyContract.update({
+          where: { id: metadata.contractId },
+          data: paymentType === 'deposit'
+            ? { depositPaidAt: new Date() }
+            : { balancePaidAt: new Date() },
         });
 
         console.log(`[PayMongo] Recorded payment ${payment.id} (₱${(amountCentavos / 100).toFixed(2)}) for contract ${metadata.contractId}`);

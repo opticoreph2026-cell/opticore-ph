@@ -19,14 +19,13 @@ export async function GET(request: Request, context: { params: Promise<{ id: str
     const project = await db.energyProject.findUnique({
       where: { id },
       include: {
-        customer: true,
-        quotation: true,
-        design: true,
-        leadInstallerOrg: true,
-        leadInstallerUser: true,
-        documents: true,
-        siteSurvey: true,
-        allocatedInventory: true,
+        contract: { include: { quotation: { include: { customer: true, roiScenario: true } } } },
+        design: { include: { inverter: true, battery: true } },
+        organization: { select: { name: true } },
+        leadInstaller: { select: { client: { select: { name: true, email: true } } } },
+        milestones: { orderBy: { milestoneDate: 'asc' } },
+        commissions: true,
+        maintenance: true,
       },
     });
 

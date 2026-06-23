@@ -15,18 +15,21 @@ export async function GET(request: Request) {
     }
 
     const { searchParams } = new URL(request.url);
-    const itemType = searchParams.get('itemType'); // "inverter" | "battery" | "panel" | "accessory"
-    const status = searchParams.get('status');
+    const ownershipStatus = searchParams.get('ownershipStatus');
+    const inverterId = searchParams.get('inverterId');
+    const batteryId = searchParams.get('batteryId');
 
-    const where: any = {};
-    if (itemType) where.itemType = itemType;
-    if (status) where.status = status;
+    const where: Record<string, unknown> = {};
+    if (ownershipStatus) where.ownershipStatus = ownershipStatus;
+    if (inverterId) where.inverterId = inverterId;
+    if (batteryId) where.batteryId = batteryId;
 
-    const inventory = await db.inventoryItem.findMany({
+    const inventory = await db.inventoryUnit.findMany({
       where,
-      orderBy: { receivedAt: 'desc' },
+      orderBy: { receivedDate: 'desc' },
       include: {
-        allocatedTo: { select: { projectId: true, installedAt: true } },
+        inverter: { select: { modelName: true, sku: true } },
+        battery: { select: { modelName: true, sku: true } },
       },
     });
 
@@ -40,40 +43,38 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     const session = await getSession();
-    // Only OptiCore staff and owners should add inventory globally
-    // We could restrict to canAccessAdminEnergy or canAccessCrm.
     if (!session || !canAccessCrm(session as any)) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const body = await request.json();
     const {
-      itemType,
-      modelIdentifier,
+      inverterId,
+      batteryId,
       serialNumber,
-      supplier,
-      costCentavos,
-      receivedAt,
-      warrantyExpiresAt,
-      location,
-      status,
+      ownershipStatus,
+      storageLocation,
+      receivedDate,
+      consignmentRemitStatus,
+      remitAmountCentavos,
+      notes,
     } = body;
 
-    if (!itemType || !modelIdentifier || !serialNumber) {
-      return NextResponse.json({ error: 'itemType, modelIdentifier, and serialNumber are required' }, { status: 400 });
+    if (!serialNumber) {
+      return NextResponse.json({ error: 'serialNumber is required' }, { status: 400 });
     }
 
-    const item = await db.inventoryItem.create({
+    const item = await db.inventoryUnit.create({
       data: {
-        itemType,
-        modelIdentifier,
+        inverterId: inverterId || null,
+        batteryId: batteryId || null,
         serialNumber,
-        supplier: supplier || '',
-        costCentavos: costCentavos || 0,
-        receivedAt: receivedAt ? new Date(receivedAt) : new Date(),
-        warrantyExpiresAt: warrantyExpiresAt ? new Date(warrantyExpiresAt) : null,
-        location: location || 'Main Warehouse',
-        status: status || 'in_stock',
+        ownershipStatus: ownershipStatus || 'consigned_bytewatt',
+        storageLocation: storageLocation || null,
+        receivedDate: receivedDate ? new Date(receivedDate) : new Date(),
+        consignmentRemitStatus: consignmentRemitStatus || 'not_applicable',
+        remitAmountCentavos: remitAmountCentavos || 0,
+        notes: notes || null,
       },
     });
 
