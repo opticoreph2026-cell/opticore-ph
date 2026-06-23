@@ -5,6 +5,8 @@ import { redirect } from 'next/navigation';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
+
+export default async function InventoryPage() {
   const session = await getSession();
   const role = session?.role as string;
   if (role !== 'opticore_owner') {

@@ -17,6 +17,7 @@
  */
 
 import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcryptjs';
 
 const db = new PrismaClient();
 
@@ -482,12 +483,107 @@ async function main() {
   }
 
   console.log(`  ✅ Regulatory rules: ${rules.length} seeded`);
+
+  // ── 7. Users (Admin + Partners) ──────────────────────────────────────────────
+
+  await seedUsers();
+
   console.log('');
   console.log('✨ OptiCore Energy seed complete!');
   console.log('');
   console.log('⚠️  REMINDER: Product prices are placeholder estimates (isPriceConfirmed: false).');
   console.log('   Update via Admin → Energy → Product Catalog once the official Bytewatt');
   console.log('   distributor price list is received.');
+}
+
+async function seedUsers() {
+  const defaultPassword = await bcrypt.hash('OptiCore-ES2026', 12);
+  const passwordHash = `bcrypt:${defaultPassword}`;
+
+  // Julius — Owner/Admin
+  const juliusClient = await db.client.upsert({
+    where: { email: 'julius@opticore.ph' },
+    update: {},
+    create: {
+      email: 'julius@opticore.ph',
+      name: 'Julius Rey S. Gisto',
+      passwordHash,
+      role: 'opticore_owner',
+      emailVerified: new Date(),
+      onboardingComplete: true,
+      preferredLanguage: 'taglish',
+    },
+  });
+
+  await db.energyProfile.upsert({
+    where: { clientId: juliusClient.id },
+    update: {},
+    create: {
+      clientId: juliusClient.id,
+      fullName: 'Julius Rey S. Gisto',
+      role: 'opticore_owner',
+      organizationId: 'org-opticore-principal',
+      prcLicenseNo: 'RME-XXXXXXXX',
+      prcLicenseType: 'RME',
+      phone: '+639171234567',
+    },
+  });
+
+  // Jeric — Installation Partner (Cebu/Bohol)
+  const jericClient = await db.client.upsert({
+    where: { email: 'jeric@example.ph' },
+    update: {},
+    create: {
+      email: 'jeric@example.ph',
+      name: 'Engr. Jeric Inson',
+      passwordHash,
+      role: 'partner_admin',
+      emailVerified: new Date(),
+      onboardingComplete: true,
+    },
+  });
+
+  await db.energyProfile.upsert({
+    where: { clientId: jericClient.id },
+    update: {},
+    create: {
+      clientId: jericClient.id,
+      fullName: 'Engr. Jeric Inson',
+      role: 'partner_admin',
+      organizationId: 'org-jeric-cebu-bohol',
+      phone: '+639171234568',
+    },
+  });
+
+  // Aldrean — Sub-Dealer (Leyte)
+  const aldreanClient = await db.client.upsert({
+    where: { email: 'aldrean@sidlakdev.ph' },
+    update: {},
+    create: {
+      email: 'aldrean@sidlakdev.ph',
+      name: 'Aldrean T. Polistico',
+      passwordHash,
+      role: 'partner_admin',
+      emailVerified: new Date(),
+      onboardingComplete: true,
+    },
+  });
+
+  await db.energyProfile.upsert({
+    where: { clientId: aldreanClient.id },
+    update: {},
+    create: {
+      clientId: aldreanClient.id,
+      fullName: 'Aldrean T. Polistico',
+      role: 'partner_admin',
+      organizationId: 'org-sidlakdev-leyte',
+      prcLicenseNo: 'ECE-XXXXXXXX',
+      prcLicenseType: 'ECE',
+      phone: '+639171234569',
+    },
+  });
+
+  console.log('  ✅ Users seeded: Julius (opticore_owner), Jeric (partner_admin), Aldrean (partner_admin)');
 }
 
 main()

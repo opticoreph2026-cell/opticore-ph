@@ -3,6 +3,8 @@ import { db } from '@/lib/db';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
+
+export default async function ProjectsPage() {
   const projects = await db.energyProject.findMany({
     orderBy: { createdAt: 'desc' },
     select: {

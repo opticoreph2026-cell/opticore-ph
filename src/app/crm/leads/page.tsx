@@ -4,6 +4,8 @@ import Link from 'next/link';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
+
+export default async function LeadsPage() {
   const leads = await db.energyLead.findMany({
     orderBy: { createdAt: 'desc' },
     select: {
