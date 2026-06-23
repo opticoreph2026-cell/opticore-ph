@@ -130,6 +130,8 @@ model Client {
   lastScanReset         DateTime  @default(now())
   locale                String    @default("en")
   suspended             Boolean   @default(false)
+  otpCode               String?
+  otpExpiresAt          DateTime?
 
   // Relations
   properties    Property[]

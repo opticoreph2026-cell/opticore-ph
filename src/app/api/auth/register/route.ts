@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { hashPassword } from '@/lib/password';
+import { sendWelcomeEmail } from '@/lib/email';
 
 export const dynamic = 'force-dynamic';
 
@@ -52,6 +53,12 @@ export async function POST(req: NextRequest) {
         emailVerified: false,
       },
     });
+
+    try {
+      await sendWelcomeEmail({ name: client.name || '', email: client.email });
+    } catch (emailErr) {
+      console.error('[Register] Welcome email failed:', emailErr);
+    }
 
     return NextResponse.json({
       user: {

@@ -16,10 +16,39 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
-        const email = credentials?.email as string | undefined;
-        const password = credentials?.password as string | undefined;
+        const creds = credentials as Record<string, string> | undefined;
+        const email = creds?.email;
+        const password = creds?.password;
+        const authType = creds?.type;
         if (!email || !password) return null;
 
+        // ── OTP login ──────────────────────────────────────────────
+        if (authType === 'otp') {
+          const client = await db.client.findUnique({ where: { email } });
+          if (!client || client.suspended) return null;
+          if (!client.otpCode || !client.otpExpiresAt) return null;
+          if (client.otpCode !== password) return null;
+          if (new Date() > client.otpExpiresAt) return null;
+
+          await db.client.update({
+            where: { id: client.id },
+            data: { otpCode: null, otpExpiresAt: null, lastLoginAt: new Date(), lastSignedInAt: new Date() },
+          });
+
+          const profile = await db.energyProfile.findUnique({
+            where: { clientId: client.id },
+          });
+
+          return {
+            id: client.id,
+            email: client.email,
+            name: client.name ?? undefined,
+            role: client.role,
+            organizationId: profile?.organizationId ?? undefined,
+          };
+        }
+
+        // ── Password login ─────────────────────────────────────────
         const client = await db.client.findUnique({ where: { email } });
         if (!client?.passwordHash || client.suspended) return null;
 

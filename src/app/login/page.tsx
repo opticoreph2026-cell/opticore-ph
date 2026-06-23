@@ -15,7 +15,9 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [turnstileToken, setTurnstileToken] = useState('');
   const [loading, setLoading] = useState(false);
-  const [magicLinkSent, setMagicLinkSent] = useState(false);
+  const [showOtpInput, setShowOtpInput] = useState(false);
+  const [otpCode, setOtpCode] = useState('');
+  const [otpSent, setOtpSent] = useState(false);
   const router = useRouter();
   const { error, success } = useToast();
 
@@ -46,19 +48,75 @@ export default function LoginPage() {
     }
   };
 
-  const handleMagicLink = async () => {
+  const handleSendOtp = async () => {
     if (!email) {
       error('Enter your email address first');
       return;
     }
     setLoading(true);
     try {
-      const result = await signIn('resend', { email, redirect: false });
-      if (result?.error) throw new Error('Failed to send magic link');
-      setMagicLinkSent(true);
-      success('Check your email for a sign-in link');
+      const res = await fetch('/api/auth/send-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        if (res.status === 404) {
+          error('No account found with this email. Please sign up first.');
+          return;
+        }
+        throw new Error(data.error || 'Failed to send OTP');
+      }
+
+      setOtpSent(true);
+      setShowOtpInput(true);
+      success('OTP sent! Check your email inbox.');
     } catch (err) {
-      error(err instanceof Error ? err.message : 'Magic link unavailable');
+      error(err instanceof Error ? err.message : 'OTP unavailable');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleVerifyOtp = async () => {
+    if (!otpCode) {
+      error('Enter the OTP code from your email');
+      return;
+    }
+    setLoading(true);
+    try {
+      const res = await fetch('/api/auth/verify-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, otp: otpCode }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || 'Invalid OTP');
+      }
+
+      const result = await signIn('credentials', {
+        email,
+        password: otpCode,
+        type: 'otp',
+        redirect: false,
+      });
+
+      if (result?.error) {
+        throw new Error('Login failed. Try again.');
+      }
+
+      const sessionRes = await fetch('/api/auth/session');
+      const sessionData = await sessionRes.json();
+      const role = sessionData?.user?.role ?? 'client';
+      router.push(getPostLoginRedirect(role));
+      router.refresh();
+    } catch (err) {
+      error(err instanceof Error ? err.message : 'Verification failed');
     } finally {
       setLoading(false);
     }
@@ -78,10 +136,56 @@ export default function LoginPage() {
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md relative z-10">
         <div className="bg-surface-900/80 backdrop-blur-md py-8 px-4 shadow-2xl border border-border-subtle sm:rounded-2xl sm:px-10">
-          {magicLinkSent ? (
-            <p className="text-center text-accent-emerald">
-              Magic link sent! Check your inbox at <strong>{email}</strong>.
-            </p>
+          {showOtpInput ? (
+            <div className="space-y-6">
+              <p className="text-sm text-white/80 text-center">
+                Enter the 6-digit code sent to <strong className="text-white">{email}</strong>
+              </p>
+
+              <div>
+                <label htmlFor="otp" className="block text-sm font-medium text-white/80">
+                  OTP Code
+                </label>
+                <input
+                  id="otp"
+                  type="text"
+                  inputMode="numeric"
+                  autoComplete="one-time-code"
+                  maxLength={6}
+                  value={otpCode}
+                  onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                  className="mt-1 appearance-none block w-full px-3 py-2.5 text-center text-2xl tracking-[0.5em] border border-border-subtle rounded-lg bg-surface-800 text-white focus:outline-none focus:ring-2 focus:ring-accent-cyan"
+                  placeholder="000000"
+                />
+              </div>
+
+              <button
+                type="button"
+                onClick={handleVerifyOtp}
+                disabled={loading || otpCode.length !== 6}
+                className="w-full flex justify-center py-2.5 px-4 rounded-lg text-sm font-medium text-white bg-gradient-to-r from-accent-cyan to-accent-emerald hover:opacity-90 disabled:opacity-50"
+              >
+                {loading ? <Spinner className="w-5 h-5 text-white" /> : 'Verify & Sign In'}
+              </button>
+
+              <div className="flex justify-between text-xs">
+                <button
+                  type="button"
+                  onClick={() => { setShowOtpInput(false); setOtpSent(false); setOtpCode(''); }}
+                  className="text-white/40 hover:text-white transition-colors"
+                >
+                  Back to login
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSendOtp}
+                  disabled={loading}
+                  className="text-accent-cyan hover:text-accent-cyan/80 transition-colors"
+                >
+                  Resend OTP
+                </button>
+              </div>
+            </div>
           ) : (
             <form className="space-y-6" onSubmit={handleCredentialsLogin}>
               <div>
@@ -131,21 +235,22 @@ export default function LoginPage() {
                 {loading ? <Spinner className="w-5 h-5 text-white" /> : 'Log in'}
               </button>
 
-              {process.env.NEXT_PUBLIC_RESEND_ENABLED !== 'false' && (
-                <button
-                  type="button"
-                  onClick={handleMagicLink}
-                  disabled={loading}
-                  className="w-full py-2.5 text-sm text-white/60 hover:text-white border border-white/10 rounded-lg transition-colors"
-                >
-                  Send magic link instead
-                </button>
-              )}
+              <button
+                type="button"
+                onClick={handleSendOtp}
+                disabled={loading}
+                className="w-full py-2.5 text-sm text-white/60 hover:text-white border border-white/10 rounded-lg transition-colors"
+              >
+                {otpSent ? 'Resend OTP' : 'Send OTP instead'}
+              </button>
             </form>
           )}
 
           <p className="mt-6 text-center text-xs text-white/40">
-            Client portal? Use the magic link with your registered email.
+            No account yet?{' '}
+            <Link href="/signup" className="font-medium text-accent-cyan hover:text-accent-cyan/80 transition-colors">
+              Sign up here
+            </Link>
           </p>
         </div>
       </div>
