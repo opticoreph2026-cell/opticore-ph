@@ -132,6 +132,8 @@ model Client {
   suspended             Boolean   @default(false)
   otpCode               String?
   otpExpiresAt          DateTime?
+  resetToken            String?   @unique
+  resetTokenExpiresAt   DateTime?
 
   // Relations
   properties    Property[]

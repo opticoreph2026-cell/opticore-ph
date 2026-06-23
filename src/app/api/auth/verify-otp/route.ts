@@ -1,14 +1,25 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { verifyOtpSchema } from '@/lib/validations';
+import { rateLimit } from '@/lib/rate-limit';
 
 export const dynamic = 'force-dynamic';
 
 export async function POST(request: Request) {
   try {
-    const { email, otp } = await request.json();
-    if (!email || !otp) {
-      return NextResponse.json({ error: 'Email and OTP are required' }, { status: 400 });
+    const ip = request.headers.get('x-forwarded-for') ?? request.headers.get('x-real-ip') ?? 'unknown';
+    const throttled = rateLimit(`verify:${ip}`, 5, 60_000);
+    if (!throttled.allowed) {
+      return NextResponse.json({ error: 'Too many attempts. Please wait before trying again.' }, { status: 429 });
     }
+
+    const body = await request.json();
+    const parsed = verifyOtpSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json({ error: parsed.error.flatten().fieldErrors }, { status: 422 });
+    }
+
+    const { email, otp } = parsed.data;
 
     const client = await db.client.findUnique({ where: { email } });
     if (!client) {

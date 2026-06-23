@@ -4,6 +4,7 @@ import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getSession } from '@/lib/session';
 import { canAccessCrm } from '@/lib/energy-auth';
+import { createQuotationSchema } from '@/lib/validations';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -54,21 +55,12 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    const {
-      customerId,
-      designId,
-      roiScenarioId,
-      hardwareSubtotalCentavos,
-      installationFeeCentavos,
-      designFeeCentavos,
-      grandTotalCentavos,
-      validUntil,
-      notes,
-    } = body;
-
-    if (!customerId || !designId) {
-      return NextResponse.json({ error: 'customerId and designId are required' }, { status: 400 });
+    const parsed = createQuotationSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json({ error: parsed.error.flatten().fieldErrors }, { status: 422 });
     }
+
+    const { customerId, designId, roiScenarioId, hardwareSubtotalCentavos, installationFeeCentavos, designFeeCentavos, grandTotalCentavos, validUntil, notes } = parsed.data;
 
     const quotation = await db.energyQuotation.create({
       data: {

@@ -4,7 +4,7 @@ import { getSession } from '@/lib/session';
 import { canAccessCrm } from '@/lib/energy-auth';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
-import { PlusCircle, FileText, Search } from 'lucide-react';
+import { PlusCircle, FileText, Search, Download } from 'lucide-react';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -84,12 +84,13 @@ export default async function QuotationsPage() {
                 <th className="px-6 py-4 font-medium tracking-wider">Status</th>
                 <th className="px-6 py-4 font-medium tracking-wider">Issue Date</th>
                 <th className="px-6 py-4 font-medium tracking-wider">Valid Until</th>
+                <th className="px-6 py-4 font-medium tracking-wider"></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5 text-white/70">
               {quotations.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-6 py-16 text-center">
+                  <td colSpan={8} className="px-6 py-16 text-center">
                     <FileText className="w-10 h-10 text-white/10 mx-auto mb-3" />
                     <p className="text-sm text-white/30">No quotations created yet</p>
                     <Link
@@ -102,10 +103,16 @@ export default async function QuotationsPage() {
                 </tr>
               ) : (
                 quotations.map((q: any) => (
-                  <tr key={q.id} className="hover:bg-white/3 transition-colors">
-                    <td className="px-6 py-4 font-medium text-white font-mono text-xs">{q.quoteNumber}</td>
+                  <tr key={q.id} className="hover:bg-white/3 transition-colors group">
+                    <td className="px-6 py-4 font-medium text-white font-mono text-xs">
+                      <Link href={`/crm/quotations/${q.id}`} className="hover:text-accent-amber transition-colors">
+                        {q.quoteNumber}
+                      </Link>
+                    </td>
                     <td className="px-6 py-4">
-                      <span className="text-white">{q.customer?.fullName || 'Unknown'}</span>
+                      <Link href={`/crm/quotations/${q.id}`} className="text-white hover:text-accent-amber transition-colors">
+                        {q.customer?.fullName || 'Unknown'}
+                      </Link>
                     </td>
                     <td className="px-6 py-4">{q.design?.pvArrayKwp ? `${q.design.pvArrayKwp} kWp` : '—'}</td>
                     <td className="px-6 py-4 text-white font-medium">
@@ -125,6 +132,16 @@ export default async function QuotationsPage() {
                     </td>
                     <td className="px-6 py-4 text-white/40">
                       {new Date(q.validUntil).toLocaleDateString('en-PH', { month: 'short', day: 'numeric', year: 'numeric' })}
+                    </td>
+                    <td className="px-6 py-4">
+                      <a
+                        href={`/api/energy/quotations/${q.id}/pdf`}
+                        download
+                        className="p-2 rounded-lg hover:bg-white/5 text-white/30 hover:text-accent-amber transition-colors opacity-0 group-hover:opacity-100"
+                        title="Download PDF"
+                      >
+                        <Download className="w-4 h-4" />
+                      </a>
                     </td>
                   </tr>
                 ))

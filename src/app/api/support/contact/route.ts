@@ -2,6 +2,7 @@ import 'server-only';
 import { NextResponse } from 'next/server';
 import { getSession } from '@/lib/session';
 import { sendContactFormEmail } from '@/lib/email';
+import { contactFormSchema } from '@/lib/validations';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -13,17 +14,19 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { subject, message } = await request.json();
-
-    if (!subject || !message) {
-      return NextResponse.json({ error: 'Subject and message are required' }, { status: 400 });
+    const body = await request.json();
+    const parsed = contactFormSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json({ error: parsed.error.flatten().fieldErrors }, { status: 422 });
     }
+
+    const { subject, message } = parsed.data;
 
     await sendContactFormEmail({
       name: session.name ?? session.email,
       email: session.email,
-      subject: String(subject),
-      message: String(message),
+      subject,
+      message,
     });
 
     return NextResponse.json({ success: true });

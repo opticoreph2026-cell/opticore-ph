@@ -11,6 +11,7 @@ import {
   type DesignComputeInput,
 } from '@/lib/design-compute';
 import type { CriticalLoad, DesignPathway, GridConnectionType } from '@/lib/solar-design';
+import { designComputeSchema } from '@/lib/validations';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -59,25 +60,12 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    const {
-      leadId,
-      save = false,
-      averageMonthlyKwh,
-      averageMonthlyBillCentavos,
-      gridConnectionType = 'single_phase',
-      designPathway = 'zero_export_hybrid',
-      customerType = 'residential',
-      peakSunHours = 4.5,
-      targetOffsetPct = 80,
-      panelWattage = 550,
-      backupAutonomyHours = 4,
-      criticalLoads = [],
-      availableRoofAreaSqm,
-    } = body;
-
-    if (!leadId) {
-      return NextResponse.json({ error: 'leadId is required' }, { status: 400 });
+    const parsed = designComputeSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json({ error: parsed.error.flatten().fieldErrors }, { status: 422 });
     }
+
+    const { leadId, save, averageMonthlyKwh, averageMonthlyBillCentavos, gridConnectionType, designPathway, customerType, peakSunHours, targetOffsetPct, panelWattage, backupAutonomyHours, criticalLoads, availableRoofAreaSqm } = parsed.data;
 
     const { lead, customer, site } = await ensureCustomerAndSite(leadId);
 

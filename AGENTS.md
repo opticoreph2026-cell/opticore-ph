@@ -85,6 +85,11 @@ Runtime:         →  src/lib/db.js PrismaClient singleton
 | `prisma/schema.prisma` | Database schema |
 | `prisma/seed.ts` | Provider seed data |
 
+## Gotchas / Build Fixes
+
+- API route files containing JSX must be `route.tsx`, not `route.ts` (e.g., `quotations/[id]/pdf/route.tsx`)
+- `Map.entries()` iteration requires `Array.from()` wrapper to avoid `--downlevelIteration` flag
+
 ## Deleted / Orphaned (DO NOT RECREATE)
 
 - `DailyMeterReading`, `LPGReading`, `ApplianceCatalog` models

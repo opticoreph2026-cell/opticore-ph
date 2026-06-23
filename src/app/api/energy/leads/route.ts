@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getSession } from '@/lib/session';
 import { canAccessCrm } from '@/lib/energy-auth';
+import { createLeadSchema } from '@/lib/validations';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -44,22 +45,12 @@ export async function POST(request: Request) {
     const isPublicSubmission = !session; // Allow public submissions from landing page
 
     const body = await request.json();
-    const {
-      fullName,
-      phone,
-      email,
-      addressLine,
-      city,
-      province,
-      customerType,
-      monthlyBillPhp,
-      source,
-      notes,
-    } = body;
-
-    if (!fullName) {
-      return NextResponse.json({ error: 'Full name is required' }, { status: 400 });
+    const parsed = createLeadSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json({ error: parsed.error.flatten().fieldErrors }, { status: 422 });
     }
+
+    const { fullName, phone, email, addressLine, city, province, customerType, monthlyBillPhp, source, notes } = parsed.data;
 
     if (email) {
       const existing = await db.energyLead.findFirst({
