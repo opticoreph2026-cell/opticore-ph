@@ -13,6 +13,7 @@ import {
 import type { CriticalLoad, DesignPathway, GridConnectionType } from '@/lib/solar-design';
 
 export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
 
 async function ensureCustomerAndSite(leadId: string) {
   const lead = await db.energyLead.findUnique({

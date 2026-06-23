@@ -6,6 +6,7 @@ import { getSession } from '@/lib/session';
 import { canAccessCrm } from '@/lib/energy-auth';
 
 export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
 
 function generateQuoteNumber(): string {
   const year = new Date().getFullYear();
