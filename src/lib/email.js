@@ -332,6 +332,56 @@ export async function sendAnomalyAlertEmail({ email, name, title, message, sever
   });
 }
 
+/**
+ * Send a customer support contact form submission to OptiCore.
+ */
+export async function sendContactFormEmail({ name, email, subject, message }) {
+  const safeName = escapeHtml(name);
+  const safeEmail = escapeHtml(email);
+  const safeSubject = escapeHtml(subject);
+  const safeMessage = formatMultilineHtml(message);
+
+  const html = `
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><title>Support Request — OptiCore PH</title></head>
+<body style="margin:0;padding:0;background:#0a0a0f;font-family:Arial,sans-serif;color:#f1f0ef;">
+  <table role="presentation" cellspacing="0" cellpadding="0" width="100%" style="background:#0a0a0f;">
+    <tr><td align="center" style="padding:40px 16px;">
+      <table role="presentation" cellspacing="0" cellpadding="0" width="560" style="background:#1a1a24;border-radius:20px;border:1px solid rgba(245,158,11,0.15);overflow:hidden;">
+        <tr>
+          <td style="padding:36px 40px;">
+            <div style="display:inline-block;padding:12px;background:rgba(6,182,212,0.1);border-radius:12px;margin-bottom:20px;">
+              <span style="color:#06b6d4;font-size:24px;">🎫</span>
+            </div>
+            <h1 style="color:#f1f0ef;font-size:22px;margin:0 0 8px;">Support Request</h1>
+            <p style="color:#a09e9b;font-size:14px;margin:0 0 24px;">
+              A customer submitted a support request from the portal.
+            </p>
+            <div style="background:#0f0f16;border-radius:16px;padding:20px;border:1px solid rgba(255,255,255,0.05);margin-bottom:16px;">
+              <p style="margin:0 0 4px;color:#f1f0ef;font-size:13px;font-weight:700;">From</p>
+              <p style="margin:0 0 16px;color:#a09e9b;font-size:14px;">${safeName} — ${safeEmail}</p>
+              <p style="margin:0 0 4px;color:#f1f0ef;font-size:13px;font-weight:700;">Subject</p>
+              <p style="margin:0 0 16px;color:#fbbf24;font-size:14px;">${safeSubject}</p>
+              <p style="margin:0 0 4px;color:#f1f0ef;font-size:13px;font-weight:700;">Message</p>
+              <p style="margin:0;color:#d6d3d1;font-size:14px;line-height:1.7;">${safeMessage}</p>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>
+  `.trim();
+
+  return sendGmailApiEmail({
+    to: 'opticoreph2026@gmail.com',
+    subject: `Support Request: ${safeSubject} — ${safeName}`,
+    html,
+  });
+}
+
 export async function sendAccountLinkedEmail(email, providerName) {
   const safeProvider = escapeHtml(providerName);
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://opticoreph.com';
