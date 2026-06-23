@@ -631,10 +631,10 @@ async function seedUsers() {
 
   // Jeric — Installation Partner (Cebu/Bohol)
   const jericClient = await db.client.upsert({
-    where: { email: 'jeric@example.ph' },
+    where: { email: 'jeric@onsite-install.com' },
     update: {},
     create: {
-      email: 'jeric@example.ph',
+      email: 'jeric@onsite-install.com',
       name: 'Engr. Jeric Inson',
       passwordHash,
       role: 'partner_admin',
@@ -657,10 +657,10 @@ async function seedUsers() {
 
   // Aldrean — Sub-Dealer (Leyte)
   const aldreanClient = await db.client.upsert({
-    where: { email: 'aldrean@sidlakdev.ph' },
+    where: { email: 'aldrean@siddlak.com' },
     update: {},
     create: {
-      email: 'aldrean@sidlakdev.ph',
+      email: 'aldrean@siddlak.com',
       name: 'Aldrean T. Polistico',
       passwordHash,
       role: 'partner_admin',
