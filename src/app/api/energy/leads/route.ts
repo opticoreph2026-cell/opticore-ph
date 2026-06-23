@@ -88,6 +88,16 @@ export async function POST(request: Request) {
       },
     });
 
+    await db.activityLog.create({
+      data: {
+        relatedToType: 'lead',
+        relatedToId: lead.id,
+        action: 'created',
+        description: `Lead created for ${fullName}${email ? ` (${email})` : ''}`,
+        actorId: (session as any)?.id ?? null,
+      },
+    }).catch((err: any) => console.error('[activity]', err));
+
     return NextResponse.json({ data: lead }, { status: 201 });
   } catch (err) {
     console.error('[POST /api/energy/leads]', err);

@@ -16,6 +16,7 @@ import {
   Menu,
   X,
   Shield,
+  FileText,
 } from 'lucide-react';
 import { NotificationBell } from '@/components/ui/NotificationBell';
 import { Logo } from '@/components/ui/Logo';
@@ -31,6 +32,7 @@ interface NavItem {
 const navItems: NavItem[] = [
   { href: '/crm', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/crm/leads', label: 'Leads & Prospects', icon: Users, badge: '' },
+  { href: '/crm/quotations', label: 'Quotations', icon: FileText },
   { href: '/crm/designs', label: 'Sizing & ROI Engine', icon: Calculator },
   { href: '/crm/projects', label: 'Active Projects', icon: Briefcase },
   { href: '/crm/inventory', label: 'Inventory', icon: Package, ownerOnly: true },

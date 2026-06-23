@@ -1,6 +1,7 @@
 import React from 'react';
 import { db } from '@/lib/db';
 import Link from 'next/link';
+import { ChevronRight } from 'lucide-react';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -58,12 +59,13 @@ export default async function LeadsPage() {
                 <th className="px-6 py-4 font-medium">Source</th>
                 <th className="px-6 py-4 font-medium">Status</th>
                 <th className="px-6 py-4 font-medium">Date</th>
+                <th className="px-6 py-4 font-medium"></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5">
               {leads.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-6 py-12 text-center text-gray-500">
+                  <td colSpan={8} className="px-6 py-12 text-center text-gray-500">
                     <div className="flex flex-col items-center gap-3">
                       <svg className="w-10 h-10 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -75,7 +77,11 @@ export default async function LeadsPage() {
                 </tr>
               ) : (
                 leads.map((lead: any) => (
-                  <tr key={lead.id} className="hover:bg-white/5 transition-colors cursor-pointer">
+                  <tr
+                    key={lead.id}
+                    onClick={() => window.location.href = `/crm/leads/${lead.id}`}
+                    className="hover:bg-white/5 transition-colors cursor-pointer"
+                  >
                     <td className="px-6 py-4 font-medium text-white">
                       <div>{lead.fullName}</div>
                       <div className="text-xs text-gray-500 capitalize">{lead.customerType.replace(/_/g, ' ')}</div>
@@ -94,6 +100,9 @@ export default async function LeadsPage() {
                     </td>
                     <td className="px-6 py-4 text-gray-500">
                       {new Date(lead.createdAt).toLocaleDateString('en-PH', { month: 'short', day: 'numeric', year: 'numeric' })}
+                    </td>
+                    <td className="px-6 py-4">
+                      <ChevronRight className="w-4 h-4 text-gray-600" />
                     </td>
                   </tr>
                 ))
