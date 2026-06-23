@@ -3,7 +3,7 @@ import { db } from '@/lib/db';
 import { getCurrentUser } from '@/lib/session';
 import { canAccessAdminEnergy } from '@/lib/energy-auth';
 import { redirect } from 'next/navigation';
-import type { ProductInverter, ProductBattery } from '@prisma/client';
+import type { ProductInverter, ProductBattery, SolarPanel } from '@prisma/client';
 
 export const runtime = 'nodejs';
 
@@ -15,17 +15,19 @@ export default async function AdminEnergyCatalog() {
 
   const inverters = await db.productInverter.findMany({ orderBy: { modelName: 'asc' } });
   const batteries = await db.productBattery.findMany({ orderBy: { modelName: 'asc' } });
+  const panels = await db.solarPanel.findMany({ orderBy: { modelName: 'asc' } });
 
   const products: (ProductInverter & { category: string; spec: string })[] = inverters.map((p: ProductInverter) => ({ ...p, category: 'inverter', spec: `${p.ratedAcKw}kW` }));
   const batteryItems: (ProductBattery & { category: string; spec: string })[] = batteries.map((p: ProductBattery) => ({ ...p, category: 'battery', spec: `${p.nominalKwh}kWh` }));
-  const allItems = [...products, ...batteryItems];
+  const panelItems: (SolarPanel & { category: string; spec: string })[] = panels.map((p: SolarPanel) => ({ ...p, category: 'panel', spec: `${p.wattage}W · ${p.efficiencyPct}%` }));
+  const allItems = [...products, ...batteryItems, ...panelItems];
 
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center mb-8">
         <div>
           <h1 className="text-3xl font-bold text-white mb-2">Energy Catalog</h1>
-          <p className="text-gray-400">Manage components: Inverters and Batteries.</p>
+          <p className="text-gray-400">Manage components: Inverters, Batteries, and Solar Panels.</p>
         </div>
         <button className="px-4 py-2 bg-accent-rose text-white font-medium rounded-lg hover:opacity-90 transition-opacity">
           Add Component

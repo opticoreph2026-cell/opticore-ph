@@ -733,6 +733,38 @@ model ProductBattery {
   @@index([compatibleInverterFamily, active])
 }
 
+// ── Solar Panel Models ─────────────────────────────────────────────────────────
+
+model SolarPanel {
+  // cellType: "mono_perc" | "bifacial" | "poly" | "thin_film"
+  id                      String   @id @default(uuid())
+  sku                     String   @unique
+  modelName               String
+  manufacturer            String   @default("Neovolt")
+  wattage                 Int      // e.g. 550 (watts STC)
+  efficiencyPct           Float    @default(21.0)
+  voc                     Float?   // Open-circuit voltage
+  isc                     Float?   // Short-circuit current
+  vmp                     Float?   // Max power voltage
+  imp                     Float?   // Max power current
+  dimensionsMm            String?  // "2278x1134x35"
+  weightKg                Float?
+  cellType                String   @default("mono_perc")
+  frameColor              String   @default("black")
+  warrantyYears           Int      @default(25)
+  performanceGuaranteePct Float    @default(85.0) // 85% after 25 years
+  datasheetUrl            String?
+  unitPriceCentavos       Int      @default(0)
+  isPriceConfirmed        Boolean  @default(false)
+  active                  Boolean  @default(true)
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+
+  designs     SystemDesign[]
+
+  @@index([manufacturer, active])
+}
+
 // ── Design Engine ─────────────────────────────────────────────────────────────
 
 model LoadAssessment {
@@ -794,6 +826,8 @@ model SystemDesign {
   pvArrayKwp              Float
   pvPanelCount            Int
   pvPanelWattage          Int      @default(550)
+  panelModelId            String?
+  panelModel              SolarPanel? @relation(fields: [panelModelId], references: [id], onDelete: SetNull)
   inverterId              String?
   inverter                ProductInverter? @relation(fields: [inverterId], references: [id], onDelete: SetNull)
   inverterQuantity        Int      @default(1)

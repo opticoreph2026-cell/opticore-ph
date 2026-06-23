@@ -37,6 +37,14 @@ interface Lead {
   customerType: string;
 }
 
+interface PanelOption {
+  id: string;
+  modelName: string;
+  wattage: number;
+  efficiencyPct: number;
+  cellType: string;
+}
+
 interface WizardForm {
   leadId: string;
   averageMonthlyBill: number;
@@ -46,6 +54,7 @@ interface WizardForm {
   customerType: string;
   peakSunHours: number;
   targetOffsetPct: number;
+  panelModelId: string;
   panelWattage: number;
   backupAutonomyHours: number;
   criticalLoads: CriticalLoad[];
@@ -63,6 +72,7 @@ export function DesignWizard() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [leads, setLeads] = useState<Lead[]>([]);
+  const [panels, setPanels] = useState<PanelOption[]>([]);
 
   const [form, setForm] = useState<WizardForm>({
     leadId: '',
@@ -73,6 +83,7 @@ export function DesignWizard() {
     customerType: 'residential',
     peakSunHours: 4.5,
     targetOffsetPct: 80,
+    panelModelId: '',
     panelWattage: 550,
     backupAutonomyHours: 4,
     criticalLoads: [],
@@ -91,6 +102,10 @@ export function DesignWizard() {
     fetch('/api/energy/leads')
       .then((r) => r.json())
       .then((json) => setLeads(json.data ?? []))
+      .catch(() => {});
+    fetch('/api/energy/products/panels')
+      .then((r) => r.json())
+      .then((json) => setPanels(json.data ?? []))
       .catch(() => {});
   }, []);
 
@@ -352,6 +367,32 @@ export function DesignWizard() {
                   onChange={(e) => setForm((f) => ({ ...f, peakSunHours: Number(e.target.value) }))}
                   className="w-full bg-[#16161D] border border-white/10 rounded-xl px-4 py-3 text-white text-sm"
                 />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-white/60 uppercase mb-1.5">Solar Panel</label>
+                <select
+                  value={form.panelModelId}
+                  onChange={(e) => {
+                    const pid = e.target.value;
+                    const panel = panels.find((p) => p.id === pid);
+                    setForm((f) => ({
+                      ...f,
+                      panelModelId: pid,
+                      panelWattage: panel?.wattage ?? f.panelWattage,
+                    }));
+                  }}
+                  className="w-full bg-[#16161D] border border-white/10 rounded-xl px-4 py-3 text-white text-sm"
+                >
+                  <option value="">— Select panel —</option>
+                  {panels.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.modelName} ({p.wattage}W · {p.efficiencyPct}% eff.)
+                    </option>
+                  ))}
+                </select>
+                {form.panelWattage > 0 && (
+                  <p className="text-xs text-white/40 mt-1.5">{form.panelWattage}W selected</p>
+                )}
               </div>
               <div>
                 <label className="block text-xs font-semibold text-white/60 uppercase mb-1.5">Utility Rate (₱/kWh)</label>

@@ -6,6 +6,7 @@
  *   - EnergyOrganization × 3 (OptiCore principal + 2 partner orgs)
  *   - ProductInverter × 5 (Neovolt/Bytewatt catalog per Part B1.2)
  *   - ProductBattery × 3 (Neovolt/Bytewatt catalog per Part B1.3)
+ *   - SolarPanel × 4 (Neovolt panels 450W–660W)
  *   - EnergyUtilityCompany × 5 (VECO, MERALCO, CEBECO I/II/III, DLPC)
  *   - UtilityRateSchedule × 5 (May 2026 indicative rates)
  *   - RegulatoryRule × 5 (ERC/DOE rules per Part B2)
@@ -286,7 +287,106 @@ async function main() {
 
   console.log(`  ✅ Batteries: ${batteries.length} Neovolt models seeded`);
 
-  // ── 4. Utility Companies ─────────────────────────────────────────────────────
+  // ── 4. Solar Panels ──────────────────────────────────────────────────────────
+
+  const panels = [
+    {
+      id: 'panel-nv-450m',
+      sku: 'NV-M10-450M',
+      modelName: 'Neovolt Mono 450W (NV-M10-450M)',
+      manufacturer: 'Neovolt',
+      wattage: 450,
+      efficiencyPct: 21.2,
+      voc: 49.5,
+      isc: 11.5,
+      vmp: 41.2,
+      imp: 10.9,
+      dimensionsMm: '1903x1134x35',
+      weightKg: 24.0,
+      cellType: 'mono_perc',
+      frameColor: 'black',
+      warrantyYears: 25,
+      performanceGuaranteePct: 85.0,
+      unitPriceCentavos: 6750000,
+      isPriceConfirmed: false,
+      active: true,
+    },
+    {
+      id: 'panel-nv-550m',
+      sku: 'NV-M10-550M',
+      modelName: 'Neovolt Mono 550W (NV-M10-550M)',
+      manufacturer: 'Neovolt',
+      wattage: 550,
+      efficiencyPct: 21.5,
+      voc: 50.2,
+      isc: 13.8,
+      vmp: 42.1,
+      imp: 13.1,
+      dimensionsMm: '2278x1134x35',
+      weightKg: 28.5,
+      cellType: 'mono_perc',
+      frameColor: 'black',
+      warrantyYears: 25,
+      performanceGuaranteePct: 85.0,
+      unitPriceCentavos: 8250000,
+      isPriceConfirmed: false,
+      active: true,
+    },
+    {
+      id: 'panel-nv-600b',
+      sku: 'NV-BB-600B',
+      modelName: 'Neovolt Bifacial 600W (NV-BB-600B)',
+      manufacturer: 'Neovolt',
+      wattage: 600,
+      efficiencyPct: 22.1,
+      voc: 52.8,
+      isc: 14.3,
+      vmp: 44.2,
+      imp: 13.6,
+      dimensionsMm: '2384x1134x35',
+      weightKg: 32.0,
+      cellType: 'bifacial',
+      frameColor: 'black',
+      warrantyYears: 30,
+      performanceGuaranteePct: 87.0,
+      unitPriceCentavos: 10500000,
+      isPriceConfirmed: false,
+      active: true,
+    },
+    {
+      id: 'panel-nv-660m',
+      sku: 'NV-M10-660M',
+      modelName: 'Neovolt Mono 660W (NV-M10-660M)',
+      manufacturer: 'Neovolt',
+      wattage: 660,
+      efficiencyPct: 21.8,
+      voc: 54.1,
+      isc: 15.2,
+      vmp: 45.6,
+      imp: 14.5,
+      dimensionsMm: '2440x1134x35',
+      weightKg: 33.5,
+      cellType: 'mono_perc',
+      frameColor: 'silver',
+      warrantyYears: 25,
+      performanceGuaranteePct: 85.0,
+      unitPriceCentavos: 11250000,
+      isPriceConfirmed: false,
+      active: true,
+    },
+  ];
+
+  for (const pnl of panels) {
+    await db.solarPanel.upsert({
+      where: { id: pnl.id },
+      update: {},
+      create: pnl,
+    });
+  }
+
+  console.log(`  ✅ Solar Panels: ${panels.length} Neovolt models seeded`);
+
+  // ── 5. Utility Companies ─────────────────────────────────────────────────────
 
   const utilities = [
     {
