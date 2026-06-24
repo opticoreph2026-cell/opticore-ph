@@ -7,8 +7,8 @@ import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 
 const slides = [
   { image: '/hero-bg.png' },
-  { image: '/designs/ChatGPT Image Jun 24, 2026, 01_11_14 PM (1).png' },
-  { image: '/designs/ChatGPT Image Jun 24, 2026, 01_11_14 PM (2).png' },
+  { image: '/designs/design-1.png' },
+  { image: '/designs/design-2.png' },
 ];
 
 export function Hero() {

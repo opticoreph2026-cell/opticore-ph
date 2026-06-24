@@ -10,7 +10,7 @@ const footerLinks = {
     { label: 'Free Site Assessment', href: '/contact' },
   ],
   Company: [
-    { label: 'About Julius Gisto, RME', href: '/#about' },
+    { label: 'About Engr. Julius Rey Gisto', href: '/about' },
     { label: 'Partner Network', href: '/#about' },
     { label: 'Cebu & Visayas Territory', href: '/#about' },
     { label: 'Bytewatt / Neovolt Products', href: '/#solutions' },

@@ -85,7 +85,7 @@ export function Navbar() {
                     </Link>
                     <Link
                       href="/contact"
-                      className="px-5 py-2 text-sm font-semibold rounded-xl bg-[#F5A524] text-[#08080B] hover:bg-[#F5A524]/90 transition-all shadow-lg shadow-[#F5A524]/20"
+                      className="px-5 py-2 text-sm font-semibold rounded-xl bg-accent-blue text-white hover:bg-accent-blue/90 transition-all shadow-lg shadow-accent-blue/20"
                     >
                       {t('getQuote')}
                     </Link>
@@ -129,7 +129,7 @@ export function Navbar() {
               <Link
                 href="/contact"
                 onClick={() => setMobileOpen(false)}
-                className="block px-4 py-3 text-sm font-semibold text-center rounded-xl bg-[#F5A524] text-[#08080B] hover:bg-[#F5A524]/90 transition-all"
+                className="block px-4 py-3 text-sm font-semibold text-center rounded-xl bg-accent-blue text-white hover:bg-accent-blue/90 transition-all"
               >
                 {t('getQuote')}
               </Link>
