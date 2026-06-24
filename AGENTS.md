@@ -17,7 +17,7 @@ Target users: households, SMEs, installation partners. Mobile-first (375px basel
 | Framework | Next.js 14 (App Router) |
 | Language | TypeScript (new code) · JS (legacy, `allowJs: true`) |
 | Database | Prisma 6.2.1 + **Supabase PostgreSQL** |
-| Auth | **NextAuth v5** (`src/auth.ts`) — Credentials + Resend magic link |
+| Auth | **NextAuth v5** (`src/auth.ts`) — Credentials + OTP (Gmail API) |
 | i18n | **next-intl** — English + Filipino (`messages/en.json`, `messages/fil.json`) |
 | AI | Google Gemini (`@google/genai`) |
 | Payments | PayMongo |
@@ -65,10 +65,9 @@ font-mono:      JetBrains Mono
 ## Database Quick Reference
 
 ```
-prisma validate  →  needs DATABASE_URL + DIRECT_URL (Supabase) in .env
-prisma generate  →  run after schema changes
-prisma db push   →  applies schema to Supabase PostgreSQL
-Runtime:         →  src/lib/db.js PrismaClient singleton
+DATABASE_URL + DIRECT_URL  →  Supabase PostgreSQL pooler (aws-1-ap-southeast-1)
+AUTH_SECRET + AUTH_URL     →  NextAuth v5 (AUTH_URL unset — auto-detected)
+Runtime:                   →  src/lib/db.js PrismaClient singleton
 ```
 
 ## Key Files
@@ -76,19 +75,27 @@ Runtime:         →  src/lib/db.js PrismaClient singleton
 | File | Purpose |
 |---|---|
 | `src/lib/db.js` | DB singleton + query helpers |
-| `src/auth.ts` | NextAuth v5 config (Credentials + Resend) |
+| `src/auth.ts` | NextAuth v5 config — authorize has console.log diagnostics for each failure mode |
 | `src/lib/session.ts` | Server-side `getSession()` for API routes & layouts |
 | `src/lib/money.ts` | Money conversion utilities (centavos, rate units) |
-| `src/lib/email.js` | Gmail OAuth2 transactional email |
+| `src/lib/email.js` | Gmail OAuth2 transactional email (OTP, welcome, contact, password reset) |
 | `src/lib/paymongo.js` | PayMongo API wrapper |
+| `src/lib/validations.ts` | Zod schemas for all POST endpoints |
+| `src/lib/rate-limit.ts` | In-memory rate limiter (2–5 req/min per IP) |
+| `src/lib/password.ts` | `hashPassword` (bcrypt), `verifyPassword` (bcrypt + legacy SHA-256) |
 | `src/middleware.ts` | NextAuth + next-intl combined middleware |
-| `prisma/schema.prisma` | Database schema |
-| `prisma/seed.ts` | Provider seed data |
+| `prisma/schema.prisma` | Database schema (1212 lines) |
+| `prisma/seed-energy.ts` | Provider seed data (3 orgs, 5 inverters, 3 batteries, 4 panels, 3 users) |
+| `.env` | Supabase pooler URLs, AUTH_SECRET, EMAIL_FROM |
+| `.env.local` | Gmail OAuth2, DATABASE_URL (Supabase), AUTH_SECRET, GEMINI_API_KEY, JWT secrets, PayMongo |
 
 ## Gotchas / Build Fixes
 
 - API route files containing JSX must be `route.tsx`, not `route.ts` (e.g., `quotations/[id]/pdf/route.tsx`)
 - `Map.entries()` iteration requires `Array.from()` wrapper to avoid `--downlevelIteration` flag
+- `.env.local` takes precedence over `.env` in Next.js — was overriding `DATABASE_URL` to SQLite (`file:./dev.db`), causing "no users in DB" login failures
+- Setting `AUTH_URL` to a fixed port (e.g. `http://localhost:3000`) can break cookie domain when dev server runs on a different port — leave it unset to auto-detect
+- Rate limiter is in-memory (`Map`) — fine for single-instance dev; for Vercel serverless use Upstash Redis
 
 ## Deleted / Orphaned (DO NOT RECREATE)
 
@@ -102,10 +109,23 @@ Runtime:         →  src/lib/db.js PrismaClient singleton
 
 See `.env.example` for full documentation. Critical runtime vars:
 
-```
-DATABASE_URL + DIRECT_URL  →  Supabase PostgreSQL
-AUTH_SECRET + AUTH_URL     →  NextAuth v5
-RESEND_API_KEY             →  Magic link + transactional email
-GEMINI_API_KEY             →  AI features
-PAYMONGO_SECRET_KEY        →  Payments
-```
+| Variable | Source | Notes |
+|---|---|---|
+| `DATABASE_URL` | `.env.local` (> `.env`) | Supabase PostgreSQL pooler — was being overridden to SQLite! |
+| `DIRECT_URL` | `.env.local` (> `.env`) | Supabase PostgreSQL pooler |
+| `AUTH_SECRET` | `.env.local` (> `.env`) | Required by NextAuth v5 — was missing! |
+| `AUTH_URL` | Unset | Auto-detected from request — do NOT set to a fixed port |
+| `GMAIL_CLIENT_ID/SECRET/REFRESH_TOKEN` | `.env.local` | Gmail OAuth2 for transactional email |
+| `GEMINI_API_KEY` | `.env.local` | AI features |
+| `PAYMONGO_SECRET_KEY` | `.env.local` | Payments |
+| `NEXT_PUBLIC_APP_URL` | Both | `http://localhost:3000` for dev |
+
+## Seed Users (Password: `OptiCore-ES2026`)
+
+| Name | Email | Role |
+|---|---|---|
+| Julius | julius@opticore.ph | opticore_owner |
+| Jeric | jeric@onsite-install.com | partner_admin |
+| Aldrean | aldrean@siddlak.com | partner_admin |
+
+> DB was seeded with wrong emails initially (`jeric@example.ph`, `aldrean@sidlakdev.ph`). Corrected to match AGENTS.md.

@@ -16,28 +16,85 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
-        const creds = credentials as Record<string, string> | undefined;
-        const email = creds?.email;
-        const password = creds?.password;
-        const authType = creds?.type;
-        if (!email || !password) return null;
+        try {
+          const creds = credentials as Record<string, string> | undefined;
+          const email = creds?.email;
+          const password = creds?.password;
+          const authType = creds?.type;
+          if (!email || !password) {
+            console.log('[auth:authorize] missing email or password');
+            return null;
+          }
 
-        // ── OTP login ──────────────────────────────────────────────
-        if (authType === 'otp') {
+          // ── OTP login ──────────────────────────────────────────────
+          if (authType === 'otp') {
+            const client = await db.client.findUnique({ where: { email } });
+            if (!client || client.suspended) {
+              console.log('[auth:authorize] OTP user not found or suspended', email);
+              return null;
+            }
+            if (!client.otpCode || !client.otpExpiresAt) {
+              console.log('[auth:authorize] no OTP requested', email);
+              return null;
+            }
+            if (client.otpCode !== password) {
+              console.log('[auth:authorize] OTP mismatch', email);
+              return null;
+            }
+            if (new Date() > client.otpExpiresAt) {
+              console.log('[auth:authorize] OTP expired', email);
+              return null;
+            }
+
+            await db.client.update({
+              where: { id: client.id },
+              data: { otpCode: null, otpExpiresAt: null, lastLoginAt: new Date(), lastSignedInAt: new Date() },
+            });
+
+            const profile = await db.energyProfile.findUnique({
+              where: { clientId: client.id },
+            });
+
+            return {
+              id: client.id,
+              email: client.email,
+              name: client.name ?? undefined,
+              role: client.role,
+              organizationId: profile?.organizationId ?? undefined,
+            };
+          }
+
+          // ── Password login ─────────────────────────────────────────
           const client = await db.client.findUnique({ where: { email } });
-          if (!client || client.suspended) return null;
-          if (!client.otpCode || !client.otpExpiresAt) return null;
-          if (client.otpCode !== password) return null;
-          if (new Date() > client.otpExpiresAt) return null;
+          if (!client) {
+            console.log('[auth:authorize] user not found', email);
+            return null;
+          }
+          if (!client.passwordHash) {
+            console.log('[auth:authorize] no password hash', email);
+            return null;
+          }
+          if (client.suspended) {
+            console.log('[auth:authorize] user suspended', email);
+            return null;
+          }
 
-          await db.client.update({
-            where: { id: client.id },
-            data: { otpCode: null, otpExpiresAt: null, lastLoginAt: new Date(), lastSignedInAt: new Date() },
-          });
+          const { valid } = await verifyPassword(password, client.passwordHash);
+          if (!valid) {
+            console.log('[auth:authorize] invalid password', email);
+            return null;
+          }
 
           const profile = await db.energyProfile.findUnique({
             where: { clientId: client.id },
           });
+
+          await db.client
+            .update({
+              where: { id: client.id },
+              data: { lastLoginAt: new Date(), lastSignedInAt: new Date() },
+            })
+            .catch(() => {});
 
           return {
             id: client.id,
@@ -46,33 +103,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             role: client.role,
             organizationId: profile?.organizationId ?? undefined,
           };
+        } catch (err) {
+          console.error('[auth:authorize] error:', err);
+          return null;
         }
-
-        // ── Password login ─────────────────────────────────────────
-        const client = await db.client.findUnique({ where: { email } });
-        if (!client?.passwordHash || client.suspended) return null;
-
-        const { valid } = await verifyPassword(password, client.passwordHash);
-        if (!valid) return null;
-
-        const profile = await db.energyProfile.findUnique({
-          where: { clientId: client.id },
-        });
-
-        await db.client
-          .update({
-            where: { id: client.id },
-            data: { lastLoginAt: new Date(), lastSignedInAt: new Date() },
-          })
-          .catch(() => {});
-
-        return {
-          id: client.id,
-          email: client.email,
-          name: client.name ?? undefined,
-          role: client.role,
-          organizationId: profile?.organizationId ?? undefined,
-        };
       },
     }),
     ...(process.env.RESEND_API_KEY
