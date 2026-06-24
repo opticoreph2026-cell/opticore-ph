@@ -15,16 +15,16 @@ module.exports = {
       },
       colors: {
         surface: {
-          1000: '#08080B',
-          900: '#0F0F14',
-          800: '#16161D',
+          1000: '#0A1628',
+          900: '#0F1F36',
+          800: '#152A4A',
         },
         border: {
-          subtle: 'rgba(255,255,255,0.04)',
-          glow: 'rgba(255,255,255,0.08)',
+          subtle: 'rgba(255,255,255,0.06)',
+          glow: 'rgba(255,255,255,0.12)',
         },
         accent: {
-          amber: '#F5A524',
+          blue: '#2563EB',
           cyan: '#06B6D4',
           emerald: '#10B981',
           rose: '#F43F5E',

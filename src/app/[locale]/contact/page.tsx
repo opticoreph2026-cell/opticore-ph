@@ -2,6 +2,8 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { Navbar } from '@/components/ui/Navbar';
 import { Footer } from '@/components/ui/Footer';
 import { ContactForm } from '@/components/landing/ContactForm';
+import { WhatsAppButton } from '@/components/landing/WhatsAppButton';
+import { ScrollToTop } from '@/components/landing/ScrollToTop';
 import { Mail, Phone, Clock } from 'lucide-react';
 
 export async function generateMetadata({
@@ -11,7 +13,15 @@ export async function generateMetadata({
 }) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'contact' });
-  return { title: `${t('title')} | OptiCore Energy Solutions` };
+  return {
+    title: `${t('title')} | OptiCore Energy Solutions`,
+    description: `Book a free solar and ESS site visit in Cebu, Bohol, or Leyte. OptiCore responds within 24 hours.`,
+    openGraph: {
+      title: `${t('title')} | OptiCore Energy Solutions`,
+      description: `Book a free solar and ESS site visit in Cebu, Bohol, or Leyte. OptiCore responds within 24 hours.`,
+      images: [{ url: '/og-image.png', width: 1200, height: 630 }],
+    },
+  };
 }
 
 export default async function ContactPage({
@@ -42,8 +52,8 @@ export default async function ContactPage({
               <div className="glass-panel rounded-2xl p-6">
                 <Phone className="w-5 h-5 text-accent-cyan mb-3" />
                 <p className="text-xs text-white/40 uppercase tracking-widest mb-1">{t('info.phone')}</p>
-                <a href="tel:+639171234567" className="text-white hover:text-accent-cyan transition-colors">
-                  +63 917 123 4567
+                <a href="tel:+639504692442" className="text-white hover:text-accent-blue transition-colors">
+                  +63 950 469 2442
                 </a>
               </div>
               <div className="glass-panel rounded-2xl p-6">
@@ -62,14 +72,16 @@ export default async function ContactPage({
                 <p className="text-white/80">{t('info.hoursValue')}</p>
               </div>
               <div className="rounded-2xl border border-[#F5A524]/20 bg-[#F5A524]/5 p-6">
-                <p className="text-sm font-semibold text-[#F5A524] mb-1">Julius Rey S. Gisto, RME</p>
-                <p className="text-xs text-white/50">Registered Master Electrician · PRC Licensed</p>
+              <p className="text-sm font-semibold text-accent-blue mb-1">Julius Rey S. Gisto, RME</p>
+              <p className="text-xs text-white/50">Registered Mechanical Engineer (RME) · PRC Licensed</p>
               </div>
             </div>
           </div>
         </div>
       </main>
       <Footer />
+      <WhatsAppButton />
+      <ScrollToTop />
     </>
   );
 }

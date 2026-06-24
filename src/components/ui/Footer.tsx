@@ -4,10 +4,10 @@ import { Logo } from './Logo';
 
 const footerLinks = {
   Solutions: [
-    { label: 'Neovolt ESS Systems', href: '/#solutions' },
+    { label: 'Neovolt ESS Systems', href: '/products' },
     { label: 'Solar + Storage Design', href: '/#solutions' },
-    { label: 'ROI Calculator', href: '/#calculator' },
-    { label: 'Net Metering Guide', href: '/#how-it-works' },
+    { label: 'ROI Calculator', href: '/calculator' },
+    { label: 'Free Site Assessment', href: '/contact' },
   ],
   Company: [
     { label: 'About Julius Gisto, RME', href: '/#about' },
@@ -32,8 +32,8 @@ export function Footer() {
           <div className="md:col-span-2 space-y-5">
             <Logo />
             <p className="text-sm text-white/40 max-w-xs leading-relaxed">
-              Licensed-engineer-led solar & ESS design, sizing, and installation for
-              Cebu, Bohol, and Eastern Visayas. Authorized Neovolt installer-partner.
+              RME-led solar & ESS design, sizing, and installation for
+              Cebu, Bohol, and Eastern Visayas. Official Neovolt ESS Installer-Partner.
             </p>
             <div className="space-y-1.5">
               <p className="text-xs text-white/25 uppercase tracking-widest font-mono">Contact</p>
@@ -46,8 +46,8 @@ export function Footer() {
               <p className="text-sm text-white/40">Cebu City, Philippines</p>
             </div>
             {/* Credentials badge */}
-            <div className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-[#F5A524]/8 border border-[#F5A524]/15">
-              <span className="text-[10px] font-semibold text-[#F5A524] uppercase tracking-widest">
+            <div className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-accent-blue/8 border border-accent-blue/15">
+              <span className="text-[10px] font-semibold text-accent-blue uppercase tracking-widest">
                 Julius Rey S. Gisto, RME · PRC Licensed
               </span>
             </div>
@@ -78,7 +78,7 @@ export function Footer() {
         {/* Bottom bar */}
         <div className="mt-16 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-xs text-white/25">
-            © {new Date().getFullYear()} OptiCore Energy Solutions. All rights reserved. DTI-registered, Cebu City, Philippines.
+            © {new Date().getFullYear()} OptiCore Energy Solutions. All rights reserved. Cebu City, Philippines.
           </p>
           <div className="flex items-center gap-4 text-xs text-white/25">
             <span>Powered by Neovolt ESS by Bytewatt</span>

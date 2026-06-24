@@ -1,17 +1,43 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/routing';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+
+const slides = [
+  { image: '/hero-bg.png' },
+  { image: '/designs/ChatGPT Image Jun 24, 2026, 01_11_14 PM (1).png' },
+  { image: '/designs/ChatGPT Image Jun 24, 2026, 01_11_14 PM (2).png' },
+];
 
 export function Hero() {
   const t = useTranslations('hero');
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % slides.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
-    <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden bg-[#08080B] pt-20">
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-accent-cyan/10 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-accent-emerald/10 rounded-full blur-[120px] pointer-events-none" />
+    <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden pt-20">
+      {slides.map((slide, index) => (
+        <div
+          key={slide.image}
+          className={`absolute inset-0 transition-opacity duration-1000 ${
+            index === currentSlide ? 'opacity-40' : 'opacity-0'
+          }`}
+          style={{
+            backgroundImage: `url(${slide.image})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+          }}
+        />
+      ))}
+      <div className="absolute inset-0 bg-gradient-to-b from-surface-1000/70 via-surface-1000/50 to-surface-1000 pointer-events-none" />
 
       <div className="max-w-5xl mx-auto px-6 relative z-10 text-center">
         <motion.div
@@ -31,7 +57,7 @@ export function Hero() {
           className="text-4xl md:text-6xl lg:text-7xl font-display font-bold tracking-tight text-white mb-6 leading-tight"
         >
           {t('title')}{' '}
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent-cyan to-accent-emerald">
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent-blue to-accent-cyan">
             {t('titleHighlight')}
           </span>
         </motion.h1>
@@ -53,17 +79,31 @@ export function Hero() {
         >
           <Link
             href="/contact"
-            className="px-8 py-4 bg-white text-black font-semibold rounded-full hover:bg-gray-200 transition-all transform hover:scale-105 shadow-[0_0_40px_rgba(255,255,255,0.2)]"
+            className="px-8 py-4 bg-accent-blue text-white font-semibold rounded-full hover:bg-accent-blue/90 transition-all transform hover:scale-105 shadow-[0_0_40px_rgba(37,99,235,0.3)]"
           >
             {t('ctaPrimary')}
           </Link>
           <Link
             href="/calculator"
-            className="px-8 py-4 bg-[#16161D] border border-white/10 text-white font-semibold rounded-full hover:bg-white/5 transition-all"
+            className="px-8 py-4 bg-surface-800 border border-white/10 text-white font-semibold rounded-full hover:bg-white/5 transition-all"
           >
             {t('ctaSecondary')}
           </Link>
         </motion.div>
+
+        <div className="flex items-center justify-center gap-2 mt-8">
+          {slides.map((_, index) => (
+            <button
+              key={index}
+              type="button"
+              onClick={() => setCurrentSlide(index)}
+              className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                index === currentSlide ? 'bg-accent-blue w-6' : 'bg-white/20'
+              }`}
+              aria-label={`Slide ${index + 1}`}
+            />
+          ))}
+        </div>
       </div>
     </section>
   );

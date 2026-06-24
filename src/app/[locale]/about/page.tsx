@@ -2,7 +2,10 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { Link } from '@/i18n/routing';
 import { Navbar } from '@/components/ui/Navbar';
 import { Footer } from '@/components/ui/Footer';
-import { Award, MapPin, Target } from 'lucide-react';
+import { WhatsAppButton } from '@/components/landing/WhatsAppButton';
+import { ScrollToTop } from '@/components/landing/ScrollToTop';
+import { Award, MapPin, Target, CheckCircle, Users, Globe } from 'lucide-react';
+import Image from 'next/image';
 
 export async function generateMetadata({
   params,
@@ -11,7 +14,15 @@ export async function generateMetadata({
 }) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'about' });
-  return { title: `${t('title')} | OptiCore Energy Solutions` };
+  return {
+    title: `${t('title')} | OptiCore Energy Solutions`,
+    description: `Julius Rey S. Gisto, RME — Registered Mechanical Engineer and founder of OptiCore Energy Solutions, Cebu.`,
+    openGraph: {
+      title: `${t('title')} | OptiCore Energy Solutions`,
+      description: `Julius Rey S. Gisto, RME — Registered Mechanical Engineer and founder of OptiCore Energy Solutions, Cebu.`,
+      images: [{ url: '/og-image.png', width: 1200, height: 630 }],
+    },
+  };
 }
 
 export default async function AboutPage({
@@ -26,7 +37,7 @@ export default async function AboutPage({
   return (
     <>
       <Navbar />
-      <main className="bg-[#08080B] text-white min-h-screen pt-24 pb-16">
+      <main className="bg-surface-1000 text-white min-h-screen pt-24 pb-16">
         <div className="max-w-4xl mx-auto px-6">
           <div className="text-center mb-16">
             <h1 className="text-4xl md:text-5xl font-display font-bold mb-4">{t('title')}</h1>
@@ -34,21 +45,62 @@ export default async function AboutPage({
           </div>
 
           <div className="glass-panel rounded-3xl p-8 md:p-12 mb-10">
-            <div className="flex items-start gap-4 mb-6">
-              <Award className="w-8 h-8 text-[#F5A524] flex-shrink-0" />
-              <div>
-                <p className="text-sm text-accent-amber uppercase tracking-widest mb-1">
-                  {t('founderTitle')}
-                </p>
+            <div className="flex flex-col md:flex-row gap-8 items-start">
+              <div className="relative w-40 h-40 md:w-48 md:h-48 rounded-2xl overflow-hidden bg-surface-800 flex-shrink-0 mx-auto md:mx-0">
+                <Image
+                  src="/julius-placeholder.png"
+                  alt="Julius Rey S. Gisto, RME"
+                  fill
+                  className="object-cover"
+                />
+              </div>
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-2">
+                  <Award className="w-5 h-5 text-accent-blue" />
+                  <p className="text-sm text-accent-blue uppercase tracking-widest">
+                    {t('founderTitle')}
+                  </p>
+                </div>
                 <h2 className="text-2xl font-display font-bold mb-3">{t('founderName')}</h2>
-                <p className="text-gray-400 leading-relaxed">{t('founderBio')}</p>
+                <p className="text-gray-400 leading-relaxed mb-6">{t('founderBio')}</p>
+
+                <h3 className="text-sm font-semibold text-white/80 uppercase tracking-widest mb-3">
+                  {t('credentials')}
+                </h3>
+                <ul className="space-y-2">
+                  {['cred1', 'cred2', 'cred3', 'cred4'].map((key) => (
+                    <li key={key} className="flex items-start gap-2 text-sm text-gray-400">
+                      <CheckCircle className="w-4 h-4 text-accent-emerald mt-0.5 flex-shrink-0" />
+                      <span>{t(key)}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div className="glass-panel rounded-3xl p-8 md:p-12 mb-10">
+            <div className="flex items-center gap-3 mb-8">
+              <Users className="w-6 h-6 text-accent-cyan" />
+              <h2 className="text-xl font-display font-bold">{t('partners')}</h2>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="bento-card">
+                <h3 className="font-bold text-white mb-1">{t('partner1Name')}</h3>
+                <p className="text-xs text-accent-cyan mb-3">{t('partner1Role')}</p>
+                <p className="text-sm text-gray-400">{t('partner1Bio')}</p>
+              </div>
+              <div className="bento-card">
+                <h3 className="font-bold text-white mb-1">{t('partner2Name')}</h3>
+                <p className="text-xs text-accent-cyan mb-3">{t('partner2Role')}</p>
+                <p className="text-sm text-gray-400">{t('partner2Bio')}</p>
               </div>
             </div>
           </div>
 
           <div className="glass-panel rounded-3xl p-8 md:p-12 mb-10">
             <div className="flex items-start gap-4">
-              <Target className="w-8 h-8 text-accent-cyan flex-shrink-0" />
+              <Target className="w-8 h-8 text-accent-blue flex-shrink-0" />
               <div>
                 <h2 className="text-xl font-display font-bold mb-3">{t('missionTitle')}</h2>
                 <p className="text-gray-400 leading-relaxed">{t('mission')}</p>
@@ -58,23 +110,17 @@ export default async function AboutPage({
 
           <div className="glass-panel rounded-3xl p-8 md:p-12 mb-10">
             <div className="flex items-start gap-4">
-              <MapPin className="w-8 h-8 text-accent-emerald flex-shrink-0" />
+              <Globe className="w-8 h-8 text-accent-emerald flex-shrink-0" />
               <div>
                 <h2 className="text-xl font-display font-bold mb-4">{t('territories')}</h2>
-                <ul className="space-y-2 text-gray-400">
-                  <li className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-accent-cyan" />
-                    {t('territoryCebu')}
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-accent-emerald" />
-                    {t('territoryBohol')}
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-accent-amber" />
-                    {t('territoryLeyte')}
-                  </li>
-                </ul>
+                <div className="space-y-3">
+                  {['territoryCebu', 'territoryBohol', 'territoryLeyte'].map((key) => (
+                    <div key={key} className="flex items-center gap-3 text-sm text-gray-400">
+                      <MapPin className="w-4 h-4 text-accent-blue flex-shrink-0" />
+                      <span>{t(key)}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
@@ -82,14 +128,16 @@ export default async function AboutPage({
           <div className="text-center">
             <Link
               href="/contact"
-              className="inline-block px-8 py-3 rounded-full bg-white text-black font-semibold hover:bg-gray-200 transition-colors"
+              className="inline-block px-8 py-3 rounded-full bg-accent-blue text-white font-semibold hover:bg-accent-blue/90 transition-colors"
             >
-              Book a Free Site Visit
+              Book a Free Site Visit →
             </Link>
           </div>
         </div>
       </main>
       <Footer />
+      <WhatsAppButton />
+      <ScrollToTop />
     </>
   );
 }

@@ -4,49 +4,54 @@
 
 @layer base {
   :root {
-    --surface-1000: #08080B;
-    --surface-900: #0F0F14;
-    --surface-800: #16161D;
-    
-    --border-subtle: rgba(255,255,255,0.04);
-    --border-glow: rgba(255,255,255,0.08);
-    
-    --accent-amber: #F5A524;
+    --surface-1000: #0A1628;
+    --surface-900: #0F1F36;
+    --surface-800: #152A4A;
+
+    --border-subtle: rgba(255, 255, 255, 0.06);
+    --border-glow: rgba(255, 255, 255, 0.12);
+
+    --accent-blue: #2563EB;
     --accent-cyan: #06B6D4;
     --accent-emerald: #10B981;
     --accent-rose: #F43F5E;
-    
+
     --foreground: #FFFFFF;
-    --foreground-muted: #A1A1AA;
+    --foreground-muted: #B0B8C8;
   }
 
   body {
     background-color: var(--surface-1000);
     color: var(--foreground);
-    @apply font-sans antialiased selection:bg-accent-cyan/30;
+    @apply font-sans antialiased selection:bg-accent-blue/30;
   }
 }
 
 @layer utilities {
   .bento-card {
-    @apply bg-[#0F0F14] border border-[rgba(255,255,255,0.04)] rounded-2xl p-6 shadow-sm;
-  }
-  
-  .glass-panel {
-    @apply bg-[#08080B]/60 backdrop-blur-md border border-[rgba(255,255,255,0.04)];
+    @apply bg-surface-900 border border-[rgba(255,255,255,0.06)] rounded-2xl p-6 shadow-sm;
   }
 
-  /* Micro-animations */
+  .glass-panel {
+    @apply bg-surface-1000/60 backdrop-blur-md border border-[rgba(255,255,255,0.06)];
+  }
+
   .hover-lift {
     @apply transition-transform duration-200 hover:-translate-y-1;
   }
+
+  .bg-hero {
+    background-image: url('/hero-bg.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
 }
 
-/* Hide scrollbar for clean horizontal lists */
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
 .no-scrollbar {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }

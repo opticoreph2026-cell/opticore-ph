@@ -26,18 +26,18 @@ Target users: households, SMEs, installation partners. Mobile-first (375px basel
 | Charts | Recharts |
 | Data fetching | SWR |
 
-## Design System — "Obsidian Refined"
+## Design System — "Navy Professional"
 
 ```css
---surface-1000: #08080B   /* page background */
---surface-900:  #0F0F14   /* card background */
---surface-800:  #16161D   /* elevated surface */
-border-subtle:  rgba(255,255,255,0.04)
-border-glow:    rgba(255,255,255,0.08)
-accent-amber:   #F5A524
-accent-cyan:    #06B6D4
-accent-emerald: #10B981
-accent-rose:    #F43F5E
+--surface-1000: #0A1628   /* page background — deep navy */
+--surface-900:  #0F1F36   /* card background — navy */
+--surface-800:  #152A4A   /* elevated surface — lighter navy */
+border-subtle:  rgba(255,255,255,0.06)
+border-glow:    rgba(255,255,255,0.12)
+accent-blue:    #2563EB   /* primary CTA / links — Electric Blue */
+accent-cyan:    #06B6D4   /* secondary highlight */
+accent-emerald: #10B981   /* success / positive */
+accent-rose:    #F43F5E   /* warning / negative */
 font-display:   Outfit
 font-body:      Inter
 font-mono:      JetBrains Mono

@@ -1,7 +1,7 @@
 {
   "meta": {
     "title": "OptiCore Energy Solutions | Solar & ESS for Cebu, Bohol & Leyte",
-    "description": "Authorized Neovolt ESS distributor and installer. Solar PV + battery storage sizing, ROI analysis, and professional installation across Eastern Visayas."
+    "description": "Cebu-based solar PV and Neovolt ESS installation by a Registered Mechanical Engineer. Free site assessment for Cebu, Bohol, and Leyte."
   },
   "nav": {
     "products": "Products",
@@ -13,12 +13,37 @@
     "dashboard": "Dashboard"
   },
   "hero": {
-    "badge": "Authorized Neovolt ESS Distributor — Cebu City",
+    "badge": "Official Neovolt ESS Installer-Partner — Cebu City",
     "title": "Power Your Home & Business with",
     "titleHighlight": "OptiCore Energy Solutions",
-    "subtitle": "Licensed RME-led solar + ESS design, Neovolt battery systems, and zero-export hybrid installations for Cebu, Bohol, and Leyte.",
+    "subtitle": "Cebu's only RME-led Neovolt ESS installer. Engineering-grade system design. Local after-sales support.",
     "ctaPrimary": "Get Free Assessment",
     "ctaSecondary": "Calculate Savings"
+  },
+  "trustBar": {
+    "rme": "PRC Licensed RME",
+    "partner": "Neovolt Official Installer-Partner",
+    "coverage": "Cebu · Bohol · Leyte Coverage"
+  },
+  "howItWorks": {
+    "title": "How It Works",
+    "subtitle": "From site visit to commissioning — three simple steps to energy independence.",
+    "step1Title": "Free Site Assessment",
+    "step1Desc": "We visit your property, analyze your bills, and survey your roof and electrical setup.",
+    "step2Title": "Engineered System Design",
+    "step2Desc": "RME-stamped load analysis, system sizing, and single-line diagram prepared for permits.",
+    "step3Title": "Installation & Commissioning",
+    "step3Desc": "Certified team installs and commissions your system. Full warranty registered with Bytewatt."
+  },
+  "territory": {
+    "title": "Service Areas",
+    "subtitle": "Serving homes and businesses across the Visayas.",
+    "cebu": "Cebu",
+    "cebuDesc": "Metro Cebu and provincial areas. Free site assessment within 48 hours.",
+    "bohol": "Bohol",
+    "boholDesc": "Tagbilaran City and municipalities. Local partner coverage across the island.",
+    "leyte": "Leyte",
+    "leyteDesc": "Tacloban and Eastern Visayas. Via SidlakDev Leyte regional partner."
   },
   "features": {
     "eyebrow": "Why OptiCore",
@@ -26,7 +51,7 @@
     "subtitle": "From site visit to commissioning — we handle sizing, permits, installation, and after-sales support.",
     "loadAssessment": {
       "title": "Precision Load Assessment",
-      "description": "Bill analysis and appliance surveys sized for Philippine households and SMEs — VECO, BOHECO, and Leyte utilities."
+      "description": "Bill analysis and appliance surveys sized for Philippine households and SMEs across Cebu, Bohol, and Leyte."
     },
     "sizing": {
       "title": "Neovolt ESS Sizing",
@@ -34,7 +59,7 @@
     },
     "roi": {
       "title": "Philippine ROI Modeling",
-      "description": "Payback analysis using real DU rates, 5% annual escalation, and 25-year lifetime projections."
+      "description": "Payback analysis using real local utility rates, 5% annual escalation, and 25-year lifetime projections."
     },
     "coverage": {
       "title": "Eastern Visayas Coverage",
@@ -42,58 +67,126 @@
     }
   },
   "calculator": {
-    "title": "Quick Solar & ESS Estimate",
-    "subtitle": "See your potential savings in under a minute. Full engineering proposal available after site visit.",
+    "title": "Solar & ESS ROI Calculator",
+    "subtitle": "See your potential savings and system size in seconds. Engineering-grade estimates based on your actual bill.",
     "monthlyBill": "Average Monthly Electric Bill (₱)",
-    "estimatedUsage": "Estimated Monthly Usage",
-    "rateNote": "Based on VECO all-in rate of ₱{rate}/kWh",
-    "recommended": "Recommended System",
-    "pvSize": "Solar PV Array Size",
-    "monthlySavings": "Estimated Monthly Savings",
-    "getProposal": "Request Detailed Proposal",
+    "province": "Your Province",
+    "propertyType": "Property Type",
+    "residential": "Residential",
+    "commercial": "Commercial",
+    "backupHours": "Backup Hours Needed",
+    "hours4": "4 hours (essentials)",
+    "hours8": "8 hours (standard)",
+    "hours12": "12 hours (extended)",
+    "hours24": "Full day",
+    "rateNote": "Using local utility rate of ₱{rate}/kWh",
+    "calculate": "Calculate My System",
+    "calculating": "Calculating...",
+    "results": "Your Engineering Estimate",
+    "dailyConsumption": "Daily Consumption",
+    "recommendedInverter": "Recommended Inverter",
+    "recommendedBattery": "Recommended Battery",
+    "pvArray": "Solar PV Array",
+    "backupAutonomy": "Backup Autonomy",
+    "monthlySavings": "Monthly Savings",
+    "annualSavings": "Annual Savings",
+    "paybackPeriod": "Simple Payback",
+    "co2Offset": "CO₂ Offset",
+    "disclaimer": "These are estimates. A free on-site assessment by Engr. Julius Gisto, RME will give you exact sizing and pricing.",
+    "cta": "Get My Free Engineering Proposal →",
     "pageTitle": "ROI Calculator",
-    "pageSubtitle": "Pre-check your solar + ESS investment before a site visit."
+    "pageSubtitle": "Pre-check your solar + ESS investment before a site visit.",
+    "tenYearChart": "10-Year Cumulative Savings",
+    "year": "Year",
+    "savings": "Savings"
   },
   "products": {
     "title": "Neovolt Product Catalog",
     "subtitle": "Bytewatt-certified energy storage systems — single-phase residential and three-phase commercial.",
     "singlePhase": "Single-Phase (Residential)",
+    "singlePhaseIntro": "For residential homes and small commercial spaces. 230Vac, 60Hz Philippine grid compatible. Zero-export mode standard — no net metering permit required.",
     "threePhase": "Three-Phase (Commercial)",
+    "threePhaseIntro": "For hotels, offices, clinics, and commercial buildings. 400Vac three-phase. Up to 15kW output. Parallel-capable up to 6 units.",
+    "batteries": "LFP Batteries",
+    "batteriesIntro": "All batteries use EVE Tier 1 prismatic LiFePO4 cells. 10-year warranty. 8,000+ cycle life. Cebu tropical climate rated (−10 to +60°C).",
+    "bundles": "System Bundles",
+    "bundlesSubtitle": "Pre-engineered system packages for common use cases.",
+    "getQuote": "Get Quote",
+    "maxPv": "Max PV Input",
+    "backup": "Backup Surge",
+    "transferTime": "Transfer Time",
+    "certifications": "Certifications",
+    "warranty": "Warranty",
+    "chemistry": "Chemistry",
+    "voltage": "Nominal Voltage",
+    "cycles": "Cycle Life",
+    "dod": "DoD",
+    "starterHome": "Starter Home",
+    "starterHomeDesc": "BW-INV-SPH3.6K + 1× BW-BAT-4.8S — 4.57 kWh storage, 3.0–4.0 kWp solar, ~4 hrs backup",
+    "starterHomeIdeal": "Ideal for: 1–2 bedroom home, essential appliances only",
+    "standardHome": "Standard Home",
+    "standardHomeDesc": "BW-INV-SPH5K + 1× BW-BAT-10.1P — 9.6 kWh storage, 4.0–6.0 kWp solar, ~8 hrs backup",
+    "standardHomeIdeal": "Ideal for: 3–4 bedroom home, full household coverage",
+    "premiumHome": "Premium Home",
+    "premiumHomeDesc": "BW-INV-SPH5K + 2× BW-BAT-10.1P — 19.2 kWh storage, 6.0–10.0 kWp solar, 16+ hrs backup",
+    "premiumHomeIdeal": "Ideal for: Large home or home office, full autonomy",
+    "commercial": "Commercial",
+    "commercialDesc": "BW-INV-TPH10K + 2× BW-BAT-9.6P — 18.24 kWh storage, 10.0–15.0 kWp solar",
+    "commercialIdeal": "Ideal for: Hotel, clinic, office, small factory",
+    "pricingNote": "Pricing available upon request — contact us for a free system design and quotation.",
+    "notSure": "Not sure which system fits your needs?",
+    "notSureCta": "Use our ROI Calculator or book a free consultation.",
     "viewSpecs": "View Specifications",
     "contactCta": "Not sure which system fits? Book a free consultation."
   },
   "about": {
     "title": "About OptiCore Energy Solutions",
     "subtitle": "Cebu-based solar + ESS integrator serving Eastern Visayas.",
-    "founderTitle": "Led by a Licensed Electrical Engineer",
+    "founderTitle": "Founder & RME",
     "founderName": "Julius Rey S. Gisto, RME",
-    "founderBio": "Registered Master Electrician with expertise in PV system design, ESS sizing, and Philippine grid interconnection. OptiCore is an authorized Neovolt ESS distributor covering Cebu, Bohol, and Leyte.",
+    "founderBio": "OptiCore Energy Solutions was founded to solve a real gap in the Cebu market — the lack of a locally based, licensed engineer offering end-to-end solar and ESS design, installation, and after-sales support. As a Registered Mechanical Engineer specializing in mechanical and electrical systems, Julius Gisto brings engineering-grade precision to every project, from initial load analysis through to commissioning and warranty registration.",
+    "credentials": "Credentials",
+    "cred1": "Registered Mechanical Engineer (RME) — Professional Regulation Commission",
+    "cred2": "Technical Background: Mechanical & Electrical Systems, Energy Audit, CAD",
+    "cred3": "Specialty: Solar PV design, ESS sizing, Philippine grid interconnection",
+    "cred4": "Location: Cebu City — serving Cebu, Bohol, and Eastern Visayas",
+    "partners": "Our Regional Installation Network",
+    "partner1Name": "Engr. Jeric Inson, RME",
+    "partner1Role": "Lead Installation Partner — Cebu & Bohol",
+    "partner1Bio": "Registered Mechanical Engineer with hands-on hybrid inverter and solar panel installation experience. Leads a certified crew.",
+    "partner2Name": "SidlakDev Leyte",
+    "partner2Role": "Independent Regional Partner — Leyte & Eastern Visayas",
+    "partner2Bio": "Aldrean T. Polistico, ECE/ECT. Licensed Electronics Engineer and Technician with TESDA NCII Solar PV certification. Established solar installation business with completed residential and commercial projects across Region VIII.",
     "missionTitle": "Our Mission",
-    "mission": "Make reliable, affordable solar + battery storage accessible to Filipino homes and businesses — with honest engineering, transparent pricing, and local after-sales support.",
+    "mission": "OptiCore's mission is to make reliable, professionally engineered solar and battery storage accessible to Filipino homes and businesses — with transparent pricing, honest engineering, and local support you can actually reach.",
     "territories": "Service Areas",
-    "territoryCebu": "Cebu — VECO",
-    "territoryBohol": "Bohol — BOHECO",
-    "territoryLeyte": "Leyte — LEYECO / DOMELCO"
+    "territoryCebu": "Cebu — Metro Cebu and provincial areas",
+    "territoryBohol": "Bohol — Tagbilaran City and municipalities",
+    "territoryLeyte": "Leyte — LEYECO/DOMELCO, via certified regional partner"
   },
   "contact": {
     "title": "Contact Us",
-    "subtitle": "Book a site visit or ask about Neovolt systems. We respond within 24 hours.",
+    "subtitle": "Book a free solar and ESS site visit in Cebu, Bohol, or Leyte. OptiCore responds within 24 hours.",
     "form": {
       "name": "Full Name",
+      "nameError": "Name must be at least 2 characters",
       "phone": "Mobile Number",
+      "phoneError": "Please enter a valid Philippine mobile number (e.g., 09XX or +639XX)",
       "email": "Email (optional)",
       "province": "Province",
+      "provinceError": "Please select your province",
       "city": "City / Municipality",
       "address": "Address",
       "bill": "Monthly Electric Bill (₱)",
+      "billError": "Please enter a valid amount",
       "customerType": "Property Type",
       "residential": "Residential",
       "commercial": "Commercial",
       "message": "Message (optional)",
       "submit": "Send Inquiry",
       "submitting": "Sending...",
-      "success": "Salamat! We received your inquiry and will contact you soon.",
-      "error": "Something went wrong. Please try again or call us directly."
+      "success": "Thank you {name}! We'll contact you within 24 hours to arrange your free site assessment.",
+      "error": "Something went wrong. Please call us directly at +63 950 469 2442 or email engineering@opticore.ph"
     },
     "info": {
       "phone": "Phone",
@@ -103,10 +196,16 @@
     }
   },
   "footer": {
-    "tagline": "Authorized Neovolt ESS distributor — Cebu, Bohol, Leyte.",
-    "rights": "All rights reserved.",
+    "tagline": "Official Neovolt ESS Installer-Partner — Cebu, Bohol, Leyte.",
+    "rights": "All rights reserved. Cebu City, Philippines.",
     "privacy": "Privacy",
     "terms": "Terms"
+  },
+  "whatsapp": {
+    "ariaLabel": "Chat with us on WhatsApp"
+  },
+  "scrollToTop": {
+    "ariaLabel": "Scroll to top"
   },
   "locale": {
     "en": "English",

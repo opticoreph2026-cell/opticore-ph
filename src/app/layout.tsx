@@ -12,7 +12,22 @@ const jetbrainsMono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-jet
 export const metadata: Metadata = {
   title: 'OptiCore Energy Solutions | Solar & ESS for Cebu, Bohol & Leyte',
   description:
-    'Authorized Neovolt ESS distributor and installer. Solar PV + battery storage sizing, ROI analysis, and professional installation across Eastern Visayas.',
+    'Cebu-based solar PV and Neovolt ESS installation by a Registered Mechanical Engineer. Free site assessment for Cebu, Bohol, and Leyte.',
+  openGraph: {
+    title: 'OptiCore Energy Solutions | Solar & ESS for Cebu, Bohol & Leyte',
+    description: 'Cebu-based solar PV and Neovolt ESS installation by a Registered Mechanical Engineer.',
+    url: 'https://opticore-ph.vercel.app',
+    siteName: 'OptiCore Energy Solutions',
+    images: [{ url: '/og-image.png', width: 1200, height: 630 }],
+    locale: 'en_PH',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'OptiCore Energy Solutions',
+    description: 'Cebu-based solar PV and Neovolt ESS installation by a Registered Mechanical Engineer.',
+    images: ['/og-image.png'],
+  },
 };
 
 export default function RootLayout({

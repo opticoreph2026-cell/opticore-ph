@@ -2,6 +2,8 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { Navbar } from '@/components/ui/Navbar';
 import { Footer } from '@/components/ui/Footer';
 import { Calculator } from '@/components/landing/Calculator';
+import { WhatsAppButton } from '@/components/landing/WhatsAppButton';
+import { ScrollToTop } from '@/components/landing/ScrollToTop';
 
 export async function generateMetadata({
   params,
@@ -10,7 +12,15 @@ export async function generateMetadata({
 }) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'calculator' });
-  return { title: `${t('pageTitle')} | OptiCore Energy Solutions` };
+  return {
+    title: `${t('pageTitle')} | OptiCore Energy Solutions`,
+    description: `Estimate your solar savings and ESS payback period. Philippine utility rates, real Neovolt system sizing, 25-year ROI.`,
+    openGraph: {
+      title: `${t('pageTitle')} | OptiCore Energy Solutions`,
+      description: `Estimate your solar savings and ESS payback period. Philippine utility rates, real Neovolt system sizing, 25-year ROI.`,
+      images: [{ url: '/og-image.png', width: 1200, height: 630 }],
+    },
+  };
 }
 
 export default async function CalculatorPage({
@@ -33,6 +43,8 @@ export default async function CalculatorPage({
         <Calculator />
       </main>
       <Footer />
+      <WhatsAppButton />
+      <ScrollToTop />
     </>
   );
 }
