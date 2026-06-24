@@ -5,15 +5,15 @@ import { Logo } from './Logo';
 const footerLinks = {
   Solutions: [
     { label: 'Neovolt ESS Systems', href: '/products' },
-    { label: 'Solar + Storage Design', href: '/#solutions' },
+    { label: 'Solar + Storage Design', href: '/products' },
     { label: 'ROI Calculator', href: '/calculator' },
     { label: 'Free Site Assessment', href: '/contact' },
   ],
   Company: [
     { label: 'About Engr. Julius Rey Gisto', href: '/about' },
-    { label: 'Partner Network', href: '/#about' },
-    { label: 'Cebu & Visayas Territory', href: '/#about' },
-    { label: 'Bytewatt / Neovolt Products', href: '/#solutions' },
+    { label: 'Partner Network', href: '/about' },
+    { label: 'Cebu & Visayas Territory', href: '/about' },
+    { label: 'Bytewatt / Neovolt Products', href: '/products' },
   ],
   Support: [
     { label: 'Customer Portal', href: '/customer' },

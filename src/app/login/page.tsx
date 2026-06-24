@@ -220,14 +220,12 @@ export default function LoginPage() {
                 />
               </div>
 
-              {process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY && (
-                <div className="flex justify-center">
-                  <Turnstile
-                    siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
-                    onSuccess={(token) => setTurnstileToken(token)}
-                  />
-                </div>
-              )}
+              <div className="flex justify-center">
+                <Turnstile
+                  siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
+                  onSuccess={(token) => setTurnstileToken(token)}
+                />
+              </div>
 
               <button
                 type="submit"
