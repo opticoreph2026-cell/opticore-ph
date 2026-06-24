@@ -50,7 +50,7 @@ export function Navbar() {
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
+          <div className="flex justify-between items-center h-20">
             <Logo />
 
             <nav className="hidden md:flex items-center gap-1">
@@ -58,7 +58,7 @@ export function Navbar() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="px-4 py-2 text-sm font-medium text-white/60 hover:text-white rounded-lg hover:bg-white/5 transition-all duration-150"
+                  className="px-4 py-2 text-base font-medium text-white/60 hover:text-white rounded-lg hover:bg-white/5 transition-all duration-150"
                 >
                   {link.label}
                 </Link>
@@ -71,7 +71,7 @@ export function Navbar() {
                 (user ? (
                   <Link
                     href={dashboardHref}
-                    className="px-4 py-2 text-sm font-medium rounded-xl bg-white/8 hover:bg-white/12 text-white border border-white/10 transition-all"
+                    className="px-4 py-2 text-base font-medium rounded-xl bg-white/8 hover:bg-white/12 text-white border border-white/10 transition-all"
                   >
                     {t('dashboard')} →
                   </Link>
@@ -79,13 +79,13 @@ export function Navbar() {
                   <>
                     <Link
                       href="/login"
-                      className="px-4 py-2 text-sm font-medium text-white/70 hover:text-white transition-colors"
+                      className="px-4 py-2 text-base font-medium text-white/70 hover:text-white transition-colors"
                     >
                       {t('signIn')}
                     </Link>
                     <Link
                       href="/contact"
-                      className="px-5 py-2 text-sm font-semibold rounded-xl bg-accent-blue text-white hover:bg-accent-blue/90 transition-all shadow-lg shadow-accent-blue/20"
+                      className="px-5 py-2 text-base font-semibold rounded-xl bg-accent-blue text-white hover:bg-accent-blue/90 transition-all shadow-lg shadow-accent-blue/20"
                     >
                       {t('getQuote')}
                     </Link>
@@ -138,7 +138,7 @@ export function Navbar() {
         )}
       </header>
 
-      {pathname !== '/' && <div className="h-16" />}
+      {pathname !== '/' && <div className="h-20" />}
     </>
   );
 }

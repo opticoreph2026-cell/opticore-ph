@@ -10,9 +10,9 @@ export function Logo({ className = 'h-8', compact = false }: LogoProps) {
   return (
     <Link href="/" className={`flex items-center group ${className}`}>
       <img
-        src="/logo.svg"
+        src="/logo.png"
         alt="OptiCore Energy Solutions"
-        className="h-8 w-auto"
+        className="h-12 w-auto"
       />
     </Link>
   );
