@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/routing';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 
 const slides = [
   { image: '/hero-bg.png' },
@@ -14,6 +14,9 @@ const slides = [
 export function Hero() {
   const t = useTranslations('hero');
   const [currentSlide, setCurrentSlide] = useState(0);
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start start', 'end start'] });
+  const bgY = useTransform(scrollYProgress, [0, 1], ['0%', '30%']);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -23,28 +26,29 @@ export function Hero() {
   }, []);
 
   return (
-    <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden pt-20">
+    <section ref={sectionRef} className="relative min-h-[90vh] flex items-center justify-center overflow-hidden pt-20">
       {slides.map((slide, index) => (
-        <div
+        <motion.div
           key={slide.image}
-          className={`absolute inset-0 transition-opacity duration-1000 ${
-            index === currentSlide ? 'opacity-40' : 'opacity-0'
-          }`}
           style={{
+            y: index === currentSlide ? bgY : 0,
             backgroundImage: `url(${slide.image})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
           }}
+          className={`absolute inset-0 transition-opacity duration-1000 ${
+            index === currentSlide ? 'opacity-40' : 'opacity-0'
+          }`}
         />
       ))}
-      <div className="absolute inset-0 bg-gradient-to-b from-surface-1000/70 via-surface-1000/50 to-surface-1000 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-b from-surface-1000/60 via-surface-1000/40 to-surface-1000 pointer-events-none" />
 
       <div className="max-w-5xl mx-auto px-6 relative z-10 text-center">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          className="inline-flex items-center space-x-2 bg-white/5 border border-white/10 rounded-full px-4 py-1.5 mb-8 backdrop-blur-md"
+          className="inline-flex items-center space-x-2 bg-white/5 backdrop-blur-xl border border-white/10 rounded-full px-4 py-1.5 mb-8"
         >
           <span className="w-2 h-2 rounded-full bg-accent-emerald animate-pulse" />
           <span className="text-sm font-medium text-gray-300">{t('badge')}</span>
@@ -85,7 +89,7 @@ export function Hero() {
           </Link>
           <Link
             href="/calculator"
-            className="px-8 py-4 bg-surface-800 border border-white/10 text-white font-semibold rounded-full hover:bg-white/5 transition-all"
+            className="px-8 py-4 bg-white/5 backdrop-blur-xl border border-white/10 text-white font-semibold rounded-full hover:bg-white/10 transition-all"
           >
             {t('ctaSecondary')}
           </Link>

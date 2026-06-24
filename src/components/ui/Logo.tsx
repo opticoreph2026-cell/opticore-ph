@@ -9,27 +9,16 @@ interface LogoProps {
 
 export function Logo({ className = 'h-8', compact = false }: LogoProps) {
   return (
-    <Link href="/" className={`flex items-center gap-2.5 group ${className}`}>
-      <div className="relative flex-shrink-0 w-8 h-8 rounded-xl overflow-hidden">
+    <Link href="/" className={`flex items-center group ${className}`}>
+      <div className="relative flex-shrink-0 w-36 h-10">
         <Image
-          src="/logo.png"
+          src="/logo.svg"
           alt="OptiCore Energy Solutions"
-          width={32}
-          height={32}
-          className="w-full h-full object-contain"
+          fill
+          className="object-contain object-left"
+          priority
         />
       </div>
-
-      {!compact && (
-        <div className="flex flex-col leading-tight">
-          <span className="font-display font-bold text-[15px] tracking-tight text-white leading-none">
-            OptiCore
-          </span>
-          <span className="text-[10px] font-medium text-accent-blue/80 tracking-widest uppercase leading-none mt-0.5">
-            Energy Solutions
-          </span>
-        </div>
-      )}
     </Link>
   );
 }

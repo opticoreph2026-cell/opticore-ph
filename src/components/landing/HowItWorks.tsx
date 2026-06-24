@@ -6,6 +6,19 @@ import { motion } from 'framer-motion';
 import { ClipboardCheck, Ruler, Wrench } from 'lucide-react';
 import Image from 'next/image';
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: { staggerChildren: 0.15 },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 30, scale: 0.95 },
+  show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] as const } },
+};
+
 export function HowItWorks() {
   const t = useTranslations('howItWorks');
 
@@ -37,25 +50,30 @@ export function HowItWorks() {
   ];
 
   return (
-    <section className="py-24 bg-surface-900/50 relative">
+    <section className="py-24 bg-surface-900/30 relative">
       <div className="max-w-6xl mx-auto px-6">
-        <div className="text-center mb-16">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-16"
+        >
           <h2 className="text-3xl md:text-5xl font-display font-bold text-white mb-4">
             {t('title')}
           </h2>
           <p className="text-gray-400 max-w-2xl mx-auto">{t('subtitle')}</p>
-        </div>
+        </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, margin: '-100px' }}
+          className="grid grid-cols-1 md:grid-cols-3 gap-8"
+        >
           {steps.map((step, index) => (
-            <motion.div
-              key={step.title}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-50px' }}
-              transition={{ duration: 0.6, delay: index * 0.15, ease: [0.16, 1, 0.3, 1] }}
-              className="group"
-            >
+            <motion.div key={step.title} variants={itemVariants} className="group">
               <div className="bento-card p-0 overflow-hidden h-full hover:border-white/20 transition-colors">
                 <div className="relative h-48 overflow-hidden bg-surface-800">
                   <Image
@@ -64,10 +82,10 @@ export function HowItWorks() {
                     fill
                     className="object-cover group-hover:scale-105 transition-transform duration-500"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-surface-900 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-surface-900/80 to-transparent" />
                 </div>
-                <div className="p-6">
-                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-4 ${step.bg}`}>
+                <div className="p-6 relative">
+                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-4 ${step.bg} backdrop-blur-sm`}>
                     <step.icon className={`w-5 h-5 ${step.color}`} />
                   </div>
                   <h3 className="text-lg font-bold text-white mb-2">{step.title}</h3>
@@ -76,7 +94,7 @@ export function HowItWorks() {
               </div>
             </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

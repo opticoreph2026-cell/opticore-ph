@@ -2,15 +2,10 @@
 
 import React from 'react';
 import { useTranslations } from 'next-intl';
-import { motion, Variants } from 'framer-motion';
-import {
-  Zap as LightningBoltIcon,
-  BarChart3 as ChartBarIcon,
-  CircleDollarSign as CurrencyDollarIcon,
-  Globe as GlobeAltIcon,
-} from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Award, MapPin, Target, Globe, Zap, CircleDollarSign } from 'lucide-react';
 
-const containerVariants: Variants = {
+const containerVariants = {
   hidden: { opacity: 0 },
   show: {
     opacity: 1,
@@ -18,33 +13,39 @@ const containerVariants: Variants = {
   },
 };
 
-const itemVariants: Variants = {
-  hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] } },
+const itemVariants = {
+  hidden: { opacity: 0, y: 20, scale: 0.95 },
+  show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] as const } },
 };
 
 export function Features() {
   const t = useTranslations('features');
 
   const features = [
-    { key: 'loadAssessment', icon: ChartBarIcon, color: 'text-accent-cyan', bg: 'bg-accent-cyan/10' },
-    { key: 'sizing', icon: LightningBoltIcon, color: 'text-accent-amber', bg: 'bg-accent-amber/10' },
-    { key: 'roi', icon: CurrencyDollarIcon, color: 'text-accent-emerald', bg: 'bg-accent-emerald/10' },
-    { key: 'coverage', icon: GlobeAltIcon, color: 'text-accent-rose', bg: 'bg-accent-rose/10' },
+    { key: 'loadAssessment', icon: Zap, color: 'text-accent-blue', bg: 'bg-accent-blue/10' },
+    { key: 'sizing', icon: Award, color: 'text-accent-cyan', bg: 'bg-accent-cyan/10' },
+    { key: 'roi', icon: CircleDollarSign, color: 'text-accent-emerald', bg: 'bg-accent-emerald/10' },
+    { key: 'coverage', icon: Globe, color: 'text-accent-rose', bg: 'bg-accent-rose/10' },
   ] as const;
 
   return (
-    <section id="solutions" className="py-24 bg-[#0F0F14] relative">
+    <section id="solutions" className="py-24 bg-surface-900/20 relative">
       <div className="max-w-7xl mx-auto px-6 relative z-10">
-        <div className="text-center mb-16">
-          <h2 className="text-sm font-semibold text-accent-cyan tracking-wider uppercase mb-3">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-16"
+        >
+          <h2 className="text-sm font-semibold text-accent-blue tracking-wider uppercase mb-3">
             {t('eyebrow')}
           </h2>
           <p className="text-3xl md:text-5xl font-display font-bold text-white mb-4">
             {t('title')}
           </p>
           <p className="text-gray-400 max-w-2xl mx-auto">{t('subtitle')}</p>
-        </div>
+        </motion.div>
 
         <motion.div
           variants={containerVariants}
@@ -57,9 +58,9 @@ export function Features() {
             <motion.div
               key={feature.key}
               variants={itemVariants}
-              className="bento-card hover:bg-[#16161D] transition-colors group"
+              className="bento-card hover:bg-white/[0.07] transition-colors group"
             >
-              <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-6 ${feature.bg}`}>
+              <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-6 ${feature.bg} backdrop-blur-sm`}>
                 <feature.icon className={`w-6 h-6 ${feature.color}`} />
               </div>
               <h3 className="text-lg font-bold text-white mb-3 font-display">
