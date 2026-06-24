@@ -6,6 +6,7 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { Logo } from '@/components/ui/Logo';
 import { Spinner } from '@/components/ui/Spinner';
 import { useToast } from '@/components/ui/Toast';
+import { PasswordInput } from '@/components/ui/PasswordInput';
 
 function ResetPasswordForm() {
   const searchParams = useSearchParams();
@@ -87,42 +88,28 @@ function ResetPasswordForm() {
 
   return (
     <form className="space-y-6" onSubmit={handleSubmit}>
-      <div>
-        <label htmlFor="password" className="block text-sm font-medium text-white/80">
-          New Password
-        </label>
-        <input
-          id="password"
-          type="password"
-          autoComplete="new-password"
-          required
-          minLength={8}
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="mt-1 appearance-none block w-full px-3 py-2.5 border border-border-subtle rounded-lg bg-surface-800 text-white focus:outline-none focus:ring-2 focus:ring-accent-amber"
-        />
-      </div>
+      <PasswordInput
+        id="password"
+        label="New Password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        autoComplete="new-password"
+        required
+      />
 
-      <div>
-        <label htmlFor="confirmPassword" className="block text-sm font-medium text-white/80">
-          Confirm New Password
-        </label>
-        <input
-          id="confirmPassword"
-          type="password"
-          autoComplete="new-password"
-          required
-          minLength={8}
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          className="mt-1 appearance-none block w-full px-3 py-2.5 border border-border-subtle rounded-lg bg-surface-800 text-white focus:outline-none focus:ring-2 focus:ring-accent-amber"
-        />
-      </div>
+      <PasswordInput
+        id="confirmPassword"
+        label="Confirm New Password"
+        value={confirmPassword}
+        onChange={(e) => setConfirmPassword(e.target.value)}
+        autoComplete="new-password"
+        required
+      />
 
       <button
         type="submit"
         disabled={loading || !password || !confirmPassword}
-        className="w-full flex justify-center py-2.5 px-4 rounded-lg text-sm font-medium text-white bg-gradient-to-r from-accent-amber to-accent-cyan hover:opacity-90 disabled:opacity-50"
+        className="w-full flex justify-center py-2.5 px-4 rounded-lg text-sm font-medium text-white bg-gradient-to-r from-accent-cyan to-accent-emerald hover:opacity-90 disabled:opacity-50"
       >
         {loading ? <Spinner className="w-5 h-5 text-white" /> : 'Reset Password'}
       </button>

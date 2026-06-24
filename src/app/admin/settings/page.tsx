@@ -5,7 +5,7 @@ import { ChangePasswordForm } from '@/components/ui/ChangePasswordForm';
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-export default function CrmSettingsPage() {
+export default function AdminSettingsPage() {
   return (
     <div className="max-w-lg mx-auto space-y-8 py-6">
       <div className="flex items-center gap-3">

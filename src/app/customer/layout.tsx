@@ -11,12 +11,14 @@ import {
   Wrench,
   LogOut,
   LayoutDashboard,
+  Settings,
 } from 'lucide-react';
 
 const navItems = [
   { href: '/customer', label: 'My System', icon: LayoutDashboard },
   { href: '/customer/documents', label: 'Documents & Manuals', icon: FileText },
   { href: '/customer/support', label: 'Support & Maintenance', icon: Wrench },
+  { href: '/customer/settings', label: 'Settings', icon: Settings },
 ];
 
 export default async function CustomerLayout({
@@ -89,7 +91,7 @@ export default async function CustomerLayout({
       <main className="flex-1 flex flex-col min-w-0">
         <header className="h-14 flex items-center justify-between px-6 bg-[#0F0F14]/60 backdrop-blur border-b border-white/5 flex-shrink-0">
           <div className="flex items-center gap-2 text-sm text-white/40">
-            <Sun className="w-4 h-4 text-[#F5A524]" />
+              <Sun className="w-4 h-4 text-accent-cyan" />
             <span className="font-medium">My OptiCore System</span>
           </div>
           <NotificationBell />

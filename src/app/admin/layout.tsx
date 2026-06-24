@@ -12,6 +12,7 @@ import {
   LogOut,
   ArrowLeft,
   Bell,
+  Settings,
 } from 'lucide-react';
 import { Logo } from '@/components/ui/Logo';
 import { NotificationBell } from '@/components/ui/NotificationBell';
@@ -23,6 +24,7 @@ const adminNavItems = [
   { href: '/admin/energy/catalog', label: 'Product Catalog', icon: Package },
   { href: '/admin/energy/organizations', label: 'Organizations', icon: Building2 },
   { href: '/admin/alerts', label: 'System Alerts', icon: Bell },
+  { href: '/admin/settings', label: 'Settings', icon: Settings },
 ];
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -82,7 +84,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         {/* User footer */}
         <div className="p-3 border-t border-white/5 flex-shrink-0">
           <div className="flex items-center gap-3 px-2 py-2 rounded-xl hover:bg-white/5 transition-colors">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#F43F5E]/40 to-[#F5A524]/40 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#F43F5E]/40 to-accent-cyan/40 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
               {initials}
             </div>
             <div className="flex-1 min-w-0">

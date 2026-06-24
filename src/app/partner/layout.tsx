@@ -12,6 +12,7 @@ import {
   LogOut,
   LayoutDashboard,
   Sun,
+  Settings,
 } from 'lucide-react';
 
 const navItems = [
@@ -19,6 +20,7 @@ const navItems = [
   { href: '/partner/designs', label: 'Solar Designs', icon: Sun },
   { href: '/partner/commissions', label: 'Commissions & Payouts', icon: Handshake },
   { href: '/partner/resources', label: 'Marketing Resources', icon: BookOpen },
+  { href: '/partner/settings', label: 'Settings', icon: Settings },
 ];
 
 export default async function PartnerLayout({

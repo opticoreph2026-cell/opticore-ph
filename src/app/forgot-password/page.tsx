@@ -40,7 +40,7 @@ export default function ForgotPasswordPage() {
 
   return (
     <div className="min-h-screen bg-surface-1000 flex flex-col justify-center py-12 sm:px-6 lg:px-8 relative overflow-hidden">
-      <div className="absolute top-1/4 right-0 w-[400px] h-[400px] bg-accent-amber/10 rounded-full blur-[100px] pointer-events-none translate-x-1/2" />
+      <div className="absolute top-1/4 right-0 w-[400px] h-[400px] bg-accent-cyan/10 rounded-full blur-[100px] pointer-events-none translate-x-1/2" />
 
       <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10 flex flex-col items-center">
         <Logo className="mb-6 h-12" />

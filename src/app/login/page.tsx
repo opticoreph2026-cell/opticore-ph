@@ -9,6 +9,7 @@ import { Spinner } from '@/components/ui/Spinner';
 import { useToast } from '@/components/ui/Toast';
 import { Turnstile } from '@marsidev/react-turnstile';
 import { getPostLoginRedirect } from '@/lib/energy-auth';
+import { PasswordInput } from '@/components/ui/PasswordInput';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -209,14 +210,13 @@ export default function LoginPage() {
                     Forgot?
                   </Link>
                 </div>
-                <input
+                <PasswordInput
                   id="password"
-                  type="password"
-                  autoComplete="current-password"
-                  required
+                  label=""
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="mt-1 appearance-none block w-full px-3 py-2.5 border border-border-subtle rounded-lg bg-surface-800 text-white focus:outline-none focus:ring-2 focus:ring-accent-cyan"
+                  autoComplete="current-password"
+                  required
                 />
               </div>
 
