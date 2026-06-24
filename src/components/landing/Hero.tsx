@@ -7,8 +7,10 @@ import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 
 const slides = [
   { image: '/hero-bg.png' },
-  { image: '/designs/design-1.png' },
-  { image: '/designs/design-2.png' },
+  { image: '/commercial.png' },
+  { image: '/residential.png' },
+  { image: '/solar-panel.png' },
+  { image: '/sunset.png' },
 ];
 
 export function Hero() {
@@ -26,10 +28,12 @@ export function Hero() {
   }, []);
 
   return (
-    <section ref={sectionRef} className="relative min-h-[90vh] flex items-center justify-center overflow-hidden pt-20">
+    <section ref={sectionRef} className="relative h-[80vh] md:h-screen flex items-center justify-center overflow-hidden pt-20">
       {slides.map((slide, index) => (
         <motion.div
           key={slide.image}
+          role="img"
+          aria-label="OptiCore Energy Solutions solar energy background"
           style={{
             y: index === currentSlide ? bgY : 0,
             backgroundImage: `url(${slide.image})`,
@@ -41,7 +45,7 @@ export function Hero() {
           }`}
         />
       ))}
-      <div className="absolute inset-0 bg-gradient-to-b from-surface-1000/60 via-surface-1000/40 to-surface-1000 pointer-events-none" />
+      <div className="absolute inset-0 bg-[rgba(26,42,58,0.6)] pointer-events-none" />
 
       <div className="max-w-5xl mx-auto px-6 relative z-10 text-center">
         <motion.div
