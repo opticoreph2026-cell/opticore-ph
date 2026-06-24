@@ -1,14 +1,15 @@
 import React from 'react';
 import { db } from '@/lib/db';
 import { SpotlightCard } from '@/components/ui/SpotlightCard';
-import { Bell, ShieldAlert, CheckCircle2, AlertTriangle, Info } from 'lucide-react';
+import { Bell, ShieldAlert, CheckCircle2, AlertTriangle, Info, X } from 'lucide-react';
+import { DismissButton } from '@/components/admin/DismissButton';
 
 export const dynamic = 'force-dynamic';
 
 export default async function AdminAlertsPage() {
   const notifications = await db.adminNotification.findMany({
     orderBy: { createdAt: 'desc' },
-    take: 50
+    take: 50,
   });
 
   const getIcon = (type: string) => {
@@ -67,6 +68,9 @@ export default async function AdminAlertsPage() {
                     </span>
                   </div>
                   <p className="text-sm text-white/60 mt-1">{notif.message}</p>
+                </div>
+                <div className="shrink-0 flex items-start">
+                  <DismissButton id={notif.id} isRead={notif.isRead} />
                 </div>
               </div>
             ))}

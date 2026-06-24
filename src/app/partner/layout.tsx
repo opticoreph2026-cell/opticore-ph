@@ -11,10 +11,12 @@ import {
   BookOpen,
   LogOut,
   LayoutDashboard,
+  Sun,
 } from 'lucide-react';
 
 const navItems = [
   { href: '/partner', label: 'My Projects', icon: LayoutDashboard },
+  { href: '/partner/designs', label: 'Solar Designs', icon: Sun },
   { href: '/partner/commissions', label: 'Commissions & Payouts', icon: Handshake },
   { href: '/partner/resources', label: 'Marketing Resources', icon: BookOpen },
 ];

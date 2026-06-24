@@ -4,6 +4,7 @@ import { getCurrentUser } from '@/lib/session';
 import { canAccessAdminEnergy } from '@/lib/energy-auth';
 import { redirect } from 'next/navigation';
 import type { EnergyOrganization } from '@prisma/client';
+import { InlineToggle } from '@/components/admin/InlineToggle';
 
 export const runtime = 'nodejs';
 
@@ -24,9 +25,6 @@ export default async function AdminOrganizationsPage() {
           <h1 className="text-3xl font-bold text-white mb-2">Organizations</h1>
           <p className="text-gray-400">Manage installation partners and their teams.</p>
         </div>
-        <button className="px-4 py-2 bg-accent-rose text-white font-medium rounded-lg hover:opacity-90 transition-opacity">
-          Add Organization
-        </button>
       </div>
 
       <div className="bg-surface-800 border border-border-subtle rounded-xl overflow-hidden">
@@ -35,13 +33,14 @@ export default async function AdminOrganizationsPage() {
             <tr>
               <th className="px-6 py-4 font-medium">Name</th>
               <th className="px-6 py-4 font-medium">Type</th>
+              <th className="px-6 py-4 font-medium">Status</th>
               <th className="px-6 py-4 font-medium">Created</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border-subtle text-white/80">
             {organizations.length === 0 ? (
               <tr>
-                <td colSpan={3} className="px-6 py-8 text-center text-white/40">
+                <td colSpan={4} className="px-6 py-8 text-center text-white/40">
                   No organizations found.
                 </td>
               </tr>
@@ -49,7 +48,19 @@ export default async function AdminOrganizationsPage() {
               organizations.map((org: EnergyOrganization) => (
                 <tr key={org.id} className="hover:bg-white/5 transition-colors">
                   <td className="px-6 py-4 font-medium text-white">{org.name}</td>
-                    <td className="px-6 py-4 capitalize">{org.type.replace(/_/g, ' ')}</td>
+                  <td className="px-6 py-4 capitalize">{org.type.replace(/_/g, ' ')}</td>
+                  <td className="px-6 py-4">
+                    <InlineToggle
+                      id={org.id}
+                      field="status"
+                      currentValue={org.status === 'active'}
+                      apiPath={`/api/admin/organizations/${org.id}`}
+                      labelTrue="active"
+                      labelFalse="inactive"
+                      colorTrue="text-accent-emerald"
+                      colorFalse="text-accent-rose"
+                    />
+                  </td>
                   <td className="px-6 py-4 text-white/60">
                     {org.createdAt.toLocaleDateString()}
                   </td>

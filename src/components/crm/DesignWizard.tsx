@@ -66,7 +66,7 @@ function formatPhp(centavos: number) {
   return `₱${(centavos / 100).toLocaleString('en-PH', { maximumFractionDigits: 0 })}`;
 }
 
-export function DesignWizard() {
+export function DesignWizard({ basePath = '/crm' }: { basePath?: string }) {
   const router = useRouter();
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -737,14 +737,14 @@ export function DesignWizard() {
                 <div className="flex flex-col sm:flex-row justify-center gap-3 pt-4">
                   <button
                     type="button"
-                    onClick={() => router.push(`/crm/roi/${designId}`)}
+                    onClick={() => router.push(`${basePath}/roi/${designId}`)}
                     className="px-6 py-3 bg-white/5 text-white rounded-xl hover:bg-white/10"
                   >
                     View ROI Chart
                   </button>
                   <button
                     type="button"
-                    onClick={() => router.push('/crm/designs')}
+                    onClick={() => router.push(`${basePath}/designs`)}
                     className="px-6 py-3 bg-accent-emerald text-[#08080B] font-semibold rounded-xl hover:bg-accent-emerald/90"
                   >
                     Back to Designs

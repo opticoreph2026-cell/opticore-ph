@@ -4,6 +4,7 @@ import { getCurrentUser } from '@/lib/session';
 import { canAccessAdminEnergy } from '@/lib/energy-auth';
 import { redirect } from 'next/navigation';
 import type { ProductInverter, ProductBattery, SolarPanel } from '@prisma/client';
+import { InlinePriceEdit } from '@/components/admin/InlinePriceEdit';
 
 export const runtime = 'nodejs';
 
@@ -17,10 +18,12 @@ export default async function AdminEnergyCatalog() {
   const batteries = await db.productBattery.findMany({ orderBy: { modelName: 'asc' } });
   const panels = await db.solarPanel.findMany({ orderBy: { modelName: 'asc' } });
 
-  const products: (ProductInverter & { category: string; spec: string })[] = inverters.map((p: ProductInverter) => ({ ...p, category: 'inverter', spec: `${p.ratedAcKw}kW` }));
-  const batteryItems: (ProductBattery & { category: string; spec: string })[] = batteries.map((p: ProductBattery) => ({ ...p, category: 'battery', spec: `${p.nominalKwh}kWh` }));
-  const panelItems: (SolarPanel & { category: string; spec: string })[] = panels.map((p: SolarPanel) => ({ ...p, category: 'panel', spec: `${p.wattage}W · ${p.efficiencyPct}%` }));
-  const allItems = [...products, ...batteryItems, ...panelItems];
+  type ProductItem = (ProductInverter | ProductBattery | SolarPanel) & { _category: string; _spec: string };
+  const products: ProductItem[] = [
+    ...inverters.map((p: ProductInverter) => ({ ...p, _category: 'inverter', _spec: `${p.ratedAcKw}kW` })),
+    ...batteries.map((p: ProductBattery) => ({ ...p, _category: 'battery', _spec: `${p.nominalKwh}kWh` })),
+    ...panels.map((p: SolarPanel) => ({ ...p, _category: 'panel', _spec: `${p.wattage}W \u00B7 ${p.efficiencyPct}%` })),
+  ];
 
   return (
     <div className="space-y-6">
@@ -29,9 +32,6 @@ export default async function AdminEnergyCatalog() {
           <h1 className="text-3xl font-bold text-white mb-2">Energy Catalog</h1>
           <p className="text-gray-400">Manage components: Inverters, Batteries, and Solar Panels.</p>
         </div>
-        <button className="px-4 py-2 bg-accent-rose text-white font-medium rounded-lg hover:opacity-90 transition-opacity">
-          Add Component
-        </button>
       </div>
 
       <div className="bg-surface-800 border border-border-subtle rounded-xl overflow-hidden">
@@ -42,20 +42,30 @@ export default async function AdminEnergyCatalog() {
               <th className="px-6 py-4 font-medium">SKU</th>
               <th className="px-6 py-4 font-medium">Category</th>
               <th className="px-6 py-4 font-medium">Specs</th>
+              <th className="px-6 py-4 font-medium">Price</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border-subtle text-white/80">
-            {allItems.map((p: any) => (
+            {products.map((p: any) => (
               <tr key={p.id} className="hover:bg-white/5 transition-colors">
                 <td className="px-6 py-4 font-medium text-white">{p.modelName}</td>
                 <td className="px-6 py-4 font-mono text-xs text-white/60">{p.sku}</td>
-                <td className="px-6 py-4 uppercase text-xs tracking-wider text-accent-cyan">{p.category}</td>
-                <td className="px-6 py-4 text-white/60 text-xs">{p.spec}</td>
+                <td className="px-6 py-4 uppercase text-xs tracking-wider text-accent-cyan">{p._category}</td>
+                <td className="px-6 py-4 text-white/60 text-xs">{p._spec}</td>
+                <td className="px-6 py-4">
+                  <InlinePriceEdit
+                    id={p.id}
+                    category={p._category}
+                    currentPriceCentavos={p.unitPriceCentavos}
+                    isConfirmed={p.isPriceConfirmed}
+                    apiPath={`/api/admin/products/${p.id}`}
+                  />
+                </td>
               </tr>
             ))}
-            {allItems.length === 0 && (
+            {products.length === 0 && (
               <tr>
-                <td colSpan={4} className="px-6 py-8 text-center text-white/40">
+                <td colSpan={5} className="px-6 py-8 text-center text-white/40">
                   No products in catalog.
                 </td>
               </tr>

@@ -2,7 +2,7 @@ import 'server-only';
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getSession } from '@/lib/session';
-import { canAccessCrm } from '@/lib/energy-auth';
+import { canAccessCrm, canAccessDesigns } from '@/lib/energy-auth';
 import { createLeadSchema } from '@/lib/validations';
 
 export const runtime = 'nodejs';
@@ -11,7 +11,7 @@ export const dynamic = 'force-dynamic';
 export async function GET(request: Request) {
   try {
     const session = await getSession();
-    if (!session || !canAccessCrm(session as any)) {
+    if (!session || !canAccessDesigns(session as any)) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -22,6 +22,9 @@ export async function GET(request: Request) {
     const where: any = {};
     if (status) where.status = status;
     if (assignedOrgId) where.assignedOrgId = assignedOrgId;
+    if (session.organizationId && !canAccessCrm(session as any)) {
+      where.assignedOrgId = session.organizationId;
+    }
 
     const leads = await db.energyLead.findMany({
       where,

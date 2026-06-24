@@ -70,6 +70,10 @@ export function canAccessPartnerPortal(session: EnergySession | null): boolean {
   return isPartnerAdmin(session) || isPartnerInstaller(session);
 }
 
+export function canAccessDesigns(session: EnergySession | null): boolean {
+  return isOptcoreStaff(session) || isPartnerAdmin(session) || isPartnerInstaller(session);
+}
+
 export function canAccessAdminEnergy(session: EnergySession | null): boolean {
   return isOptcoreOwner(session);
 }

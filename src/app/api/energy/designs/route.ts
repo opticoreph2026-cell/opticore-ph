@@ -3,7 +3,7 @@ import 'server-only';
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getSession } from '@/lib/session';
-import { canAccessCrm } from '@/lib/energy-auth';
+import { canAccessCrm, canAccessDesigns } from '@/lib/energy-auth';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -11,7 +11,7 @@ export const dynamic = 'force-dynamic';
 export async function GET(request: Request) {
   try {
     const session = await getSession();
-    if (!session || !canAccessCrm(session as any)) {
+    if (!session || !canAccessDesigns(session as any)) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
