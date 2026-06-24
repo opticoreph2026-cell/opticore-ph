@@ -198,7 +198,7 @@ export function ProposalPDF({
         {chartDataUri && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>25-Year Cumulative Cash Flow</Text>
-            <Image src={chartDataUri} style={styles.chartImage} alt="" />
+            <Image src={chartDataUri} style={styles.chartImage} />
           </View>
         )}
 
