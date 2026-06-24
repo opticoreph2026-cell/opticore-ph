@@ -127,9 +127,22 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       return true;
     },
     async jwt({ token, user, account }) {
+      const now = Date.now();
+      const THIRTY_MIN = 30 * 60 * 1000;
+      const WRITE_THROTTLE = 60 * 1000;
+
       if (user) {
+        token.lastActivityAt = now;
         token.role = (user as { role?: string }).role;
         token.organizationId = (user as { organizationId?: string }).organizationId;
+      } else {
+        const lastActivity = token.lastActivityAt as number | undefined;
+        if (lastActivity && now - lastActivity > THIRTY_MIN) {
+          return {};
+        }
+        if (!lastActivity || now - lastActivity > WRITE_THROTTLE) {
+          token.lastActivityAt = now;
+        }
       }
 
       if (account?.provider === 'resend' && user?.email) {

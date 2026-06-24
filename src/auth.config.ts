@@ -25,5 +25,5 @@ export const authConfig = {
     },
   },
   providers: [],
-  trustHost: true,
+  trustHost: process.env.VERCEL === '1',
 } satisfies NextAuthConfig;
