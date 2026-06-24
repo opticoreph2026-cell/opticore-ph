@@ -10,12 +10,13 @@ interface LogoProps {
 export function Logo({ className = 'h-8', compact = false }: LogoProps) {
   return (
     <Link href="/" className={`flex items-center group ${className}`}>
-      <div className="relative flex-shrink-0 w-36 h-10">
+      <div className="flex-shrink-0 px-3 py-1.5 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10">
         <Image
-          src="/logo.svg"
+          src="/logo.png"
           alt="OptiCore Energy Solutions"
-          fill
-          className="object-contain object-left"
+          width={180}
+          height={50}
+          className="object-contain"
           priority
         />
       </div>

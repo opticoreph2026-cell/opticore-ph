@@ -10,6 +10,7 @@ const outfit = Outfit({ subsets: ['latin'], variable: '--font-outfit' });
 const jetbrainsMono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-jetbrains-mono' });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://opticore-energy-solutions.vercel.app'),
   title: 'OptiCore Energy Solutions | Solar & ESS for Cebu, Bohol & Leyte',
   description:
     'Cebu-based solar PV and Neovolt ESS installation by a Registered Mechanical Engineer. Free site assessment for Cebu, Bohol, and Leyte.',
