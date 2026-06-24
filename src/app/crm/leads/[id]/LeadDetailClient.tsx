@@ -7,7 +7,7 @@ import { ArrowLeft, Phone, Mail, MapPin, Building, Activity, Users, FileText, Ch
 
 const STATUS_OPTIONS = [
   { value: 'new', label: 'New', color: 'text-accent-cyan' },
-  { value: 'contacted', label: 'Contacted', color: 'text-accent-amber' },
+  { value: 'contacted', label: 'Contacted', color: 'text-accent-cyan' },
   { value: 'site_visit_scheduled', label: 'Site Visit Scheduled', color: 'text-purple-400' },
   { value: 'qualified', label: 'Qualified', color: 'text-accent-emerald' },
   { value: 'disqualified', label: 'Disqualified', color: 'text-accent-rose' },
@@ -16,7 +16,7 @@ const STATUS_OPTIONS = [
 
 const statusColors: Record<string, string> = {
   new: 'bg-accent-cyan/10 text-accent-cyan',
-  contacted: 'bg-accent-amber/10 text-accent-amber',
+  contacted: 'bg-accent-cyan/10 text-accent-cyan',
   site_visit_scheduled: 'bg-purple-500/10 text-purple-400',
   qualified: 'bg-accent-emerald/10 text-accent-emerald',
   disqualified: 'bg-accent-rose/10 text-accent-rose',
@@ -201,7 +201,7 @@ export default function LeadDetailClient({
         )}
         {lead.city && (
           <div className="flex items-center gap-2 text-sm text-gray-400">
-            <MapPin className="w-4 h-4 text-accent-amber" />
+            <MapPin className="w-4 h-4 text-accent-cyan" />
             <span>{lead.city}{lead.province ? `, ${lead.province}` : ''}</span>
           </div>
         )}
@@ -221,7 +221,7 @@ export default function LeadDetailClient({
               onClick={() => setTab(t.key)}
               className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
                 tab === t.key
-                  ? 'text-accent-amber border-accent-amber'
+                  ? 'text-accent-cyan border-accent-cyan'
                   : 'text-gray-500 border-transparent hover:text-gray-300'
               }`}
             >
@@ -288,7 +288,7 @@ export default function LeadDetailClient({
                   value={lead.assignedOrgId || ''}
                   onChange={(e) => handleAssignOrg(e.target.value)}
                   disabled={saving === 'org'}
-                  className="bg-[#0F0F14] border border-white/5 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-accent-amber/50"
+                  className="bg-[#0F0F14] border border-white/5 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-accent-blue/50"
                 >
                   <option value="">Unassigned</option>
                   {organizations.map((org) => (
@@ -310,12 +310,12 @@ export default function LeadDetailClient({
                   value={noteInput}
                   onChange={(e) => setNoteInput(e.target.value)}
                   placeholder="Add a note..."
-                  className="flex-1 bg-[#0F0F14] border border-white/5 rounded-lg px-3 py-2 text-sm text-white placeholder-white/20 focus:outline-none focus:border-accent-amber/50"
+                  className="flex-1 bg-[#0F0F14] border border-white/5 rounded-lg px-3 py-2 text-sm text-white placeholder-white/20 focus:outline-none focus:border-accent-blue/50"
                 />
                 <button
                   onClick={handleAddNote}
                   disabled={savingNote || !noteInput.trim()}
-                  className="px-4 py-2 rounded-lg bg-accent-amber text-[#08080B] text-sm font-semibold hover:bg-accent-amber/90 transition-colors disabled:opacity-50"
+                  className="px-4 py-2 rounded-lg bg-accent-blue text-white text-sm font-semibold hover:bg-accent-blue/90 transition-colors disabled:opacity-50"
                 >
                   {savingNote ? 'Saving...' : 'Save'}
                 </button>
@@ -330,7 +330,7 @@ export default function LeadDetailClient({
               <div className="space-y-2">
                 <Link
                   href={`/crm/roi/${lead.id}`}
-                  className="block w-full text-center px-4 py-2 rounded-lg bg-accent-amber/10 text-accent-amber text-sm font-medium hover:bg-accent-amber/20 transition-colors"
+                  className="block w-full text-center px-4 py-2 rounded-lg bg-accent-blue/10 text-accent-blue text-sm font-medium hover:bg-accent-blue/20 transition-colors"
                 >
                   Create Design
                 </Link>
@@ -359,7 +359,7 @@ export default function LeadDetailClient({
             <div className="space-y-0">
               {activities.map((act, i) => (
                 <div key={act.id} className="flex gap-4 pb-4 border-l-2 border-white/5 ml-2 pl-4 relative">
-                  <div className="absolute -left-[9px] top-1 w-4 h-4 rounded-full bg-[#16161D] border-2 border-accent-amber" />
+                  <div className="absolute -left-[9px] top-1 w-4 h-4 rounded-full bg-[#16161D] border-2 border-accent-cyan" />
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-white">
                       {ACTION_LABELS[act.action] || act.action.replace(/_/g, ' ')}

@@ -262,7 +262,7 @@ export function DesignWizard({ basePath = '/crm' }: { basePath?: string }) {
         <div className="flex items-center justify-between relative">
           <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-[2px] bg-white/5 z-0" />
           <div
-            className="absolute left-0 top-1/2 -translate-y-1/2 h-[2px] bg-[#F5A524] z-0 transition-all duration-500"
+            className="absolute left-0 top-1/2 -translate-y-1/2 h-[2px] bg-accent-cyan z-0 transition-all duration-500"
             style={{ width: `${((step - 1) / (STEPS.length - 1)) * 100}%` }}
           />
           {STEPS.map((s) => {
@@ -274,7 +274,7 @@ export function DesignWizard({ basePath = '/crm' }: { basePath?: string }) {
                 <div
                   className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all ${
                     isActive
-                      ? 'bg-[#F5A524] text-[#08080B] scale-110'
+                      ? 'bg-accent-cyan text-[#08080B] scale-110'
                       : isPast
                         ? 'bg-[#10B981] text-[#08080B]'
                         : 'bg-[#16161D] border border-white/10 text-white/30'
@@ -461,9 +461,9 @@ export function DesignWizard({ basePath = '/crm' }: { basePath?: string }) {
                   max={100}
                   value={form.targetOffsetPct}
                   onChange={(e) => setForm((f) => ({ ...f, targetOffsetPct: Number(e.target.value) }))}
-                  className="w-full accent-[#F5A524]"
+                  className="w-full accent-accent-cyan"
                 />
-                <p className="text-sm text-accent-amber mt-1">{form.targetOffsetPct}%</p>
+                <p className="text-sm text-accent-cyan mt-1">{form.targetOffsetPct}%</p>
               </div>
               <div>
                 <label className="block text-xs font-semibold text-white/60 uppercase mb-1.5">Backup Hours</label>
@@ -562,7 +562,7 @@ export function DesignWizard({ basePath = '/crm' }: { basePath?: string }) {
                 label="PV Array"
                 value={`${computeResult.pv.pvArrayKwp.toFixed(1)} kWp`}
                 sub={`${computeResult.pv.panelCount} × ${form.panelWattage}W panels`}
-                color="text-accent-amber"
+                color="text-accent-cyan"
               />
               <SizingCard
                 label="Inverter"
@@ -578,7 +578,7 @@ export function DesignWizard({ basePath = '/crm' }: { basePath?: string }) {
               />
             </div>
             {computeResult.selection.warningFlags.length > 0 && (
-              <div className="rounded-xl border border-accent-amber/30 bg-accent-amber/10 p-4 text-sm text-accent-amber">
+              <div className="rounded-xl border border-accent-rose/30 bg-accent-rose/10 p-4 text-sm text-accent-rose">
                 {computeResult.selection.warningFlags.map((w, i) => (
                   <p key={i}>{w}</p>
                 ))}
@@ -677,7 +677,7 @@ export function DesignWizard({ basePath = '/crm' }: { basePath?: string }) {
                 Zero-export default: 70%. With battery time-shifting, residential typically 65–85%.
               </p>
             </div>
-            <div className="bg-[#16161D] rounded-xl p-5 border border-[#F5A524]/20">
+            <div className="bg-[#16161D] rounded-xl p-5 border border-accent-blue/20">
               <p className="text-sm text-white/60 mb-1">System Investment</p>
               <p className="text-2xl font-bold text-white">{formatPhp(computeResult.grandTotalCentavos)}</p>
               <p className="text-xs text-white/40 mt-2">
@@ -721,7 +721,7 @@ export function DesignWizard({ basePath = '/crm' }: { basePath?: string }) {
                   type="button"
                   onClick={createQuotation}
                   disabled={loading}
-                  className="inline-flex items-center gap-2 px-8 py-3 bg-[#F5A524] text-[#08080B] font-semibold rounded-xl hover:bg-[#F5A524]/90 disabled:opacity-50"
+                  className="inline-flex items-center gap-2 px-8 py-3 bg-accent-blue text-white font-semibold rounded-xl hover:bg-accent-blue/90 disabled:opacity-50"
                 >
                   {loading ? <Spinner className="w-5 h-5" /> : <FileText className="w-5 h-5" />}
                   Create Quotation
@@ -732,7 +732,7 @@ export function DesignWizard({ basePath = '/crm' }: { basePath?: string }) {
                 <CheckCircle2 className="w-12 h-12 text-accent-emerald mx-auto" />
                 <h2 className="text-2xl font-display font-bold text-white">Proposal Ready</h2>
                 <p className="text-white/40">
-                  Quote <span className="text-accent-amber font-mono">{quotation.quoteNumber}</span> saved as draft.
+                  Quote <span className="text-accent-cyan font-mono">{quotation.quoteNumber}</span> saved as draft.
                 </p>
                 <div className="flex flex-col sm:flex-row justify-center gap-3 pt-4">
                   <button
@@ -819,7 +819,7 @@ function NavButtons({
           type="button"
           onClick={onNext}
           disabled={nextDisabled}
-          className="inline-flex items-center gap-2 px-6 py-3 bg-[#F5A524] text-[#08080B] font-semibold rounded-xl hover:bg-[#F5A524]/90 disabled:opacity-50"
+          className="inline-flex items-center gap-2 px-6 py-3 bg-accent-blue text-white font-semibold rounded-xl hover:bg-accent-blue/90 disabled:opacity-50"
         >
           {loading ? <Spinner className="w-4 h-4" /> : null}
           {nextLabel} <ChevronRight className="w-4 h-4" />

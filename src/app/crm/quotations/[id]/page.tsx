@@ -65,7 +65,7 @@ export default async function QuotationDetailPage({
           <a
             href={`/api/energy/quotations/${id}/pdf`}
             download
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-accent-amber text-[#08080B] text-sm font-semibold hover:bg-accent-amber/90 transition-colors"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-accent-blue text-white text-sm font-semibold hover:bg-accent-blue/90 transition-colors"
           >
             <Download className="w-4 h-4" />
             Download PDF

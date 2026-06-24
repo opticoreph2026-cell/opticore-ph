@@ -57,7 +57,7 @@ export default async function DesignsPage() {
         </div>
         <Link
           href="/crm/designs/new"
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#F5A524] text-[#08080B] text-sm font-semibold hover:bg-[#F5A524]/90 transition-colors shadow-lg shadow-[#F5A524]/20"
+          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-accent-blue text-white text-sm font-semibold hover:bg-accent-blue/90 transition-colors shadow-lg shadow-accent-blue/20"
         >
           <PlusCircle className="w-4 h-4" />
           New Design
@@ -72,7 +72,7 @@ export default async function DesignsPage() {
             <input
               type="text"
               placeholder="Search designs or customers..."
-              className="w-full bg-[#16161D] border border-white/5 rounded-xl pl-9 pr-4 py-2 text-sm text-white placeholder-white/20 focus:outline-none focus:border-[#F5A524]/50 focus:ring-1 focus:ring-[#F5A524]/50 transition-all"
+              className="w-full bg-[#16161D] border border-white/5 rounded-xl pl-9 pr-4 py-2 text-sm text-white placeholder-white/20 focus:outline-none focus:border-accent-blue/50 focus:ring-1 focus:ring-accent-blue/50 transition-all"
             />
           </div>
         </div>
@@ -97,7 +97,7 @@ export default async function DesignsPage() {
                     <p className="text-sm text-white/30">No designs created yet</p>
                     <Link
                       href="/crm/designs/new"
-                      className="mt-4 inline-flex items-center gap-2 text-sm text-[#F5A524] hover:text-[#F5A524]/80 transition-colors"
+                      className="mt-4 inline-flex items-center gap-2 text-sm text-accent-blue hover:text-accent-blue/80 transition-colors"
                     >
                       <PlusCircle className="w-4 h-4" /> Start a new design
                     </Link>
@@ -108,11 +108,11 @@ export default async function DesignsPage() {
                   <tr key={design.id} className="hover:bg-white/3 transition-colors group">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-xl bg-[#F5A524]/10 flex items-center justify-center">
-                          <FileText className="w-4 h-4 text-[#F5A524]" />
+                        <div className="w-8 h-8 rounded-xl bg-accent-cyan/10 flex items-center justify-center">
+                          <FileText className="w-4 h-4 text-accent-cyan" />
                         </div>
                         <div>
-                          <p className="font-medium text-white group-hover:text-[#F5A524] transition-colors">
+                          <p className="font-medium text-white group-hover:text-accent-cyan transition-colors">
                             {design.site?.customer?.fullName || 'Unknown Customer'}
                           </p>
                           <p className="text-xs text-white/30">

@@ -10,6 +10,7 @@ import {
   NEOVOLT_BATTERIES,
   SYSTEM_PRESETS,
 } from '@/data/neovolt-products';
+import { AnimatedSection } from '@/components/ui/AnimatedSection';
 
 export async function generateMetadata({
   params,
@@ -119,12 +120,12 @@ export default async function ProductsPage({
       <Navbar />
       <main className="bg-surface-1000 text-white min-h-screen pt-24 pb-16">
         <div className="max-w-6xl mx-auto px-6">
-          <div className="text-center mb-16">
+          <AnimatedSection className="text-center mb-16">
             <h1 className="text-4xl md:text-5xl font-display font-bold mb-4">{t('title')}</h1>
             <p className="text-gray-400 max-w-2xl mx-auto">{t('subtitle')}</p>
-          </div>
+          </AnimatedSection>
 
-          <section className="mb-16">
+          <AnimatedSection className="mb-16" delay={0.1}>
             <h2 className="text-2xl font-display font-bold mb-2 text-accent-blue">
               {t('singlePhase')}
             </h2>
@@ -134,9 +135,9 @@ export default async function ProductsPage({
                 <InverterCard key={inv.sku} inv={inv} t={t} />
               ))}
             </div>
-          </section>
+          </AnimatedSection>
 
-          <section className="mb-16">
+          <AnimatedSection className="mb-16" delay={0.2}>
             <h2 className="text-2xl font-display font-bold mb-2 text-accent-cyan">
               {t('threePhase')}
             </h2>
@@ -146,9 +147,9 @@ export default async function ProductsPage({
                 <InverterCard key={inv.sku} inv={inv} t={t} />
               ))}
             </div>
-          </section>
+          </AnimatedSection>
 
-          <section className="mb-16">
+          <AnimatedSection className="mb-16" delay={0.3}>
             <h2 className="text-2xl font-display font-bold mb-2">{t('batteries')}</h2>
             <p className="text-sm text-gray-400 mb-6">{t('batteriesIntro')}</p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -156,9 +157,9 @@ export default async function ProductsPage({
                 <BatteryCard key={bat.sku} bat={bat} t={t} />
               ))}
             </div>
-          </section>
+          </AnimatedSection>
 
-          <section className="mb-16">
+          <AnimatedSection className="mb-16" delay={0.4}>
             <h2 className="text-2xl font-display font-bold mb-2">{t('bundles')}</h2>
             <p className="text-sm text-gray-400 mb-6">{t('bundlesSubtitle')}</p>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -191,13 +192,13 @@ export default async function ProductsPage({
                 </div>
               ))}
             </div>
-          </section>
+          </AnimatedSection>
 
-          <div className="text-center mb-12">
+          <AnimatedSection className="text-center mb-12" delay={0.5}>
             <p className="text-gray-400 mb-2 text-sm">{t('pricingNote')}</p>
-          </div>
+          </AnimatedSection>
 
-          <div className="glass-panel rounded-2xl p-8 text-center">
+          <AnimatedSection className="glass-panel rounded-2xl p-8 text-center" delay={0.6}>
             <p className="text-white font-bold mb-2">{t('notSure')}</p>
             <p className="text-gray-400 text-sm mb-6">{t('notSureCta')}</p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -214,7 +215,7 @@ export default async function ProductsPage({
                 Book Free Consultation
               </Link>
             </div>
-          </div>
+          </AnimatedSection>
         </div>
       </main>
       <Footer />

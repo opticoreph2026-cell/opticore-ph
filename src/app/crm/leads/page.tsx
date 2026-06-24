@@ -25,7 +25,7 @@ export default async function LeadsPage() {
 
   const statusColors: Record<string, string> = {
     new: 'bg-accent-cyan/10 text-accent-cyan',
-    contacted: 'bg-accent-amber/10 text-accent-amber',
+    contacted: 'bg-accent-cyan/10 text-accent-cyan',
     site_visit_scheduled: 'bg-purple-500/10 text-purple-400',
     qualified: 'bg-accent-emerald/10 text-accent-emerald',
     disqualified: 'bg-accent-rose/10 text-accent-rose',
@@ -41,7 +41,7 @@ export default async function LeadsPage() {
         </div>
         <Link
           href="/crm/leads/new"
-          className="px-4 py-2 bg-accent-amber text-[#08080B] font-medium rounded-lg hover:bg-[#e0961f] transition-colors text-sm"
+          className="px-4 py-2 bg-accent-blue text-white font-medium rounded-lg hover:bg-accent-blue/90 transition-colors text-sm"
         >
           + Add Lead
         </Link>

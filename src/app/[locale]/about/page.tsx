@@ -6,6 +6,7 @@ import { WhatsAppButton } from '@/components/landing/WhatsAppButton';
 import { ScrollToTop } from '@/components/landing/ScrollToTop';
 import { Award, MapPin, Target, CheckCircle, Users, Globe } from 'lucide-react';
 import Image from 'next/image';
+import { AnimatedSection } from '@/components/ui/AnimatedSection';
 
 export async function generateMetadata({
   params,
@@ -39,12 +40,12 @@ export default async function AboutPage({
       <Navbar />
       <main className="bg-surface-1000 text-white min-h-screen pt-24 pb-16">
         <div className="max-w-4xl mx-auto px-6">
-          <div className="text-center mb-16">
+          <AnimatedSection className="text-center mb-16">
             <h1 className="text-4xl md:text-5xl font-display font-bold mb-4">{t('title')}</h1>
             <p className="text-gray-400">{t('subtitle')}</p>
-          </div>
+          </AnimatedSection>
 
-          <div className="glass-panel rounded-3xl p-8 md:p-12 mb-10">
+          <AnimatedSection className="glass-panel rounded-3xl p-8 md:p-12 mb-10" delay={0.1}>
             <div className="flex flex-col md:flex-row gap-8 items-start">
               <div className="relative w-40 h-40 md:w-48 md:h-48 rounded-2xl overflow-hidden bg-surface-800 flex-shrink-0 mx-auto md:mx-0">
                 <Image
@@ -77,9 +78,9 @@ export default async function AboutPage({
                 </ul>
               </div>
             </div>
-          </div>
+          </AnimatedSection>
 
-          <div className="glass-panel rounded-3xl p-8 md:p-12 mb-10">
+          <AnimatedSection className="glass-panel rounded-3xl p-8 md:p-12 mb-10" delay={0.2}>
             <div className="flex items-center gap-3 mb-8">
               <Users className="w-6 h-6 text-accent-cyan" />
               <h2 className="text-xl font-display font-bold">{t('partners')}</h2>
@@ -96,9 +97,9 @@ export default async function AboutPage({
                 <p className="text-sm text-gray-400">{t('partner2Bio')}</p>
               </div>
             </div>
-          </div>
+          </AnimatedSection>
 
-          <div className="glass-panel rounded-3xl p-8 md:p-12 mb-10">
+          <AnimatedSection className="glass-panel rounded-3xl p-8 md:p-12 mb-10" delay={0.3}>
             <div className="flex items-start gap-4">
               <Target className="w-8 h-8 text-accent-blue flex-shrink-0" />
               <div>
@@ -106,9 +107,9 @@ export default async function AboutPage({
                 <p className="text-gray-400 leading-relaxed">{t('mission')}</p>
               </div>
             </div>
-          </div>
+          </AnimatedSection>
 
-          <div className="glass-panel rounded-3xl p-8 md:p-12 mb-10">
+          <AnimatedSection className="glass-panel rounded-3xl p-8 md:p-12 mb-10" delay={0.4}>
             <div className="flex items-start gap-4">
               <Globe className="w-8 h-8 text-accent-emerald flex-shrink-0" />
               <div>
@@ -123,16 +124,16 @@ export default async function AboutPage({
                 </div>
               </div>
             </div>
-          </div>
+          </AnimatedSection>
 
-          <div className="text-center">
+          <AnimatedSection className="text-center" delay={0.5}>
             <Link
               href="/contact"
               className="inline-block px-8 py-3 rounded-full bg-accent-blue text-white font-semibold hover:bg-accent-blue/90 transition-colors"
             >
               Book a Free Site Visit →
             </Link>
-          </div>
+          </AnimatedSection>
         </div>
       </main>
       <Footer />

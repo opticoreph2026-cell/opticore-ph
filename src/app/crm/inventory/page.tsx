@@ -4,6 +4,7 @@ import { getSession } from '@/lib/session';
 import { canAccessAdminEnergy } from '@/lib/energy-auth';
 import { redirect } from 'next/navigation';
 import type { InventoryUnit } from '@prisma/client';
+import { AddUnitDialog } from '@/components/crm/AddUnitDialog';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -32,9 +33,7 @@ export default async function InventoryPage() {
           <h1 className="text-2xl font-bold text-white mb-1">Inventory Management</h1>
           <p className="text-sm text-gray-400">Track consigned and owned hardware units by serial number.</p>
         </div>
-        <button className="px-4 py-2 bg-[#F5A524] text-[#08080B] font-medium rounded-lg hover:bg-[#e0961f] transition-colors text-sm">
-          Add Unit
-        </button>
+        <AddUnitDialog />
       </div>
 
       <div className="bg-[#16161D] border border-white/5 rounded-xl overflow-hidden">

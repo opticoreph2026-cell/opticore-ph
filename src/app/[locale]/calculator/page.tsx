@@ -4,6 +4,7 @@ import { Footer } from '@/components/ui/Footer';
 import { Calculator } from '@/components/landing/Calculator';
 import { WhatsAppButton } from '@/components/landing/WhatsAppButton';
 import { ScrollToTop } from '@/components/landing/ScrollToTop';
+import { AnimatedSection } from '@/components/ui/AnimatedSection';
 
 export async function generateMetadata({
   params,
@@ -36,10 +37,10 @@ export default async function CalculatorPage({
     <>
       <Navbar />
       <main className="bg-[#08080B] text-white min-h-screen pt-24">
-        <div className="max-w-4xl mx-auto px-6 text-center mb-4">
+        <AnimatedSection className="max-w-4xl mx-auto px-6 text-center mb-4">
           <h1 className="text-4xl md:text-5xl font-display font-bold mb-4">{t('pageTitle')}</h1>
           <p className="text-gray-400">{t('pageSubtitle')}</p>
-        </div>
+        </AnimatedSection>
         <Calculator />
       </main>
       <Footer />

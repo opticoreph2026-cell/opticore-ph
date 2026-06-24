@@ -72,7 +72,7 @@ export function InlinePriceEdit({ id, category, currentPriceCentavos, isConfirme
       title="Click to edit price"
     >
       \u20B1{(currentPriceCentavos / 100).toLocaleString('en-PH', { minimumFractionDigits: 2 })}
-      {!confirmed && <span className="ml-1 text-[10px] text-accent-amber">(est.)</span>}
+      {!confirmed && <span className="ml-1 text-[10px] text-accent-cyan">(est.)</span>}
     </button>
   );
 }

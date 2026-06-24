@@ -54,7 +54,7 @@ export default async function QuotationsPage() {
         </div>
         <Link
           href="/crm/designs"
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-accent-amber text-[#08080B] text-sm font-semibold hover:bg-accent-amber/90 transition-colors shadow-lg shadow-accent-amber/20"
+          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-accent-blue text-white text-sm font-semibold hover:bg-accent-blue/90 transition-colors shadow-lg shadow-accent-blue/20"
         >
           <PlusCircle className="w-4 h-4" />
           New Quotation
@@ -68,7 +68,7 @@ export default async function QuotationsPage() {
             <input
               type="text"
               placeholder="Search quotations..."
-              className="w-full bg-[#16161D] border border-white/5 rounded-xl pl-9 pr-4 py-2 text-sm text-white placeholder-white/20 focus:outline-none focus:border-accent-amber/50 focus:ring-1 focus:ring-accent-amber/50 transition-all"
+              className="w-full bg-[#16161D] border border-white/5 rounded-xl pl-9 pr-4 py-2 text-sm text-white placeholder-white/20 focus:outline-none focus:border-accent-blue/50 focus:ring-1 focus:ring-accent-blue/50 transition-all"
             />
           </div>
         </div>
@@ -95,7 +95,7 @@ export default async function QuotationsPage() {
                     <p className="text-sm text-white/30">No quotations created yet</p>
                     <Link
                       href="/crm/designs"
-                      className="mt-4 inline-flex items-center gap-2 text-sm text-accent-amber hover:text-accent-amber/80 transition-colors"
+                      className="mt-4 inline-flex items-center gap-2 text-sm text-accent-blue hover:text-accent-blue/80 transition-colors"
                     >
                       <PlusCircle className="w-4 h-4" /> Create a quotation from a design
                     </Link>
@@ -105,12 +105,12 @@ export default async function QuotationsPage() {
                 quotations.map((q: any) => (
                   <tr key={q.id} className="hover:bg-white/3 transition-colors group">
                     <td className="px-6 py-4 font-medium text-white font-mono text-xs">
-                      <Link href={`/crm/quotations/${q.id}`} className="hover:text-accent-amber transition-colors">
+                      <Link href={`/crm/quotations/${q.id}`} className="hover:text-accent-blue transition-colors">
                         {q.quoteNumber}
                       </Link>
                     </td>
                     <td className="px-6 py-4">
-                      <Link href={`/crm/quotations/${q.id}`} className="text-white hover:text-accent-amber transition-colors">
+                      <Link href={`/crm/quotations/${q.id}`} className="text-white hover:text-accent-blue transition-colors">
                         {q.customer?.fullName || 'Unknown'}
                       </Link>
                     </td>
@@ -137,7 +137,7 @@ export default async function QuotationsPage() {
                       <a
                         href={`/api/energy/quotations/${q.id}/pdf`}
                         download
-                        className="p-2 rounded-lg hover:bg-white/5 text-white/30 hover:text-accent-amber transition-colors opacity-0 group-hover:opacity-100"
+                        className="p-2 rounded-lg hover:bg-white/5 text-white/30 hover:text-accent-blue transition-colors opacity-0 group-hover:opacity-100"
                         title="Download PDF"
                       >
                         <Download className="w-4 h-4" />

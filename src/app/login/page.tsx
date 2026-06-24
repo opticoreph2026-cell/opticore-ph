@@ -128,10 +128,7 @@ export default function LoginPage() {
 
       <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10 flex flex-col items-center">
         <Logo className="mb-6 h-12" />
-        <h2 className="text-center text-3xl font-display font-bold text-white tracking-tight">
-          OptiCore Energy Solutions
-        </h2>
-        <p className="mt-2 text-center text-sm text-white/60">Sign in to your portal</p>
+        <p className="text-center text-sm text-white/60">Sign in to your portal</p>
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md relative z-10">

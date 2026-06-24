@@ -78,13 +78,13 @@ function CrmSidebar({ role, email, name }: CrmSidebarProps) {
               href={item.href}
               className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 group ${
                 isActive
-                  ? 'bg-[#F5A524]/10 text-[#F5A524] shadow-sm'
+                  ? 'bg-accent-blue/10 text-accent-blue shadow-sm'
                   : 'text-white/50 hover:text-white hover:bg-white/5'
               }`}
             >
               <Icon
                 className={`w-4 h-4 flex-shrink-0 transition-colors ${
-                  isActive ? 'text-[#F5A524]' : 'text-white/40 group-hover:text-white/70'
+                  isActive ? 'text-accent-blue' : 'text-white/40 group-hover:text-white/70'
                 }`}
               />
               <span className="flex-1">{item.label}</span>
@@ -115,7 +115,7 @@ function CrmSidebar({ role, email, name }: CrmSidebarProps) {
               href="/crm/settings"
               className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 group ${
                 pathname === '/crm/settings'
-                  ? 'bg-[#F5A524]/10 text-[#F5A524]'
+                  ? 'bg-accent-blue/10 text-accent-blue'
                   : 'text-white/50 hover:text-white hover:bg-white/5'
               }`}
             >
@@ -129,7 +129,7 @@ function CrmSidebar({ role, email, name }: CrmSidebarProps) {
       {/* User footer */}
       <div className="p-3 border-t border-white/5 flex-shrink-0">
         <div className="flex items-center gap-3 px-2 py-2 rounded-xl hover:bg-white/5 transition-colors">
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#F5A524] to-[#06B6D4] flex items-center justify-center text-[#08080B] text-xs font-bold flex-shrink-0">
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-accent-blue to-accent-cyan flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
             {initials}
           </div>
           <div className="flex-1 min-w-0">

@@ -44,7 +44,7 @@ async function getRecentLeads() {
 
 const statusColors: Record<string, string> = {
   new: 'bg-[#06B6D4]/15 text-[#06B6D4]',
-  contacted: 'bg-[#F5A524]/15 text-[#F5A524]',
+  contacted: 'bg-accent-cyan/15 text-accent-cyan',
   site_visit_scheduled: 'bg-purple-500/15 text-purple-400',
   qualified: 'bg-[#10B981]/15 text-[#10B981]',
   disqualified: 'bg-white/5 text-white/30',
@@ -87,7 +87,7 @@ export default async function CrmDashboard() {
         </div>
         <Link
           href="/crm/leads"
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#F5A524] text-[#08080B] text-sm font-semibold hover:bg-[#F5A524]/90 transition-colors shadow-lg shadow-[#F5A524]/20"
+          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-accent-blue text-white text-sm font-semibold hover:bg-accent-blue/90 transition-colors shadow-lg shadow-accent-blue/20"
         >
           <PlusCircle className="w-4 h-4" />
           New Lead
@@ -109,8 +109,8 @@ export default async function CrmDashboard() {
             label: 'Qualified Prospects',
             value: stats.qualified,
             icon: TrendingUp,
-            color: 'text-[#F5A524]',
-            bg: 'bg-[#F5A524]/10',
+            color: 'text-accent-cyan',
+            bg: 'bg-accent-cyan/10',
             href: '/crm/leads',
           },
           {
@@ -167,7 +167,7 @@ export default async function CrmDashboard() {
               <p className="text-sm text-white/30">No leads yet</p>
               <Link
                 href="/crm/leads"
-                className="mt-4 inline-flex items-center gap-2 text-sm text-[#F5A524] hover:text-[#F5A524]/80 transition-colors"
+                className="mt-4 inline-flex items-center gap-2 text-sm text-accent-blue hover:text-accent-blue/80 transition-colors"
               >
                 <PlusCircle className="w-4 h-4" /> Add your first lead
               </Link>
@@ -181,7 +181,7 @@ export default async function CrmDashboard() {
                   className="flex items-center justify-between px-6 py-4 hover:bg-white/3 transition-colors group"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#F5A524]/20 to-[#06B6D4]/20 flex items-center justify-center text-sm font-bold text-white/60">
+                    <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-accent-blue/20 to-accent-cyan/20 flex items-center justify-center text-sm font-bold text-white/60">
                       {lead.fullName?.charAt(0) ?? '?'}
                     </div>
                     <div>
@@ -218,7 +218,7 @@ export default async function CrmDashboard() {
             <div className="p-4 space-y-2">
               {[
                 { href: '/crm/leads', label: 'Add New Lead', icon: Users, color: 'text-[#06B6D4]' },
-                { href: '/crm/designs/new', label: 'Start ROI Design', icon: Calculator, color: 'text-[#F5A524]' },
+                { href: '/crm/designs/new', label: 'Start ROI Design', icon: Calculator, color: 'text-accent-blue' },
                 { href: '/crm/projects', label: 'View Projects', icon: Briefcase, color: 'text-purple-400' },
                 ...(isOwner
                   ? [{ href: '/crm/inventory', label: 'Manage Inventory', icon: Package, color: 'text-[#10B981]' }]
@@ -245,7 +245,7 @@ export default async function CrmDashboard() {
             <div className="space-y-3">
               {[
                 { label: 'New → Contacted', pct: stats.newLeads > 0 ? 100 : 0, color: 'bg-[#06B6D4]' },
-                { label: 'Qualified', pct: stats.qualified > 0 ? 60 : 0, color: 'bg-[#F5A524]' },
+                { label: 'Qualified', pct: stats.qualified > 0 ? 60 : 0, color: 'bg-accent-cyan' },
                 { label: 'In Progress', pct: stats.activeProjects > 0 ? 40 : 0, color: 'bg-purple-500' },
                 { label: 'Commissioned', pct: stats.commissioned > 0 ? 20 : 0, color: 'bg-[#10B981]' },
               ].map((stage) => (
