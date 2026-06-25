@@ -22,7 +22,12 @@ const statusColors: Record<string, string> = {
   new: 'bg-accent-cyan/10 text-accent-cyan',
   contacted: 'bg-accent-cyan/10 text-accent-cyan',
   site_visit_scheduled: 'bg-purple-500/10 text-purple-400',
+  site_visit_done: 'bg-purple-500/25 text-purple-300',
   qualified: 'bg-accent-emerald/10 text-accent-emerald',
+  quote_sent: 'bg-blue-500/15 text-blue-400',
+  negotiating: 'bg-amber-500/15 text-amber-400',
+  won: 'bg-accent-emerald/20 text-accent-emerald font-semibold',
+  lost: 'bg-accent-rose/15 text-accent-rose',
   disqualified: 'bg-accent-rose/10 text-accent-rose',
   converted: 'bg-green-500/10 text-green-400',
 };

@@ -2,6 +2,7 @@ import 'server-only';
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getSession } from '@/lib/session';
+import { onboardingSchema } from '@/lib/validations';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -12,12 +13,24 @@ export async function POST(request: NextRequest) {
     if (!session?.email) {
       return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
     }
+    if (session.role !== 'customer') {
+      return NextResponse.json({ error: 'Only customers can onboard' }, { status: 403 });
+    }
 
-    const { siteAddress, utilityCompanyId, averageBill } = await request.json();
+    const body = await request.json();
+    const parsed = onboardingSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json({ error: 'Invalid input' }, { status: 422 });
+    }
+
+    const { siteAddress, utilityCompanyId, averageBill } = parsed.data;
 
     const client = await db.client.findFirst({ where: { email: { equals: session.email, mode: 'insensitive' } } });
     if (!client) {
       return NextResponse.json({ error: 'Client not found' }, { status: 404 });
+    }
+    if (client.onboardingComplete) {
+      return NextResponse.json({ error: 'Onboarding already completed' }, { status: 400 });
     }
 
     let utilityCompany = null;

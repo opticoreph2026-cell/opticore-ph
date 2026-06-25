@@ -5,6 +5,7 @@ import { canAccessAdminEnergy } from '@/lib/energy-auth';
 import { redirect } from 'next/navigation';
 import type { EnergyUtilityCompany } from '@prisma/client';
 import { AddUtilityDialog } from '@/components/admin/AddUtilityDialog';
+import { formatUnitsToRatePHP } from '@/lib/money';
 
 export const runtime = 'nodejs';
 
@@ -51,7 +52,7 @@ export default async function AdminEnergyRules() {
                 <td className="px-6 py-4">{u.name}</td>
                 <td className="px-6 py-4">
                   {u.rateSchedules[0]
-                    ? `₱${(u.rateSchedules[0].allInRateRu / 10000).toFixed(4)}`
+                    ? formatUnitsToRatePHP(u.rateSchedules[0].allInRateRu)
                     : '—'}
                 </td>
                 <td className="px-6 py-4">

@@ -37,14 +37,19 @@ export function NotificationBell() {
   const [open, setOpen] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const unread = notifications.filter((n) => !n.isRead).length;
 
   const fetchNotifications = useCallback(() => {
+    setFetchError(false);
     fetch('/api/notifications')
-      .then((r) => r.json())
+      .then((r) => {
+        if (!r.ok) throw new Error('Failed to fetch');
+        return r.json();
+      })
       .then((json) => setNotifications(json.data ?? []))
-      .catch(() => {})
+      .catch(() => { setFetchError(true); })
       .finally(() => setLoading(false));
   }, []);
 
@@ -150,6 +155,17 @@ export function NotificationBell() {
                 <Bell className="w-8 h-8 text-white/20 mx-auto mb-3" />
                 <p className="text-sm text-white/40">No notifications</p>
               </div>
+            ) : fetchError ? (
+              <div className="py-12 text-center">
+                <AlertCircle className="w-8 h-8 text-accent-rose/50 mx-auto mb-3" />
+                <p className="text-sm text-white/40">Could not load notifications.</p>
+                <button
+                  onClick={fetchNotifications}
+                  className="mt-2 text-xs text-accent-cyan hover:text-accent-cyan/80 transition-colors"
+                >
+                  Try again
+                </button>
+              </div>
             ) : (
               notifications.map((notif) => {
                 const cfg = typeConfig[notif.type] ?? typeConfig.system;
@@ -199,7 +215,10 @@ export function NotificationBell() {
           </div>
 
           <div className="px-5 py-3 border-t border-white/5">
-            <button className="text-xs text-white/40 hover:text-white/70 transition-colors">
+            <button
+              onClick={() => { setOpen(false); router.push('/admin/alerts'); }}
+              className="text-xs text-white/40 hover:text-white/70 transition-colors"
+            >
               View all notifications
             </button>
           </div>

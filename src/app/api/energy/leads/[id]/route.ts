@@ -7,6 +7,26 @@ import { canAccessCrm } from '@/lib/energy-auth';
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
+const LEAD_STATUS_TRANSITIONS: Record<string, string[]> = {
+  new: ['contacted', 'disqualified'],
+  contacted: ['site_visit_scheduled', 'disqualified'],
+  site_visit_scheduled: ['site_visit_done', 'disqualified'],
+  site_visit_done: ['qualified', 'disqualified'],
+  qualified: ['quote_sent', 'disqualified'],
+  quote_sent: ['negotiating', 'won', 'lost', 'disqualified'],
+  negotiating: ['won', 'lost', 'disqualified'],
+  won: [],
+  lost: [],
+  disqualified: [],
+  converted: [],
+};
+
+function isValidLeadTransition(from: string, to: string): boolean {
+  if (from === to) return true;
+  const allowed = LEAD_STATUS_TRANSITIONS[from];
+  return !!allowed && allowed.includes(to);
+}
+
 export async function GET(request: Request, context: { params: Promise<{ id: string }> }) {
   try {
     const session = await getSession();
@@ -52,6 +72,20 @@ export async function PATCH(request: Request, context: { params: Promise<{ id: s
     });
     if (!existing) {
       return NextResponse.json({ error: 'Not found' }, { status: 404 });
+    }
+
+    if (body.status && !isValidLeadTransition(existing.status, body.status)) {
+      return NextResponse.json({
+        error: `Invalid status transition from "${existing.status}" to "${body.status}".`,
+      }, { status: 422 });
+    }
+
+    // Append notes with timestamp instead of overwriting
+    if (body.notes && body.notes !== existing.notes) {
+      const timestamp = new Date().toLocaleString('en-PH', {
+        month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit',
+      });
+      body.notes = `${existing.notes ? existing.notes + '\n\n' : ''}[${timestamp}] ${body.notes}`;
     }
 
     const lead = await db.energyLead.update({

@@ -24,10 +24,8 @@ export async function POST(request: Request) {
 
     const client = await db.client.findUnique({ where: { email } });
     if (!client) {
-      return NextResponse.json(
-        { exists: false, error: 'No account found with this email. Please sign up first.' },
-        { status: 404 },
-      );
+      // Return generic success to prevent email enumeration
+      return NextResponse.json({ success: true, message: 'If an account exists, an OTP has been sent.' });
     }
 
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
@@ -40,7 +38,7 @@ export async function POST(request: Request) {
 
     await sendOTPEmail({ email, otp });
 
-    return NextResponse.json({ exists: true, message: 'OTP sent to your email' });
+    return NextResponse.json({ success: true, message: 'If an account exists, an OTP has been sent.' });
   } catch (err) {
     console.error('[POST /api/auth/send-otp]', err);
     return NextResponse.json({ error: 'Failed to send OTP' }, { status: 500 });

@@ -2,20 +2,19 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { hashPassword } from '@/lib/password';
 import { sendWelcomeEmail } from '@/lib/email';
+import { registerSchema } from '@/lib/validations';
 
 export const dynamic = 'force-dynamic';
 
 export async function POST(req: NextRequest) {
   try {
-    const { email, password, name, turnstileToken } = await req.json();
-
-    if (!email || !password) {
-      return NextResponse.json({ error: 'Email and password are required' }, { status: 400 });
+    const body = await req.json();
+    const parsed = registerSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json({ error: 'Invalid input' }, { status: 422 });
     }
 
-    if (!turnstileToken) {
-      return NextResponse.json({ error: 'Security verification required' }, { status: 400 });
-    }
+    const { email, password, name, turnstileToken } = parsed.data;
     if (process.env.TURNSTILE_SECRET_KEY) {
       const verifyRes = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
         method: 'POST',

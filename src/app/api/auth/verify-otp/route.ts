@@ -23,19 +23,23 @@ export async function POST(request: Request) {
 
     const client = await db.client.findUnique({ where: { email } });
     if (!client) {
-      return NextResponse.json({ error: 'No account found' }, { status: 404 });
+      // Generic error to prevent email enumeration
+      return NextResponse.json({ error: 'Invalid or expired OTP. Request a new one.' }, { status: 400 });
     }
 
     if (!client.otpCode || !client.otpExpiresAt) {
-      return NextResponse.json({ error: 'No OTP requested. Request a new one.' }, { status: 400 });
+      return NextResponse.json({ error: 'Invalid or expired OTP. Request a new one.' }, { status: 400 });
     }
 
     if (client.otpCode !== otp) {
-      return NextResponse.json({ error: 'Invalid OTP code' }, { status: 400 });
+      // Clear OTP on failed attempt to prevent brute-force
+      await db.client.update({ where: { id: client.id }, data: { otpCode: null, otpExpiresAt: null } });
+      return NextResponse.json({ error: 'Invalid or expired OTP. Request a new one.' }, { status: 400 });
     }
 
     if (new Date() > client.otpExpiresAt) {
-      return NextResponse.json({ error: 'OTP expired. Request a new one.' }, { status: 400 });
+      await db.client.update({ where: { id: client.id }, data: { otpCode: null, otpExpiresAt: null } });
+      return NextResponse.json({ error: 'Invalid or expired OTP. Request a new one.' }, { status: 400 });
     }
 
     return NextResponse.json({ success: true, email: client.email });

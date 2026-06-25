@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { resetPasswordSchema } from '@/lib/validations';
 import { rateLimit } from '@/lib/rate-limit';
-import bcrypt from 'bcryptjs';
+import { hashPassword } from '@/lib/password';
 
 export const dynamic = 'force-dynamic';
 
@@ -35,7 +35,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Reset token has expired. Please request a new one.' }, { status: 400 });
     }
 
-    const passwordHash = await bcrypt.hash(password, 12);
+    const passwordHash = await hashPassword(password);
 
     await db.client.update({
       where: { id: client.id },

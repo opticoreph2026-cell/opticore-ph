@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { getCurrentUser } from '@/lib/session';
 import { db } from '@/lib/db';
 import { hashPassword, verifyPassword } from '@/lib/password';
+import { changePasswordSchema } from '@/lib/validations';
 
 export async function PATCH(request: Request) {
   try {
@@ -10,15 +11,13 @@ export async function PATCH(request: Request) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
 
-    const { currentPassword, newPassword } = await request.json();
-
-    if (!currentPassword || !newPassword) {
-      return NextResponse.json({ error: 'Current password and new password are required' }, { status: 400 });
+    const body = await request.json();
+    const parsed = changePasswordSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json({ error: 'Invalid input' }, { status: 422 });
     }
 
-    if (newPassword.length < 8) {
-      return NextResponse.json({ error: 'New password must be at least 8 characters' }, { status: 400 });
-    }
+    const { currentPassword, newPassword } = parsed.data;
 
     const dbUser = await db.client.findUnique({
       where: { id: user.sub },

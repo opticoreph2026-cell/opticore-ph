@@ -567,7 +567,7 @@ model EnergyProfile {
 model EnergyLead {
   // source: "website_calc" | "facebook" | "referral" | "developer_outreach" | "demo_unit" | "direct"
   // customerType: "residential" | "small_commercial" | "medium_commercial" | "developer" | "eastern_visayas"
-  // status: "new" | "contacted" | "site_visit_scheduled" | "qualified" | "disqualified" | "converted"
+  // status: "new" | "contacted" | "site_visit_scheduled" | "site_visit_done" | "qualified" | "quote_sent" | "negotiating" | "won" | "lost" | "disqualified" | "converted"
   id                   String   @id @default(uuid())
   source               String   @default("website_calc")
   fullName             String

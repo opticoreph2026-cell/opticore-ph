@@ -159,14 +159,6 @@ export function computeYear1Financials(params: {
 }): Year1FinancialResult {
   const { energyFlow, allInRateRu, bgcRateRu, omAnnualCostCentavos, rateTrace } = params;
 
-  // Bill WITHOUT system (pure load × retail rate)
-  const billWithoutSystemCentavos = Math.round(
-    (energyFlow.annualPvGenerationKwh + energyFlow.gridImportedKwh) / energyFlow.annualPvGenerationKwh
-      * energyFlow.selfConsumedKwh * allInRateRu / 100 +
-    energyFlow.gridImportedKwh * allInRateRu / 100,
-  );
-
-  // Simpler, correct approach:
   const totalAnnualLoadKwh = energyFlow.selfConsumedKwh + energyFlow.gridImportedKwh;
   const billWithoutCentavos = Math.round(totalAnnualLoadKwh * allInRateRu / 100);
 
@@ -333,12 +325,12 @@ export function computeHeadlineMetrics(
     ? Math.round(totalDiscountedCost / totalDiscountedYield)
     : 0;
 
-  // 25-year net benefit
+  // 25-year net benefit (year 0 already includes -capexTotalCentavos)
   const netBenefit25yrCentavos =
-    cashFlows.filter((c) => c.year > 0 && c.year <= 25).reduce(
+    cashFlows.filter((c) => c.year >= 0 && c.year <= 25).reduce(
       (sum, c) => sum + c.netCashFlowCentavos,
       0,
-    ) - config.capexTotalCentavos;
+    );
 
   // Cash-flow-positive for loan scenarios
   const monthlyLoanPaymentCentavos =

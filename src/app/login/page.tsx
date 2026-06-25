@@ -44,9 +44,14 @@ export default function LoginPage() {
         throw new Error('Invalid email or password');
       }
 
-      const sessionRes = await fetch('/api/auth/session');
-      const sessionData = await sessionRes.json();
-      const role = sessionData?.user?.role ?? 'client';
+      // Retry session fetch to avoid race condition with cookie propagation
+      let role = 'client';
+      for (let i = 0; i < 5; i++) {
+        const sessionRes = await fetch('/api/auth/session');
+        const sessionData = await sessionRes.json();
+        if (sessionData?.user?.role) { role = sessionData.user.role; break; }
+        await new Promise((r) => setTimeout(r, 300));
+      }
       router.push(getPostLoginRedirect(role));
       router.refresh();
     } catch (err) {
@@ -123,9 +128,14 @@ export default function LoginPage() {
         throw new Error('Login failed. Try again.');
       }
 
-      const sessionRes = await fetch('/api/auth/session');
-      const sessionData = await sessionRes.json();
-      const role = sessionData?.user?.role ?? 'client';
+      // Retry session fetch to avoid race condition with cookie propagation
+      let role = 'client';
+      for (let i = 0; i < 5; i++) {
+        const sessionRes = await fetch('/api/auth/session');
+        const sessionData = await sessionRes.json();
+        if (sessionData?.user?.role) { role = sessionData.user.role; break; }
+        await new Promise((r) => setTimeout(r, 300));
+      }
       router.push(getPostLoginRedirect(role));
       router.refresh();
     } catch (err) {

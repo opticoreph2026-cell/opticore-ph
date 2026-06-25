@@ -92,12 +92,38 @@ export async function POST(request: Request) {
       },
     }).catch((err: any) => console.error('[activity]', err));
 
+    // ── Territory-based auto-assignment ─────────────────────────────────
+    if (province) {
+      try {
+        const orgs = await db.energyOrganization.findMany({
+          where: { status: 'active', type: 'partner' },
+          select: { id: true, name: true, territory: true },
+        });
+        const normalizedProvince = province.toLowerCase().trim();
+        const matchedOrg = orgs.find((org: { id: string; name: string; territory: string }) => {
+          try {
+            const territories: string[] = JSON.parse(org.territory);
+            return territories.some((t) => t.toLowerCase().trim() === normalizedProvince);
+          } catch { return false; }
+        });
+        if (matchedOrg) {
+          await db.energyLead.update({
+            where: { id: lead.id },
+            data: { assignedOrgId: matchedOrg.id },
+          });
+          lead.assignedOrgId = matchedOrg.id;
+        }
+      } catch (terrErr) {
+        console.error('[territory assignment]', terrErr);
+      }
+    }
+
     await db.adminNotification.create({
       data: {
         type: 'lead',
         title: 'New Lead',
         message: `New ${customerType || 'residential'} lead from ${fullName}`,
-        meta: JSON.stringify({ href: `/admin/energy/leads` }),
+        meta: JSON.stringify({ href: `/crm/leads` }),
       },
     }).catch((err: any) => console.error('[notification]', err));
 

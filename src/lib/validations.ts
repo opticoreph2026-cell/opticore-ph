@@ -105,6 +105,26 @@ export function isValidQuotationTransition(from: string, to: string): boolean {
   return !!allowed && allowed.includes(to);
 }
 
+export const registerSchema = z.object({
+  email: emailSchema,
+  password: z.string().min(8, 'Password must be at least 8 characters').max(128),
+  name: z.string().min(1, 'Name is required').max(255),
+  turnstileToken: z.string().min(1, 'Security check required'),
+});
+
+export const changePasswordSchema = z.object({
+  currentPassword: z.string().min(1, 'Current password is required'),
+  newPassword: z.string().min(8, 'New password must be at least 8 characters').max(128),
+});
+
+export const onboardingSchema = z.object({
+  siteAddress: z.string().min(1, 'Address is required').max(500),
+  utilityCompanyId: z.string().min(1, 'Utility company is required'),
+  averageBill: z.number().int().min(0, 'Average bill is required'),
+  province: z.string().max(100).optional().nullable(),
+  city: z.string().max(100).optional().nullable(),
+});
+
 export const updateRoiSchema = z.object({
   scenarioLabel: z.string().max(200).optional(),
   selfConsumptionPct: z.number().min(0).max(100).optional(),

@@ -12,19 +12,21 @@ import {
   Calculator,
   Package,
   ChevronRight,
+  FileText,
 } from 'lucide-react';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 async function getStats() {
-  const [newLeads, qualified, activeProjects, commissioned] = await Promise.all([
+  const [newLeads, qualified, quoteSent, activeProjects, commissioned] = await Promise.all([
     db.energyLead.count({ where: { status: 'new' } }),
     db.energyLead.count({ where: { status: 'qualified' } }),
+    db.energyLead.count({ where: { status: 'quote_sent' } }),
     db.energyProject.count({ where: { status: { in: ['scheduled', 'in_progress'] } } }),
     db.energyProject.count({ where: { status: 'commissioned' } }),
   ]);
-  return { newLeads, qualified, activeProjects, commissioned };
+  return { newLeads, qualified, quoteSent, activeProjects, commissioned };
 }
 
 async function getRecentLeads() {
@@ -46,7 +48,12 @@ const statusColors: Record<string, string> = {
   new: 'bg-[#06B6D4]/15 text-[#06B6D4]',
   contacted: 'bg-accent-cyan/15 text-accent-cyan',
   site_visit_scheduled: 'bg-purple-500/15 text-purple-400',
+  site_visit_done: 'bg-purple-500/25 text-purple-300',
   qualified: 'bg-[#10B981]/15 text-[#10B981]',
+  quote_sent: 'bg-blue-500/15 text-blue-400',
+  negotiating: 'bg-amber-500/15 text-amber-400',
+  won: 'bg-[#10B981]/20 text-[#10B981] font-semibold',
+  lost: 'bg-accent-rose/15 text-accent-rose',
   disqualified: 'bg-white/5 text-white/30',
   converted: 'bg-[#10B981]/20 text-[#10B981] font-semibold',
 };
@@ -54,8 +61,13 @@ const statusColors: Record<string, string> = {
 const statusLabel: Record<string, string> = {
   new: 'New',
   contacted: 'Contacted',
-  site_visit_scheduled: 'Site Visit',
+  site_visit_scheduled: 'Site Visit Scheduled',
+  site_visit_done: 'Site Visit Done',
   qualified: 'Qualified',
+  quote_sent: 'Quote Sent',
+  negotiating: 'Negotiating',
+  won: 'Won',
+  lost: 'Lost',
   disqualified: 'Disqualified',
   converted: 'Converted',
 };
@@ -95,7 +107,7 @@ export default async function CrmDashboard() {
       </div>
 
       {/* Stat cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
         {[
           {
             label: 'New Leads',
@@ -106,12 +118,20 @@ export default async function CrmDashboard() {
             href: '/crm/leads',
           },
           {
-            label: 'Qualified Prospects',
+            label: 'Qualified',
             value: stats.qualified,
             icon: TrendingUp,
             color: 'text-accent-cyan',
             bg: 'bg-accent-cyan/10',
             href: '/crm/leads',
+          },
+          {
+            label: 'Quote Sent',
+            value: stats.quoteSent,
+            icon: FileText,
+            color: 'text-blue-400',
+            bg: 'bg-blue-500/10',
+            href: '/crm/quotations',
           },
           {
             label: 'Active Projects',
@@ -245,9 +265,9 @@ export default async function CrmDashboard() {
             <div className="space-y-3">
               {[
                 { label: 'New → Contacted', pct: stats.newLeads > 0 ? 100 : 0, color: 'bg-[#06B6D4]' },
-                { label: 'Qualified', pct: stats.qualified > 0 ? 60 : 0, color: 'bg-accent-cyan' },
-                { label: 'In Progress', pct: stats.activeProjects > 0 ? 40 : 0, color: 'bg-purple-500' },
-                { label: 'Commissioned', pct: stats.commissioned > 0 ? 20 : 0, color: 'bg-[#10B981]' },
+                { label: 'Site Visit Done', pct: stats.qualified > 0 ? 60 : 0, color: 'bg-purple-500' },
+                { label: 'Quote Sent', pct: stats.quoteSent > 0 ? 40 : 0, color: 'bg-blue-500' },
+                { label: 'Won / Commissioned', pct: stats.commissioned > 0 ? 20 : 0, color: 'bg-[#10B981]' },
               ].map((stage) => (
                 <div key={stage.label}>
                   <div className="flex justify-between text-xs text-white/40 mb-1">

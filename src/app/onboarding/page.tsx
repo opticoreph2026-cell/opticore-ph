@@ -1,24 +1,38 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
+import { useSession } from 'next-auth/react';
 
 export default function OnboardingPage() {
   const router = useRouter();
+  const { data: session, status } = useSession();
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     utilityCompanyId: 'MERALCO',
     averageBill: 5000,
     siteAddress: ''
   });
 
+  useEffect(() => {
+    if (status === 'unauthenticated') {
+      router.push('/login');
+    }
+  }, [status, router]);
+
+  if (status === 'loading' || status === 'unauthenticated') {
+    return null;
+  }
+
   const handleNext = () => setStep((s) => s + 1);
   const handleBack = () => setStep((s) => s - 1);
 
   const handleSubmit = async () => {
     setLoading(true);
+    setError(null);
     try {
       const res = await fetch('/api/energy/onboarding', {
         method: 'POST',
@@ -31,7 +45,7 @@ export default function OnboardingPage() {
 
       router.push('/customer');
     } catch (err) {
-      console.error('[Onboarding]', err);
+      setError(err instanceof Error ? err.message : 'Onboarding failed');
       setLoading(false);
     }
   };
@@ -128,6 +142,11 @@ export default function OnboardingPage() {
                 />
               </div>
 
+              {error && (
+                <div className="p-3 rounded-xl bg-accent-rose/10 border border-accent-rose/20 text-sm text-accent-rose">
+                  {error}
+                </div>
+              )}
               <div className="flex gap-4">
                 <button onClick={handleBack} disabled={loading} className="px-6 py-3 text-white bg-[#16161D] border border-white/10 rounded-xl disabled:opacity-50">Back</button>
                 <button 

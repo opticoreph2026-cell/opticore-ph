@@ -84,6 +84,60 @@ export async function POST(request: Request) {
       });
     }
 
+    // ── Auto-deduct inventory from design's inverter/battery ────────────
+    if (designId) {
+      try {
+        const design = await db.systemDesign.findUnique({
+          where: { id: designId },
+          select: { inverterId: true, inverterQuantity: true, batteryId: true, batteryQuantity: true },
+        });
+        if (design) {
+          const updates: Promise<unknown>[] = [];
+          if (design.inverterId && design.inverterQuantity > 0) {
+            const inverters = await db.inventoryUnit.findMany({
+              where: {
+                inverterId: design.inverterId,
+                ownershipStatus: { not: 'sold_installed' },
+                installedAtProjectId: null,
+              },
+              take: design.inverterQuantity,
+              orderBy: { receivedDate: 'asc' },
+            });
+            for (const unit of inverters) {
+              updates.push(
+                db.inventoryUnit.update({
+                  where: { id: unit.id },
+                  data: { ownershipStatus: 'sold_installed', installedAtProjectId: project.id },
+                }),
+              );
+            }
+          }
+          if (design.batteryId && design.batteryQuantity > 0) {
+            const batteries = await db.inventoryUnit.findMany({
+              where: {
+                batteryId: design.batteryId,
+                ownershipStatus: { not: 'sold_installed' },
+                installedAtProjectId: null,
+              },
+              take: design.batteryQuantity,
+              orderBy: { receivedDate: 'asc' },
+            });
+            for (const unit of batteries) {
+              updates.push(
+                db.inventoryUnit.update({
+                  where: { id: unit.id },
+                  data: { ownershipStatus: 'sold_installed', installedAtProjectId: project.id },
+                }),
+              );
+            }
+          }
+          await Promise.all(updates);
+        }
+      } catch (invErr) {
+        console.error('[POST /api/energy/projects] inventory deduction error (non-fatal):', invErr);
+      }
+    }
+
     return NextResponse.json({ data: project }, { status: 201 });
   } catch (err) {
     console.error('[POST /api/energy/projects]', err);

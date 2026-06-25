@@ -500,9 +500,11 @@ export function generateSldData(params: {
 }): SldData {
   const { pvKwp, panelCount, panelWattage, selection, cabling, pathway } = params;
 
-  // Battery voltage: BW-BAT-10.1P = 96V (high voltage); BW-BAT-4.8S/9.6P = 700V
+  // Battery voltage: BW-BAT-4.8S = 48V, BW-BAT-9.6P = 96V, BW-BAT-10.1P = 96V (HV)
   const batteryVoltage =
-    selection.battery.compatibleInverterFamily === 'single_phase_aio' ? '96 Vdc (HV)' : '700 Vdc (HV)';
+    selection.battery.sku === 'BW-BAT-4.8S' ? '48 Vdc' :
+    selection.battery.sku === 'BW-BAT-9.6P' ? '96 Vdc' :
+    '96 Vdc (HV)';
 
   return {
     pvArrayKwp: pvKwp,
