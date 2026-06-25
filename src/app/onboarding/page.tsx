@@ -19,12 +19,21 @@ export default function OnboardingPage() {
 
   const handleSubmit = async () => {
     setLoading(true);
-    // Ideally this hits a new API to create EnergyCustomer, EnergySite, and EnergyLead
-    // We will just simulate it for the UI and push to /customer
-    setTimeout(() => {
-      setLoading(false);
+    try {
+      const res = await fetch('/api/energy/onboarding', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Onboarding failed');
+
       router.push('/customer');
-    }, 1500);
+    } catch (err) {
+      console.error('[Onboarding]', err);
+      setLoading(false);
+    }
   };
 
   return (

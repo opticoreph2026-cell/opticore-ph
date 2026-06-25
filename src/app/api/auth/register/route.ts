@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
         email,
         name,
         passwordHash: hashed,
-        role: 'client',
+        role: 'customer',
       },
     });
 
