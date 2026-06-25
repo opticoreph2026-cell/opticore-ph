@@ -45,7 +45,7 @@ export default async function QuotationDetailPage({
     redirect('/crm/quotations');
   }
 
-  const formatMoney = (c: number) => `₱${(c / 100).toLocaleString('en-PH', { minimumFractionDigits: 0 })}`;
+  const formatMoney = (c: number) => `₱${c.toLocaleString('en-PH', { minimumFractionDigits: 2 })}`;
 
   return (
     <div className="max-w-3xl space-y-6">

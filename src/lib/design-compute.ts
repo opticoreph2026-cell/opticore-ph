@@ -1,7 +1,7 @@
 /**
  * @file src/lib/design-compute.ts
  * @description Orchestrates solar-design.ts engine with catalog data.
- * Pure functions — no DB calls.
+ * Pure functions — no DB calls. Money values in pesos (Decimal(10,2)).
  */
 
 import {
@@ -20,7 +20,7 @@ import {
 
 export interface DesignComputeInput {
   averageMonthlyKwh: number;
-  averageMonthlyBillCentavos: number;
+  averageMonthlyBill: number;
   gridConnectionType: GridConnectionType;
   designPathway: DesignPathway;
   customerType: string;
@@ -31,42 +31,42 @@ export interface DesignComputeInput {
   criticalLoads: CriticalLoad[];
   availableRoofAreaSqm?: number;
   /** Override defaults from DB fee config */
-  panelPriceCentavos?: number;
+  panelPrice?: number;
   installationFeePct?: number;
-  designFeeCentavos?: number;
-  permitFeeCentavos?: number;
+  designFee?: number;
+  permitFee?: number;
 }
 
-/** Placeholder distributor pricing when catalog `isPriceConfirmed` is false */
-export const ESTIMATED_UNIT_PRICES_CENTAVOS: Record<string, number> = {
-  'BW-INV-SPH3.6K': 8500000,
-  'BW-INV-SPH5K': 10500000,
-  'BW-INV-SPH6K': 12500000,
-  'BW-INV-SPH8K': 15500000,
-  'BW-INV-TPH4K': 12000000,
-  'BW-INV-TPH6K': 14500000,
-  'BW-INV-TPH8K': 17000000,
-  'BW-INV-TPH10K': 21000000,
-  'BW-INV-TPH12K': 25000000,
-  'BW-INV-TPH15K': 30000000,
-  'BW-INV-SPB5K': 9500000,
-  'BW-BAT-4.8S': 6500000,
-  'BW-BAT-9.6P': 11500000,
-  'BW-BAT-10.1P': 12500000,
+/** Placeholder distributor pricing when catalog `isPriceConfirmed` is false (in pesos) */
+export const ESTIMATED_UNIT_PRICES: Record<string, number> = {
+  'BW-INV-SPH3.6K': 85000,
+  'BW-INV-SPH5K': 105000,
+  'BW-INV-SPH6K': 125000,
+  'BW-INV-SPH8K': 155000,
+  'BW-INV-TPH4K': 120000,
+  'BW-INV-TPH6K': 145000,
+  'BW-INV-TPH8K': 170000,
+  'BW-INV-TPH10K': 210000,
+  'BW-INV-TPH12K': 250000,
+  'BW-INV-TPH15K': 300000,
+  'BW-INV-SPB5K': 95000,
+  'BW-BAT-4.8S': 65000,
+  'BW-BAT-9.6P': 115000,
+  'BW-BAT-10.1P': 125000,
 };
 
-export const ESTIMATED_PANEL_PRICE_CENTAVOS = 750000; // ₱7,500 per 550W panel (editable)
+export const ESTIMATED_PANEL_PRICE = 7500; // ₱7,500 per 550W panel
 export const ESTIMATED_INSTALLATION_PCT = 0.15;
-export const ESTIMATED_DESIGN_FEE_CENTAVOS = 1500000; // ₱15,000
-export const ESTIMATED_PERMIT_FEE_CENTAVOS = 2500000; // ₱25,000
+export const ESTIMATED_DESIGN_FEE = 15000; // ₱15,000
+export const ESTIMATED_PERMIT_FEE = 25000; // ₱25,000
 
 export interface BomLineItem {
   itemType: string;
   description: string;
   quantity: number;
   unit: string;
-  unitCostCentavos: number;
-  totalCentavos: number;
+  unitCost: number;
+  total: number;
   source: string;
 }
 
@@ -78,17 +78,17 @@ export interface DesignComputeResult {
   sld: ReturnType<typeof generateSldData>;
   annualYieldKwh: number;
   bom: BomLineItem[];
-  hardwareSubtotalCentavos: number;
-  installationFeeCentavos: number;
-  designFeeCentavos: number;
-  permitFeeCentavos: number;
-  grandTotalCentavos: number;
+  hardwareSubtotal: number;
+  installationFee: number;
+  designFee: number;
+  permitFee: number;
+  grandTotal: number;
   trace: Record<string, unknown>;
 }
 
-function resolveUnitPrice(spec: { sku: string; unitPriceCentavos: number; isPriceConfirmed: boolean }): number {
-  if (spec.isPriceConfirmed && spec.unitPriceCentavos > 0) return spec.unitPriceCentavos;
-  return ESTIMATED_UNIT_PRICES_CENTAVOS[spec.sku] ?? 0;
+function resolveUnitPrice(spec: { sku: string; unitPrice: number; isPriceConfirmed: boolean }): number {
+  if (spec.isPriceConfirmed && spec.unitPrice > 0) return spec.unitPrice;
+  return ESTIMATED_UNIT_PRICES[spec.sku] ?? 0;
 }
 
 /** Derive default critical loads from monthly consumption when survey is empty */
@@ -174,7 +174,7 @@ export function runDesignCompute(
 
   const inverterUnit = resolveUnitPrice(selection.inverter);
   const batteryUnit = resolveUnitPrice(selection.battery);
-  const panelUnit = input.panelPriceCentavos ?? ESTIMATED_PANEL_PRICE_CENTAVOS;
+  const panelUnit = input.panelPrice ?? ESTIMATED_PANEL_PRICE;
 
   const bom: BomLineItem[] = [
     {
@@ -182,8 +182,8 @@ export function runDesignCompute(
       description: `Solar PV Module ${input.panelWattage}W`,
       quantity: pv.panelCount,
       unit: 'pc',
-      unitCostCentavos: panelUnit,
-      totalCentavos: panelUnit * pv.panelCount,
+      unitCost: panelUnit,
+      total: panelUnit * pv.panelCount,
       source: 'third_party',
     },
     {
@@ -191,8 +191,8 @@ export function runDesignCompute(
       description: selection.inverter.modelName,
       quantity: selection.inverterQuantity,
       unit: 'pc',
-      unitCostCentavos: inverterUnit,
-      totalCentavos: inverterUnit * selection.inverterQuantity,
+      unitCost: inverterUnit,
+      total: inverterUnit * selection.inverterQuantity,
       source: 'neovolt_catalog',
     },
     {
@@ -200,8 +200,8 @@ export function runDesignCompute(
       description: selection.battery.modelName,
       quantity: selection.batteryQuantity,
       unit: 'pc',
-      unitCostCentavos: batteryUnit,
-      totalCentavos: batteryUnit * selection.batteryQuantity,
+      unitCost: batteryUnit,
+      total: batteryUnit * selection.batteryQuantity,
       source: 'neovolt_catalog',
     },
     {
@@ -209,19 +209,18 @@ export function runDesignCompute(
       description: 'Mounting, BOS, cabling & breakers',
       quantity: 1,
       unit: 'lot',
-      unitCostCentavos: Math.round(pv.pvArrayKwp * 350000),
-      totalCentavos: Math.round(pv.pvArrayKwp * 350000),
+      unitCost: Math.round(pv.pvArrayKwp * 3500),
+      total: Math.round(pv.pvArrayKwp * 3500),
       source: 'third_party',
     },
   ];
 
-  const hardwareSubtotalCentavos = bom.reduce((s, i) => s + i.totalCentavos, 0);
+  const hardwareSubtotal = bom.reduce((s, i) => s + i.total, 0);
   const installPct = input.installationFeePct ?? ESTIMATED_INSTALLATION_PCT;
-  const installationFeeCentavos = Math.round(hardwareSubtotalCentavos * installPct);
-  const designFeeCentavos = input.designFeeCentavos ?? ESTIMATED_DESIGN_FEE_CENTAVOS;
-  const permitFeeCentavos = input.permitFeeCentavos ?? ESTIMATED_PERMIT_FEE_CENTAVOS;
-  const grandTotalCentavos =
-    hardwareSubtotalCentavos + installationFeeCentavos + designFeeCentavos + permitFeeCentavos;
+  const installationFee = Math.round(hardwareSubtotal * installPct);
+  const designFee = input.designFee ?? ESTIMATED_DESIGN_FEE;
+  const permitFee = input.permitFee ?? ESTIMATED_PERMIT_FEE;
+  const grandTotal = hardwareSubtotal + installationFee + designFee + permitFee;
 
   return {
     pv,
@@ -231,11 +230,11 @@ export function runDesignCompute(
     sld,
     annualYieldKwh,
     bom,
-    hardwareSubtotalCentavos,
-    installationFeeCentavos,
-    designFeeCentavos,
-    permitFeeCentavos,
-    grandTotalCentavos,
+    hardwareSubtotal,
+    installationFee,
+    designFee,
+    permitFee,
+    grandTotal,
     trace: {
       input,
       backup,
@@ -256,7 +255,7 @@ export function mapInverterFromDb(row: {
   backupSurgeKw: number | null;
   maxParallelUnits: number;
   peakEfficiencyPct: number;
-  unitPriceCentavos: number;
+  unitPrice: number;
   isPriceConfirmed: boolean;
 }): InverterSpec {
   return {
@@ -270,7 +269,7 @@ export function mapInverterFromDb(row: {
     backupSurgeKw: row.backupSurgeKw ?? row.ratedAcKw,
     maxParallelUnits: row.maxParallelUnits,
     peakEfficiencyPct: row.peakEfficiencyPct,
-    unitPriceCentavos: row.unitPriceCentavos,
+    unitPrice: row.unitPrice,
     isPriceConfirmed: row.isPriceConfirmed,
   };
 }
@@ -286,7 +285,7 @@ export function mapBatteryFromDb(row: {
   roundTripEfficiencyPct: number;
   cycleLife: number;
   warrantyYears: number;
-  unitPriceCentavos: number;
+  unitPrice: number;
   isPriceConfirmed: boolean;
 }): BatterySpec {
   return {
@@ -300,7 +299,7 @@ export function mapBatteryFromDb(row: {
     roundTripEfficiencyPct: row.roundTripEfficiencyPct,
     cycleLife: row.cycleLife,
     warrantyYears: row.warrantyYears,
-    unitPriceCentavos: row.unitPriceCentavos,
+    unitPrice: row.unitPrice,
     isPriceConfirmed: row.isPriceConfirmed,
   };
 }

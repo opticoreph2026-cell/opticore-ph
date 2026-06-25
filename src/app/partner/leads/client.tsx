@@ -12,7 +12,7 @@ interface Lead {
   city: string | null;
   province: string | null;
   customerType: string;
-  monthlyBillPhp: number;
+  monthlyBill: number;
   status: string;
   source: string;
   createdAt: string;

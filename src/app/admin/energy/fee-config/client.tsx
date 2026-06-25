@@ -8,10 +8,10 @@ import { Save } from 'lucide-react';
 
 interface FeeConfig {
   id: string;
-  designFeeCentavos: number;
+  designFee: number;
   installationPct: number;
-  permitFeeCentavos: number;
-  maintenanceAnnualFeeCentavos: number;
+  permitFee: number;
+  maintenanceAnnualFee: number;
   depositRequiredPct: number;
   updatedAt: string;
 }
@@ -21,10 +21,10 @@ export function FeeConfigClient({ config }: { config: FeeConfig }) {
   const { success, error } = useToast();
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState({
-    designFeeCentavos: config.designFeeCentavos.toString(),
+    designFee: config.designFee.toString(),
     installationPct: config.installationPct.toString(),
-    permitFeeCentavos: config.permitFeeCentavos.toString(),
-    maintenanceAnnualFeeCentavos: config.maintenanceAnnualFeeCentavos.toString(),
+    permitFee: config.permitFee.toString(),
+    maintenanceAnnualFee: config.maintenanceAnnualFee.toString(),
     depositRequiredPct: config.depositRequiredPct.toString(),
   });
 
@@ -35,10 +35,10 @@ export function FeeConfigClient({ config }: { config: FeeConfig }) {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          designFeeCentavos: parseInt(form.designFeeCentavos) || 0,
+          designFee: parseFloat(form.designFee) || 0,
           installationPct: parseInt(form.installationPct) || 0,
-          permitFeeCentavos: parseInt(form.permitFeeCentavos) || 0,
-          maintenanceAnnualFeeCentavos: parseInt(form.maintenanceAnnualFeeCentavos) || 0,
+          permitFee: parseFloat(form.permitFee) || 0,
+          maintenanceAnnualFee: parseFloat(form.maintenanceAnnualFee) || 0,
           depositRequiredPct: parseFloat(form.depositRequiredPct) || 0,
         }),
       });
@@ -81,10 +81,9 @@ export function FeeConfigClient({ config }: { config: FeeConfig }) {
       <SpotlightCard className="p-6 space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <Field
-            label="Design Fee (centavos)"
-            value={form.designFeeCentavos}
-            onChange={(v) => setForm((p) => ({ ...p, designFeeCentavos: v }))}
-            suffix="₱ × 100"
+            label="Design Fee (₱)"
+            value={form.designFee}
+            onChange={(v) => setForm((p) => ({ ...p, designFee: v }))}
           />
           <Field
             label="Installation Fee (%)"
@@ -93,16 +92,14 @@ export function FeeConfigClient({ config }: { config: FeeConfig }) {
             suffix="× 100 (1500 = 15%)"
           />
           <Field
-            label="Permit Fee (centavos)"
-            value={form.permitFeeCentavos}
-            onChange={(v) => setForm((p) => ({ ...p, permitFeeCentavos: v }))}
-            suffix="¢"
+            label="Permit Fee (₱)"
+            value={form.permitFee}
+            onChange={(v) => setForm((p) => ({ ...p, permitFee: v }))}
           />
           <Field
-            label="Annual Maintenance (centavos)"
-            value={form.maintenanceAnnualFeeCentavos}
-            onChange={(v) => setForm((p) => ({ ...p, maintenanceAnnualFeeCentavos: v }))}
-            suffix="¢"
+            label="Annual Maintenance (₱)"
+            value={form.maintenanceAnnualFee}
+            onChange={(v) => setForm((p) => ({ ...p, maintenanceAnnualFee: v }))}
           />
           <Field
             label="Required Deposit (%)"

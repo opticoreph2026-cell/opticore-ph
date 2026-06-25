@@ -45,7 +45,7 @@ export interface InverterSpec {
   backupSurgeKw: number;
   maxParallelUnits: number;
   peakEfficiencyPct: number;
-  unitPriceCentavos: number;
+  unitPrice: number;
   isPriceConfirmed: boolean;
 }
 
@@ -60,7 +60,7 @@ export interface BatterySpec {
   roundTripEfficiencyPct: number;
   cycleLife: number;
   warrantyYears: number;
-  unitPriceCentavos: number;
+  unitPrice: number;
   isPriceConfirmed: boolean;
 }
 

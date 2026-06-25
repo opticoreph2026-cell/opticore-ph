@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { AdminTable, type Column, type FieldConfig } from '@/components/ui/AdminTable';
-import { formatCentavosToPHP } from '@/lib/money';
+import { formatPHP } from '@/lib/money';
 
 interface Package {
   id: string;
@@ -40,7 +40,7 @@ export function PackageAdminClient({
     { key: 'panels', label: 'Panels', render: (p) => `${p.panelQuantity}× ${p.panelSku}` },
     { key: 'inverters', label: 'Inverter', render: (p) => `${p.inverterQuantity}× ${p.inverterSku}` },
     { key: 'batteries', label: 'Battery', render: (p) => `${p.batteryQuantity}× ${p.batterySku}` },
-    { key: 'grandTotalCentavos', label: 'Total', render: (p) => formatCentavosToPHP(p.grandTotalCentavos) },
+    { key: 'grandTotalCentavos', label: 'Total', render: (p) => formatPHP(p.grandTotalCentavos) },
   ];
 
   const fields: FieldConfig[] = [
@@ -77,12 +77,12 @@ export function PackageAdminClient({
       options: batteries.map((b) => ({ value: b.sku, label: `${b.modelName} (${b.sku})` })),
     },
     { key: 'batteryQuantity', label: 'Battery Quantity', type: 'number' },
-    { key: 'totalHardwareCentavos', label: 'Hardware Total (centavos)', type: 'number' },
-    { key: 'installationFeeCentavos', label: 'Installation Fee (centavos)', type: 'number' },
-    { key: 'designFeeCentavos', label: 'Design Fee (centavos)', type: 'number' },
-    { key: 'permitFeeCentavos', label: 'Permit Fee (centavos)', type: 'number' },
-    { key: 'grandTotalCentavos', label: 'Grand Total (centavos)', type: 'number' },
-    { key: 'monthlyPaymentEstimateCentavos', label: 'Monthly Estimate (centavos)', type: 'number' },
+    { key: 'totalHardware', label: 'Hardware Total (₱)', type: 'number' },
+    { key: 'installationFee', label: 'Installation Fee (₱)', type: 'number' },
+    { key: 'designFee', label: 'Design Fee (₱)', type: 'number' },
+    { key: 'permitFee', label: 'Permit Fee (₱)', type: 'number' },
+    { key: 'grandTotal', label: 'Grand Total (₱)', type: 'number' },
+    { key: 'monthlyPaymentEstimate', label: 'Monthly Estimate (₱)', type: 'number' },
   ];
 
   const handleSave = async (data: Partial<Package>, id?: string) => {

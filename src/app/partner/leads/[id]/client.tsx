@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Phone, Mail, MapPin, Zap, Calendar } from 'lucide-react';
 import { useToast } from '@/components/ui/Toast';
-import { formatCentavosToPHP } from '@/lib/money';
+import { formatPHP } from '@/lib/money';
 
 interface Lead {
   id: string;
@@ -15,7 +15,7 @@ interface Lead {
   city: string | null;
   province: string | null;
   customerType: string;
-  monthlyBillPhp: number;
+  monthlyBill: number;
   status: string;
   source: string;
   notes: string | null;
@@ -110,7 +110,7 @@ export function PartnerLeadDetailClient({ lead, userId }: { lead: Lead; userId?:
               <h3 className="text-sm font-semibold text-white/60 uppercase tracking-wider">Details</h3>
               <div className="flex items-center gap-3 text-sm text-white/70">
                 <Zap className="w-4 h-4 text-accent-rose" />
-                Est. bill: {formatCentavosToPHP(lead.monthlyBillPhp)}/mo
+                Est. bill: {formatPHP(lead.monthlyBill)}/mo
               </div>
               {lead.utilityCompany && (
                 <div className="flex items-center gap-3 text-sm text-white/70">

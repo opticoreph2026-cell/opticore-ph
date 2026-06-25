@@ -12,8 +12,8 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 
-function formatPhp(centavos: number) {
-  return `₱${(centavos / 100).toLocaleString('en-PH', { maximumFractionDigits: 0 })}`;
+function formatPhp(pesos: number) {
+  return `₱${pesos.toLocaleString('en-PH', { minimumFractionDigits: 2 })}`;
 }
 
 export default function ROIConsultationPage() {
@@ -62,8 +62,8 @@ export default function ROIConsultationPage() {
     .filter((c) => c.year > 0)
     .map((c) => ({
       year: `Y${c.year}`,
-      cumulative: c.cumulativeCashFlowCentavos / 100,
-      cost: capexTotalCentavos / 100,
+      cumulative: c.cumulativeCashFlow,
+      cost: capexTotalCentavos,
     }));
 
   return (

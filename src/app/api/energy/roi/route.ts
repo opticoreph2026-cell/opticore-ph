@@ -61,10 +61,10 @@ export async function POST(request: Request) {
     const {
       designId,
       selfConsumptionPct = 70,
-      capexTotalCentavos,
-      omAnnualCostCentavos = 500000,
+      capexTotal,
+      omAnnualCost = 5000,
       financingType = 'cash',
-      loanPrincipalCentavos = 0,
+      loanPrincipal = 0,
       loanInterestRatePct = 10,
       loanTermMonths = 60,
       annualDegradationPct = 0.6,
@@ -98,12 +98,12 @@ export async function POST(request: Request) {
       : design.estimatedAnnualYieldKwh;
 
     const capex =
-      capexTotalCentavos ??
+      capexTotal ??
       design.bomItems.reduce(
-        (s: number, i: { unitCostCentavos: number; quantity: number }) =>
-          s + i.unitCostCentavos * i.quantity,
+        (s: number, i: { unitCost: number; quantity: number }) =>
+          s + i.unitCost * i.quantity,
         0,
-      ) + 4000000;
+      ) + 40000;
 
     const energyFlow = computeAnnualEnergyFlow({
       annualPvGenerationKwh: design.estimatedAnnualYieldKwh,
@@ -114,7 +114,7 @@ export async function POST(request: Request) {
 
     const config: MultiYearConfig = {
       pathway,
-      capexTotalCentavos: capex,
+      capexTotal: capex,
       year1AllInRateRu: allInRateRu,
       year1BgcRateRu: bgcRateRu,
       year1AnnualLoadKwh: annualLoadKwh,
@@ -123,11 +123,11 @@ export async function POST(request: Request) {
       annualDegradationPct,
       annualRateEscalationPct,
       annualLoadGrowthPct: 0,
-      omAnnualCostCentavos,
+      omAnnualCost,
       analysisHorizonYears: 25,
       discountRatePct,
       financingType,
-      loanPrincipalCentavos: financingType === 'loan' ? loanPrincipalCentavos : 0,
+      loanPrincipal: financingType === 'loan' ? loanPrincipal : 0,
       loanAnnualInterestRatePct: loanInterestRatePct,
       loanTermMonths,
       utilityName,
@@ -142,12 +142,12 @@ export async function POST(request: Request) {
       energyFlow,
       headline,
       cashFlowByYear: cashFlow,
-      year1SavingsCentavos: headline.yearOneSavingsCentavos,
+      year1Savings: headline.yearOneSavings,
       simplePaybackYears: headline.simplePaybackYears,
-      npvCentavos: headline.npvCentavos,
+      npv: headline.npv,
       irrPct: headline.irrPct,
-      lcoeCentavosPerKwh: headline.lcoeCentavosPerKwh,
-      netBenefit25yrCentavos: headline.netBenefit25yrCentavos,
+      lcoePesosPerKwh: headline.lcoePesosPerKwh,
+      netBenefit25yr: headline.netBenefit25yr,
     };
 
     const scenario = await db.roiScenario.create({
@@ -157,14 +157,14 @@ export async function POST(request: Request) {
         pathway,
         selfConsumptionPct,
         exportPct: pathway === 'grid_tied_net_metered' ? 100 - selfConsumptionPct : 0,
-        capexTotalCentavos: capex,
+        capexTotal: capex,
         financingType,
         loanTermMonths: financingType === 'loan' ? loanTermMonths : null,
         loanInterestRatePct: financingType === 'loan' ? loanInterestRatePct : null,
         annualDegradationPct,
         annualRateEscalationPct,
         discountRatePct,
-        omAnnualCostCentavos,
+        omAnnualCost,
         analysisHorizonYears: 25,
         resultsJson: JSON.stringify(resultsJson),
         generatedById: session.sub,

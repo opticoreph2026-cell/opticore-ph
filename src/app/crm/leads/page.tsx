@@ -16,7 +16,7 @@ export default async function LeadsPage() {
       phone: true,
       city: true,
       customerType: true,
-      monthlyBillPhp: true,
+      monthlyBill: true,
       status: true,
       source: true,
       createdAt: true,
@@ -99,7 +99,7 @@ export default async function LeadsPage() {
                               <div className="text-xs text-gray-500">{lead.phone || '—'}</div>
                             </div>
                             <div className="text-gray-400">{lead.city || '—'}</div>
-                            <div>₱{(lead.monthlyBillPhp / 100).toLocaleString('en-PH', { minimumFractionDigits: 0 })}</div>
+                            <div>₱{lead.monthlyBill.toLocaleString('en-PH', { minimumFractionDigits: 2 })}</div>
                             <div className="text-gray-400 capitalize">{lead.source.replace(/_/g, ' ')}</div>
                             <div>
                               <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium capitalize ${statusColors[lead.status] ?? 'bg-white/5 text-gray-400'}`}>

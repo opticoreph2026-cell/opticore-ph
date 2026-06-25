@@ -3,7 +3,7 @@
  * @description ROI / Financial Computation Engine — OptiCore Energy Solutions
  *
  * Implements Part G formulas from the platform specification.
- * All functions are PURE (no DB calls). Money is always Int centavos (₱ × 100).
+ * Money is stored as Decimal(10,2) pesos. Rate units stay Int (₱/kWh × 10,000).
  *
  * CRITICAL RULE (Part G.1):
  *   Self-consumed kWh → saved at RETAIL (all-in) rate.
@@ -13,8 +13,7 @@
  *
  * Rate input format: Int rate units (₱/kWh × 10,000)
  *   e.g., ₱12.88/kWh → 128800 rate units
- *   Conversion: centavosPerKwh = rateUnits × kWh / 10_000 * 100
- *             → simplification: savings_centavos = rateUnits × kWh / 100
+ *   Conversion: savings_pesos = rateUnits × kWh / 10_000
  */
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -30,11 +29,10 @@ export interface EnergyFlowResult {
 }
 
 export interface Year1FinancialResult {
-  /** Centavos */
-  billWithoutSystemCentavos: number;
-  billWithSystemCentavos: number;
-  grossSavingsCentavos: number;
-  netSavingsCentavos: number;
+  billWithoutSystem: number;
+  billWithSystem: number;
+  grossSavings: number;
+  netSavings: number;
   /** Rate trace for audit/credibility */
   rateTrace: {
     utilityName: string;
@@ -52,11 +50,11 @@ export interface CashFlowYear {
   selfConsumedKwh: number;
   exportedKwh: number;
   gridImportedKwh: number;
-  grossSavingsCentavos: number;
-  omCostCentavos: number;
-  loanPaymentCentavos: number;
-  netCashFlowCentavos: number;       // savings - OM - loan payment (capex at year 0)
-  cumulativeCashFlowCentavos: number;
+  grossSavings: number;
+  omCost: number;
+  loanPayment: number;
+  netCashFlow: number;       // savings - OM - loan payment (capex at year 0)
+  cumulativeCashFlow: number;
   retailRateRu: number;
   bgcRateRu: number;
 }
@@ -64,19 +62,19 @@ export interface CashFlowYear {
 export interface HeadlineMetrics {
   simplePaybackYears: number;
   discountedPaybackYears: number | null;
-  npvCentavos: number;
+  npv: number;
   irrPct: number | null;
-  lcoeCentavosPerKwh: number;
-  yearOneSavingsCentavos: number;
-  netBenefit25yrCentavos: number;
+  lcoePesosPerKwh: number;
+  yearOneSavings: number;
+  netBenefit25yr: number;
   isCashFlowPositive: boolean;     // monthly savings > monthly loan payment
-  monthlyLoanPaymentCentavos: number;
-  monthlySavingsYear1Centavos: number;
+  monthlyLoanPayment: number;
+  monthlySavingsYear1: number;
 }
 
 export interface MultiYearConfig {
   pathway: DesignPathway;
-  capexTotalCentavos: number;
+  capexTotal: number;
   year1AllInRateRu: number;
   year1BgcRateRu: number;
   year1AnnualLoadKwh: number;
@@ -85,11 +83,11 @@ export interface MultiYearConfig {
   annualDegradationPct: number;    // e.g., 0.6
   annualRateEscalationPct: number; // e.g., 4
   annualLoadGrowthPct: number;     // e.g., 0 (default)
-  omAnnualCostCentavos: number;
+  omAnnualCost: number;
   analysisHorizonYears: number;
   discountRatePct: number;
   financingType: 'cash' | 'loan';
-  loanPrincipalCentavos?: number;
+  loanPrincipal?: number;
   loanAnnualInterestRatePct?: number;
   loanTermMonths?: number;
   utilityName: string;
@@ -146,37 +144,36 @@ export function computeAnnualEnergyFlow(params: {
  * CRITICAL: retailRateRu and bgcRateRu are ALWAYS treated as distinct.
  * For zero_export / off_grid: bgcRateRu is irrelevant (export = 0).
  *
- * Centavos formula:
- *   savings_centavos = rateRu × kWh / 100
- *   (because rateRu = ₱/kWh × 10,000 and centavos = ₱ × 100)
+ * Formula: savings_pesos = rateRu × kWh / 10_000
+ *   (rateRu = ₱/kWh × 10,000, so rateRu × kWh / 10_000 = ₱)
  */
 export function computeYear1Financials(params: {
   energyFlow: EnergyFlowResult;
   allInRateRu: number;           // retail rate in rate units
   bgcRateRu: number;             // BGC (export credit) rate in rate units
-  omAnnualCostCentavos: number;
+  omAnnualCost: number;
   rateTrace: Year1FinancialResult['rateTrace'];
 }): Year1FinancialResult {
-  const { energyFlow, allInRateRu, bgcRateRu, omAnnualCostCentavos, rateTrace } = params;
+  const { energyFlow, allInRateRu, bgcRateRu, omAnnualCost, rateTrace } = params;
 
   const totalAnnualLoadKwh = energyFlow.selfConsumedKwh + energyFlow.gridImportedKwh;
-  const billWithoutCentavos = Math.round(totalAnnualLoadKwh * allInRateRu / 100);
+  const billWithout = Math.round(totalAnnualLoadKwh * allInRateRu / 10000);
 
   // Bill WITH system:
   //   Pay for grid imports at retail rate
   //   Receive export credit at BGC (for net-metered only)
-  const gridImportCostCentavos = Math.round(energyFlow.gridImportedKwh * allInRateRu / 100);
-  const exportCreditCentavos = Math.round(energyFlow.exportedKwh * bgcRateRu / 100);
-  const billWithSystemCentavos = Math.max(gridImportCostCentavos - exportCreditCentavos, 0);
+  const gridImportCost = Math.round(energyFlow.gridImportedKwh * allInRateRu / 10000);
+  const exportCredit = Math.round(energyFlow.exportedKwh * bgcRateRu / 10000);
+  const billWithSystem = Math.max(gridImportCost - exportCredit, 0);
 
-  const grossSavingsCentavos = billWithoutCentavos - billWithSystemCentavos;
-  const netSavingsCentavos = grossSavingsCentavos - omAnnualCostCentavos;
+  const grossSavings = billWithout - billWithSystem;
+  const netSavings = grossSavings - omAnnualCost;
 
   return {
-    billWithoutSystemCentavos: billWithoutCentavos,
-    billWithSystemCentavos,
-    grossSavingsCentavos,
-    netSavingsCentavos,
+    billWithoutSystem: billWithout,
+    billWithSystem,
+    grossSavings,
+    netSavings,
     rateTrace,
   };
 }
@@ -188,9 +185,9 @@ export function computeYear1Financials(params: {
  * Year 0 = CapEx outflow. Year 1–N = annual net savings.
  */
 export function projectMultiYear(config: MultiYearConfig): CashFlowYear[] {
-  const monthlyLoanPayment = config.financingType === 'loan' && config.loanPrincipalCentavos
+  const monthlyLoanPayment = config.financingType === 'loan' && config.loanPrincipal
     ? computeMonthlyLoanPayment(
-        config.loanPrincipalCentavos,
+        config.loanPrincipal,
         config.loanAnnualInterestRatePct ?? 10,
         config.loanTermMonths ?? 60,
       )
@@ -198,7 +195,7 @@ export function projectMultiYear(config: MultiYearConfig): CashFlowYear[] {
 
   const annualLoanPayment = monthlyLoanPayment * 12;
   const rows: CashFlowYear[] = [];
-  let cumulativeCashFlow = -config.capexTotalCentavos;
+  let cumulativeCashFlow = -config.capexTotal;
 
   for (let t = 0; t <= config.analysisHorizonYears; t++) {
     if (t === 0) {
@@ -209,11 +206,11 @@ export function projectMultiYear(config: MultiYearConfig): CashFlowYear[] {
         selfConsumedKwh: 0,
         exportedKwh: 0,
         gridImportedKwh: config.year1AnnualLoadKwh,
-        grossSavingsCentavos: 0,
-        omCostCentavos: 0,
-        loanPaymentCentavos: 0,
-        netCashFlowCentavos: -config.capexTotalCentavos,
-        cumulativeCashFlowCentavos: -config.capexTotalCentavos,
+        grossSavings: 0,
+        omCost: 0,
+        loanPayment: 0,
+        netCashFlow: -config.capexTotal,
+        cumulativeCashFlow: -config.capexTotal,
         retailRateRu: config.year1AllInRateRu,
         bgcRateRu: config.year1BgcRateRu,
       });
@@ -233,13 +230,13 @@ export function projectMultiYear(config: MultiYearConfig): CashFlowYear[] {
       pathway: config.pathway,
     });
 
-    const gridImportCost = Math.round(energyFlow.gridImportedKwh * retailRateRu / 100);
-    const exportCredit = Math.round(energyFlow.exportedKwh * bgcRateRu / 100);
+    const gridImportCost = Math.round(energyFlow.gridImportedKwh * retailRateRu / 10000);
+    const exportCredit = Math.round(energyFlow.exportedKwh * bgcRateRu / 10000);
     const billWith = Math.max(gridImportCost - exportCredit, 0);
-    const billWithout = Math.round(scaledLoad * retailRateRu / 100);
+    const billWithout = Math.round(scaledLoad * retailRateRu / 10000);
     const grossSavings = billWithout - billWith;
 
-    const omCost = Math.round(config.omAnnualCostCentavos * Math.pow(1.02, t - 1)); // 2% OM escalation
+    const omCost = Math.round(config.omAnnualCost * Math.pow(1.02, t - 1)); // 2% OM escalation
     const loanPayment = t <= (config.loanTermMonths ? Math.ceil(config.loanTermMonths / 12) : 0)
       ? annualLoanPayment
       : 0;
@@ -254,11 +251,11 @@ export function projectMultiYear(config: MultiYearConfig): CashFlowYear[] {
       selfConsumedKwh: Math.round(energyFlow.selfConsumedKwh * 10) / 10,
       exportedKwh: Math.round(energyFlow.exportedKwh * 10) / 10,
       gridImportedKwh: Math.round(energyFlow.gridImportedKwh * 10) / 10,
-      grossSavingsCentavos: grossSavings,
-      omCostCentavos: omCost,
-      loanPaymentCentavos: loanPayment,
-      netCashFlowCentavos: netCashFlow,
-      cumulativeCashFlowCentavos: cumulativeCashFlow,
+      grossSavings,
+      omCost,
+      loanPayment,
+      netCashFlow,
+      cumulativeCashFlow,
       retailRateRu,
       bgcRateRu,
     });
@@ -276,40 +273,40 @@ export function computeHeadlineMetrics(
   cashFlows: CashFlowYear[],
   config: Pick<
     MultiYearConfig,
-    | 'capexTotalCentavos'
+    | 'capexTotal'
     | 'discountRatePct'
     | 'financingType'
-    | 'loanPrincipalCentavos'
+    | 'loanPrincipal'
     | 'loanAnnualInterestRatePct'
     | 'loanTermMonths'
   >,
 ): HeadlineMetrics {
   const discountRate = config.discountRatePct / 100;
   const year1 = cashFlows.find((c) => c.year === 1);
-  const yearOneSavingsCentavos = year1?.netCashFlowCentavos ?? 0;
+  const yearOneSavings = year1?.netCashFlow ?? 0;
 
   // Simple payback = CapEx / Year-1 net savings
   const simplePaybackYears =
-    yearOneSavingsCentavos > 0 ? config.capexTotalCentavos / yearOneSavingsCentavos : Infinity;
+    yearOneSavings > 0 ? config.capexTotal / yearOneSavings : Infinity;
 
   // Discounted payback = first year where cumulative discounted CF ≥ 0
-  let cumulativeDiscounted = -config.capexTotalCentavos;
+  let cumulativeDiscounted = -config.capexTotal;
   let discountedPaybackYears: number | null = null;
-  let npv = -config.capexTotalCentavos;
+  let npv = -config.capexTotal;
 
   const productionRows = cashFlows.filter((c) => c.year > 0);
 
   // Total discounted PV output for LCOE
   let totalDiscountedYield = 0;
-  let totalDiscountedCost = config.capexTotalCentavos;
+  let totalDiscountedCost = config.capexTotal;
 
   for (const row of productionRows) {
     const discountFactor = Math.pow(1 + discountRate, row.year);
-    const discountedCF = row.netCashFlowCentavos / discountFactor;
+    const discountedCF = row.netCashFlow / discountFactor;
     cumulativeDiscounted += discountedCF;
     npv += discountedCF;
     totalDiscountedYield += row.pvYieldKwh / discountFactor;
-    totalDiscountedCost += row.omCostCentavos / discountFactor;
+    totalDiscountedCost += row.omCost / discountFactor;
 
     if (discountedPaybackYears === null && cumulativeDiscounted >= 0) {
       discountedPaybackYears = row.year;
@@ -320,45 +317,44 @@ export function computeHeadlineMetrics(
   const irrPct = solveIRR(cashFlows);
 
   // LCOE = (CapEx + PV of OM costs) / PV of lifetime yield
-  // In centavos per kWh: totalDiscountedCost [centavos] / totalDiscountedYield [kWh]
-  const lcoeCentavosPerKwh = totalDiscountedYield > 0
-    ? Math.round(totalDiscountedCost / totalDiscountedYield)
+  const lcoePesosPerKwh = totalDiscountedYield > 0
+    ? Math.round(totalDiscountedCost / totalDiscountedYield * 100) / 100
     : 0;
 
-  // 25-year net benefit (year 0 already includes -capexTotalCentavos)
-  const netBenefit25yrCentavos =
+  // 25-year net benefit (year 0 already includes -capexTotal)
+  const netBenefit25yr =
     cashFlows.filter((c) => c.year >= 0 && c.year <= 25).reduce(
-      (sum, c) => sum + c.netCashFlowCentavos,
+      (sum, c) => sum + c.netCashFlow,
       0,
     );
 
   // Cash-flow-positive for loan scenarios
-  const monthlyLoanPaymentCentavos =
-    config.financingType === 'loan' && config.loanPrincipalCentavos
+  const monthlyLoanPayment =
+    config.financingType === 'loan' && config.loanPrincipal
       ? computeMonthlyLoanPayment(
-          config.loanPrincipalCentavos,
+          config.loanPrincipal,
           config.loanAnnualInterestRatePct ?? 10,
           config.loanTermMonths ?? 60,
         )
       : 0;
 
-  const monthlySavingsYear1Centavos = Math.round(yearOneSavingsCentavos / 12);
+  const monthlySavingsYear1 = Math.round(yearOneSavings / 12);
   const isCashFlowPositive =
     config.financingType === 'loan'
-      ? monthlySavingsYear1Centavos > monthlyLoanPaymentCentavos
+      ? monthlySavingsYear1 > monthlyLoanPayment
       : true;
 
   return {
     simplePaybackYears: Math.round(simplePaybackYears * 10) / 10,
     discountedPaybackYears,
-    npvCentavos: Math.round(npv),
+    npv: Math.round(npv),
     irrPct: irrPct !== null ? Math.round(irrPct * 10) / 10 : null,
-    lcoeCentavosPerKwh,
-    yearOneSavingsCentavos,
-    netBenefit25yrCentavos: Math.round(netBenefit25yrCentavos),
+    lcoePesosPerKwh,
+    yearOneSavings,
+    netBenefit25yr: Math.round(netBenefit25yr),
     isCashFlowPositive,
-    monthlyLoanPaymentCentavos: Math.round(monthlyLoanPaymentCentavos),
-    monthlySavingsYear1Centavos,
+    monthlyLoanPayment: Math.round(monthlyLoanPayment),
+    monthlySavingsYear1,
   };
 }
 
@@ -366,23 +362,23 @@ export function computeHeadlineMetrics(
 
 /**
  * Standard amortization formula.
- * Returns monthly payment in centavos.
+ * Returns monthly payment in pesos.
  */
 export function computeMonthlyLoanPayment(
-  principalCentavos: number,
+  principal: number,
   annualInterestRatePct: number,
   termMonths: number,
 ): number {
-  if (annualInterestRatePct === 0) return Math.round(principalCentavos / termMonths);
+  if (annualInterestRatePct === 0) return Math.round(principal / termMonths);
   const monthlyRate = annualInterestRatePct / 100 / 12;
   const factor = Math.pow(1 + monthlyRate, termMonths);
-  return Math.round((principalCentavos * monthlyRate * factor) / (factor - 1));
+  return Math.round((principal * monthlyRate * factor) / (factor - 1));
 }
 
 // ─── IRR Solver (bisection) ───────────────────────────────────────────────────
 
 function solveIRR(cashFlows: CashFlowYear[]): number | null {
-  const flows = cashFlows.map((c) => c.netCashFlowCentavos);
+  const flows = cashFlows.map((c) => c.netCashFlow);
   if (flows[0] === undefined || flows[0] >= 0) return null; // CapEx must be negative at t=0
 
   function npvAtRate(r: number): number {
@@ -417,12 +413,12 @@ export function phpPerKwhToRateUnit(phpPerKwh: number): number {
   return Math.round(phpPerKwh * 10000);
 }
 
-/** Convert centavos to ₱ display string */
-export function centavosToPhpDisplay(centavos: number): string {
-  return (centavos / 100).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+/** Convert pesos to ₱ display string */
+export function pesosToPhpDisplay(pesos: number): string {
+  return pesos.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
-/** Convert centavos to ₱ with symbol */
-export function formatPhp(centavos: number): string {
-  return `₱${centavosToPhpDisplay(centavos)}`;
+/** Convert pesos to ₱ with symbol */
+export function formatPhp(pesos: number): string {
+  return `₱${pesosToPhpDisplay(pesos)}`;
 }

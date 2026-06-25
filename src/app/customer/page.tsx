@@ -171,7 +171,7 @@ export default async function CustomerDashboard() {
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm font-bold text-white">₱{(q.grandTotalCentavos / 100).toLocaleString('en-PH')}</p>
+                      <p className="text-sm font-bold text-white">₱{q.grandTotal.toLocaleString('en-PH')}</p>
                       <span className={`text-xs capitalize ${
                         q.status === 'accepted' ? 'text-accent-emerald' :
                         q.status === 'rejected' ? 'text-accent-rose' :

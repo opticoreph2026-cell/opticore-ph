@@ -10,7 +10,7 @@ interface ProductRow {
   id: string;
   modelName: string;
   sku: string;
-  unitPriceCentavos: number;
+  unitPrice: number;
   isPriceConfirmed: boolean;
   _category: string;
   _spec: string;
@@ -115,7 +115,7 @@ export function CatalogTable({ initialProducts }: { initialProducts: ProductRow[
                   <InlinePriceEdit
                     id={p.id}
                     category={p._category as 'inverter' | 'battery' | 'panel'}
-                    currentPriceCentavos={p.unitPriceCentavos}
+                    currentPrice={p.unitPrice}
                     isConfirmed={p.isPriceConfirmed}
                     apiPath={`/api/admin/products/${p.id}`}
                   />

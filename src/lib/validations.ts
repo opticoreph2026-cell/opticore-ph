@@ -19,7 +19,7 @@ export const createLeadSchema = z.object({
   city: z.string().max(100).optional().nullable(),
   province: z.string().max(100).optional().nullable(),
   customerType: z.enum(['residential', 'commercial', 'small_commercial', 'industrial']).default('residential'),
-  monthlyBillPhp: z.number().int().min(0).optional().nullable(),
+  monthlyBill: z.number().min(0).optional().nullable(),
   source: z.string().max(50).optional().nullable(),
   notes: z.string().max(2000).optional().nullable(),
 });
@@ -43,7 +43,7 @@ export const designComputeSchema = z.object({
   leadId: z.string().uuid(),
   save: z.boolean().default(false),
   averageMonthlyKwh: z.number().positive().optional(),
-  averageMonthlyBillCentavos: z.number().int().positive().optional(),
+  averageMonthlyBill: z.number().positive().optional(),
   gridConnectionType: gridConnectionEnum.default('single_phase'),
   designPathway: designPathwayEnum.default('zero_export_hybrid'),
   customerType: customerTypeEnum.default('residential'),
@@ -68,10 +68,10 @@ export const createQuotationSchema = z.object({
   customerId: z.string().uuid(),
   designId: z.string().uuid(),
   roiScenarioId: z.string().uuid().optional().nullable(),
-  hardwareSubtotalCentavos: z.number().int().min(0).default(0),
-  installationFeeCentavos: z.number().int().min(0).default(0),
-  designFeeCentavos: z.number().int().min(0).default(0),
-  grandTotalCentavos: z.number().int().min(0).default(0),
+  hardwareSubtotal: z.number().min(0).default(0),
+  installationFee: z.number().min(0).default(0),
+  designFee: z.number().min(0).default(0),
+  grandTotal: z.number().min(0).default(0),
   validUntil: z.string().optional().nullable(),
   notes: z.string().max(2000).optional().nullable(),
 });
@@ -86,14 +86,14 @@ const QUOTATION_STATUS_TRANSITIONS: Record<string, string[]> = {
 
 export const updateQuotationSchema = z.object({
   status: z.string().optional(),
-  hardwareSubtotalCentavos: z.number().int().min(0).optional(),
-  installationFeeCentavos: z.number().int().min(0).optional(),
-  designFeeCentavos: z.number().int().min(0).optional(),
-  grandTotalCentavos: z.number().int().min(0).optional(),
+  hardwareSubtotal: z.number().min(0).optional(),
+  installationFee: z.number().min(0).optional(),
+  designFee: z.number().min(0).optional(),
+  grandTotal: z.number().min(0).optional(),
   notes: z.string().max(2000).optional().nullable(),
   vatTreatment: z.enum(['vat_inclusive', 'vat_exclusive', 'vat_exempt']).optional(),
   depositRequiredPct: z.number().min(0).max(100).optional(),
-  maintenanceContractOfferCentavos: z.number().int().min(0).optional(),
+  maintenanceContractOffer: z.number().min(0).optional(),
 });
 
 export function getQuotationStatusTransitions() {
@@ -120,7 +120,7 @@ export const changePasswordSchema = z.object({
 export const onboardingSchema = z.object({
   siteAddress: z.string().min(1, 'Address is required').max(500),
   utilityCompanyId: z.string().min(1, 'Utility company is required'),
-  averageBill: z.number().int().min(0, 'Average bill is required'),
+  averageBill: z.number().min(0, 'Average bill is required'),
   province: z.string().max(100).optional().nullable(),
   city: z.string().max(100).optional().nullable(),
 });
@@ -128,13 +128,13 @@ export const onboardingSchema = z.object({
 export const updateRoiSchema = z.object({
   scenarioLabel: z.string().max(200).optional(),
   selfConsumptionPct: z.number().min(0).max(100).optional(),
-  capexTotalCentavos: z.number().int().min(0).optional(),
+  capexTotal: z.number().min(0).optional(),
   financingType: z.enum(['cash', 'loan', 'lease']).optional(),
   loanTermMonths: z.number().int().min(0).optional().nullable(),
   loanInterestRatePct: z.number().min(0).max(100).optional().nullable(),
   annualDegradationPct: z.number().min(0).max(100).optional(),
   annualRateEscalationPct: z.number().min(0).max(100).optional(),
   discountRatePct: z.number().min(0).max(100).optional(),
-  omAnnualCostCentavos: z.number().int().min(0).optional(),
+  omAnnualCost: z.number().min(0).optional(),
   analysisHorizonYears: z.number().int().min(1).max(50).optional(),
 });

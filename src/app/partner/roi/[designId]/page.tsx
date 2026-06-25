@@ -12,8 +12,8 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 
-function formatPhp(centavos: number) {
-  return `\u20B1${(centavos / 100).toLocaleString('en-PH', { maximumFractionDigits: 0 })}`;
+function formatPhp(pesos: number) {
+  return `\u20B1${pesos.toLocaleString('en-PH', { minimumFractionDigits: 2 })}`;
 }
 
 export default function PartnerROIPage() {
@@ -62,8 +62,8 @@ export default function PartnerROIPage() {
     .filter((c) => c.year > 0)
     .map((c) => ({
       year: `Y${c.year}`,
-      cumulative: c.cumulativeCashFlowCentavos / 100,
-      cost: capexTotalCentavos / 100,
+      cumulative: c.cumulativeCashFlow,
+      cost: capexTotalCentavos,
     }));
 
   return (

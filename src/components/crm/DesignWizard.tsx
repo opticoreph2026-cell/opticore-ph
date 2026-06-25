@@ -33,7 +33,7 @@ interface Lead {
   fullName: string;
   phone?: string | null;
   province?: string | null;
-  monthlyBillPhp: number;
+  monthlyBill: number;
   customerType: string;
 }
 
@@ -62,9 +62,9 @@ interface WizardForm {
   allInRatePhp: number;
 }
 
-function formatPhp(centavos: number) {
-  return `₱${(centavos / 100).toLocaleString('en-PH', { maximumFractionDigits: 0 })}`;
-}
+  function formatPhp(pesos: number) {
+    return `₱${pesos.toLocaleString('en-PH', { maximumFractionDigits: 2 })}`;
+  }
 
 export function DesignWizard({ basePath = '/crm' }: { basePath?: string }) {
   const router = useRouter();
@@ -112,7 +112,7 @@ export function DesignWizard({ basePath = '/crm' }: { basePath?: string }) {
   const onLeadChange = (leadId: string) => {
     const lead = leads.find((l) => l.id === leadId);
     if (lead) {
-      const bill = lead.monthlyBillPhp / 100 || 10000;
+      const bill = lead.monthlyBill || 10000;
       const kwh = Math.round(bill / form.allInRatePhp);
       setForm((f) => ({
         ...f,
@@ -138,7 +138,7 @@ export function DesignWizard({ basePath = '/crm' }: { basePath?: string }) {
             leadId: form.leadId,
             save,
             averageMonthlyKwh: form.averageMonthlyKwh,
-            averageMonthlyBillCentavos: Math.round(form.averageMonthlyBill * 100),
+            averageMonthlyBill: form.averageMonthlyBill,
             gridConnectionType: form.gridConnectionType,
             designPathway: form.designPathway,
             customerType: form.customerType,
@@ -177,7 +177,7 @@ export function DesignWizard({ basePath = '/crm' }: { basePath?: string }) {
         body: JSON.stringify({
           designId,
           selfConsumptionPct: form.selfConsumptionPct,
-          capexTotalCentavos: computeResult.grandTotalCentavos,
+          capexTotal: computeResult.grandTotal,
           allInRateRu: Math.round(form.allInRatePhp * 10000),
           bgcRateRu: Math.round(form.allInRatePhp * 0.65 * 10000),
           annualRateEscalationPct: 5,
@@ -208,10 +208,10 @@ export function DesignWizard({ basePath = '/crm' }: { basePath?: string }) {
           customerId,
           designId,
           roiScenarioId,
-          hardwareSubtotalCentavos: computeResult.hardwareSubtotalCentavos,
-          installationFeeCentavos: computeResult.installationFeeCentavos,
-          designFeeCentavos: computeResult.designFeeCentavos,
-          grandTotalCentavos: computeResult.grandTotalCentavos,
+          hardwareSubtotal: computeResult.hardwareSubtotal,
+          installationFee: computeResult.installationFee,
+          designFee: computeResult.designFee,
+          grandTotal: computeResult.grandTotal,
         }),
       });
       const json = await res.json();
@@ -620,23 +620,23 @@ export function DesignWizard({ basePath = '/crm' }: { basePath?: string }) {
                   <tr key={i}>
                     <td className="py-3">{item.description}</td>
                     <td className="py-3 text-right">{item.quantity}</td>
-                    <td className="py-3 text-right">{formatPhp(item.totalCentavos)}</td>
+                    <td className="py-3 text-right">{formatPhp(item.total)}</td>
                   </tr>
                 ))}
                 <tr>
                   <td className="py-3">Installation & commissioning (est.)</td>
                   <td className="py-3 text-right">1</td>
-                  <td className="py-3 text-right">{formatPhp(computeResult.installationFeeCentavos)}</td>
+                  <td className="py-3 text-right">{formatPhp(computeResult.installationFee)}</td>
                 </tr>
                 <tr>
                   <td className="py-3">Design & engineering fee</td>
                   <td className="py-3 text-right">1</td>
-                  <td className="py-3 text-right">{formatPhp(computeResult.designFeeCentavos)}</td>
+                  <td className="py-3 text-right">{formatPhp(computeResult.designFee)}</td>
                 </tr>
                 <tr>
                   <td className="py-3">Permits & DU filing</td>
                   <td className="py-3 text-right">1</td>
-                  <td className="py-3 text-right">{formatPhp(computeResult.permitFeeCentavos)}</td>
+                  <td className="py-3 text-right">{formatPhp(computeResult.permitFee)}</td>
                 </tr>
               </tbody>
               <tfoot>
@@ -645,7 +645,7 @@ export function DesignWizard({ basePath = '/crm' }: { basePath?: string }) {
                     Grand Total (excl. VAT):
                   </td>
                   <td className="py-4 text-right text-xl font-bold text-accent-cyan">
-                    {formatPhp(computeResult.grandTotalCentavos)}
+                    {formatPhp(computeResult.grandTotal)}
                   </td>
                 </tr>
               </tfoot>
@@ -679,7 +679,7 @@ export function DesignWizard({ basePath = '/crm' }: { basePath?: string }) {
             </div>
             <div className="bg-[#16161D] rounded-xl p-5 border border-accent-blue/20">
               <p className="text-sm text-white/60 mb-1">System Investment</p>
-              <p className="text-2xl font-bold text-white">{formatPhp(computeResult.grandTotalCentavos)}</p>
+              <p className="text-2xl font-bold text-white">{formatPhp(computeResult.grandTotal)}</p>
               <p className="text-xs text-white/40 mt-2">
                 25-year projection with {form.allInRatePhp} ₱/kWh + 5% annual rate escalation
               </p>
@@ -702,15 +702,15 @@ export function DesignWizard({ basePath = '/crm' }: { basePath?: string }) {
                 <MetricCard label="Payback" value={`${roiResults.simplePaybackYears?.toFixed?.(1) ?? roiResults.headline?.simplePaybackYears?.toFixed?.(1) ?? '—'} yrs`} />
                 <MetricCard
                   label="Year 1 Savings"
-                  value={formatPhp(roiResults.year1SavingsCentavos ?? roiResults.headline?.yearOneSavingsCentavos ?? 0)}
+                  value={formatPhp(roiResults.year1Savings ?? roiResults.headline?.yearOneSavings ?? 0)}
                 />
                 <MetricCard
                   label="NPV (25yr)"
-                  value={formatPhp(roiResults.npvCentavos ?? roiResults.headline?.npvCentavos ?? 0)}
+                  value={formatPhp(roiResults.npv ?? roiResults.headline?.npv ?? 0)}
                 />
                 <MetricCard
                   label="Total Investment"
-                  value={formatPhp(computeResult?.grandTotalCentavos ?? 0)}
+                  value={formatPhp(computeResult?.grandTotal ?? 0)}
                 />
               </div>
             )}

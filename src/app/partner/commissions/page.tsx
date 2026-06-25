@@ -25,11 +25,11 @@ export default async function PartnerCommissionsPage() {
 
   const totalEarned = (commissions as any[])
     .filter((c: any) => c.status === 'paid')
-    .reduce((sum: number, c: any) => sum + c.amountCentavos, 0);
+    .reduce((sum: number, c: any) => sum + c.amount, 0);
 
   const pendingEarned = (commissions as any[])
     .filter((c: any) => c.status === 'pending')
-    .reduce((sum: number, c: any) => sum + c.amountCentavos, 0);
+    .reduce((sum: number, c: any) => sum + c.amount, 0);
 
   const paidThisMonth = (commissions as any[])
     .filter((c: any) => {
@@ -38,7 +38,7 @@ export default async function PartnerCommissionsPage() {
       const now = new Date();
       return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
     })
-    .reduce((sum: number, c: any) => sum + c.amountCentavos, 0);
+    .reduce((sum: number, c: any) => sum + c.amount, 0);
 
   return (
     <div className="space-y-8">
@@ -93,7 +93,7 @@ export default async function PartnerCommissionsPage() {
                       {comm.project?.contract?.quotation?.customer?.fullName || 'Unknown'}
                     </td>
                     <td className="px-6 py-4 capitalize">{comm.roleInProject.replace(/_/g, ' ')}</td>
-                    <td className="px-6 py-4">₱{(comm.amountCentavos / 100).toLocaleString()}</td>
+                    <td className="px-6 py-4">₱{comm.amount.toLocaleString()}</td>
                     <td className="px-6 py-4">
                       <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
                         comm.status === 'paid'

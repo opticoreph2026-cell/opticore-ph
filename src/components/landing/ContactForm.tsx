@@ -4,6 +4,7 @@ import React, { useState, useRef } from 'react';
 import { useTranslations } from 'next-intl';
 import { useSearchParams } from 'next/navigation';
 import { Spinner } from '@/components/ui/Spinner';
+import { roundMoney } from '@/lib/money';
 
 const PROVINCES = ['Cebu', 'Bohol', 'Leyte', 'Other'] as const;
 
@@ -79,7 +80,7 @@ export function ContactForm() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...form,
-          monthlyBillPhp: form.monthlyBillPhp * 100,
+          monthlyBill: roundMoney(form.monthlyBillPhp),
           source: 'website_contact',
         }),
       });

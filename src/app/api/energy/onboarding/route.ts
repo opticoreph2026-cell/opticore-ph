@@ -1,6 +1,7 @@
 import 'server-only';
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { roundMoney } from '@/lib/money';
 import { getSession } from '@/lib/session';
 import { onboardingSchema } from '@/lib/validations';
 
@@ -68,7 +69,7 @@ export async function POST(request: NextRequest) {
           addressLine: siteAddress,
           customerType: 'residential',
           utilityCompanyId: utilityCompany.id,
-          monthlyBillPhp: averageBill * 100,
+          monthlyBill: roundMoney(averageBill),
           status: 'new',
         },
       });

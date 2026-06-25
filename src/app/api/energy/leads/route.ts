@@ -53,7 +53,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: parsed.error.flatten().fieldErrors }, { status: 422 });
     }
 
-    const { fullName, phone, email, addressLine, city, province, customerType, monthlyBillPhp, source, notes } = parsed.data;
+    const { fullName, phone, email, addressLine, city, province, customerType, monthlyBill, source, notes } = parsed.data;
 
     if (email) {
       const existing = await db.energyLead.findFirst({
@@ -75,7 +75,7 @@ export async function POST(request: Request) {
         city,
         province,
         customerType: customerType || 'residential',
-        monthlyBillPhp: monthlyBillPhp || 0,
+        monthlyBill: monthlyBill || 0,
         source: source || 'website_calc',
         status: 'new',
         notes,

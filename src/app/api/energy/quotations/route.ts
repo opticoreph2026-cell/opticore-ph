@@ -61,10 +61,10 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: parsed.error.flatten().fieldErrors }, { status: 422 });
     }
 
-    const { customerId, designId, roiScenarioId, hardwareSubtotalCentavos, installationFeeCentavos, designFeeCentavos, grandTotalCentavos, validUntil, notes } = parsed.data;
+    const { customerId, designId, roiScenarioId, hardwareSubtotal, installationFee, designFee, grandTotal, validUntil, notes } = parsed.data;
 
-    const computedTotal = (hardwareSubtotalCentavos ?? 0) + (installationFeeCentavos ?? 0) + (designFeeCentavos ?? 0);
-    const finalTotal = grandTotalCentavos ?? computedTotal;
+    const computedTotal = (hardwareSubtotal ?? 0) + (installationFee ?? 0) + (designFee ?? 0);
+    const finalTotal = grandTotal ?? computedTotal;
 
     const quotation = await db.energyQuotation.create({
       data: {
@@ -75,10 +75,10 @@ export async function POST(request: Request) {
         validUntil: validUntil
           ? new Date(validUntil)
           : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-        hardwareSubtotalCentavos: hardwareSubtotalCentavos ?? 0,
-        installationFeeCentavos: installationFeeCentavos ?? 0,
-        designFeeCentavos: designFeeCentavos ?? 0,
-        grandTotalCentavos: finalTotal,
+        hardwareSubtotal: hardwareSubtotal ?? 0,
+        installationFee: installationFee ?? 0,
+        designFee: designFee ?? 0,
+        grandTotal: finalTotal,
         depositRequiredPct: 50,
         status: 'draft',
         notes: notes ?? null,

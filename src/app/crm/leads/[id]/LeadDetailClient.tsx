@@ -50,7 +50,7 @@ interface LeadData {
   city?: string | null;
   province?: string | null;
   customerType: string;
-  monthlyBillPhp: number;
+  monthlyBill: number;
   status: string;
   source: string;
   notes?: string | null;
@@ -163,7 +163,7 @@ export default function LeadDetailClient({
   };
 
   const formatMoney = (centavos: number) =>
-    `₱${(centavos / 100).toLocaleString('en-PH', { minimumFractionDigits: 0 })}`;
+    `₱${centavos.toLocaleString('en-PH', { minimumFractionDigits: 2 })}`;
 
   const formatDate = (d: string) =>
     new Date(d).toLocaleDateString('en-PH', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });
@@ -217,7 +217,7 @@ export default function LeadDetailClient({
         )}
         <div className="flex items-center gap-2 text-sm text-gray-400">
           <Building className="w-4 h-4 text-purple-400" />
-          <span>{formatMoney(lead.monthlyBillPhp)}/mo est.</span>
+          <span>{formatMoney(lead.monthlyBill)}/mo est.</span>
         </div>
       </div>
 

@@ -46,10 +46,10 @@ export async function GET(
     const panelCount = quotation.design?.pvPanelCount
       ? `${quotation.design.pvPanelCount} × ${quotation.design.pvPanelWattage}W`
       : 'N/A';
-    const systemCost = quotation.grandTotalCentavos / 100;
-    const hardwareCost = quotation.hardwareSubtotalCentavos / 100;
-    const installationFee = quotation.installationFeeCentavos / 100;
-    const designFee = quotation.designFeeCentavos / 100;
+    const systemCost = quotation.grandTotal;
+    const hardwareCost = quotation.hardwareSubtotal;
+    const installationFee = quotation.installationFee;
+    const designFee = quotation.designFee;
     const depositPct = quotation.depositRequiredPct;
     const validUntil = new Date(quotation.validUntil).toLocaleDateString('en-PH', {
       month: 'long', day: 'numeric', year: 'numeric',
@@ -66,8 +66,8 @@ export async function GET(
         try { results = JSON.parse(results); } catch { results = null; }
       }
       if (results) {
-        year1Savings = Math.round((results.year1SavingsCentavos ?? results.headline?.year1SavingsCentavos ?? 0) / 100);
-        lifetimeSavings = Math.round((results.npvCentavos ?? results.headline?.npvCentavos ?? 0) / 100);
+        year1Savings = results.year1SavingsCentavos ?? results.headline?.year1SavingsCentavos ?? 0;
+        lifetimeSavings = results.npvCentavos ?? results.headline?.npvCentavos ?? 0;
         paybackYears = results.simplePaybackYears ?? results.headline?.simplePaybackYears ?? 0;
         irr = results.irr ?? results.headline?.irr ?? 0;
       }

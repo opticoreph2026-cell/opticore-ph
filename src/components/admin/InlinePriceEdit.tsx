@@ -5,14 +5,14 @@ import React, { useState } from 'react';
 interface InlinePriceEditProps {
   id: string;
   category: 'inverter' | 'battery' | 'panel';
-  currentPriceCentavos: number;
+  currentPrice: number;
   isConfirmed: boolean;
   apiPath: string;
 }
 
-export function InlinePriceEdit({ id, category, currentPriceCentavos, isConfirmed, apiPath }: InlinePriceEditProps) {
+export function InlinePriceEdit({ id, category, currentPrice, isConfirmed, apiPath }: InlinePriceEditProps) {
   const [editing, setEditing] = useState(false);
-  const [price, setPrice] = useState(String(currentPriceCentavos / 100));
+  const [price, setPrice] = useState(String(currentPrice));
   const [confirmed, setConfirmed] = useState(isConfirmed);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -20,11 +20,11 @@ export function InlinePriceEdit({ id, category, currentPriceCentavos, isConfirme
   const handleSave = async () => {
     setSaving(true);
     try {
-      const newCentavos = Math.round(parseFloat(price) * 100);
+      const newPrice = parseFloat(price);
       const res = await fetch(apiPath, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ category, unitPriceCentavos: newCentavos, isPriceConfirmed: true }),
+        body: JSON.stringify({ category, unitPrice: newPrice, isPriceConfirmed: true }),
       });
       if (!res.ok) throw new Error('Failed');
       setConfirmed(true);
@@ -67,11 +67,11 @@ export function InlinePriceEdit({ id, category, currentPriceCentavos, isConfirme
   return (
     <button
       type="button"
-      onClick={() => { setEditing(true); setPrice(String(currentPriceCentavos / 100)); }}
+      onClick={() => { setEditing(true); setPrice(String(currentPrice)); }}
       className="text-sm text-white font-mono hover:text-accent-cyan transition-colors"
       title="Click to edit price"
     >
-      \u20B1{(currentPriceCentavos / 100).toLocaleString('en-PH', { minimumFractionDigits: 2 })}
+      \u20B1{currentPrice.toLocaleString('en-PH', { minimumFractionDigits: 2 })}
       {!confirmed && <span className="ml-1 text-[10px] text-accent-cyan">(est.)</span>}
     </button>
   );

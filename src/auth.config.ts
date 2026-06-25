@@ -7,11 +7,12 @@ export const authConfig = {
   },
   session: {
     strategy: 'jwt',
-    maxAge: 7 * 24 * 60 * 60,
   },
   callbacks: {
     authorized({ auth, request }) {
-      const { pathname } = request.nextUrl;
+      let { pathname } = request.nextUrl;
+      // Strip locale prefix for locale-aware protected path matching
+      pathname = pathname.replace(/^\/(en|fil)\//, '/');
       const protectedPrefixes = ['/crm', '/partner', '/customer', '/admin'];
       const isProtected = protectedPrefixes.some((p) => pathname.startsWith(p));
       const isEnergyApi =

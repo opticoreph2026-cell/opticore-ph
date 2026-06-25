@@ -65,7 +65,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: parsed.error.flatten().fieldErrors }, { status: 422 });
     }
 
-    const { leadId, save, averageMonthlyKwh, averageMonthlyBillCentavos, gridConnectionType, designPathway, customerType, peakSunHours, targetOffsetPct, panelWattage, backupAutonomyHours, criticalLoads, availableRoofAreaSqm } = parsed.data;
+    const { leadId, save, averageMonthlyKwh, averageMonthlyBill, gridConnectionType, designPathway, customerType, peakSunHours, targetOffsetPct, panelWattage, backupAutonomyHours, criticalLoads, availableRoofAreaSqm } = parsed.data;
 
     const { lead, customer, site } = await ensureCustomerAndSite(leadId);
 
@@ -76,8 +76,8 @@ export async function POST(request: Request) {
     ]);
 
     const input: DesignComputeInput = {
-      averageMonthlyKwh: Number(averageMonthlyKwh) || lead.monthlyBillPhp / 100 / 10.5,
-      averageMonthlyBillCentavos: Number(averageMonthlyBillCentavos) || lead.monthlyBillPhp,
+      averageMonthlyKwh: Number(averageMonthlyKwh) || (lead.monthlyBill ? lead.monthlyBill / 10.5 : 0),
+      averageMonthlyBill: Number(averageMonthlyBill) || lead.monthlyBill || 0,
       gridConnectionType: gridConnectionType as GridConnectionType,
       designPathway: designPathway as DesignPathway,
       customerType: customerType || lead.customerType,
@@ -87,10 +87,10 @@ export async function POST(request: Request) {
       backupAutonomyHours: Number(backupAutonomyHours),
       criticalLoads: criticalLoads as CriticalLoad[],
       availableRoofAreaSqm: availableRoofAreaSqm ? Number(availableRoofAreaSqm) : undefined,
-      panelPriceCentavos: undefined, // callers should set; falls back to ESTIMATED_PANEL_PRICE_CENTAVOS
+      panelPrice: undefined, // callers should set; falls back to ESTIMATED_PANEL_PRICE
       installationFeePct: feeConfig ? Number(feeConfig.installationPct) / 10000 : undefined,
-      designFeeCentavos: feeConfig?.designFeeCentavos ?? undefined,
-      permitFeeCentavos: feeConfig?.permitFeeCentavos ?? undefined,
+      designFee: feeConfig?.designFee ?? undefined,
+      permitFee: feeConfig?.permitFee ?? undefined,
     };
 
     const result = runDesignCompute(
@@ -123,7 +123,7 @@ export async function POST(request: Request) {
         siteId: site.id,
         assessedById: profile?.id ?? null,
         averageMonthlyKwh: input.averageMonthlyKwh,
-        averageMonthlyBillPhp: input.averageMonthlyBillCentavos,
+        averageMonthlyBill: input.averageMonthlyBill,
         gridConnectionType: input.gridConnectionType,
         backupAutonomyHours: input.backupAutonomyHours,
         criticalLoadsJson: JSON.stringify(input.criticalLoads),
@@ -160,7 +160,7 @@ export async function POST(request: Request) {
         description: item.description,
         quantity: item.quantity,
         unit: item.unit,
-        unitCostCentavos: item.unitCostCentavos,
+        unitCost: item.unitCost,
         source: item.source,
       })),
     });

@@ -57,7 +57,7 @@ export default function NewLeadPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...form,
-          monthlyBillPhp: form.monthlyBillPhp ? parseInt(form.monthlyBillPhp) * 100 : 0,
+          monthlyBill: form.monthlyBillPhp ? parseFloat(form.monthlyBillPhp) : 0,
         }),
       });
       const json = await res.json();

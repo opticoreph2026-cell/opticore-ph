@@ -116,7 +116,7 @@ export default async function QuotationsPage() {
                     </td>
                     <td className="px-6 py-4">{q.design?.pvArrayKwp ? `${q.design.pvArrayKwp} kWp` : '—'}</td>
                     <td className="px-6 py-4 text-white font-medium">
-                      ₱{(q.grandTotalCentavos / 100).toLocaleString('en-PH', { minimumFractionDigits: 0 })}
+                      ₱{q.grandTotal.toLocaleString('en-PH', { minimumFractionDigits: 2 })}
                     </td>
                     <td className="px-6 py-4">
                       <span
