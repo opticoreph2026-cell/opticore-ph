@@ -42,12 +42,12 @@ export default async function AdminReportsPage() {
                 <div key={report.id} className="p-4 rounded-xl border border-border-subtle bg-surface-1000">
                   <div className="flex items-start justify-between mb-2">
                     <div>
-                      <p className="text-sm font-medium text-white">Report for {report.property.name}</p>
-                      <p className="text-xs text-white/40">Client: {report.property.client.email}</p>
+                      <p className="text-sm font-medium text-white">Report for {report.property?.name ?? 'Unknown Property'}</p>
+                      <p className="text-xs text-white/40">Client: {report.property?.client?.email ?? 'N/A'}</p>
                     </div>
                     <span className="text-xs font-mono text-white/40">{new Date(report.createdAt).toLocaleDateString()}</span>
                   </div>
-                  <p className="text-sm text-white/60 line-clamp-2">{report.content}</p>
+                  <p className="text-sm text-white/60 line-clamp-2">{report.summary}</p>
                 </div>
               ))}
 

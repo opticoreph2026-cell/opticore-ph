@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getSession } from '@/lib/session';
 import { canAccessCrm } from '@/lib/energy-auth';
+import { updateQuotationSchema, isValidQuotationTransition } from '@/lib/validations';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -51,9 +52,33 @@ export async function PATCH(request: Request, context: { params: Promise<{ id: s
     const { id } = await context.params;
     const body = await request.json();
 
+    const parsed = updateQuotationSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json({ error: parsed.error.flatten().fieldErrors }, { status: 422 });
+    }
+
+    const existing = await db.energyQuotation.findUnique({ where: { id }, select: { status: true } });
+    if (!existing) {
+      return NextResponse.json({ error: 'Not found' }, { status: 404 });
+    }
+
+    if (parsed.data.status && !isValidQuotationTransition(existing.status, parsed.data.status)) {
+      return NextResponse.json({
+        error: `Cannot transition from '${existing.status}' to '${parsed.data.status}'`,
+      }, { status: 422 });
+    }
+
+    const updateData: any = { ...parsed.data };
+    if (updateData.status === 'sent') {
+      updateData.sentAt = new Date();
+    }
+    if (updateData.status === 'accepted' || updateData.status === 'rejected') {
+      updateData.respondedAt = new Date();
+    }
+
     const quotation = await db.energyQuotation.update({
       where: { id },
-      data: body,
+      data: updateData,
     });
 
     return NextResponse.json({ data: quotation });

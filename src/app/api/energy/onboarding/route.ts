@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
 
     const { siteAddress, utilityCompanyId, averageBill } = await request.json();
 
-    const client = await db.client.findUnique({ where: { email: session.email } });
+    const client = await db.client.findFirst({ where: { email: { equals: session.email, mode: 'insensitive' } } });
     if (!client) {
       return NextResponse.json({ error: 'Client not found' }, { status: 404 });
     }
@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
     const customer = await db.energyCustomer.create({
       data: {
         fullName: client.name || session.email,
-        contactEmail: session.email,
+        contactEmail: session.email.toLowerCase(),
         contactPhone: client.phone,
         siteAddress: siteAddress || null,
         utilityCompanyId: utilityCompany?.id || null,

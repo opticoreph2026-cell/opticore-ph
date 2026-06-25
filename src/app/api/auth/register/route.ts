@@ -34,10 +34,11 @@ export async function POST(req: NextRequest) {
     }
 
     const hashed = await hashPassword(password);
+    const normalizedEmail = email.toLowerCase().trim();
 
     const client = await db.client.create({
       data: {
-        email,
+        email: normalizedEmail,
         name,
         passwordHash: hashed,
         role: 'customer',

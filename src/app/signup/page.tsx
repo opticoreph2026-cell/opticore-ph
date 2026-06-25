@@ -36,7 +36,7 @@ export default function SignupPage() {
         throw new Error(data.error || 'Failed to create account');
       }
 
-      await signIn('credentials', { email, password, redirect: false });
+      await signIn('credentials', { email, password, skipTurnstile: 'true', redirect: false });
       success('Account created!');
       router.push('/onboarding');
     } catch (err: any) {

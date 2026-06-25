@@ -79,30 +79,35 @@ export default async function LeadsPage() {
                 leads.map((lead: any) => (
                   <tr
                     key={lead.id}
-                    onClick={() => window.location.href = `/crm/leads/${lead.id}`}
                     className="hover:bg-white/5 transition-colors cursor-pointer"
                   >
-                    <td className="px-6 py-4 font-medium text-white">
-                      <div>{lead.fullName}</div>
-                      <div className="text-xs text-gray-500 capitalize">{lead.customerType.replace(/_/g, ' ')}</div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div>{lead.email || '—'}</div>
-                      <div className="text-xs text-gray-500">{lead.phone || '—'}</div>
-                    </td>
-                    <td className="px-6 py-4 text-gray-400">{lead.city || '—'}</td>
-                    <td className="px-6 py-4">₱{(lead.monthlyBillPhp / 100).toLocaleString('en-PH', { minimumFractionDigits: 0 })}</td>
-                    <td className="px-6 py-4 text-gray-400 capitalize">{lead.source.replace(/_/g, ' ')}</td>
-                    <td className="px-6 py-4">
-                      <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium capitalize ${statusColors[lead.status] ?? 'bg-white/5 text-gray-400'}`}>
-                        {lead.status.replace(/_/g, ' ')}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-gray-500">
-                      {new Date(lead.createdAt).toLocaleDateString('en-PH', { month: 'short', day: 'numeric', year: 'numeric' })}
-                    </td>
-                    <td className="px-6 py-4">
-                      <ChevronRight className="w-4 h-4 text-gray-600" />
+                    <td colSpan={8} className="p-0">
+                      <Link href={`/crm/leads/${lead.id}`} className="contents">
+                        <div className="flex items-center px-6 py-4">
+                          <div className="flex-1 min-w-0 grid grid-cols-7 gap-4 items-center">
+                            <div className="font-medium text-white">
+                              <div>{lead.fullName}</div>
+                              <div className="text-xs text-gray-500 capitalize">{lead.customerType.replace(/_/g, ' ')}</div>
+                            </div>
+                            <div>
+                              <div>{lead.email || '—'}</div>
+                              <div className="text-xs text-gray-500">{lead.phone || '—'}</div>
+                            </div>
+                            <div className="text-gray-400">{lead.city || '—'}</div>
+                            <div>₱{(lead.monthlyBillPhp / 100).toLocaleString('en-PH', { minimumFractionDigits: 0 })}</div>
+                            <div className="text-gray-400 capitalize">{lead.source.replace(/_/g, ' ')}</div>
+                            <div>
+                              <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium capitalize ${statusColors[lead.status] ?? 'bg-white/5 text-gray-400'}`}>
+                                {lead.status.replace(/_/g, ' ')}
+                              </span>
+                            </div>
+                            <div className="text-gray-500">
+                              {new Date(lead.createdAt).toLocaleDateString('en-PH', { month: 'short', day: 'numeric', year: 'numeric' })}
+                            </div>
+                          </div>
+                          <ChevronRight className="w-4 h-4 text-gray-600 ml-2 flex-shrink-0" />
+                        </div>
+                      </Link>
                     </td>
                   </tr>
                 ))

@@ -11,8 +11,9 @@ export const dynamic = 'force-dynamic';
 
 function generateQuoteNumber(): string {
   const year = new Date().getFullYear();
-  const seq = Math.floor(Math.random() * 9000) + 1000;
-  return `OCE-${year}-${seq}`;
+  const ts = Date.now().toString(36).slice(-4).toUpperCase();
+  const seq = Math.floor(Math.random() * 900) + 100;
+  return `OCE-${year}-${ts}${seq}`;
 }
 
 export async function GET(request: Request) {
@@ -62,6 +63,9 @@ export async function POST(request: Request) {
 
     const { customerId, designId, roiScenarioId, hardwareSubtotalCentavos, installationFeeCentavos, designFeeCentavos, grandTotalCentavos, validUntil, notes } = parsed.data;
 
+    const computedTotal = (hardwareSubtotalCentavos ?? 0) + (installationFeeCentavos ?? 0) + (designFeeCentavos ?? 0);
+    const finalTotal = grandTotalCentavos ?? computedTotal;
+
     const quotation = await db.energyQuotation.create({
       data: {
         customerId,
@@ -74,7 +78,7 @@ export async function POST(request: Request) {
         hardwareSubtotalCentavos: hardwareSubtotalCentavos ?? 0,
         installationFeeCentavos: installationFeeCentavos ?? 0,
         designFeeCentavos: designFeeCentavos ?? 0,
-        grandTotalCentavos: grandTotalCentavos ?? 0,
+        grandTotalCentavos: finalTotal,
         depositRequiredPct: 50,
         status: 'draft',
         notes: notes ?? null,

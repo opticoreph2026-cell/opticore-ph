@@ -5,6 +5,7 @@ import { canAccessCrm } from '@/lib/energy-auth';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, Download, FileText } from 'lucide-react';
+import { QuotationActions } from '@/components/crm/QuotationActions';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -62,6 +63,7 @@ export default async function QuotationDetailPage({
           <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium capitalize ${statusColors[quotation.status] ?? 'bg-white/5 text-gray-400'}`}>
             {quotation.status}
           </span>
+          <QuotationActions quotationId={quotation.id} currentStatus={quotation.status} />
           <a
             href={`/api/energy/quotations/${id}/pdf`}
             download

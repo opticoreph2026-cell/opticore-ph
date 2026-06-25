@@ -75,3 +75,46 @@ export const createQuotationSchema = z.object({
   validUntil: z.string().optional().nullable(),
   notes: z.string().max(2000).optional().nullable(),
 });
+
+const QUOTATION_STATUS_TRANSITIONS: Record<string, string[]> = {
+  draft: ['sent'],
+  sent: ['accepted', 'rejected', 'expired'],
+  accepted: [],
+  rejected: [],
+  expired: ['sent'],
+};
+
+export const updateQuotationSchema = z.object({
+  status: z.string().optional(),
+  hardwareSubtotalCentavos: z.number().int().min(0).optional(),
+  installationFeeCentavos: z.number().int().min(0).optional(),
+  designFeeCentavos: z.number().int().min(0).optional(),
+  grandTotalCentavos: z.number().int().min(0).optional(),
+  notes: z.string().max(2000).optional().nullable(),
+  vatTreatment: z.enum(['vat_inclusive', 'vat_exclusive', 'vat_exempt']).optional(),
+  depositRequiredPct: z.number().min(0).max(100).optional(),
+  maintenanceContractOfferCentavos: z.number().int().min(0).optional(),
+});
+
+export function getQuotationStatusTransitions() {
+  return QUOTATION_STATUS_TRANSITIONS;
+}
+
+export function isValidQuotationTransition(from: string, to: string): boolean {
+  const allowed = QUOTATION_STATUS_TRANSITIONS[from];
+  return !!allowed && allowed.includes(to);
+}
+
+export const updateRoiSchema = z.object({
+  scenarioLabel: z.string().max(200).optional(),
+  selfConsumptionPct: z.number().min(0).max(100).optional(),
+  capexTotalCentavos: z.number().int().min(0).optional(),
+  financingType: z.enum(['cash', 'loan', 'lease']).optional(),
+  loanTermMonths: z.number().int().min(0).optional().nullable(),
+  loanInterestRatePct: z.number().min(0).max(100).optional().nullable(),
+  annualDegradationPct: z.number().min(0).max(100).optional(),
+  annualRateEscalationPct: z.number().min(0).max(100).optional(),
+  discountRatePct: z.number().min(0).max(100).optional(),
+  omAnnualCostCentavos: z.number().int().min(0).optional(),
+  analysisHorizonYears: z.number().int().min(1).max(50).optional(),
+});

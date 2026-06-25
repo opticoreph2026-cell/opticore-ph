@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getSession } from '@/lib/session';
 import { canAccessDesigns } from '@/lib/energy-auth';
+import { updateRoiSchema } from '@/lib/validations';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -55,9 +56,14 @@ export async function PATCH(request: Request, context: { params: Promise<{ id: s
     const { id } = await context.params;
     const body = await request.json();
 
+    const parsed = updateRoiSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json({ error: parsed.error.flatten().fieldErrors }, { status: 422 });
+    }
+
     const scenario = await db.roiScenario.update({
       where: { id },
-      data: body,
+      data: parsed.data,
     });
 
     return NextResponse.json({ data: scenario });

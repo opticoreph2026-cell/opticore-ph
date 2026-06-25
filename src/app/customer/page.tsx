@@ -15,7 +15,7 @@ export default async function CustomerDashboard() {
 
   if (email) {
     customer = await db.energyCustomer.findFirst({
-      where: { contactEmail: email },
+      where: { contactEmail: { equals: email, mode: 'insensitive' } },
       select: {
         id: true,
         fullName: true,

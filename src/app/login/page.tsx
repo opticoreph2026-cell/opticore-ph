@@ -105,6 +105,7 @@ export default function LoginPage() {
         email,
         password: otpCode,
         type: 'otp',
+        turnstileToken,
         redirect: false,
       });
 
@@ -155,6 +156,13 @@ export default function LoginPage() {
                   onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
                   className="mt-1 appearance-none block w-full px-3 py-2.5 text-center text-2xl tracking-[0.5em] border border-border-subtle rounded-lg bg-surface-800 text-white focus:outline-none focus:ring-2 focus:ring-accent-cyan"
                   placeholder="000000"
+                />
+              </div>
+
+              <div className="flex justify-center">
+                <Turnstile
+                  siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
+                  onSuccess={(token) => setTurnstileToken(token)}
                 />
               </div>
 

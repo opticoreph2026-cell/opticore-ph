@@ -25,7 +25,7 @@ export async function GET(
       where: { id },
       include: {
         customer: true,
-        design: { include: { inverter: true, battery: true } },
+        design: { include: { inverter: true, battery: true, panelModel: true } },
         roiScenario: true,
       },
     });
@@ -38,38 +38,60 @@ export async function GET(
     const address = quotation.customer?.siteAddress ?? 'N/A';
     const inverterModel = quotation.design?.inverter?.modelName ?? 'N/A';
     const batteryCap = quotation.design?.battery
-      ? `${quotation.design.battery.usableKwh} kWh`
+      ? `${quotation.design.battery.usableKwh} kWh LFP`
       : 'N/A';
     const solarCap = quotation.design?.pvArrayKwp
       ? `${quotation.design.pvArrayKwp} kWp`
       : 'N/A';
+    const panelCount = quotation.design?.pvPanelCount
+      ? `${quotation.design.pvPanelCount} × ${quotation.design.pvPanelWattage}W`
+      : 'N/A';
     const systemCost = quotation.grandTotalCentavos / 100;
+    const hardwareCost = quotation.hardwareSubtotalCentavos / 100;
+    const installationFee = quotation.installationFeeCentavos / 100;
+    const designFee = quotation.designFeeCentavos / 100;
+    const depositPct = quotation.depositRequiredPct;
+    const validUntil = new Date(quotation.validUntil).toLocaleDateString('en-PH', {
+      month: 'long', day: 'numeric', year: 'numeric',
+    });
 
-    // Default ROI values — use parsed results if available
     let year1Savings = 0;
     let lifetimeSavings = 0;
     let paybackYears = 0;
+    let irr = 0;
 
-    if (quotation.roiScenario?.parsedResults) {
-      const r = quotation.roiScenario.parsedResults as any;
-      year1Savings = Math.round((r.year1SavingsCentavos ?? 0) / 100);
-      lifetimeSavings = Math.round(
-        ((r.npvCentavos ?? r.headline?.npvCentavos ?? 0) + systemCost * 100) / 100
-      );
-      paybackYears = r.simplePaybackYears ?? r.headline?.simplePaybackYears ?? 0;
+    if (quotation.roiScenario) {
+      let results: any = quotation.roiScenario.resultsJson;
+      if (typeof results === 'string') {
+        try { results = JSON.parse(results); } catch { results = null; }
+      }
+      if (results) {
+        year1Savings = Math.round((results.year1SavingsCentavos ?? results.headline?.year1SavingsCentavos ?? 0) / 100);
+        lifetimeSavings = Math.round((results.npvCentavos ?? results.headline?.npvCentavos ?? 0) / 100);
+        paybackYears = results.simplePaybackYears ?? results.headline?.simplePaybackYears ?? 0;
+        irr = results.irr ?? results.headline?.irr ?? 0;
+      }
     }
 
     const stream = await renderToStream(
       <ProposalPDF
+        quoteNumber={quotation.quoteNumber}
         customerName={customerName}
         address={address}
         inverterModel={inverterModel}
         batteryCap={batteryCap}
         solarCap={solarCap}
+        panelCount={panelCount}
         systemCost={systemCost}
+        hardwareCost={hardwareCost}
+        installationFee={installationFee}
+        designFee={designFee}
+        depositPct={depositPct}
+        validUntil={validUntil}
         year1Savings={year1Savings}
         lifetimeSavings={lifetimeSavings}
         paybackYears={paybackYears}
+        irr={irr}
       />
     );
 

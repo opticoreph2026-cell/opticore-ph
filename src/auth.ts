@@ -26,6 +26,25 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             return null;
           }
 
+          // ── Turnstile verification for OTP ────────────────────────
+          if (authType === 'otp' && process.env.TURNSTILE_SECRET_KEY) {
+            const turnstileToken = creds?.turnstileToken;
+            if (!turnstileToken) {
+              console.log('[auth:authorize] OTP missing turnstile token');
+              return null;
+            }
+            const verifyRes = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+              body: `secret=${process.env.TURNSTILE_SECRET_KEY}&response=${turnstileToken}`,
+            });
+            const outcome = await verifyRes.json();
+            if (!outcome.success) {
+              console.log('[auth:authorize] OTP turnstile verification failed');
+              return null;
+            }
+          }
+
           // ── OTP login ──────────────────────────────────────────────
           if (authType === 'otp') {
             const client = await db.client.findUnique({ where: { email } });
@@ -64,8 +83,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             };
           }
 
-          // ── Turnstile verification ───────────────────────────────
-          if (process.env.TURNSTILE_SECRET_KEY) {
+          // ── Turnstile verification (skip for OTP and post-signup auto-login) ──
+          if (process.env.TURNSTILE_SECRET_KEY && !creds?.skipTurnstile) {
             const turnstileToken = creds?.turnstileToken;
             if (!turnstileToken) {
               console.log('[auth:authorize] missing turnstile token');
