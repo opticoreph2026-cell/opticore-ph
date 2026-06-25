@@ -47,13 +47,14 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         name={(user as any).name}
         email={user.email!}
         displayRole="Owner · Full Access"
+        logohref="/admin"
       />
 
       {/* Admin Sidebar */}
       <aside className="w-64 border-r border-white/5 bg-[#0F0F14] hidden md:flex flex-col h-screen sticky top-0">
         {/* Brand */}
         <div className="h-16 flex items-center px-5 border-b border-white/5 flex-shrink-0">
-          <Logo />
+          <Logo href="/admin" />
         </div>
 
         {/* Admin badge */}

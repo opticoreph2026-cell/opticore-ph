@@ -55,7 +55,7 @@ function CrmSidebar({ role, email, name }: CrmSidebarProps) {
     <aside className="w-64 bg-[#0F0F14] border-r border-white/5 flex flex-col h-screen sticky top-0">
       {/* Brand */}
       <div className="h-16 flex items-center px-5 border-b border-white/5 flex-shrink-0">
-        <Logo />
+        <Logo href="/crm" />
       </div>
 
       {/* Nav label */}
@@ -180,7 +180,7 @@ export default function CrmSidebarWrapper({
 
       {/* Mobile topbar */}
       <header className="md:hidden fixed top-0 left-0 right-0 z-40 h-14 flex items-center justify-between px-4 bg-[#0F0F14]/95 backdrop-blur border-b border-white/5">
-        <Logo />
+        <Logo href="/crm" />
         <div className="flex items-center gap-2">
           <NotificationBell />
           <button

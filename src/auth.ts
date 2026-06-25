@@ -64,6 +64,25 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             };
           }
 
+          // ── Turnstile verification ───────────────────────────────
+          if (process.env.TURNSTILE_SECRET_KEY) {
+            const turnstileToken = creds?.turnstileToken;
+            if (!turnstileToken) {
+              console.log('[auth:authorize] missing turnstile token');
+              return null;
+            }
+            const verifyRes = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+              body: `secret=${process.env.TURNSTILE_SECRET_KEY}&response=${turnstileToken}`,
+            });
+            const outcome = await verifyRes.json();
+            if (!outcome.success) {
+              console.log('[auth:authorize] turnstile verification failed');
+              return null;
+            }
+          }
+
           // ── Password login ─────────────────────────────────────────
           const client = await db.client.findUnique({ where: { email } });
           if (!client) {

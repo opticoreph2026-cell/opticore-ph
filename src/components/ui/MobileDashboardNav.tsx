@@ -18,6 +18,7 @@ interface MobileDashboardNavProps {
   name?: string;
   email: string;
   displayRole: string;
+  logohref?: string;
 }
 
 export function MobileDashboardNav({
@@ -26,6 +27,7 @@ export function MobileDashboardNav({
   name,
   email,
   displayRole,
+  logohref = '/',
 }: MobileDashboardNavProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname();
@@ -34,7 +36,7 @@ export function MobileDashboardNav({
     <>
       {/* Mobile topbar */}
       <header className="md:hidden fixed top-0 left-0 right-0 z-40 h-14 flex items-center justify-between px-4 bg-[#0F0F14]/95 backdrop-blur border-b border-white/5">
-        <Logo />
+        <Logo href={logohref} />
         <div className="flex items-center gap-2">
           <NotificationBell />
           <button
@@ -56,7 +58,7 @@ export function MobileDashboardNav({
           />
           <div className="absolute left-0 top-0 bottom-0 w-64 bg-[#0F0F14] border-r border-white/5 flex flex-col">
             <div className="h-14 flex items-center px-5 border-b border-white/5 flex-shrink-0">
-              <Logo />
+              <Logo href={logohref} />
             </div>
 
             <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-0.5">

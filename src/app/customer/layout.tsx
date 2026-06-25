@@ -44,12 +44,13 @@ export default async function CustomerLayout({
         name={name}
         email={email}
         displayRole="Customer"
+        logohref="/customer"
       />
 
       {/* Sidebar */}
       <aside className="w-64 bg-[#0F0F14] border-r border-white/5 flex flex-col h-screen sticky top-0 hidden md:flex">
         <div className="h-16 flex items-center px-5 border-b border-white/5 flex-shrink-0">
-          <Logo />
+          <Logo href="/customer" />
         </div>
 
         <div className="px-4 pt-5 pb-2">
