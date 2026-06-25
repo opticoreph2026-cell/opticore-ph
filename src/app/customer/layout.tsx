@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation';
 import { canAccessCustomerPortal } from '@/lib/energy-auth';
 import { NotificationBell } from '@/components/ui/NotificationBell';
 import { Logo } from '@/components/ui/Logo';
+import { MobileDashboardNav } from '@/components/ui/MobileDashboardNav';
 import {
   Sun,
   FileText,
@@ -37,6 +38,14 @@ export default async function CustomerLayout({
 
   return (
     <div className="flex min-h-screen bg-[#08080B] text-white">
+      <MobileDashboardNav
+        navItems={navItems}
+        initials={initials}
+        name={name}
+        email={email}
+        displayRole="Customer"
+      />
+
       {/* Sidebar */}
       <aside className="w-64 bg-[#0F0F14] border-r border-white/5 flex flex-col h-screen sticky top-0 hidden md:flex">
         <div className="h-16 flex items-center px-5 border-b border-white/5 flex-shrink-0">
@@ -89,7 +98,7 @@ export default async function CustomerLayout({
 
       {/* Main content */}
       <main className="flex-1 flex flex-col min-w-0">
-        <header className="h-14 flex items-center justify-between px-6 bg-[#0F0F14]/60 backdrop-blur border-b border-white/5 flex-shrink-0">
+        <header className="hidden md:flex h-14 items-center justify-between px-6 bg-[#0F0F14]/60 backdrop-blur border-b border-white/5 flex-shrink-0">
           <div className="flex items-center gap-2 text-sm text-white/40">
               <Sun className="w-4 h-4 text-accent-cyan" />
             <span className="font-medium">My OptiCore System</span>
@@ -97,7 +106,7 @@ export default async function CustomerLayout({
           <NotificationBell />
         </header>
 
-        <div className="flex-1 overflow-auto p-6 md:p-8">
+        <div className="flex-1 overflow-auto p-6 md:p-8 pt-20 md:pt-6">
           {children}
         </div>
       </main>

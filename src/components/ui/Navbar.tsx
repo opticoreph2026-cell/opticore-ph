@@ -7,6 +7,7 @@ import { Logo } from './Logo';
 import { useAuth } from './AuthProvider';
 import { LocaleSwitcher } from './LocaleSwitcher';
 import { Menu, X } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export function Navbar() {
   const t = useTranslations('nav');
@@ -106,8 +107,15 @@ export function Navbar() {
           </div>
         </div>
 
-        {mobileOpen && (
-          <div className="md:hidden bg-[#0F0F14] border-t border-white/5 px-4 py-4 space-y-1">
+        <AnimatePresence>
+          {mobileOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.2, ease: 'easeInOut' }}
+              className="md:hidden bg-[#0F0F14] border-t border-white/5 px-4 py-4 space-y-1 max-h-[80vh] overflow-y-auto"
+            >
             {navLinks.map((link) => (
               <Link
                 key={link.href}
@@ -134,8 +142,9 @@ export function Navbar() {
                 {t('getQuote')}
               </Link>
             </div>
-          </div>
-        )}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </header>
 
       {pathname !== '/' && <div className="h-20" />}

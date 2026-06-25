@@ -33,7 +33,7 @@ export function Footer() {
             <Logo />
             <p className="text-sm text-white/40 max-w-xs leading-relaxed">
               RME-led solar & ESS design, sizing, and installation for
-              Cebu, Bohol, and Eastern Visayas. Official Neovolt ESS Installer-Partner.
+              Cebu, Bohol, and Eastern Visayas. RME-led solar & ESS provider. Featuring Neovolt ESS by Bytewatt.
             </p>
             <div className="space-y-1.5">
               <p className="text-xs text-white/25 uppercase tracking-widest font-mono">Contact</p>
@@ -81,7 +81,7 @@ export function Footer() {
             © {new Date().getFullYear()} OptiCore Energy Solutions. All rights reserved. Cebu City, Philippines.
           </p>
           <div className="flex items-center gap-4 text-xs text-white/25">
-            <span>Powered by Neovolt ESS by Bytewatt</span>
+            <span>Featuring Neovolt ESS by Bytewatt</span>
             <span>·</span>
             <span>IEC 61727 · IEC 62116 Certified</span>
           </div>

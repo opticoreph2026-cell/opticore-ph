@@ -28,7 +28,7 @@ export function Hero() {
   }, []);
 
   return (
-    <section ref={sectionRef} className="relative h-[80vh] md:h-screen flex items-center justify-center overflow-hidden pt-20">
+    <section ref={sectionRef} className="relative min-h-[70vh] md:min-h-screen flex items-center justify-center overflow-hidden pt-20">
       {slides.map((slide, index) => (
         <motion.div
           key={slide.image}

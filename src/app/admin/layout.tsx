@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { Logo } from '@/components/ui/Logo';
 import { NotificationBell } from '@/components/ui/NotificationBell';
+import { MobileDashboardNav } from '@/components/ui/MobileDashboardNav';
 
 const adminNavItems = [
   { href: '/admin', label: 'System Overview', icon: LayoutDashboard },
@@ -40,6 +41,14 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
   return (
     <div className="min-h-screen bg-[#08080B] text-white flex">
+      <MobileDashboardNav
+        navItems={adminNavItems}
+        initials={initials}
+        name={(user as any).name}
+        email={user.email!}
+        displayRole="Owner · Full Access"
+      />
+
       {/* Admin Sidebar */}
       <aside className="w-64 border-r border-white/5 bg-[#0F0F14] hidden md:flex flex-col h-screen sticky top-0">
         {/* Brand */}
@@ -111,7 +120,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       {/* Main */}
       <main className="flex-1 overflow-x-hidden flex flex-col">
         {/* Top header */}
-        <header className="h-14 flex items-center justify-between px-8 bg-[#0F0F14]/60 backdrop-blur border-b border-white/5 flex-shrink-0">
+        <header className="hidden md:flex h-14 items-center justify-between px-8 bg-[#0F0F14]/60 backdrop-blur border-b border-white/5 flex-shrink-0">
           <div className="flex items-center gap-2 text-sm text-white/40">
             <ShieldCheck className="w-4 h-4 text-[#F43F5E]" />
             <span>Admin Command Center</span>
@@ -119,18 +128,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           <NotificationBell />
         </header>
 
-        {/* Mobile header */}
-        <header className="md:hidden flex items-center justify-between p-4 border-b border-white/5 bg-[#0F0F14]">
-          <div className="flex items-center gap-2">
-            <ShieldCheck className="w-5 h-5 text-[#F43F5E]" />
-            <span className="font-display font-bold">Admin Panel</span>
-          </div>
-          <Link href="/crm" className="text-white/60 hover:text-white p-2">
-            <ArrowLeft className="w-5 h-5" />
-          </Link>
-        </header>
-
-        <div className="p-6 md:p-10 max-w-7xl mx-auto w-full">
+        <div className="p-6 md:p-10 max-w-7xl mx-auto w-full pt-20 md:pt-6">
           {children}
         </div>
       </main>

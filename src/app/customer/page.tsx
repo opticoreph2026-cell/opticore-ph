@@ -76,7 +76,7 @@ export default async function CustomerDashboard() {
     <div className="space-y-8">
       <div>
         <h1 className="text-3xl font-bold text-white mb-2">My System</h1>
-        <p className="text-gray-400">Track your Neovolt ESS installation and manage your documents.</p>
+        <p className="text-gray-400">Track your solar installation and manage your documents.</p>
       </div>
 
       {!customer ? (

@@ -13,10 +13,10 @@ export const metadata: Metadata = {
   metadataBase: new URL('https://opticore-energy-solutions.vercel.app'),
   title: 'OptiCore Energy Solutions | Solar & ESS for Cebu, Bohol & Leyte',
   description:
-    'Cebu-based solar PV and Neovolt ESS installation by a Registered Mechanical Engineer. Free site assessment for Cebu, Bohol, and Leyte.',
+    'Cebu-based solar PV and ESS installation by a Registered Mechanical Engineer. Free site assessment for Cebu, Bohol, and Leyte.',
   openGraph: {
     title: 'OptiCore Energy Solutions | Solar & ESS for Cebu, Bohol & Leyte',
-    description: 'Cebu-based solar PV and Neovolt ESS installation by a Registered Mechanical Engineer.',
+    description: 'Cebu-based solar PV and ESS installation by a Registered Mechanical Engineer.',
     url: 'https://opticore-ph.vercel.app',
     siteName: 'OptiCore Energy Solutions',
     images: [{ url: '/og-image.png', width: 1200, height: 630 }],
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'OptiCore Energy Solutions',
-    description: 'Cebu-based solar PV and Neovolt ESS installation by a Registered Mechanical Engineer.',
+    description: 'Cebu-based solar PV and ESS installation by a Registered Mechanical Engineer.',
     images: ['/og-image.png'],
   },
 };

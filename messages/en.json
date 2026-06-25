@@ -1,7 +1,7 @@
 {
   "meta": {
     "title": "OptiCore Energy Solutions | Solar & ESS for Cebu, Bohol & Leyte",
-    "description": "Cebu-based solar PV and Neovolt ESS installation by a Registered Mechanical Engineer. Free site assessment for Cebu, Bohol, and Leyte."
+    "description": "Cebu-based solar PV and ESS installation by a Registered Mechanical Engineer. Free site assessment for Cebu, Bohol, and Leyte."
   },
   "nav": {
     "products": "Products",
@@ -13,16 +13,16 @@
     "dashboard": "Dashboard"
   },
   "hero": {
-    "badge": "Official Neovolt ESS Installer-Partner — Cebu City",
+    "badge": "Licensed RME — Cebu City",
     "title": "Power Your Home & Business with",
     "titleHighlight": "OptiCore Energy Solutions",
-    "subtitle": "Cebu's only RME-led Neovolt ESS installer. Engineering-grade system design. Local after-sales support.",
+    "subtitle": "RME-led solar & ESS design and installation. Engineering-grade system design. Local after-sales support.",
     "ctaPrimary": "Get Free Assessment",
     "ctaSecondary": "Calculate Savings"
   },
   "trustBar": {
     "rme": "PRC Licensed RME",
-    "partner": "Neovolt Official Installer-Partner",
+    "partner": "RME Licensed · PRC Certified",
     "coverage": "Cebu · Bohol · Leyte Coverage"
   },
   "howItWorks": {
@@ -196,7 +196,7 @@
     }
   },
   "footer": {
-    "tagline": "Official Neovolt ESS Installer-Partner — Cebu, Bohol, Leyte.",
+    "tagline": "Solar & ESS Provider — Cebu, Bohol, Leyte.",
     "rights": "All rights reserved. Cebu City, Philippines.",
     "privacy": "Privacy",
     "terms": "Terms"
