@@ -1,19 +1,20 @@
-import React from 'react';
+import 'server-only';
+import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getSession } from '@/lib/session';
-import { CustomerStats } from '@/components/dashboard/CustomerStats';
 
 export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
 
-export default async function CustomerDashboard() {
-  const session = await getSession();
-  const email = session?.email as string | undefined;
+export async function GET() {
+  try {
+    const session = await getSession();
+    if (!session?.email) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
 
-  let customer = null;
-  let project = null;
-
-  if (email) {
-    customer = await db.energyCustomer.findFirst({
+    const email = session.email;
+    const customer = await db.energyCustomer.findFirst({
       where: { contactEmail: { equals: email, mode: 'insensitive' } },
       select: {
         id: true,
@@ -36,6 +37,7 @@ export default async function CustomerDashboard() {
       },
     });
 
+    let project = null;
     if (customer) {
       project = await db.energyProject.findFirst({
         where: {
@@ -58,30 +60,10 @@ export default async function CustomerDashboard() {
         },
       });
     }
+
+    return NextResponse.json({ customer, project });
+  } catch (err) {
+    console.error('[GET /api/dashboard/customer]', err);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
-
-  const serializedCustomer = customer
-    ? {
-        ...customer,
-        quotations: customer.quotations.map((q: any) => ({
-          ...q,
-          grandTotal: Number(q.grandTotal),
-          issueDate: q.issueDate.toISOString(),
-          validUntil: q.validUntil.toISOString(),
-        })),
-      }
-    : null;
-
-  const serializedProject = project
-    ? {
-        ...project,
-        scheduledInstallDate: project.scheduledInstallDate?.toISOString() ?? null,
-        commissioningDate: project.commissioningDate?.toISOString() ?? null,
-        milestones: project.milestones.map((m: any) => ({ ...m, milestoneDate: m.milestoneDate.toISOString() })),
-      }
-    : null;
-
-  return (
-    <CustomerStats initialData={{ customer: serializedCustomer, project: serializedProject }} email={email} />
-  );
 }

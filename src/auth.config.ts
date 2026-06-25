@@ -8,6 +8,13 @@ export const authConfig = {
   session: {
     strategy: 'jwt',
   },
+  cookies: {
+    sessionToken: {
+      options: {
+        maxAge: undefined,
+      } as any,
+    },
+  },
   callbacks: {
     authorized({ auth, request }) {
       let { pathname } = request.nextUrl;
