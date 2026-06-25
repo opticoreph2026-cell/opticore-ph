@@ -254,7 +254,7 @@ export function Calculator() {
                 <p className="text-xs text-gray-500 text-center">{t('disclaimer')}</p>
 
                 <Link
-                  href="/contact"
+                  href={`/contact?bill=${bill}&province=${province}&type=${propertyType}`}
                   className="block w-full py-3 text-center bg-accent-blue text-white font-semibold rounded-xl hover:bg-accent-blue/90 transition-colors"
                 >
                   {t('cta')}

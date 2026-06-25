@@ -2,6 +2,7 @@
 
 import React, { useState, useRef } from 'react';
 import { useTranslations } from 'next-intl';
+import { useSearchParams } from 'next/navigation';
 import { Spinner } from '@/components/ui/Spinner';
 
 const PROVINCES = ['Cebu', 'Bohol', 'Leyte', 'Other'] as const;
@@ -17,6 +18,7 @@ interface FormErrors {
 
 export function ContactForm() {
   const t = useTranslations('contact.form');
+  const searchParams = useSearchParams();
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
@@ -24,17 +26,33 @@ export function ContactForm() {
   const [submittedName, setSubmittedName] = useState('');
   const [errors, setErrors] = useState<FormErrors>({});
 
-  const [form, setForm] = useState({
-    fullName: '',
-    phone: '',
-    email: '',
-    province: 'Cebu',
-    city: '',
-    addressLine: '',
-    monthlyBillPhp: 5000,
-    customerType: 'residential',
-    notes: '',
-  });
+  function getInitialForm() {
+    const billParam = searchParams?.get('bill');
+    const provinceParam = searchParams?.get('province');
+    const typeParam = searchParams?.get('type');
+
+    let province = 'Cebu';
+    if (provinceParam) {
+      const capitalized = provinceParam.charAt(0).toUpperCase() + provinceParam.slice(1);
+      if (PROVINCES.includes(capitalized as typeof PROVINCES[number])) {
+        province = capitalized;
+      }
+    }
+
+    return {
+      fullName: '',
+      phone: '',
+      email: '',
+      province,
+      city: '',
+      addressLine: '',
+      monthlyBillPhp: billParam ? parseInt(billParam) : 5000,
+      customerType: typeParam === 'commercial' ? 'small_commercial' : 'residential',
+      notes: '',
+    };
+  }
+
+  const [form, setForm] = useState(getInitialForm);
 
   const validate = (): boolean => {
     const newErrors: FormErrors = {};

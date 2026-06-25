@@ -18,7 +18,7 @@ export const createLeadSchema = z.object({
   addressLine: z.string().max(500).optional().nullable(),
   city: z.string().max(100).optional().nullable(),
   province: z.string().max(100).optional().nullable(),
-  customerType: z.enum(['residential', 'commercial', 'industrial']).default('residential'),
+  customerType: z.enum(['residential', 'commercial', 'small_commercial', 'industrial']).default('residential'),
   monthlyBillPhp: z.number().int().min(0).optional().nullable(),
   source: z.string().max(50).optional().nullable(),
   notes: z.string().max(2000).optional().nullable(),

@@ -8,14 +8,14 @@ const intlMiddleware = createMiddleware(routing);
 
 const { auth } = NextAuth(authConfig);
 
-const appPrefixes = ['/crm', '/partner', '/customer', '/admin', '/login', '/signup', '/api', '/privacy', '/terms'];
+const appPrefixes = ['/crm', '/partner', '/customer', '/admin', '/login', '/signup', '/api', '/privacy', '/terms', '/onboarding'];
 
 export default auth((request) => {
   const { pathname } = request.nextUrl;
 
-  // Public lead submission — no auth required
+  // Public lead submission — no auth required, bypass intl to prevent locale redirect
   if (pathname === '/api/energy/leads' && request.method === 'POST') {
-    return intlMiddleware(request);
+    return;
   }
 
   // Strip locale prefix (e.g., /en/login → /login, /fil/crm → /crm)
