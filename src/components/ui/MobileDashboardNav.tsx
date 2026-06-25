@@ -10,7 +10,6 @@ import { NotificationBell } from './NotificationBell';
 interface MobileNavItem {
   href: string;
   label: string;
-  icon: React.ElementType;
 }
 
 interface MobileDashboardNavProps {
@@ -62,20 +61,18 @@ export function MobileDashboardNav({
 
             <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-0.5">
               {navItems.map((item) => {
-                const Icon = item.icon;
                 const isActive = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
                 return (
                   <Link
                     key={item.href}
                     href={item.href}
                     onClick={() => setMobileOpen(false)}
-                    className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 group ${
+                    className={`block px-4 py-3 rounded-xl text-sm font-medium transition-all duration-150 ${
                       isActive
                         ? 'bg-white/10 text-white'
                         : 'text-white/50 hover:text-white hover:bg-white/5'
                     }`}
                   >
-                    <Icon className={`w-4 h-4 flex-shrink-0 ${isActive ? 'text-white' : 'text-white/40 group-hover:text-white/70'}`} />
                     {item.label}
                   </Link>
                 );

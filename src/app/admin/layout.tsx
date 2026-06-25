@@ -42,7 +42,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   return (
     <div className="min-h-screen bg-[#08080B] text-white flex">
       <MobileDashboardNav
-        navItems={adminNavItems}
+        navItems={adminNavItems.map(({ label, href }) => ({ label, href }))}
         initials={initials}
         name={(user as any).name}
         email={user.email!}

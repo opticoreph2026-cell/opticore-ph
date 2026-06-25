@@ -42,7 +42,7 @@ export default async function PartnerLayout({
   return (
     <div className="flex min-h-screen bg-[#08080B] text-white">
       <MobileDashboardNav
-        navItems={navItems}
+        navItems={navItems.map(({ label, href }) => ({ label, href }))}
         initials={initials}
         name={name}
         email={email}
