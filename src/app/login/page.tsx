@@ -26,6 +26,12 @@ export default function LoginPage() {
     e.preventDefault();
     setLoading(true);
 
+    if (!turnstileToken) {
+      error('Please complete the security check before logging in.');
+      setLoading(false);
+      return;
+    }
+
     try {
       const result = await signIn('credentials', {
         email,
@@ -86,6 +92,10 @@ export default function LoginPage() {
   const handleVerifyOtp = async () => {
     if (!otpCode) {
       error('Enter the OTP code from your email');
+      return;
+    }
+    if (!turnstileToken) {
+      error('Please complete the security check before verifying.');
       return;
     }
     setLoading(true);

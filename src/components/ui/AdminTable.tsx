@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   Plus, Pencil, Trash2, X, Search, ChevronLeft, ChevronRight,
 } from 'lucide-react';
@@ -63,6 +64,7 @@ export function AdminTable<T extends { [key: string]: any }>({
   const [deleting, setDeleting] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState<Record<string, string>>({});
+  const router = useRouter();
   const { error: toastError, success } = useToast();
 
   const filtered = searchKeys && search
@@ -108,10 +110,12 @@ export function AdminTable<T extends { [key: string]: any }>({
         await onSave?.(payload, editing[identifierKey] as string);
         success('Updated successfully');
         setEditing(null);
+        router.refresh();
       } else {
         await onSave?.(payload, undefined);
         success('Created successfully');
         setShowCreate(false);
+        router.refresh();
       }
     } catch (err) {
       toastError(err instanceof Error ? err.message : 'Failed to save');
@@ -127,6 +131,7 @@ export function AdminTable<T extends { [key: string]: any }>({
       await onDelete?.(deleting);
       success('Deleted successfully');
       setDeleting(null);
+      router.refresh();
     } catch (err) {
       toastError(err instanceof Error ? err.message : 'Failed to delete');
     } finally {

@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { AdminTable, type Column, type FieldConfig } from '@/components/ui/AdminTable';
+import { formatCentavosToPHP } from '@/lib/money';
 
 interface Commission {
   id: string;
@@ -23,7 +24,7 @@ export function CommissionAdminClient({
   const columns: Column<Commission>[] = [
     { key: 'organization', label: 'Partner', render: (c) => c.organization?.name || '—' },
     { key: 'roleInProject', label: 'Role', render: (c) => <span className="capitalize">{c.roleInProject.replace(/_/g, ' ')}</span> },
-    { key: 'amountCentavos', label: 'Amount', render: (c) => `₱${(c.amountCentavos / 100).toLocaleString('en-PH')}` },
+    { key: 'amountCentavos', label: 'Amount', render: (c) => formatCentavosToPHP(c.amountCentavos) },
     {
       key: 'status', label: 'Status',
       render: (c) => {

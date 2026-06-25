@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { AdminTable, type Column, type FieldConfig } from '@/components/ui/AdminTable';
+import { formatCentavosToPHP } from '@/lib/money';
 
 interface Lead {
   id: string;
@@ -26,7 +27,7 @@ export function AdminPageClient({ leads, orgs }: { leads: Lead[]; orgs: { id: st
     { key: 'city', label: 'Location', render: (l) => <span>{[l.city, l.province].filter(Boolean).join(', ') || '—'}</span> },
     {
       key: 'monthlyBillPhp', label: 'Est. Bill',
-      render: (l) => `₱${(l.monthlyBillPhp / 100).toLocaleString('en-PH')}`,
+      render: (l) => formatCentavosToPHP(l.monthlyBillPhp),
     },
     { key: 'source', label: 'Source', render: (l) => <span className="capitalize">{l.source.replace(/_/g, ' ')}</span> },
     {

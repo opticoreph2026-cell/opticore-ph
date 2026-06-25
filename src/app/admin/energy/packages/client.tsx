@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { AdminTable, type Column, type FieldConfig } from '@/components/ui/AdminTable';
+import { formatCentavosToPHP } from '@/lib/money';
 
 interface Package {
   id: string;
@@ -39,7 +40,7 @@ export function PackageAdminClient({
     { key: 'panels', label: 'Panels', render: (p) => `${p.panelQuantity}× ${p.panelSku}` },
     { key: 'inverters', label: 'Inverter', render: (p) => `${p.inverterQuantity}× ${p.inverterSku}` },
     { key: 'batteries', label: 'Battery', render: (p) => `${p.batteryQuantity}× ${p.batterySku}` },
-    { key: 'grandTotalCentavos', label: 'Total', render: (p) => `₱${(p.grandTotalCentavos / 100).toLocaleString('en-PH')}` },
+    { key: 'grandTotalCentavos', label: 'Total', render: (p) => formatCentavosToPHP(p.grandTotalCentavos) },
   ];
 
   const fields: FieldConfig[] = [

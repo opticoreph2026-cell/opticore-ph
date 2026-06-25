@@ -23,6 +23,12 @@ export default function SignupPage() {
     e.preventDefault();
     setLoading(true);
 
+    if (!turnstileToken) {
+      error('Please complete the security check before creating an account.');
+      setLoading(false);
+      return;
+    }
+
     try {
       const res = await fetch('/api/auth/register', {
         method: 'POST',

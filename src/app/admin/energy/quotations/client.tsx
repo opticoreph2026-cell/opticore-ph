@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { AdminTable, type Column, type FieldConfig } from '@/components/ui/AdminTable';
+import { formatCentavosToPHP } from '@/lib/money';
 
 interface Quotation {
   id: string;
@@ -21,7 +22,7 @@ export function QuotationAdminClient({ quotations }: { quotations: Quotation[] }
     { key: 'design', label: 'System', render: (q) => q.design ? `${q.design.pvArrayKwp.toFixed(2)} kWp` : '—' },
     {
       key: 'grandTotalCentavos', label: 'Total',
-      render: (q) => `₱${(q.grandTotalCentavos / 100).toLocaleString('en-PH')}`,
+      render: (q) => formatCentavosToPHP(q.grandTotalCentavos),
     },
     {
       key: 'status', label: 'Status',
