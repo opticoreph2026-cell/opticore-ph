@@ -13,6 +13,7 @@ import {
   ArrowLeft,
   Bell,
   Settings,
+  TrendingUp,
 } from 'lucide-react';
 import { Logo } from '@/components/ui/Logo';
 import { NotificationBell } from '@/components/ui/NotificationBell';
@@ -28,6 +29,18 @@ const adminNavItems = [
   { href: '/admin/reports', label: 'Reports', icon: ShieldCheck },
   { href: '/admin/alerts', label: 'System Alerts', icon: Bell },
   { href: '/admin/settings', label: 'Settings', icon: Settings },
+];
+
+const energyCrmItems = [
+  { href: '/admin/energy/leads', label: 'Leads', icon: Users },
+  { href: '/admin/energy/customers', label: 'Customers', icon: Users },
+  { href: '/admin/energy/quotations', label: 'Quotations', icon: ShieldCheck },
+  { href: '/admin/energy/designs', label: 'Designs', icon: Zap },
+  { href: '/admin/energy/projects', label: 'Projects', icon: Package },
+  { href: '/admin/energy/inventory', label: 'Inventory', icon: Package },
+  { href: '/admin/energy/commissions', label: 'Commissions', icon: TrendingUp },
+  { href: '/admin/energy/fee-config', label: 'Fee Config', icon: Settings },
+  { href: '/admin/energy/packages', label: 'Packages', icon: Package },
 ];
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -83,6 +96,24 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           })}
 
           <div className="pt-4 mt-2 border-t border-white/5">
+            <p className="px-3 pb-2 text-[10px] font-semibold text-white/25 uppercase tracking-widest font-mono">
+              Energy CRM
+            </p>
+            {energyCrmItems.map((item) => {
+              const Icon = item.icon;
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium text-white/50 hover:text-white hover:bg-white/5 transition-all duration-150 group"
+                >
+                  <Icon className="w-4 h-4 flex-shrink-0 text-white/30 group-hover:text-[#06B6D4] transition-colors" />
+                  {item.label}
+                </Link>
+              );
+            })}
+          </div>
+          <div className="pt-2 mt-2 border-t border-white/5">
             <Link
               href="/crm"
               className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-white/50 hover:text-white hover:bg-white/5 transition-all duration-150 group"

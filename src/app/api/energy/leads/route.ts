@@ -92,6 +92,15 @@ export async function POST(request: Request) {
       },
     }).catch((err: any) => console.error('[activity]', err));
 
+    await db.adminNotification.create({
+      data: {
+        type: 'lead',
+        title: 'New Lead',
+        message: `New ${customerType || 'residential'} lead from ${fullName}`,
+        meta: JSON.stringify({ href: `/admin/energy/leads` }),
+      },
+    }).catch((err: any) => console.error('[notification]', err));
+
     return NextResponse.json({ data: lead }, { status: 201 });
   } catch (err) {
     console.error('[POST /api/energy/leads]', err);

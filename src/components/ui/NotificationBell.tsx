@@ -1,40 +1,58 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import { Bell, X, CheckCheck, Users, Zap, Package, TrendingUp, AlertCircle } from 'lucide-react';
 
 interface Notification {
   id: string;
-  type: 'lead' | 'project' | 'payment' | 'system' | 'alert';
+  type: string;
   title: string;
   message: string;
-  time: string;
-  read: boolean;
-  href?: string;
+  meta?: string;
+  isRead: boolean;
+  createdAt: string;
 }
 
-const typeConfig = {
+const typeConfig: Record<string, { icon: React.ElementType; color: string; bg: string }> = {
   lead: { icon: Users, color: 'text-accent-cyan', bg: 'bg-accent-cyan/10' },
-  project: { icon: Zap, color: 'text-accent-amber', bg: 'bg-accent-amber/10' },
+  project: { icon: Zap, color: 'text-amber-400', bg: 'bg-amber-400/10' },
   payment: { icon: TrendingUp, color: 'text-accent-emerald', bg: 'bg-accent-emerald/10' },
   system: { icon: Package, color: 'text-white/60', bg: 'bg-white/5' },
   alert: { icon: AlertCircle, color: 'text-accent-rose', bg: 'bg-accent-rose/10' },
 };
 
+function timeAgo(dateStr: string): string {
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1) return 'Just now';
+  if (mins < 60) return `${mins}m ago`;
+  const hours = Math.floor(mins / 60);
+  if (hours < 24) return `${hours}h ago`;
+  return `${Math.floor(hours / 24)}d ago`;
+}
+
 export function NotificationBell() {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
   const ref = useRef<HTMLDivElement>(null);
-  const unread = notifications.filter((n) => !n.read).length;
+  const unread = notifications.filter((n) => !n.isRead).length;
 
-  useEffect(() => {
+  const fetchNotifications = useCallback(() => {
     fetch('/api/notifications')
       .then((r) => r.json())
       .then((json) => setNotifications(json.data ?? []))
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
+
+  useEffect(() => {
+    fetchNotifications();
+    const interval = setInterval(fetchNotifications, 30000);
+    return () => clearInterval(interval);
+  }, [fetchNotifications]);
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -46,18 +64,47 @@ export function NotificationBell() {
     return () => document.removeEventListener('mousedown', handler);
   }, []);
 
-  const markAllRead = () => {
-    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
-  };
-
-  const dismiss = (id: string) => {
-    setNotifications((prev) => prev.filter((n) => n.id !== id));
-  };
-
-  const markRead = (id: string) => {
-    setNotifications((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, read: true } : n))
+  const markAllRead = async () => {
+    const ids = notifications.filter((n) => !n.isRead).map((n) => n.id);
+    setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
+    await Promise.allSettled(
+      ids.map((id) =>
+        fetch(`/api/notifications/${id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ isRead: true }),
+        }),
+      ),
     );
+  };
+
+  const markRead = async (id: string) => {
+    setNotifications((prev) =>
+      prev.map((n) => (n.id === id ? { ...n, isRead: true } : n)),
+    );
+    fetch(`/api/notifications/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ isRead: true }),
+    }).catch(() => {});
+  };
+
+  const dismiss = async (id: string) => {
+    setNotifications((prev) => prev.filter((n) => n.id !== id));
+    fetch(`/api/notifications/${id}`, { method: 'DELETE' }).catch(() => {});
+  };
+
+  const handleClick = (notif: Notification) => {
+    markRead(notif.id);
+    setOpen(false);
+    if (notif.meta) {
+      try {
+        const meta = JSON.parse(notif.meta);
+        if (meta.href) {
+          router.push(meta.href);
+        }
+      } catch { /* ignore */ }
+    }
   };
 
   return (
@@ -75,7 +122,7 @@ export function NotificationBell() {
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full mt-2 w-[380px] z-50 bg-[#0F0F14] border border-white/8 rounded-2xl shadow-2xl shadow-black/60 overflow-hidden">
+        <div className="absolute right-0 top-full mt-2 w-[380px] z-50 bg-[#0F0F14] border border-white/8 rounded-2xl shadow-2xl shadow-black/60 overflow-hidden max-[420px]:fixed max-[420px]:left-2 max-[420px]:right-2 max-[420px]:w-auto">
           <div className="flex items-center justify-between px-5 py-4 border-b border-white/5">
             <div>
               <h3 className="font-display font-semibold text-white">Notifications</h3>
@@ -105,31 +152,23 @@ export function NotificationBell() {
               </div>
             ) : (
               notifications.map((notif) => {
-                const cfg = typeConfig[notif.type];
-                const Icon = (cfg ?? typeConfig.system)!.icon;
-                const color = (cfg ?? typeConfig.system)!.color;
-                const bg = (cfg ?? typeConfig.system)!.bg;
+                const cfg = typeConfig[notif.type] ?? typeConfig.system;
+                const Icon = cfg!.icon;
                 return (
                   <div
                     key={notif.id}
                     className={`flex gap-3 px-5 py-4 border-b border-white/4 hover:bg-white/3 transition-colors cursor-pointer ${
-                      !notif.read ? 'bg-white/[0.02]' : ''
+                      !notif.isRead ? 'bg-white/[0.02]' : ''
                     }`}
-                    onClick={() => {
-                      markRead(notif.id);
-                      if (notif.href) {
-                        window.location.href = notif.href;
-                        setOpen(false);
-                      }
-                    }}
+                    onClick={() => handleClick(notif)}
                   >
-                    <div className={`w-9 h-9 rounded-xl ${bg} flex-shrink-0 flex items-center justify-center mt-0.5`}>
-                      <Icon className={`w-4 h-4 ${color}`} />
+                    <div className={`w-9 h-9 rounded-xl ${cfg!.bg} flex-shrink-0 flex items-center justify-center mt-0.5`}>
+                      <Icon className={`w-4 h-4 ${cfg!.color}`} />
                     </div>
 
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-2">
-                        <p className={`text-sm font-medium leading-tight ${!notif.read ? 'text-white' : 'text-white/70'}`}>
+                        <p className={`text-sm font-medium leading-tight ${!notif.isRead ? 'text-white' : 'text-white/70'}`}>
                           {notif.title}
                         </p>
                         <button
@@ -146,11 +185,11 @@ export function NotificationBell() {
                         {notif.message}
                       </p>
                       <p className="text-[10px] text-white/30 mt-1.5 font-medium">
-                        {notif.time}
+                        {timeAgo(notif.createdAt)}
                       </p>
                     </div>
 
-                    {!notif.read && (
+                    {!notif.isRead && (
                       <div className="w-1.5 h-1.5 rounded-full bg-accent-cyan flex-shrink-0 mt-2" />
                     )}
                   </div>

@@ -1214,3 +1214,43 @@ model ActivityLog {
   @@index([relatedToType, relatedToId])
   @@index([createdAt(sort: Desc)])
 }
+
+// ── Fee Configuration (singleton) ─────────────────────────────────────────────
+
+model FeeConfiguration {
+  id                            String   @id @default(uuid())
+  designFeeCentavos             Int      @default(1500000)
+  installationPct               Int      @default(1500)     // 15.00% × 100
+  permitFeeCentavos             Int      @default(2500000)
+  maintenanceAnnualFeeCentavos  Int      @default(500000)
+  depositRequiredPct            Float    @default(30.0)
+  updatedAt                     DateTime @updatedAt
+}
+
+// ── Package Bundles ───────────────────────────────────────────────────────────
+
+model PackageBundle {
+  // category: "starter" | "standard" | "premium" | "custom"
+  // status: "active" | "inactive"
+  id                          String   @id @default(uuid())
+  name                        String
+  description                 String?
+  category                    String   @default("standard")
+  status                      String   @default("active")
+  panelSku                    String
+  panelQuantity               Int
+  inverterSku                 String
+  inverterQuantity            Int
+  batterySku                  String
+  batteryQuantity             Int
+  totalHardwareCentavos       Int
+  installationFeeCentavos     Int
+  designFeeCentavos           Int
+  permitFeeCentavos           Int
+  grandTotalCentavos          Int
+  monthlyPaymentEstimateCentavos Int?
+  createdAt                   DateTime @default(now())
+  updatedAt                   DateTime @updatedAt
+
+  @@index([category, status])
+}

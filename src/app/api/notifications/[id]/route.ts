@@ -7,51 +7,41 @@ import { isOptcoreStaff } from '@/lib/energy-auth';
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-export async function GET() {
+export async function PATCH(request: Request, context: { params: Promise<{ id: string }> }) {
   try {
     const session = await getSession();
     if (!session || !isOptcoreStaff(session as any)) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const notifications = await db.adminNotification.findMany({
-      orderBy: { createdAt: 'desc' },
-      take: 50,
+    const { id } = await context.params;
+    const body = await request.json();
+
+    const notification = await db.adminNotification.update({
+      where: { id },
+      data: { isRead: body.isRead ?? true },
     });
 
-    return NextResponse.json({ data: notifications });
+    return NextResponse.json({ data: notification });
   } catch (err) {
-    console.error('[GET /api/notifications]', err);
+    console.error('[PATCH /api/notifications/[id]]', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
 
-export async function POST(request: Request) {
+export async function DELETE(request: Request, context: { params: Promise<{ id: string }> }) {
   try {
     const session = await getSession();
     if (!session || !isOptcoreStaff(session as any)) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const body = await request.json();
-    const { type, title, message, meta } = body;
+    const { id } = await context.params;
+    await db.adminNotification.delete({ where: { id } });
 
-    if (!type || !title || !message) {
-      return NextResponse.json({ error: 'type, title, and message are required' }, { status: 422 });
-    }
-
-    const notification = await db.adminNotification.create({
-      data: {
-        type,
-        title,
-        message,
-        meta: meta ? JSON.stringify(meta) : null,
-      },
-    });
-
-    return NextResponse.json({ data: notification }, { status: 201 });
+    return NextResponse.json({ success: true });
   } catch (err) {
-    console.error('[POST /api/notifications]', err);
+    console.error('[DELETE /api/notifications/[id]]', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

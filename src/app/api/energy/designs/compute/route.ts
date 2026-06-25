@@ -69,9 +69,10 @@ export async function POST(request: Request) {
 
     const { lead, customer, site } = await ensureCustomerAndSite(leadId);
 
-    const [inverterRows, batteryRows] = await Promise.all([
+    const [inverterRows, batteryRows, feeConfig] = await Promise.all([
       db.productInverter.findMany({ where: { active: true } }),
       db.productBattery.findMany({ where: { active: true } }),
+      db.feeConfiguration.findFirst(),
     ]);
 
     const input: DesignComputeInput = {
@@ -86,6 +87,10 @@ export async function POST(request: Request) {
       backupAutonomyHours: Number(backupAutonomyHours),
       criticalLoads: criticalLoads as CriticalLoad[],
       availableRoofAreaSqm: availableRoofAreaSqm ? Number(availableRoofAreaSqm) : undefined,
+      panelPriceCentavos: undefined, // callers should set; falls back to ESTIMATED_PANEL_PRICE_CENTAVOS
+      installationFeePct: feeConfig ? Number(feeConfig.installationPct) / 10000 : undefined,
+      designFeeCentavos: feeConfig?.designFeeCentavos ?? undefined,
+      permitFeeCentavos: feeConfig?.permitFeeCentavos ?? undefined,
     };
 
     const result = runDesignCompute(

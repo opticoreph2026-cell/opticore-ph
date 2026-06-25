@@ -81,6 +81,17 @@ export async function PATCH(request: Request, context: { params: Promise<{ id: s
       data: updateData,
     });
 
+    if (parsed.data.status === 'sent') {
+      db.adminNotification.create({
+        data: {
+          type: 'project',
+          title: 'Quotation Sent',
+          message: `Quotation ${quotation.quoteNumber} has been sent to the customer`,
+          meta: JSON.stringify({ href: `/admin/energy/quotations` }),
+        },
+      }).catch(() => {});
+    }
+
     return NextResponse.json({ data: quotation });
   } catch (err) {
     console.error('[PATCH /api/energy/quotations/[id]]', err);

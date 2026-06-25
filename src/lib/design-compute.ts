@@ -30,6 +30,11 @@ export interface DesignComputeInput {
   backupAutonomyHours: number;
   criticalLoads: CriticalLoad[];
   availableRoofAreaSqm?: number;
+  /** Override defaults from DB fee config */
+  panelPriceCentavos?: number;
+  installationFeePct?: number;
+  designFeeCentavos?: number;
+  permitFeeCentavos?: number;
 }
 
 /** Placeholder distributor pricing when catalog `isPriceConfirmed` is false */
@@ -167,7 +172,7 @@ export function runDesignCompute(
 
   const inverterUnit = resolveUnitPrice(selection.inverter);
   const batteryUnit = resolveUnitPrice(selection.battery);
-  const panelUnit = ESTIMATED_PANEL_PRICE_CENTAVOS;
+  const panelUnit = input.panelPriceCentavos ?? ESTIMATED_PANEL_PRICE_CENTAVOS;
 
   const bom: BomLineItem[] = [
     {
@@ -209,9 +214,10 @@ export function runDesignCompute(
   ];
 
   const hardwareSubtotalCentavos = bom.reduce((s, i) => s + i.totalCentavos, 0);
-  const installationFeeCentavos = Math.round(hardwareSubtotalCentavos * ESTIMATED_INSTALLATION_PCT);
-  const designFeeCentavos = ESTIMATED_DESIGN_FEE_CENTAVOS;
-  const permitFeeCentavos = ESTIMATED_PERMIT_FEE_CENTAVOS;
+  const installPct = input.installationFeePct ?? ESTIMATED_INSTALLATION_PCT;
+  const installationFeeCentavos = Math.round(hardwareSubtotalCentavos * installPct);
+  const designFeeCentavos = input.designFeeCentavos ?? ESTIMATED_DESIGN_FEE_CENTAVOS;
+  const permitFeeCentavos = input.permitFeeCentavos ?? ESTIMATED_PERMIT_FEE_CENTAVOS;
   const grandTotalCentavos =
     hardwareSubtotalCentavos + installationFeeCentavos + designFeeCentavos + permitFeeCentavos;
 

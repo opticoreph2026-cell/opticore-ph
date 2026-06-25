@@ -89,6 +89,16 @@ export async function PATCH(request: Request, context: { params: Promise<{ id: s
           },
         })
       );
+      activityPromises.push(
+        db.adminNotification.create({
+          data: {
+            type: 'lead',
+            title: 'Lead Assigned',
+            message: body.assignedOrgId ? 'A lead has been assigned to your organization' : 'Lead unassigned',
+            meta: JSON.stringify({ href: `/partner/leads/${id}` }),
+          },
+        })
+      );
     }
 
     await Promise.allSettled(activityPromises);
