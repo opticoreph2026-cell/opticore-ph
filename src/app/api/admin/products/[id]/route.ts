@@ -4,6 +4,7 @@ import { getSession } from '@/lib/session';
 import { isOptcoreOwner } from '@/lib/energy-auth';
 
 export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
 
 export async function PATCH(request: Request, context: { params: Promise<{ id: string }> }) {
   try {

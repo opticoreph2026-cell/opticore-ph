@@ -23,6 +23,8 @@ const adminNavItems = [
   { href: '/admin/providers', label: 'Utility Companies', icon: Zap },
   { href: '/admin/energy/catalog', label: 'Product Catalog', icon: Package },
   { href: '/admin/energy/organizations', label: 'Organizations', icon: Building2 },
+  { href: '/admin/energy/rules', label: 'Utility Rates', icon: Zap },
+  { href: '/admin/reports', label: 'Reports', icon: ShieldCheck },
   { href: '/admin/alerts', label: 'System Alerts', icon: Bell },
   { href: '/admin/settings', label: 'Settings', icon: Settings },
 ];

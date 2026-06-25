@@ -20,7 +20,7 @@ export async function PATCH(request: Request) {
       return NextResponse.json({ error: 'New password must be at least 8 characters' }, { status: 400 });
     }
 
-    const dbUser = await db.user.findUnique({
+    const dbUser = await db.client.findUnique({
       where: { id: user.sub },
       select: { passwordHash: true },
     });
@@ -36,12 +36,12 @@ export async function PATCH(request: Request) {
 
     const newHash = await hashPassword(newPassword);
 
-    await db.user.update({
+    await db.client.update({
       where: { id: user.sub },
       data: { passwordHash: newHash },
     });
 
-    return NextResponse.json({ ok: true });
+    return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Change password error:', error);
     return NextResponse.json({ error: 'Something went wrong' }, { status: 500 });
