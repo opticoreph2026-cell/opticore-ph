@@ -36,7 +36,7 @@ export default async function QuotationsPage() {
     select: {
       id: true,
       quoteNumber: true,
-      grandTotalCentavos: true,
+      grandTotal: true,
       status: true,
       issueDate: true,
       validUntil: true,
@@ -116,7 +116,7 @@ export default async function QuotationsPage() {
                     </td>
                     <td className="px-6 py-4">{q.design?.pvArrayKwp ? `${q.design.pvArrayKwp} kWp` : '—'}</td>
                     <td className="px-6 py-4 text-white font-medium">
-                      ₱{q.grandTotal.toLocaleString('en-PH', { minimumFractionDigits: 2 })}
+                      ₱{Number(q.grandTotal).toLocaleString('en-PH', { minimumFractionDigits: 2 })}
                     </td>
                     <td className="px-6 py-4">
                       <span

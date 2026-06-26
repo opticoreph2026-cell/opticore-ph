@@ -45,7 +45,7 @@ export default async function QuotationDetailPage({
     redirect('/crm/quotations');
   }
 
-  const formatMoney = (c: number) => `₱${c.toLocaleString('en-PH', { minimumFractionDigits: 2 })}`;
+  const formatMoney = (v: number) => `₱${Number(v).toLocaleString('en-PH', { minimumFractionDigits: 2 })}`;
 
   return (
     <div className="max-w-3xl space-y-6">
@@ -134,25 +134,25 @@ export default async function QuotationDetailPage({
         <div className="space-y-3 text-sm">
           <div className="flex justify-between">
             <span className="text-gray-500">Hardware</span>
-            <span className="text-white">{formatMoney(quotation.hardwareSubtotalCentavos)}</span>
+            <span className="text-white">{formatMoney(quotation.hardwareSubtotal)}</span>
           </div>
           <div className="flex justify-between">
             <span className="text-gray-500">Installation</span>
-            <span className="text-white">{formatMoney(quotation.installationFeeCentavos)}</span>
+            <span className="text-white">{formatMoney(quotation.installationFee)}</span>
           </div>
           <div className="flex justify-between">
             <span className="text-gray-500">Design & Engineering</span>
-            <span className="text-white">{formatMoney(quotation.designFeeCentavos)}</span>
+            <span className="text-white">{formatMoney(quotation.designFee)}</span>
           </div>
-          {quotation.maintenanceContractOfferCentavos > 0 && (
+          {Number(quotation.maintenanceContractOffer) > 0 && (
             <div className="flex justify-between">
               <span className="text-gray-500">Maintenance</span>
-              <span className="text-white">{formatMoney(quotation.maintenanceContractOfferCentavos)}</span>
+              <span className="text-white">{formatMoney(quotation.maintenanceContractOffer)}</span>
             </div>
           )}
           <div className="flex justify-between pt-3 border-t border-white/5">
             <span className="text-base font-semibold text-white">Grand Total</span>
-            <span className="text-base font-bold text-accent-cyan">{formatMoney(quotation.grandTotalCentavos)}</span>
+            <span className="text-base font-bold text-accent-cyan">{formatMoney(quotation.grandTotal)}</span>
           </div>
           <div className="flex justify-between text-xs text-gray-500">
             <span>Deposit Required</span>

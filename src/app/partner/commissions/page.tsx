@@ -50,15 +50,15 @@ export default async function PartnerCommissionsPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-[#16161D] p-6 rounded-2xl border border-white/5">
           <div className="text-sm font-medium text-gray-400 mb-1">Total Earned</div>
-          <div className="text-4xl font-bold text-accent-emerald">₱{(totalEarned / 100).toLocaleString()}</div>
+          <div className="text-4xl font-bold text-accent-emerald">₱{Number(totalEarned).toLocaleString()}</div>
         </div>
         <div className="bg-[#16161D] p-6 rounded-2xl border border-white/5">
           <div className="text-sm font-medium text-gray-400 mb-1">Pending Payouts</div>
-          <div className="text-4xl font-bold text-accent-amber">₱{(pendingEarned / 100).toLocaleString()}</div>
+          <div className="text-4xl font-bold text-accent-amber">₱{Number(pendingEarned).toLocaleString()}</div>
         </div>
         <div className="bg-[#16161D] p-6 rounded-2xl border border-white/5">
           <div className="text-sm font-medium text-gray-400 mb-1">Paid This Month</div>
-          <div className="text-4xl font-bold text-accent-cyan">₱{(paidThisMonth / 100).toLocaleString()}</div>
+          <div className="text-4xl font-bold text-accent-cyan">₱{Number(paidThisMonth).toLocaleString()}</div>
         </div>
       </div>
 
@@ -93,7 +93,7 @@ export default async function PartnerCommissionsPage() {
                       {comm.project?.contract?.quotation?.customer?.fullName || 'Unknown'}
                     </td>
                     <td className="px-6 py-4 capitalize">{comm.roleInProject.replace(/_/g, ' ')}</td>
-                    <td className="px-6 py-4">₱{comm.amount.toLocaleString()}</td>
+                    <td className="px-6 py-4">₱{Number(comm.amount).toLocaleString()}</td>
                     <td className="px-6 py-4">
                       <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
                         comm.status === 'paid'

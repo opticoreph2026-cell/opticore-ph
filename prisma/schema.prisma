@@ -45,6 +45,8 @@ model Client {
   resetToken          String?   @unique
   resetTokenExpiresAt DateTime?
 
+  energyProfile  EnergyProfile?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -96,7 +98,8 @@ model EnergyProfile {
   // role: "opticore_owner" | "opticore_staff" | "partner_admin" | "partner_installer" | "customer"
   // prcLicenseType: "RME" | "REE" | "PEE" | "ECE" | "ECT" | "TESDA_NCII" | "TESDA_NCIII" | "none"
   id               String   @id @default(uuid())
-  clientId         String   @unique  // FK → Client.id
+  clientId         String   @unique
+  client           Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
   fullName         String
   role             String   @default("customer")
   organizationId   String?

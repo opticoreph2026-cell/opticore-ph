@@ -162,8 +162,8 @@ export default function LeadDetailClient({
     }
   };
 
-  const formatMoney = (centavos: number) =>
-    `₱${centavos.toLocaleString('en-PH', { minimumFractionDigits: 2 })}`;
+  const formatMoney = (v: number) =>
+    `₱${Number(v).toLocaleString('en-PH', { minimumFractionDigits: 2 })}`;
 
   const formatDate = (d: string) =>
     new Date(d).toLocaleDateString('en-PH', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });

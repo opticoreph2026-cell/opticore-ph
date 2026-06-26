@@ -3,6 +3,7 @@ import { db } from '@/lib/db';
 import { SpotlightCard } from '@/components/ui/SpotlightCard';
 import { Users, Search, CheckCircle2, XCircle } from 'lucide-react';
 import { InlineToggle } from '@/components/admin/InlineToggle';
+import { DeleteClientButton } from '@/components/admin/DeleteClientButton';
 
 export const dynamic = 'force-dynamic';
 
@@ -88,16 +89,19 @@ export default async function AdminClientsPage() {
                     </div>
                   </td>
                   <td className="p-4">
-                    <InlineToggle
-                      id={client.id}
-                      field="suspended"
-                      currentValue={client.suspended}
-                      apiPath={`/api/admin/clients/${client.id}`}
-                      labelTrue="Active"
-                      labelFalse="Suspended"
-                      colorTrue="text-accent-emerald"
-                      colorFalse="text-accent-rose"
-                    />
+                    <div className="flex items-center gap-2">
+                      <InlineToggle
+                        id={client.id}
+                        field="suspended"
+                        currentValue={client.suspended}
+                        apiPath={`/api/admin/clients/${client.id}`}
+                        labelTrue="Active"
+                        labelFalse="Suspended"
+                        colorTrue="text-accent-emerald"
+                        colorFalse="text-accent-rose"
+                      />
+                      <DeleteClientButton clientId={client.id} clientEmail={client.email} />
+                    </div>
                   </td>
                   <td className="p-4 text-right text-xs text-white/40 font-mono">
                     {new Date(client.createdAt).toLocaleDateString('en-PH', { month: 'short', day: 'numeric', year: 'numeric' })}
