@@ -284,7 +284,7 @@ export function PhilippineAddressSelect({
   };
 
   const inputClass =
-    'appearance-none block w-full pl-10 pr-10 py-2.5 border border-border-subtle rounded-lg bg-surface-800 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-accent-cyan disabled:opacity-50 disabled:cursor-not-allowed';
+    'appearance-none block w-full pl-9 pr-9 py-1.5 border border-border-subtle rounded-lg bg-surface-800 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-accent-cyan disabled:opacity-50 disabled:cursor-not-allowed';
 
   function renderSuggestions<T extends { id: string; name: string }>({
     items,
@@ -340,7 +340,7 @@ export function PhilippineAddressSelect({
   }
 
   return (
-    <div ref={containerRef} className="space-y-3">
+    <div ref={containerRef} className="space-y-2">
       {/* Province */}
       <div className="relative">
         <div className="relative">

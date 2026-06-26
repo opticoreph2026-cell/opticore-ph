@@ -115,41 +115,41 @@ export function ContactForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
+    <form onSubmit={handleSubmit} className="space-y-3">
       <input ref={honeypotRef} type="text" name="_gotcha" className="hidden" tabIndex={-1} autoComplete="off" />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div>
-          <label className="block text-sm font-medium text-white/80 mb-1.5">{t('name')}</label>
+          <label className="block text-xs font-medium text-white/80 mb-1">{t('name')}</label>
           <input
             required
             value={form.fullName}
             onChange={(e) => setForm({ ...form, fullName: e.target.value })}
-            className={`w-full px-4 py-2.5 rounded-xl bg-surface-800 border ${errors.fullName ? 'border-accent-rose' : 'border-border-subtle'} text-white focus:outline-none focus:ring-2 focus:ring-accent-blue`}
+            className={`w-full px-3 py-1.5 rounded-lg bg-surface-800 border ${errors.fullName ? 'border-accent-rose' : 'border-border-subtle'} text-white focus:outline-none focus:ring-2 focus:ring-accent-blue`}
           />
-          {errors.fullName && <p className="text-xs text-accent-rose mt-1">{errors.fullName}</p>}
+          {errors.fullName && <p className="text-xs text-accent-rose mt-0.5">{errors.fullName}</p>}
         </div>
         <div>
-          <label className="block text-sm font-medium text-white/80 mb-1.5">{t('phone')}</label>
+          <label className="block text-xs font-medium text-white/80 mb-1">{t('phone')}</label>
           <input
             required
             type="tel"
             value={form.phone}
             onChange={(e) => setForm({ ...form, phone: e.target.value })}
             placeholder="09XX XXX XXXX"
-            className={`w-full px-4 py-2.5 rounded-xl bg-surface-800 border ${errors.phone ? 'border-accent-rose' : 'border-border-subtle'} text-white focus:outline-none focus:ring-2 focus:ring-accent-blue`}
+            className={`w-full px-3 py-1.5 rounded-lg bg-surface-800 border ${errors.phone ? 'border-accent-rose' : 'border-border-subtle'} text-white focus:outline-none focus:ring-2 focus:ring-accent-blue`}
           />
-          {errors.phone && <p className="text-xs text-accent-rose mt-1">{errors.phone}</p>}
+          {errors.phone && <p className="text-xs text-accent-rose mt-0.5">{errors.phone}</p>}
         </div>
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-white/80 mb-1.5">{t('email')}</label>
+        <label className="block text-xs font-medium text-white/80 mb-1">{t('email')}</label>
         <input
           type="email"
           value={form.email}
           onChange={(e) => setForm({ ...form, email: e.target.value })}
-          className="w-full px-4 py-2.5 rounded-xl bg-surface-800 border border-border-subtle text-white focus:outline-none focus:ring-2 focus:ring-accent-blue"
+          className="w-full px-3 py-1.5 rounded-lg bg-surface-800 border border-border-subtle text-white focus:outline-none focus:ring-2 focus:ring-accent-blue"
         />
       </div>
 
@@ -159,23 +159,23 @@ export function ContactForm() {
         barangay={form.barangay}
         onChange={handleAddressChange}
       />
-      {errors.province && <p className="text-xs text-accent-rose mt-1">{errors.province}</p>}
+      {errors.province && <p className="text-xs text-accent-rose mt-0.5">{errors.province}</p>}
 
       <div>
-        <label className="block text-sm font-medium text-white/80 mb-1.5">{t('street')}</label>
+        <label className="block text-xs font-medium text-white/80 mb-1">{t('street')}</label>
         <input
           value={form.addressLine}
           onChange={(e) => setForm({ ...form, addressLine: e.target.value })}
-          className="w-full px-4 py-2.5 rounded-xl bg-surface-800 border border-border-subtle text-white focus:outline-none focus:ring-2 focus:ring-accent-blue"
+          className="w-full px-3 py-1.5 rounded-lg bg-surface-800 border border-border-subtle text-white focus:outline-none focus:ring-2 focus:ring-accent-blue"
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-white/80 mb-1.5">{t('customerType')}</label>
+        <label className="block text-xs font-medium text-white/80 mb-1">{t('customerType')}</label>
         <select
           value={form.customerType}
           onChange={(e) => setForm({ ...form, customerType: e.target.value })}
-          className="w-full px-4 py-2.5 rounded-xl bg-surface-800 border border-border-subtle text-white focus:outline-none focus:ring-2 focus:ring-accent-blue"
+          className="w-full px-3 py-1.5 rounded-lg bg-surface-800 border border-border-subtle text-white focus:outline-none focus:ring-2 focus:ring-accent-blue"
         >
           <option value="residential">{t('residential')}</option>
           <option value="small_commercial">{t('commercial')}</option>
@@ -183,8 +183,8 @@ export function ContactForm() {
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-white/80 mb-1.5">{t('bill')}</label>
-        <div className="flex items-center gap-4">
+        <label className="block text-xs font-medium text-white/80 mb-1">{t('bill')}</label>
+        <div className="flex items-center gap-3">
           <input
             type="range"
             min="1000"
@@ -192,26 +192,26 @@ export function ContactForm() {
             step="500"
             value={form.monthlyBillPhp}
             onChange={(e) => setForm({ ...form, monthlyBillPhp: Number(e.target.value) })}
-            className="flex-1 h-2 bg-surface-800 rounded-lg accent-accent-blue"
+            className="flex-1 h-1.5 bg-surface-800 rounded-lg accent-accent-blue"
           />
-          <span className="text-accent-blue font-bold min-w-[100px] text-right">
+          <span className="text-accent-blue font-semibold min-w-[90px] text-right text-sm">
             ₱{form.monthlyBillPhp.toLocaleString()}
           </span>
         </div>
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-white/80 mb-1.5">{t('message')}</label>
+        <label className="block text-xs font-medium text-white/80 mb-1">{t('message')}</label>
         <textarea
-          rows={3}
+          rows={2}
           value={form.notes}
           onChange={(e) => setForm({ ...form, notes: e.target.value })}
-          className="w-full px-4 py-2.5 rounded-xl bg-surface-800 border border-border-subtle text-white focus:outline-none focus:ring-2 focus:ring-accent-blue resize-none"
+          className="w-full px-3 py-1.5 rounded-lg bg-surface-800 border border-border-subtle text-white focus:outline-none focus:ring-2 focus:ring-accent-blue resize-none"
         />
       </div>
 
       {error && (
-        <p className="text-sm text-accent-rose bg-accent-rose/10 border border-accent-rose/20 rounded-xl px-4 py-3">
+        <p className="text-xs text-accent-rose bg-accent-rose/10 border border-accent-rose/20 rounded-lg px-3 py-2">
           {error}
         </p>
       )}
@@ -219,9 +219,9 @@ export function ContactForm() {
       <button
         type="submit"
         disabled={loading}
-        className="w-full py-3 rounded-xl bg-accent-blue text-white font-semibold hover:bg-accent-blue/90 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+        className="w-full py-2 rounded-lg bg-accent-blue text-white font-semibold hover:bg-accent-blue/90 transition-colors disabled:opacity-50 flex items-center justify-center gap-2 text-sm"
       >
-        {loading ? <Spinner className="w-5 h-5" /> : t('submit')}
+        {loading ? <Spinner className="w-4 h-4" /> : t('submit')}
       </button>
     </form>
   );
