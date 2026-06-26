@@ -15,7 +15,7 @@ export default auth((request) => {
 
   // Public lead submission — no auth required, bypass intl to prevent locale redirect
   if (pathname === '/api/energy/leads' && request.method === 'POST') {
-    return;
+    return NextResponse.next();
   }
 
   // Strip locale prefix (e.g., /en/login → /login, /fil/crm → /crm)
