@@ -24,6 +24,7 @@ interface PhilippineAddressSelectProps {
   city?: string;
   barangay?: string;
   onChange: (data: { province: string; city: string; barangay: string }) => void;
+  streetSlot?: React.ReactNode;
 }
 
 type FieldState = 'idle' | 'loading' | 'error' | 'open';
@@ -42,6 +43,7 @@ export function PhilippineAddressSelect({
   city: initialCity,
   barangay: initialBarangay,
   onChange,
+  streetSlot,
 }: PhilippineAddressSelectProps) {
   const [selectedProvince, setSelectedProvince] = useState<ProvinceItem | null>(null);
   const [selectedCity, setSelectedCity] = useState<CityItem | null>(null);
@@ -341,150 +343,153 @@ export function PhilippineAddressSelect({
 
   return (
     <div ref={containerRef} className="space-y-2">
-      {/* Province */}
-      <div className="relative">
+      {/* Province + City row */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40 pointer-events-none" />
-          <input
-            type="text"
-            value={provinceInput}
-            onChange={(e) => {
-              setProvinceInput(e.target.value);
-              setSelectedProvince(null);
-            }}
-            onFocus={() => {
-              if (provinceInput && !selectedProvince) {
-                setShowProvinceSuggestions(true);
-              }
-            }}
-            placeholder="Search province..."
-            className={inputClass}
-          />
-          <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center">
-            {provinceState === 'loading' && (
-              <Spinner className="w-4 h-4" color="text-accent-cyan" />
-            )}
-            {selectedProvince && provinceState !== 'loading' && (
-              <button
-                type="button"
-                onClick={clearProvince}
-                className="text-white/40 hover:text-white/80 transition-colors"
-                tabIndex={-1}
-              >
-                <X className="w-4 h-4" />
-              </button>
-            )}
+          <div className="relative">
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-white/40 pointer-events-none" />
+            <input
+              type="text"
+              value={provinceInput}
+              onChange={(e) => {
+                setProvinceInput(e.target.value);
+                setSelectedProvince(null);
+              }}
+              onFocus={() => {
+                if (provinceInput && !selectedProvince) {
+                  setShowProvinceSuggestions(true);
+                }
+              }}
+              placeholder="Province"
+              className={inputClass}
+            />
+            <div className="absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center">
+              {provinceState === 'loading' && (
+                <Spinner className="w-3.5 h-3.5" color="text-accent-cyan" />
+              )}
+              {selectedProvince && provinceState !== 'loading' && (
+                <button
+                  type="button"
+                  onClick={clearProvince}
+                  className="text-white/40 hover:text-white/80 transition-colors"
+                  tabIndex={-1}
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              )}
+            </div>
           </div>
+          {showProvinceSuggestions && !selectedProvince && (
+            <div className="absolute z-50 mt-1 w-full bg-surface-900 border border-border-subtle rounded-lg shadow-lg max-h-60 overflow-y-auto">
+              {renderSuggestions({
+                items: provinceSuggestions,
+                state: provinceState,
+                onSelect: selectProvince,
+                onRetry: () => setProvinceState('idle'),
+                loading: false,
+              })}
+            </div>
+          )}
         </div>
-        {showProvinceSuggestions && !selectedProvince && (
-          <div className="absolute z-50 mt-1 w-full bg-surface-900 border border-border-subtle rounded-lg shadow-lg max-h-60 overflow-y-auto">
-            {renderSuggestions({
-              items: provinceSuggestions,
-              state: provinceState,
-              onSelect: selectProvince,
-              onRetry: () => setProvinceState('idle'),
-              loading: false,
-            })}
+        <div className="relative">
+          <div className="relative">
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-white/40 pointer-events-none" />
+            <input
+              type="text"
+              value={cityInput}
+              onChange={(e) => {
+                setCityInput(e.target.value);
+                setSelectedCity(null);
+              }}
+              onFocus={() => {
+                if (cityInput && !selectedCity && selectedProvince) {
+                  setShowCitySuggestions(true);
+                }
+              }}
+              placeholder="City / Municipality"
+              disabled={!selectedProvince}
+              className={inputClass}
+            />
+            <div className="absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center">
+              {cityState === 'loading' && (
+                <Spinner className="w-3.5 h-3.5" color="text-accent-cyan" />
+              )}
+              {selectedCity && cityState !== 'loading' && (
+                <button
+                  type="button"
+                  onClick={clearCity}
+                  className="text-white/40 hover:text-white/80 transition-colors"
+                  tabIndex={-1}
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              )}
+            </div>
           </div>
-        )}
+          {showCitySuggestions && !selectedCity && selectedProvince && (
+            <div className="absolute z-50 mt-1 w-full bg-surface-900 border border-border-subtle rounded-lg shadow-lg max-h-60 overflow-y-auto">
+              {renderSuggestions({
+                items: citySuggestions,
+                state: cityState,
+                onSelect: selectCity,
+                onRetry: retryCities,
+                loading: false,
+              })}
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* City */}
-      <div className="relative">
+      {/* Barangay + Street row */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40 pointer-events-none" />
-          <input
-            type="text"
-            value={cityInput}
-            onChange={(e) => {
-              setCityInput(e.target.value);
-              setSelectedCity(null);
-            }}
-            onFocus={() => {
-              if (cityInput && !selectedCity && selectedProvince) {
-                setShowCitySuggestions(true);
-              }
-            }}
-            placeholder="Search city / municipality..."
-            disabled={!selectedProvince}
-            className={inputClass}
-          />
-          <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center">
-            {cityState === 'loading' && (
-              <Spinner className="w-4 h-4" color="text-accent-cyan" />
-            )}
-            {selectedCity && cityState !== 'loading' && (
-              <button
-                type="button"
-                onClick={clearCity}
-                className="text-white/40 hover:text-white/80 transition-colors"
-                tabIndex={-1}
-              >
-                <X className="w-4 h-4" />
-              </button>
-            )}
+          <div className="relative">
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-white/40 pointer-events-none" />
+            <input
+              type="text"
+              value={barangayInput}
+              onChange={(e) => {
+                setBarangayInput(e.target.value);
+                setSelectedBarangay(null);
+              }}
+              onFocus={() => {
+                if (barangayInput && !selectedBarangay && selectedCity) {
+                  setShowBarangaySuggestions(true);
+                }
+              }}
+              placeholder="Barangay"
+              disabled={!selectedCity}
+              className={inputClass}
+            />
+            <div className="absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center">
+              {barangayState === 'loading' && (
+                <Spinner className="w-3.5 h-3.5" color="text-accent-cyan" />
+              )}
+              {selectedBarangay && barangayState !== 'loading' && (
+                <button
+                  type="button"
+                  onClick={clearBarangay}
+                  className="text-white/40 hover:text-white/80 transition-colors"
+                  tabIndex={-1}
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              )}
+            </div>
           </div>
+          {showBarangaySuggestions && !selectedBarangay && selectedCity && (
+            <div className="absolute z-50 mt-1 w-full bg-surface-900 border border-border-subtle rounded-lg shadow-lg max-h-60 overflow-y-auto">
+              {renderSuggestions({
+                items: barangaySuggestions,
+                state: barangayState,
+                onSelect: selectBarangay,
+                onRetry: retryBarangays,
+                loading: false,
+              })}
+            </div>
+          )}
         </div>
-        {showCitySuggestions && !selectedCity && selectedProvince && (
-          <div className="absolute z-50 mt-1 w-full bg-surface-900 border border-border-subtle rounded-lg shadow-lg max-h-60 overflow-y-auto">
-            {renderSuggestions({
-              items: citySuggestions,
-              state: cityState,
-              onSelect: selectCity,
-              onRetry: retryCities,
-              loading: false,
-            })}
-          </div>
-        )}
-      </div>
-
-      {/* Barangay */}
-      <div className="relative">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40 pointer-events-none" />
-          <input
-            type="text"
-            value={barangayInput}
-            onChange={(e) => {
-              setBarangayInput(e.target.value);
-              setSelectedBarangay(null);
-            }}
-            onFocus={() => {
-              if (barangayInput && !selectedBarangay && selectedCity) {
-                setShowBarangaySuggestions(true);
-              }
-            }}
-            placeholder="Search barangay..."
-            disabled={!selectedCity}
-            className={inputClass}
-          />
-          <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center">
-            {barangayState === 'loading' && (
-              <Spinner className="w-4 h-4" color="text-accent-cyan" />
-            )}
-            {selectedBarangay && barangayState !== 'loading' && (
-              <button
-                type="button"
-                onClick={clearBarangay}
-                className="text-white/40 hover:text-white/80 transition-colors"
-                tabIndex={-1}
-              >
-                <X className="w-4 h-4" />
-              </button>
-            )}
-          </div>
-        </div>
-        {showBarangaySuggestions && !selectedBarangay && selectedCity && (
-          <div className="absolute z-50 mt-1 w-full bg-surface-900 border border-border-subtle rounded-lg shadow-lg max-h-60 overflow-y-auto">
-            {renderSuggestions({
-              items: barangaySuggestions,
-              state: barangayState,
-              onSelect: selectBarangay,
-              onRetry: retryBarangays,
-              loading: false,
-            })}
-          </div>
-        )}
+        {streetSlot}
       </div>
     </div>
   );

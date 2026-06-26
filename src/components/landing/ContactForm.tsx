@@ -158,17 +158,19 @@ export function ContactForm() {
         city={form.city}
         barangay={form.barangay}
         onChange={handleAddressChange}
+        streetSlot={
+          <div>
+            <label className="block text-xs font-medium text-white/80 mb-1">{t('street')}</label>
+            <input
+              value={form.addressLine}
+              onChange={(e) => setForm({ ...form, addressLine: e.target.value })}
+              className="w-full px-3 py-1.5 rounded-lg bg-surface-800 border border-border-subtle text-white focus:outline-none focus:ring-2 focus:ring-accent-blue"
+              placeholder="House/Street"
+            />
+          </div>
+        }
       />
       {errors.province && <p className="text-xs text-accent-rose mt-0.5">{errors.province}</p>}
-
-      <div>
-        <label className="block text-xs font-medium text-white/80 mb-1">{t('street')}</label>
-        <input
-          value={form.addressLine}
-          onChange={(e) => setForm({ ...form, addressLine: e.target.value })}
-          className="w-full px-3 py-1.5 rounded-lg bg-surface-800 border border-border-subtle text-white focus:outline-none focus:ring-2 focus:ring-accent-blue"
-        />
-      </div>
 
       <div>
         <label className="block text-xs font-medium text-white/80 mb-1">{t('customerType')}</label>
