@@ -26,7 +26,7 @@ export async function POST(request: Request) {
         territory: body.territory || null,
         netMeteringApplicationUrl: body.netMeteringApplicationUrl || null,
         defaultProcessingDays: body.defaultProcessingDays || 60,
-        dimcFeeCapCentavos: body.dimcFeeCapCentavos || 300000,
+        dimcFeeCap: body.dimcFeeCap || 3000,
       },
       select: { id: true, name: true, code: true, territory: true },
     });

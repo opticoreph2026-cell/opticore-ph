@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/routing';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -8,11 +8,12 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import { Spinner } from '@/components/ui/Spinner';
 import { NEOVOLT_INVERTERS_SINGLE } from '@/data/neovolt-products';
 
-const PROVINCES = [
-  { id: 'cebu', name: 'Cebu', rate: 10.5 },
-  { id: 'bohol', name: 'Bohol', rate: 11.2 },
-  { id: 'leyte', name: 'Leyte', rate: 10.8 },
-] as const;
+interface UtilityOption {
+  id: string;
+  code: string;
+  name: string;
+  rateRu?: number;
+}
 
 const BACKUP_OPTIONS = [
   { id: '4', label: 'hours4', hours: 4 },
@@ -25,20 +26,71 @@ function round(v: number): number {
   return Math.round(v);
 }
 
+function useDebounce<T>(value: T, delay: number): T {
+  const [debounced, setDebounced] = useState(value);
+  useEffect(() => {
+    const timer = setTimeout(() => setDebounced(value), delay);
+    return () => clearTimeout(timer);
+  }, [value, delay]);
+  return debounced;
+}
+
 export function Calculator() {
   const t = useTranslations('calculator');
   const [bill, setBill] = useState(5000);
-  const [province, setProvince] = useState('cebu');
   const [propertyType, setPropertyType] = useState('residential');
   const [backupId, setBackupId] = useState('8');
   const [showResults, setShowResults] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const selectedProvince = PROVINCES.find((p) => p.id === province)!;
-  const backupOption = BACKUP_OPTIONS.find((b) => b.id === backupId)!;
-  const rate = selectedProvince.rate;
+  // Utility search state
+  const [utilities, setUtilities] = useState<UtilityOption[]>([]);
+  const [utilitySearch, setUtilitySearch] = useState('');
+  const [utilitySuggestions, setUtilitySuggestions] = useState<UtilityOption[]>([]);
+  const [selectedUtility, setSelectedUtility] = useState<UtilityOption | null>(null);
+  const [utilityLoading, setUtilityLoading] = useState(false);
+  const [showUtilitySuggestions, setShowUtilitySuggestions] = useState(false);
+  const debouncedSearch = useDebounce(utilitySearch, 300);
 
-  const dailyKwh = round((bill / rate) / 30);
+  // Manual rate fallback
+  const [manualRate, setManualRate] = useState('');
+
+  // Fetch all utilities on mount
+  useEffect(() => {
+    fetch('/api/energy/utility-rates')
+      .then((r) => r.json())
+      .then((res) => {
+        if (res.data?.companies) {
+          const opts: UtilityOption[] = res.data.companies.map((c: any) => ({
+            id: c.id,
+            code: c.code,
+            name: c.name,
+            rateRu: c.latestRate ? c.latestRate.allInRateRu : undefined,
+          }));
+          setUtilities(opts);
+          setUtilitySuggestions(opts);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  // Filter utilities on search
+  useEffect(() => {
+    if (!debouncedSearch) {
+      setUtilitySuggestions(utilities);
+      return;
+    }
+    const q = debouncedSearch.toLowerCase();
+    setUtilitySuggestions(
+      utilities.filter((u) => u.code.toLowerCase().includes(q) || u.name.toLowerCase().includes(q))
+    );
+  }, [debouncedSearch, utilities]);
+
+  const rate = selectedUtility?.rateRu ? selectedUtility.rateRu / 10000 : parseFloat(manualRate) || 0;
+
+  const backupOption = BACKUP_OPTIONS.find((b) => b.id === backupId)!;
+
+  const dailyKwh = rate > 0 ? round((bill / rate) / 30) : 0;
   const peakLoad = dailyKwh / 8 / 0.6;
   const requiredKwp = Math.max(1, round((dailyKwh / (4.5 * 0.8)) * 10) / 10);
   const panelCount = Math.ceil((requiredKwp * 1000) / 415);
@@ -102,21 +154,53 @@ export function Calculator() {
                 />
               </div>
 
-              <div>
+              <div className="relative">
                 <label className="block text-sm font-medium text-gray-400 mb-2">
                   {t('province')}
                 </label>
-                <select
-                  value={province}
-                  onChange={(e) => setProvince(e.target.value)}
+                <input
+                  type="text"
+                  value={selectedUtility ? `${selectedUtility.name} (${selectedUtility.code})` : utilitySearch}
+                  onChange={(e) => { setUtilitySearch(e.target.value); setSelectedUtility(null); setShowUtilitySuggestions(true); }}
+                  onFocus={() => setShowUtilitySuggestions(true)}
+                  placeholder="Search electric company..."
                   className="w-full px-4 py-2.5 rounded-xl bg-surface-800 border border-border-subtle text-white focus:outline-none focus:ring-2 focus:ring-accent-blue"
-                >
-                  {PROVINCES.map((p) => (
-                    <option key={p.id} value={p.id}>
-                      {p.name} — ₱{p.rate}/kWh
-                    </option>
-                  ))}
-                </select>
+                />
+                {utilityLoading && (
+                  <div className="absolute right-3 top-9"><Spinner className="w-4 h-4" /></div>
+                )}
+                {showUtilitySuggestions && utilitySuggestions.length > 0 && !selectedUtility && (
+                  <div className="absolute z-20 mt-1 w-full bg-surface-900 border border-border-subtle rounded-xl max-h-48 overflow-y-auto shadow-xl">
+                    {utilitySuggestions.map((u) => (
+                      <button
+                        key={u.id}
+                        type="button"
+                        onClick={() => { setSelectedUtility(u); setUtilitySearch(''); setShowUtilitySuggestions(false); }}
+                        className="w-full text-left px-4 py-2.5 text-sm text-white/80 hover:bg-white/5 hover:text-white transition-colors"
+                      >
+                        <span className="font-medium">{u.name}</span>
+                        <span className="text-white/40 ml-2">({u.code})</span>
+                        {u.rateRu && (
+                          <span className="text-accent-cyan ml-2">₱{(u.rateRu / 10000).toFixed(4)}/kWh</span>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                )}
+                {!selectedUtility && (
+                  <div className="mt-2">
+                    <label className="block text-xs text-gray-500 mb-1">Or enter rate manually (₱/kWh)</label>
+                    <input
+                      type="number"
+                      step="0.1"
+                      min="0"
+                      value={manualRate}
+                      onChange={(e) => setManualRate(e.target.value)}
+                      placeholder="e.g. 12.88"
+                      className="w-full px-3 py-1.5 rounded-lg bg-surface-800 border border-border-subtle text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent-blue"
+                    />
+                  </div>
+                )}
               </div>
             </div>
 
@@ -254,7 +338,7 @@ export function Calculator() {
                 <p className="text-xs text-gray-500 text-center">{t('disclaimer')}</p>
 
                 <Link
-                  href={`/contact?bill=${bill}&province=${province}&type=${propertyType}`}
+                  href={`/contact?bill=${bill}&province=${selectedUtility?.code || ''}&type=${propertyType}`}
                   className="block w-full py-3 text-center bg-accent-blue text-white font-semibold rounded-xl hover:bg-accent-blue/90 transition-colors"
                 >
                   {t('cta')}

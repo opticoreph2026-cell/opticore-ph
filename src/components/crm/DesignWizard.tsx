@@ -45,6 +45,13 @@ interface PanelOption {
   cellType: string;
 }
 
+interface UtilityOption {
+  id: string;
+  code: string;
+  name: string;
+  rateRu?: number;
+}
+
 interface WizardForm {
   leadId: string;
   averageMonthlyBill: number;
@@ -62,6 +69,15 @@ interface WizardForm {
   allInRatePhp: number;
 }
 
+function useDebounce<T>(value: T, delay: number): T {
+  const [debounced, setDebounced] = useState(value);
+  useEffect(() => {
+    const timer = setTimeout(() => setDebounced(value), delay);
+    return () => clearTimeout(timer);
+  }, [value, delay]);
+  return debounced;
+}
+
   function formatPhp(pesos: number) {
     return `₱${pesos.toLocaleString('en-PH', { maximumFractionDigits: 2 })}`;
   }
@@ -73,6 +89,11 @@ export function DesignWizard({ basePath = '/crm' }: { basePath?: string }) {
   const [error, setError] = useState('');
   const [leads, setLeads] = useState<Lead[]>([]);
   const [panels, setPanels] = useState<PanelOption[]>([]);
+  const [utilities, setUtilities] = useState<UtilityOption[]>([]);
+  const [utilitySearch, setUtilitySearch] = useState('');
+  const [utilitySuggestions, setUtilitySuggestions] = useState<UtilityOption[]>([]);
+  const [selectedUtility, setSelectedUtility] = useState<UtilityOption | null>(null);
+  const [showUtilitySuggestions, setShowUtilitySuggestions] = useState(false);
 
   const [form, setForm] = useState<WizardForm>({
     leadId: '',
@@ -107,7 +128,35 @@ export function DesignWizard({ basePath = '/crm' }: { basePath?: string }) {
       .then((r) => r.json())
       .then((json) => setPanels(json.data ?? []))
       .catch(() => {});
+    fetch('/api/energy/utility-rates')
+      .then((r) => r.json())
+      .then((res) => {
+        if (res.data?.companies) {
+          const opts: UtilityOption[] = res.data.companies.map((c: any) => ({
+            id: c.id,
+            code: c.code,
+            name: c.name,
+            rateRu: c.latestRate ? c.latestRate.allInRateRu : undefined,
+          }));
+          setUtilities(opts);
+          setUtilitySuggestions(opts);
+        }
+      })
+      .catch(() => {});
   }, []);
+
+  // Filter utility suggestions on search
+  const debouncedUtilitySearch = useDebounce(utilitySearch, 300);
+  useEffect(() => {
+    if (!debouncedUtilitySearch) {
+      setUtilitySuggestions(utilities);
+      return;
+    }
+    const q = debouncedUtilitySearch.toLowerCase();
+    setUtilitySuggestions(
+      utilities.filter((u) => u.code.toLowerCase().includes(q) || u.name.toLowerCase().includes(q))
+    );
+  }, [debouncedUtilitySearch, utilities]);
 
   const onLeadChange = (leadId: string) => {
     const lead = leads.find((l) => l.id === leadId);
@@ -178,6 +227,7 @@ export function DesignWizard({ basePath = '/crm' }: { basePath?: string }) {
           designId,
           selfConsumptionPct: form.selfConsumptionPct,
           capexTotal: computeResult.grandTotal,
+          utilityCompanyId: selectedUtility?.id || undefined,
           allInRateRu: Math.round(form.allInRatePhp * 10000),
           bgcRateRu: Math.round(form.allInRatePhp * 0.65 * 10000),
           annualRateEscalationPct: 5,
@@ -394,22 +444,66 @@ export function DesignWizard({ basePath = '/crm' }: { basePath?: string }) {
                   <p className="text-xs text-white/40 mt-1.5">{form.panelWattage}W selected</p>
                 )}
               </div>
-              <div>
+              <div className="relative">
                 <label className="block text-xs font-semibold text-white/60 uppercase mb-1.5">Utility Rate (₱/kWh)</label>
                 <input
-                  type="number"
-                  step="0.1"
-                  value={form.allInRatePhp}
-                  onChange={(e) => {
-                    const rate = Number(e.target.value);
-                    setForm((f) => ({
-                      ...f,
-                      allInRatePhp: rate,
-                      averageMonthlyKwh: Math.round(f.averageMonthlyBill / rate) || f.averageMonthlyKwh,
-                    }));
-                  }}
+                  type="text"
+                  value={selectedUtility ? `${selectedUtility.name} (${selectedUtility.code})` : utilitySearch}
+                  onChange={(e) => { setUtilitySearch(e.target.value); setSelectedUtility(null); setShowUtilitySuggestions(true); }}
+                  onFocus={() => setShowUtilitySuggestions(true)}
+                  placeholder="Search electric company..."
                   className="w-full bg-[#16161D] border border-white/10 rounded-xl px-4 py-3 text-white text-sm"
                 />
+                {showUtilitySuggestions && utilitySuggestions.length > 0 && !selectedUtility && (
+                  <div className="absolute z-20 mt-1 w-full bg-surface-900 border border-border-subtle rounded-xl max-h-48 overflow-y-auto shadow-xl">
+                    {utilitySuggestions.map((u) => (
+                      <button
+                        key={u.id}
+                        type="button"
+                        onClick={() => {
+                          setSelectedUtility(u);
+                          setUtilitySearch('');
+                          setShowUtilitySuggestions(false);
+                          if (u.rateRu) {
+                            const rate = u.rateRu / 10000;
+                            setForm((f) => ({
+                              ...f,
+                              allInRatePhp: rate,
+                              averageMonthlyKwh: Math.round(f.averageMonthlyBill / rate) || f.averageMonthlyKwh,
+                            }));
+                          }
+                        }}
+                        className="w-full text-left px-4 py-2.5 text-sm text-white/80 hover:bg-white/5 hover:text-white transition-colors"
+                      >
+                        <span className="font-medium">{u.name}</span>
+                        <span className="text-white/40 ml-2">({u.code})</span>
+                        {u.rateRu && (
+                          <span className="text-accent-cyan ml-2">₱{(u.rateRu / 10000).toFixed(4)}/kWh</span>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                )}
+                {!selectedUtility && (
+                  <div className="mt-2">
+                    <label className="block text-xs text-gray-500 mb-1">Or enter manually</label>
+                    <input
+                      type="number"
+                      step="0.1"
+                      min="0"
+                      value={form.allInRatePhp}
+                      onChange={(e) => {
+                        const rate = Number(e.target.value);
+                        setForm((f) => ({
+                          ...f,
+                          allInRatePhp: rate,
+                          averageMonthlyKwh: Math.round(f.averageMonthlyBill / rate) || f.averageMonthlyKwh,
+                        }));
+                      }}
+                      className="w-full bg-[#16161D] border border-white/10 rounded-xl px-4 py-3 text-white text-sm"
+                    />
+                  </div>
+                )}
               </div>
             </div>
             <NavButtons

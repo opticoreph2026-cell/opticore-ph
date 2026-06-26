@@ -86,6 +86,7 @@ Runtime:                   →  src/lib/db.js PrismaClient singleton
 | `src/middleware.ts` | NextAuth + next-intl combined middleware |
 | `prisma/schema.prisma` | Database schema (1212 lines) |
 | `prisma/seed-energy.ts` | Provider seed data (3 orgs, 5 inverters, 3 batteries, 4 panels, 3 users) |
+| `prisma/seed-address.ts` | Philippine address seed (87 provinces, 1,634 cities, 42,046 barangays from PSGC API) |
 | `.env` | Supabase pooler URLs, AUTH_SECRET, EMAIL_FROM |
 | `.env.local` | Gmail OAuth2, DATABASE_URL (Supabase), AUTH_SECRET, GEMINI_API_KEY, JWT secrets, PayMongo |
 

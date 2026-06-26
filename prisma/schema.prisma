@@ -133,6 +133,7 @@ model EnergyLead {
   phone                String?
   email                String?
   addressLine          String?
+  barangay             String?
   city                 String?
   province             String?
   customerType         String   @default("residential")
@@ -811,4 +812,37 @@ model PackageBundle {
   updatedAt                   DateTime @updatedAt
 
   @@index([category, status])
+}
+
+// ── Philippine Address Reference Data ──────────────────────────────────────────
+
+model PhilippineProvince {
+  id     String @id
+  name   String
+  region String
+  cities PhilippineCity[]
+
+  @@index([name])
+}
+
+model PhilippineCity {
+  id         String @id
+  provinceId String
+  province   PhilippineProvince @relation(fields: [provinceId], references: [id], onDelete: Cascade)
+  name       String
+  isCity     Boolean @default(true)
+  barangays  PhilippineBarangay[]
+
+  @@index([provinceId])
+  @@index([name])
+}
+
+model PhilippineBarangay {
+  id     String @id
+  cityId String
+  city   PhilippineCity @relation(fields: [cityId], references: [id], onDelete: Cascade)
+  name   String
+
+  @@index([cityId])
+  @@index([name])
 }

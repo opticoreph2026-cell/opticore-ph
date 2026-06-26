@@ -74,7 +74,36 @@ export async function POST(request: Request) {
       bgcRateRu = 65000,
       utilityName = 'VECO',
       customerClass = 'residential',
+      utilityCompanyId,
     } = body;
+
+    // DB rate lookup fallback
+    let resolvedAllInRateRu = allInRateRu;
+    let resolvedBgcRateRu = bgcRateRu;
+    let resolvedUtilityName = utilityName;
+
+    if (utilityCompanyId) {
+      try {
+        const latestRate = await db.utilityRateSchedule.findFirst({
+          where: { utilityCompanyId },
+          orderBy: { effectiveDate: 'desc' },
+          select: { allInRateRu: true, bgcRateRu: true },
+        });
+        if (latestRate) {
+          resolvedAllInRateRu = latestRate.allInRateRu;
+          resolvedBgcRateRu = latestRate.bgcRateRu ?? Math.round(latestRate.allInRateRu * 0.65);
+        }
+        const company = await db.utilityCompany.findUnique({
+          where: { id: utilityCompanyId },
+          select: { name: true, code: true },
+        });
+        if (company) {
+          resolvedUtilityName = company.name;
+        }
+      } catch {
+        // Fall back to client-provided rates
+      }
+    }
 
     if (!designId) {
       return NextResponse.json({ error: 'designId is required' }, { status: 400 });
@@ -115,8 +144,8 @@ export async function POST(request: Request) {
     const config: MultiYearConfig = {
       pathway,
       capexTotal: capex,
-      year1AllInRateRu: allInRateRu,
-      year1BgcRateRu: bgcRateRu,
+      year1AllInRateRu: resolvedAllInRateRu,
+      year1BgcRateRu: resolvedBgcRateRu,
       year1AnnualLoadKwh: annualLoadKwh,
       year1PvYieldKwh: design.estimatedAnnualYieldKwh,
       selfConsumptionPct,
@@ -130,7 +159,7 @@ export async function POST(request: Request) {
       loanPrincipal: financingType === 'loan' ? loanPrincipal : 0,
       loanAnnualInterestRatePct: loanInterestRatePct,
       loanTermMonths,
-      utilityName,
+      utilityName: resolvedUtilityName,
       customerClass,
       effectiveDate: new Date().toISOString().slice(0, 10),
     };

@@ -4,9 +4,8 @@ import React, { useState, useRef } from 'react';
 import { useTranslations } from 'next-intl';
 import { useSearchParams } from 'next/navigation';
 import { Spinner } from '@/components/ui/Spinner';
+import { PhilippineAddressSelect } from '@/components/ui/PhilippineAddressSelect';
 import { roundMoney } from '@/lib/money';
-
-const PROVINCES = ['Cebu', 'Bohol', 'Leyte', 'Other'] as const;
 
 const PHONE_REGEX = /^(09\d{9}|\+639\d{9})$/;
 
@@ -29,23 +28,15 @@ export function ContactForm() {
 
   function getInitialForm() {
     const billParam = searchParams?.get('bill');
-    const provinceParam = searchParams?.get('province');
     const typeParam = searchParams?.get('type');
-
-    let province = 'Cebu';
-    if (provinceParam) {
-      const capitalized = provinceParam.charAt(0).toUpperCase() + provinceParam.slice(1);
-      if (PROVINCES.includes(capitalized as typeof PROVINCES[number])) {
-        province = capitalized;
-      }
-    }
 
     return {
       fullName: '',
       phone: '',
       email: '',
-      province,
+      province: '',
       city: '',
+      barangay: '',
       addressLine: '',
       monthlyBillPhp: billParam ? parseInt(billParam) : 5000,
       customerType: typeParam === 'commercial' ? 'small_commercial' : 'residential',
@@ -63,6 +54,10 @@ export function ContactForm() {
     if (!form.monthlyBillPhp || form.monthlyBillPhp < 1) newErrors.monthlyBillPhp = t('billError');
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
+  };
+
+  const handleAddressChange = (data: { province: string; city: string; barangay: string }) => {
+    setForm((prev) => ({ ...prev, ...data }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -94,8 +89,9 @@ export function ContactForm() {
         fullName: '',
         phone: '',
         email: '',
-        province: 'Cebu',
+        province: '',
         city: '',
+        barangay: '',
         addressLine: '',
         monthlyBillPhp: 5000,
         customerType: 'residential',
@@ -147,41 +143,23 @@ export function ContactForm() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-        <div>
-          <label className="block text-sm font-medium text-white/80 mb-1.5">{t('email')}</label>
-          <input
-            type="email"
-            value={form.email}
-            onChange={(e) => setForm({ ...form, email: e.target.value })}
-            className="w-full px-4 py-2.5 rounded-xl bg-surface-800 border border-border-subtle text-white focus:outline-none focus:ring-2 focus:ring-accent-blue"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-white/80 mb-1.5">{t('province')}</label>
-          <select
-            value={form.province}
-            onChange={(e) => setForm({ ...form, province: e.target.value })}
-            className={`w-full px-4 py-2.5 rounded-xl bg-surface-800 border ${errors.province ? 'border-accent-rose' : 'border-border-subtle'} text-white focus:outline-none focus:ring-2 focus:ring-accent-blue`}
-          >
-            {PROVINCES.map((p) => (
-              <option key={p} value={p}>
-                {p}
-              </option>
-            ))}
-          </select>
-          {errors.province && <p className="text-xs text-accent-rose mt-1">{errors.province}</p>}
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-white/80 mb-1.5">{t('city')}</label>
-          <input
-            required
-            value={form.city}
-            onChange={(e) => setForm({ ...form, city: e.target.value })}
-            className="w-full px-4 py-2.5 rounded-xl bg-surface-800 border border-border-subtle text-white focus:outline-none focus:ring-2 focus:ring-accent-blue"
-          />
-        </div>
+      <div>
+        <label className="block text-sm font-medium text-white/80 mb-1.5">{t('email')}</label>
+        <input
+          type="email"
+          value={form.email}
+          onChange={(e) => setForm({ ...form, email: e.target.value })}
+          className="w-full px-4 py-2.5 rounded-xl bg-surface-800 border border-border-subtle text-white focus:outline-none focus:ring-2 focus:ring-accent-blue"
+        />
       </div>
+
+      <PhilippineAddressSelect
+        province={form.province}
+        city={form.city}
+        barangay={form.barangay}
+        onChange={handleAddressChange}
+      />
+      {errors.province && <p className="text-xs text-accent-rose mt-1">{errors.province}</p>}
 
       <div>
         <label className="block text-sm font-medium text-white/80 mb-1.5">{t('address')}</label>

@@ -3,8 +3,9 @@ import { db } from '@/lib/db';
 import { getCurrentUser } from '@/lib/session';
 import { canAccessAdminEnergy } from '@/lib/energy-auth';
 import { redirect } from 'next/navigation';
-import type { EnergyUtilityCompany } from '@prisma/client';
+import type { EnergyUtilityCompany, UtilityRateSchedule } from '@prisma/client';
 import { AddUtilityDialog } from '@/components/admin/AddUtilityDialog';
+import { EditRateDialog } from '@/components/admin/EditRateDialog';
 import { formatUnitsToRatePHP } from '@/lib/money';
 
 export const runtime = 'nodejs';
@@ -43,10 +44,11 @@ export default async function AdminEnergyRules() {
               <th className="px-6 py-4 font-medium">Name</th>
               <th className="px-6 py-4 font-medium">Res. Rate (₱/kWh)</th>
               <th className="px-6 py-4 font-medium">Net Metering</th>
+              <th className="px-6 py-4 font-medium"></th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border-subtle text-white/80">
-            {utilities.map((u: EnergyUtilityCompany & { rateSchedules: { allInRateRu: number }[] }) => (
+            {utilities.map((u: EnergyUtilityCompany & { rateSchedules: UtilityRateSchedule[] }) => (
               <tr key={u.id} className="hover:bg-white/5 transition-colors">
                 <td className="px-6 py-4 font-bold text-accent-cyan">{u.code}</td>
                 <td className="px-6 py-4">{u.name}</td>
@@ -65,6 +67,14 @@ export default async function AdminEnergyRules() {
                       Coming Soon
                     </span>
                   )}
+                </td>
+                <td className="px-6 py-4 text-right">
+                  <EditRateDialog
+                    utilityId={u.id}
+                    utilityName={u.name}
+                    currentAllInRateRu={u.rateSchedules[0]?.allInRateRu ?? 0}
+                    currentBgcRateRu={u.rateSchedules[0]?.blendedGenerationRateRu ?? 0}
+                  />
                 </td>
               </tr>
             ))}

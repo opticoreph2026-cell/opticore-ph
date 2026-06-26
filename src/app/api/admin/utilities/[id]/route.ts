@@ -19,7 +19,7 @@ export async function PATCH(request: Request, context: { params: Promise<{ id: s
     const utility = await db.energyUtilityCompany.update({
       where: { id },
       data: body,
-      select: { id: true, name: true, code: true, territory: true, dimcFeeCapCentavos: true, defaultProcessingDays: true },
+      select: { id: true, name: true, code: true, territory: true, dimcFeeCap: true, defaultProcessingDays: true },
     });
 
     return NextResponse.json({ data: utility });
