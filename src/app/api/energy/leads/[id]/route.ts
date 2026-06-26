@@ -2,7 +2,7 @@ import 'server-only';
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getSession } from '@/lib/session';
-import { canAccessCrm } from '@/lib/energy-auth';
+import { canAccessCrm, canAccessDesigns, isOptcoreStaff } from '@/lib/energy-auth';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -59,7 +59,7 @@ export async function GET(request: Request, context: { params: Promise<{ id: str
 export async function PATCH(request: Request, context: { params: Promise<{ id: string }> }) {
   try {
     const session = await getSession();
-    if (!session || !canAccessCrm(session as any)) {
+    if (!session || !canAccessDesigns(session as any)) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -68,10 +68,16 @@ export async function PATCH(request: Request, context: { params: Promise<{ id: s
 
     const existing = await db.energyLead.findUnique({
       where: { id },
-      select: { status: true, assignedOrgId: true, notes: true },
+      select: { status: true, assignedOrgId: true, assignedUserId: true, notes: true },
     });
     if (!existing) {
       return NextResponse.json({ error: 'Not found' }, { status: 404 });
+    }
+
+    // Partner users can only modify leads assigned to their own org
+    const isStaff = isOptcoreStaff(session as any);
+    if (!isStaff && session.organizationId && existing.assignedOrgId !== session.organizationId) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
     if (body.status && !isValidLeadTransition(existing.status, body.status)) {
@@ -103,6 +109,23 @@ export async function PATCH(request: Request, context: { params: Promise<{ id: s
             relatedToId: id,
             action: 'status_changed',
             description: `Status changed from "${existing.status}" to "${body.status}"`,
+            actorId: (session as any)?.id ?? null,
+          },
+        })
+      );
+    }
+
+    if ('assignedUserId' in body && body.assignedUserId !== existing.assignedUserId) {
+      const actorName = (session as any)?.name || (session as any)?.email || 'A user';
+      activityPromises.push(
+        db.activityLog.create({
+          data: {
+            relatedToType: 'lead',
+            relatedToId: id,
+            action: 'assigned',
+            description: body.assignedUserId
+              ? `Lead claimed by ${actorName}`
+              : 'Lead unclaimed',
             actorId: (session as any)?.id ?? null,
           },
         })
