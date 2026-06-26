@@ -4,19 +4,17 @@ import { NextResponse } from 'next/server';
 export const dynamic = 'force-dynamic';
 
 export async function POST(request: Request) {
-  const signOutResponse = await signOut({ redirect: false });
+  // Perform server-side sign out (cleans up internal state)
+  await signOut({ redirect: false }).catch(() => {});
+
   const response = NextResponse.redirect(new URL('/login', request.url));
 
-  // Copy Set-Cookie headers from signOut to clear NextAuth session cookies
-  const cookiesToClear =
-    typeof signOutResponse.headers.getSetCookie === 'function'
-      ? signOutResponse.headers.getSetCookie()
-      : [signOutResponse.headers.get('Set-Cookie')].filter(Boolean);
-  for (const cookie of cookiesToClear) {
-    response.headers.append('Set-Cookie', cookie);
+  // Clear NextAuth session token cookies (authjs.session-token + secure variant)
+  for (const name of ['authjs.session-token', '__Secure-authjs.session-token', '__Host-authjs.session-token']) {
+    response.cookies.set(name, '', { maxAge: 0, path: '/' });
   }
 
-  // Also clear the guard cookie
+  // Clear the guard cookie
   response.cookies.set('opticore_session', '', { maxAge: 0, path: '/' });
 
   return response;
