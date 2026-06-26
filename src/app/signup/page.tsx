@@ -43,7 +43,7 @@ export default function SignupPage() {
       }
 
       await signIn('credentials', { email, password, skipTurnstile: 'true', redirect: false });
-      document.cookie = 'opticore_session=1; path=/; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : '');
+      document.cookie = 'opticore_session=1; path=/; max-age=604800; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : '');
       success('Account created!');
       router.push('/onboarding');
     } catch (err: any) {
