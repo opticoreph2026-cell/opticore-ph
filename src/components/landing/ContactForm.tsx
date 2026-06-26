@@ -160,7 +160,6 @@ export function ContactForm() {
         onChange={handleAddressChange}
         streetSlot={
           <div>
-            <label className="block text-xs font-medium text-white/80 mb-1">{t('street')}</label>
             <input
               value={form.addressLine}
               onChange={(e) => setForm({ ...form, addressLine: e.target.value })}
