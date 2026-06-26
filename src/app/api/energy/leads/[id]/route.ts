@@ -130,6 +130,7 @@ export async function PATCH(request: Request, context: { params: Promise<{ id: s
             title: 'Lead Assigned',
             message: body.assignedOrgId ? 'A lead has been assigned to your organization' : 'Lead unassigned',
             meta: JSON.stringify({ href: `/partner/leads/${id}` }),
+            organizationId: body.assignedOrgId || null,
           },
         })
       );

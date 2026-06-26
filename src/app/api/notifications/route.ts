@@ -2,15 +2,19 @@ import 'server-only';
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getSession } from '@/lib/session';
-import { isOptcoreStaff } from '@/lib/energy-auth';
+import { isOptcoreStaff, isPartnerAdmin, isPartnerInstaller } from '@/lib/energy-auth';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
+function canAccessNotifications(session: any): boolean {
+  return isOptcoreStaff(session) || isPartnerAdmin(session) || isPartnerInstaller(session);
+}
+
 export async function GET(request: Request) {
   try {
     const session = await getSession();
-    if (!session || !isOptcoreStaff(session as any)) {
+    if (!session || !canAccessNotifications(session)) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -19,13 +23,23 @@ export async function GET(request: Request) {
     const limit = Math.min(100, Math.max(1, parseInt(searchParams.get('limit') ?? '50', 10) || 50));
     const skip = (page - 1) * limit;
 
+    // Filter by organization: staff see all; partners see their org + global
+    const where: Record<string, any> = {};
+    if (session.organizationId && !isOptcoreStaff(session)) {
+      where.OR = [
+        { organizationId: session.organizationId },
+        { organizationId: null },
+      ];
+    }
+
     const [notifications, total] = await Promise.all([
       db.adminNotification.findMany({
+        where,
         orderBy: { createdAt: 'desc' },
         take: limit,
         skip,
       }),
-      db.adminNotification.count(),
+      db.adminNotification.count({ where }),
     ]);
 
     return NextResponse.json({ data: notifications, total, page, limit, totalPages: Math.ceil(total / limit) });
@@ -38,12 +52,12 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     const session = await getSession();
-    if (!session || !isOptcoreStaff(session as any)) {
+    if (!session || !canAccessNotifications(session)) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const body = await request.json();
-    const { type, title, message, meta } = body;
+    const { type, title, message, meta, organizationId } = body;
 
     if (!type || !title || !message) {
       return NextResponse.json({ error: 'type, title, and message are required' }, { status: 422 });
@@ -55,6 +69,7 @@ export async function POST(request: Request) {
         title,
         message,
         meta: meta ? JSON.stringify(meta) : null,
+        organizationId: organizationId || null,
       },
     });
 

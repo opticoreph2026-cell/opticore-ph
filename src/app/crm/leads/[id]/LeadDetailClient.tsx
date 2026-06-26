@@ -34,6 +34,20 @@ const statusColors: Record<string, string> = {
   converted: 'bg-green-500/10 text-green-400',
 };
 
+const LEAD_STATUS_TRANSITIONS: Record<string, string[]> = {
+  new: ['contacted', 'disqualified'],
+  contacted: ['site_visit_scheduled', 'disqualified'],
+  site_visit_scheduled: ['site_visit_done', 'disqualified'],
+  site_visit_done: ['qualified', 'disqualified'],
+  qualified: ['quote_sent', 'disqualified'],
+  quote_sent: ['negotiating', 'won', 'lost', 'disqualified'],
+  negotiating: ['won', 'lost', 'disqualified'],
+  won: [],
+  lost: [],
+  disqualified: [],
+  converted: [],
+};
+
 const ACTION_LABELS: Record<string, string> = {
   created: 'Lead created',
   status_changed: 'Status changed',
@@ -280,24 +294,53 @@ export default function LeadDetailClient({
               </div>
             </div>
 
-            {/* Status Control */}
+            {/* Pipeline Status */}
             <div className="bg-[#16161D] border border-white/5 rounded-xl p-6 space-y-4">
               <h3 className="text-sm font-semibold text-white/60 uppercase tracking-wider">Pipeline Status</h3>
-              <div className="flex flex-wrap gap-2">
-                {STATUS_OPTIONS.map((opt) => (
-                  <button
-                    key={opt.value}
-                    disabled={saving === 'status'}
-                    onClick={() => handleStatusChange(opt.value)}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${
-                      lead.status === opt.value
-                        ? `${statusColors[opt.value]} border-current`
-                        : 'border-white/5 text-gray-400 hover:text-white hover:bg-white/5'
-                    }`}
-                  >
-                    {opt.label}
-                  </button>
-                ))}
+              <div className="space-y-3">
+                {/* Current status badge */}
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-gray-500 uppercase tracking-wider">Current</span>
+                  <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium capitalize border ${
+                    statusColors[lead.status] ?? 'bg-white/5 text-gray-400 border-white/5'
+                  }`}>
+                    {STATUS_OPTIONS.find((s) => s.value === lead.status)?.label || lead.status.replace(/_/g, ' ')}
+                  </span>
+                </div>
+
+                {/* Valid next steps */}
+                {(() => {
+                  const validNext = LEAD_STATUS_TRANSITIONS[lead.status] ?? [];
+                  if (validNext.length === 0) {
+                    return <p className="text-xs text-gray-500">This lead has reached a terminal stage.</p>;
+                  }
+                  return (
+                    <div>
+                      <span className="text-xs text-gray-500 uppercase tracking-wider">Next Step</span>
+                      <div className="flex flex-wrap gap-2 mt-2">
+                        {validNext.map((value) => {
+                          const opt = STATUS_OPTIONS.find((s) => s.value === value);
+                          if (!opt) return null;
+                          return (
+                            <button
+                              key={value}
+                              disabled={saving === 'status'}
+                              onClick={() => handleStatusChange(value)}
+                              className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${
+                                saving === 'status'
+                                  ? 'opacity-50 cursor-not-allowed border-white/5 text-gray-500'
+                                  : 'border-accent-cyan/30 text-accent-cyan hover:bg-accent-cyan/10 hover:border-accent-cyan'
+                              }`}
+                            >
+                              {opt.label}
+                              <span className="ml-1.5 text-[10px] opacity-60">→</span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })()}
               </div>
             </div>
 

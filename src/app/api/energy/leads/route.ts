@@ -143,6 +143,7 @@ export async function POST(request: Request) {
         title: 'New Lead',
         message: `New ${customerType || 'residential'} lead from ${fullName}`,
         meta: JSON.stringify({ href: `/crm/leads` }),
+        organizationId: lead.assignedOrgId || null,
       },
     }).catch((err: any) => console.error('[notification]', err));
 

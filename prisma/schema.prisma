@@ -54,13 +54,16 @@ model Client {
 // ── Admin ─────────────────────────────────────────────────────────────────────
 
 model AdminNotification {
-  id        String   @id @default(uuid())
-  type      String
-  title     String
-  message   String
-  meta      String?
-  isRead    Boolean  @default(false)
-  createdAt DateTime @default(now())
+  id             String   @id @default(uuid())
+  type           String
+  title          String
+  message        String
+  meta           String?
+  organizationId String?                        // null = broadcast to all staff; non-null = scoped to org members
+  isRead         Boolean  @default(false)
+  createdAt      DateTime @default(now())
+
+  @@index([organizationId])
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
