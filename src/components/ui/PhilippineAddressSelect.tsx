@@ -3,12 +3,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Search, X } from 'lucide-react';
 import { Spinner } from '@/components/ui/Spinner';
-
-interface ProvinceItem {
-  id: string;
-  name: string;
-  region: string;
-}
+import { PROVINCES } from '@/data/provinces';
+import type { ProvinceItem } from '@/data/provinces';
 
 interface CityItem {
   id: string;
@@ -68,83 +64,35 @@ export function PhilippineAddressSelect({
   const [showBarangaySuggestions, setShowBarangaySuggestions] = useState(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
-  const allProvincesRef = useRef<ProvinceItem[]>([]);
-  const provincesLoadedRef = useRef(false);
-  const initRef = useRef(false);
 
   const debouncedProvince = useDebounce(provinceInput, 300);
   const debouncedCity = useDebounce(cityInput, 300);
   const debouncedBarangay = useDebounce(barangayInput, 300);
 
   // Initialize from props on mount only
+  const initRef = useRef(false);
   useEffect(() => {
     if (initRef.current) return;
     initRef.current = true;
-    if (initialProvince) setProvinceInput(initialProvince);
+    if (initialProvince) {
+      setProvinceInput(initialProvince);
+      const found = PROVINCES.find((p) => p.name.toLowerCase() === initialProvince.toLowerCase());
+      if (found) {
+        setSelectedProvince(found);
+      }
+    }
     if (initialCity) setCityInput(initialCity);
     if (initialBarangay) setBarangayInput(initialBarangay);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Pre-fetch all provinces on mount
-  useEffect(() => {
-    if (provincesLoadedRef.current) return;
-    fetch('/api/data/provinces')
-      .then((res) => {
-        if (!res.ok) throw new Error('Failed');
-        return res.json();
-      })
-      .then((json) => {
-        allProvincesRef.current = json.data;
-        provincesLoadedRef.current = true;
-      })
-      .catch(() => {});
-  }, []);
-
-  // Resolve initial province from the cached list once loaded
-  useEffect(() => {
-    if (!initialProvince || !provincesLoadedRef.current || selectedProvince) return;
-    const found = allProvincesRef.current.find(
-      (p) => p.name.toLowerCase() === initialProvince.toLowerCase(),
-    );
-    if (found) {
-      setSelectedProvince(found);
-      setProvinceInput(found.name);
-    }
-  }, [initialProvince, selectedProvince]);
-
   // Filter provinces client-side on debounced input
   useEffect(() => {
     if (!debouncedProvince || selectedProvince || !provinceInput.trim()) return;
-
-    if (provincesLoadedRef.current) {
-      const q = debouncedProvince.toLowerCase();
-      const filtered = allProvincesRef.current.filter((p) =>
-        p.name.toLowerCase().includes(q),
-      );
-      setProvinceSuggestions(filtered);
-      setShowProvinceSuggestions(true);
-      setProvinceState(filtered.length > 0 ? 'open' : 'idle');
-    } else {
-      // Cache not ready — fetch on demand
-      setProvinceState('loading');
-      fetch('/api/data/provinces')
-        .then((res) => {
-          if (!res.ok) throw new Error('Failed');
-          return res.json();
-        })
-        .then((json) => {
-          allProvincesRef.current = json.data;
-          provincesLoadedRef.current = true;
-          const q = debouncedProvince.toLowerCase();
-          const filtered = json.data.filter((p: ProvinceItem) =>
-            p.name.toLowerCase().includes(q),
-          );
-          setProvinceSuggestions(filtered);
-          setShowProvinceSuggestions(true);
-          setProvinceState(filtered.length > 0 ? 'open' : 'idle');
-        })
-        .catch(() => setProvinceState('error'));
-    }
+    const q = debouncedProvince.toLowerCase();
+    const filtered = PROVINCES.filter((p) => p.name.toLowerCase().includes(q));
+    setProvinceSuggestions(filtered);
+    setShowProvinceSuggestions(true);
+    setProvinceState(filtered.length > 0 ? 'open' : 'idle');
   }, [debouncedProvince, selectedProvince, provinceInput]);
 
   // Fetch cities on debounced input
@@ -295,27 +243,6 @@ export function PhilippineAddressSelect({
 
   // --- Retry handlers ---
 
-  const retryProvince = () => {
-    setProvinceState('loading');
-    fetch('/api/data/provinces')
-      .then((res) => {
-        if (!res.ok) throw new Error('Failed');
-        return res.json();
-      })
-      .then((json) => {
-        allProvincesRef.current = json.data;
-        provincesLoadedRef.current = true;
-        const q = provinceInput.toLowerCase();
-        const filtered = json.data.filter((p: ProvinceItem) =>
-          p.name.toLowerCase().includes(q),
-        );
-        setProvinceSuggestions(filtered);
-        setShowProvinceSuggestions(true);
-        setProvinceState(filtered.length > 0 ? 'open' : 'idle');
-      })
-      .catch(() => setProvinceState('error'));
-  };
-
   const retryCities = () => {
     if (!selectedProvince) return;
     setCityState('loading');
@@ -455,7 +382,7 @@ export function PhilippineAddressSelect({
               items: provinceSuggestions,
               state: provinceState,
               onSelect: selectProvince,
-              onRetry: retryProvince,
+              onRetry: () => setProvinceState('idle'),
               loading: false,
             })}
           </div>

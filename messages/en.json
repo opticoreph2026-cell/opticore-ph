@@ -177,6 +177,7 @@
       "provinceError": "Please select your province",
       "city": "City / Municipality",
       "address": "Address",
+      "street": "Street",
       "bill": "Monthly Electric Bill (₱)",
       "billError": "Please enter a valid amount",
       "customerType": "Property Type",

@@ -162,7 +162,7 @@ export function ContactForm() {
       {errors.province && <p className="text-xs text-accent-rose mt-1">{errors.province}</p>}
 
       <div>
-        <label className="block text-sm font-medium text-white/80 mb-1.5">{t('address')}</label>
+        <label className="block text-sm font-medium text-white/80 mb-1.5">{t('street')}</label>
         <input
           value={form.addressLine}
           onChange={(e) => setForm({ ...form, addressLine: e.target.value })}

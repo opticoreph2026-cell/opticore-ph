@@ -177,6 +177,7 @@
       "provinceError": "Mangyaring pumili ng inyong probinsya",
       "city": "Lungsod / Munisipyo",
       "address": "Address",
+      "street": "Street",
       "bill": "Buwanang Bill sa Kuryente (₱)",
       "billError": "Mangyaring maglagay ng wastong halaga",
       "customerType": "Uri ng Property",

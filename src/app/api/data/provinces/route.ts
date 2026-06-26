@@ -9,7 +9,9 @@ export async function GET() {
       orderBy: { name: 'asc' },
       select: { id: true, name: true, region: true },
     });
-    return NextResponse.json({ data: provinces });
+    return NextResponse.json({ data: provinces }, {
+      headers: { 'Cache-Control': 'public, max-age=86400, s-maxage=86400, stale-while-revalidate=604800' },
+    });
   } catch (err) {
     console.error('[GET /api/data/provinces]', err);
     return NextResponse.json({ error: 'Failed to fetch provinces' }, { status: 500 });

@@ -19,7 +19,9 @@ export async function GET(request: NextRequest) {
       take: 100,
     });
 
-    return NextResponse.json({ data: barangays });
+    return NextResponse.json({ data: barangays }, {
+      headers: { 'Cache-Control': 'public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400' },
+    });
   } catch (err) {
     console.error('[GET /api/data/barangays]', err);
     return NextResponse.json({ error: 'Failed to fetch barangays' }, { status: 500 });
