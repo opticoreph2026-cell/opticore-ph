@@ -8,17 +8,9 @@ export const authConfig = {
   session: {
     strategy: 'jwt',
   },
-  cookies: {
-    sessionToken: {
-      options: {
-        maxAge: undefined,
-      } as any,
-    },
-  },
   callbacks: {
     authorized({ auth, request }) {
       let { pathname } = request.nextUrl;
-      // Strip locale prefix for locale-aware protected path matching
       pathname = pathname.replace(/^\/(en|fil)\//, '/');
       const protectedPrefixes = ['/crm', '/partner', '/customer', '/admin'];
       const isProtected = protectedPrefixes.some((p) => pathname.startsWith(p));
@@ -26,9 +18,19 @@ export const authConfig = {
         pathname.startsWith('/api/energy') &&
         !(pathname === '/api/energy/leads' && request.method === 'POST');
 
-      if (isProtected || isEnergyApi) {
+      if (isProtected) {
+        if (!auth?.user) return false;
+        if (pathname !== '/login') {
+          const guardCookie = request.cookies.get('opticore_session');
+          if (!guardCookie) return false;
+        }
+        return true;
+      }
+
+      if (isEnergyApi) {
         return !!auth?.user;
       }
+
       return true;
     },
   },

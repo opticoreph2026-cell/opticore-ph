@@ -30,7 +30,14 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
     }
 
-    return NextResponse.json({ success: true });
+    const response = NextResponse.json({ success: true });
+    response.cookies.set('opticore_session', '1', {
+      httpOnly: true,
+      sameSite: 'lax',
+      path: '/',
+      secure: process.env.NODE_ENV === 'production',
+    });
+    return response;
   } catch (err) {
     console.error('[POST /api/auth/login]', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

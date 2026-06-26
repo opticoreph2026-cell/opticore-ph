@@ -5,5 +5,7 @@ export const dynamic = 'force-dynamic';
 
 export async function POST(request: Request) {
   await signOut({ redirect: false });
-  return NextResponse.redirect(new URL('/login', request.url));
+  const response = NextResponse.redirect(new URL('/login', request.url));
+  response.cookies.set('opticore_session', '', { maxAge: 0, path: '/' });
+  return response;
 }
