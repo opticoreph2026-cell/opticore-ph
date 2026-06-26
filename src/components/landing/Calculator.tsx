@@ -156,7 +156,7 @@ export function Calculator() {
 
               <div className="relative">
                 <label className="block text-sm font-medium text-gray-400 mb-2">
-                  {t('province')}
+                  {t('electricUtility')}
                 </label>
                 <input
                   type="text"

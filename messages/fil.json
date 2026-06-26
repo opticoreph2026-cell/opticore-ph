@@ -70,7 +70,7 @@
     "title": "Solar at ESS ROI Calculator",
     "subtitle": "Tingnan ang posibleng savings at system size sa ilang segundo. Engineering-grade estimates base sa inyong bill.",
     "monthlyBill": "Average na Buwanang Bill sa Kuryente (₱)",
-    "province": "Inyong Probinsya",
+    "electricUtility": "Electric Utility",
     "propertyType": "Uri ng Property",
     "residential": "Residential",
     "commercial": "Commercial",

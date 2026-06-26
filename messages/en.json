@@ -70,7 +70,7 @@
     "title": "Solar & ESS ROI Calculator",
     "subtitle": "See your potential savings and system size in seconds. Engineering-grade estimates based on your actual bill.",
     "monthlyBill": "Average Monthly Electric Bill (₱)",
-    "province": "Your Province",
+    "electricUtility": "Electric Utility",
     "propertyType": "Property Type",
     "residential": "Residential",
     "commercial": "Commercial",
