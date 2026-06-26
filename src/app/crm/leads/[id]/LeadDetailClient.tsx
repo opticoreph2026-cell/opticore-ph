@@ -3,7 +3,8 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, Phone, Mail, MapPin, Building, Activity, Users, FileText, ChevronDown } from 'lucide-react';
+import { ArrowLeft, Phone, Mail, MapPin, Building, Activity, Users, FileText, ChevronDown, Loader2 } from 'lucide-react';
+import { useToast } from '@/components/ui/Toast';
 
 const STATUS_OPTIONS = [
   { value: 'new', label: 'New', color: 'text-accent-cyan' },
@@ -47,6 +48,7 @@ interface LeadData {
   phone?: string | null;
   email?: string | null;
   addressLine?: string | null;
+  barangay?: string | null;
   city?: string | null;
   province?: string | null;
   customerType: string;
@@ -87,6 +89,7 @@ export default function LeadDetailClient({
   currentUserId: string | null;
 }) {
   const router = useRouter();
+  const { success: showSuccess, error: showError } = useToast();
   const [lead, setLead] = useState(initialLead);
   const [activities, setActivities] = useState(initialActivities);
   const [tab, setTab] = useState<'overview' | 'activity' | 'customers'>('overview');
@@ -106,8 +109,10 @@ export default function LeadDetailClient({
       if (!res.ok) throw new Error('Failed to update status');
       const json = await res.json();
       setLead((prev) => ({ ...prev, status: json.data.status }));
+      showSuccess(`Status updated to "${json.data.status.replace(/_/g, ' ')}"`);
       refreshActivity();
     } catch (err) {
+      showError('Failed to update status');
       console.error(err);
     } finally {
       setSaving(null);
@@ -125,8 +130,10 @@ export default function LeadDetailClient({
       if (!res.ok) throw new Error('Failed to assign');
       const json = await res.json();
       setLead((prev) => ({ ...prev, assignedOrgId: json.data.assignedOrgId }));
+      showSuccess(orgId ? 'Lead assigned to organization' : 'Lead unassigned');
       refreshActivity();
     } catch (err) {
+      showError('Failed to assign organization');
       console.error(err);
     } finally {
       setSaving(null);
@@ -137,15 +144,19 @@ export default function LeadDetailClient({
     if (!noteInput.trim()) return;
     setSavingNote(true);
     try {
-      await fetch(`/api/energy/leads/${lead.id}`, {
+      const res = await fetch(`/api/energy/leads/${lead.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ notes: noteInput.trim() }),
       });
-      setLead((prev) => ({ ...prev, notes: noteInput.trim() }));
+      if (!res.ok) throw new Error('Failed to save note');
+      const json = await res.json();
+      setLead((prev) => ({ ...prev, notes: json.data.notes }));
       setNoteInput('');
+      showSuccess('Note added');
       refreshActivity();
     } catch (err) {
+      showError('Failed to save note');
       console.error(err);
     } finally {
       setSavingNote(false);
@@ -260,7 +271,7 @@ export default function LeadDetailClient({
                 </div>
                 <div>
                   <span className="text-gray-500">Address</span>
-                  <p className="text-white mt-0.5">{lead.addressLine || '—'}</p>
+                  <p className="text-white mt-0.5">{[lead.addressLine, lead.barangay, lead.city, lead.province].filter(Boolean).join(', ') || '—'}</p>
                 </div>
                 <div>
                   <span className="text-gray-500">Utility</span>
@@ -327,7 +338,7 @@ export default function LeadDetailClient({
                   disabled={savingNote || !noteInput.trim()}
                   className="px-4 py-2 rounded-lg bg-accent-blue text-white text-sm font-semibold hover:bg-accent-blue/90 transition-colors disabled:opacity-50"
                 >
-                  {savingNote ? 'Saving...' : 'Save'}
+                  {savingNote ? <><Loader2 className="w-4 h-4 animate-spin inline mr-1" />Saving...</> : 'Save'}
                 </button>
               </div>
             </div>

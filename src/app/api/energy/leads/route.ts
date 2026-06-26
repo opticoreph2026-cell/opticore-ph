@@ -53,7 +53,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: parsed.error.flatten().fieldErrors }, { status: 422 });
     }
 
-    const { fullName, phone, email, addressLine, city, province, barangay, customerType, monthlyBill, source, notes } = parsed.data;
+    const { fullName, phone, email, addressLine, city, province, barangay, utilityCompanyId, customerType, monthlyBill, source, notes } = parsed.data;
 
     if (email) {
       const existing = await db.energyLead.findFirst({
@@ -66,6 +66,23 @@ export async function POST(request: Request) {
       }
     }
 
+    // ── Auto-populate utility company from province if not provided ──
+    let resolvedUtilityCompanyId = utilityCompanyId || null;
+    if (!resolvedUtilityCompanyId && province) {
+      try {
+        const utils = await db.energyUtilityCompany.findMany({
+          select: { id: true, name: true, territory: true },
+        });
+        const normalizedProvince = province.toLowerCase().trim();
+        const matched = utils.find((u: { id: string; name: string; territory: string | null }) =>
+          u.territory?.toLowerCase().includes(normalizedProvince)
+        );
+        if (matched) resolvedUtilityCompanyId = matched.id;
+      } catch {
+        // silent — utility auto-match is best-effort
+      }
+    }
+
     const lead = await db.energyLead.create({
       data: {
         fullName,
@@ -75,6 +92,7 @@ export async function POST(request: Request) {
         city,
         province,
         barangay,
+        utilityCompanyId: resolvedUtilityCompanyId,
         customerType: customerType || 'residential',
         monthlyBill: monthlyBill || 0,
         source: source || 'website_calc',
