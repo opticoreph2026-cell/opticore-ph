@@ -15,7 +15,7 @@ export function LocaleSwitcher() {
     <button
       type="button"
       onClick={() => router.replace(pathname, { locale: otherLocale })}
-      className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-white/60 hover:text-white rounded-lg hover:bg-white/5 border border-white/10 transition-all"
+      className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-foreground-500 dark:text-white/60 hover:text-foreground-950 dark:hover:text-white rounded-lg hover:bg-foreground-950/5 dark:hover:bg-white/5 border border-foreground-950/10 dark:border-white/10 transition-all"
       aria-label={`Switch language to ${otherLocale === 'fil' ? 'Filipino' : 'English'}`}
     >
       <Globe className="w-3.5 h-3.5" />

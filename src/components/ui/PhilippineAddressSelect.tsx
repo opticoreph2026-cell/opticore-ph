@@ -286,7 +286,7 @@ export function PhilippineAddressSelect({
   };
 
   const inputClass =
-    'appearance-none block w-full pl-9 pr-9 py-1.5 border border-border-subtle rounded-lg bg-surface-800 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-accent-cyan disabled:opacity-50 disabled:cursor-not-allowed';
+    'appearance-none block w-full pl-9 pr-9 py-1.5 border border-foreground-950/10 dark:border-white/10 rounded-lg bg-background-100 dark:bg-background-800 text-foreground-950 dark:text-white placeholder:text-foreground-400 dark:placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-accent-500 disabled:opacity-50 disabled:cursor-not-allowed';
 
   function renderSuggestions<T extends { id: string; name: string }>({
     items,
@@ -303,12 +303,12 @@ export function PhilippineAddressSelect({
   }) {
     if (state === 'error') {
       return (
-        <div className="px-3 py-2 text-sm text-accent-rose flex items-center justify-between">
+        <div className="px-3 py-2 text-sm text-rose-500 dark:text-rose-400 flex items-center justify-between">
           <span>Failed to load</span>
           <button
             type="button"
             onClick={onRetry}
-            className="text-accent-cyan hover:underline ml-2 shrink-0"
+            className="text-accent-500 hover:underline ml-2 shrink-0"
           >
             Retry
           </button>
@@ -318,15 +318,15 @@ export function PhilippineAddressSelect({
 
     if (loading || state === 'loading') {
       return (
-        <div className="px-3 py-2 text-sm text-white/40 flex items-center gap-2">
-          <Spinner className="w-3.5 h-3.5" color="text-accent-cyan" />
+        <div className="px-3 py-2 text-sm text-foreground-400 dark:text-white/40 flex items-center gap-2">
+          <Spinner className="w-3.5 h-3.5" color="text-accent-500" />
           <span>Loading...</span>
         </div>
       );
     }
 
     if (items.length === 0) {
-      return <div className="px-3 py-2 text-sm text-white/40">No results found</div>;
+      return <div className="px-3 py-2 text-sm text-foreground-400 dark:text-white/40">No results found</div>;
     }
 
     return items.map((item) => (
@@ -334,7 +334,7 @@ export function PhilippineAddressSelect({
         key={item.id}
         type="button"
         onClick={() => onSelect(item)}
-        className="w-full text-left px-3 py-2 text-sm text-white hover:bg-surface-800 transition-colors"
+        className="w-full text-left px-3 py-2 text-sm text-foreground-950 dark:text-white hover:bg-foreground-950/5 dark:hover:bg-background-700 transition-colors"
       >
         {item.name}
       </button>
@@ -347,7 +347,7 @@ export function PhilippineAddressSelect({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
         <div className="relative">
           <div className="relative">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-white/40 pointer-events-none" />
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-foreground-400 dark:text-white/40 pointer-events-none" />
             <input
               type="text"
               value={provinceInput}
@@ -365,13 +365,13 @@ export function PhilippineAddressSelect({
             />
             <div className="absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center">
               {provinceState === 'loading' && (
-                <Spinner className="w-3.5 h-3.5" color="text-accent-cyan" />
+                <Spinner className="w-3.5 h-3.5" color="text-accent-500" />
               )}
               {selectedProvince && provinceState !== 'loading' && (
                 <button
                   type="button"
                   onClick={clearProvince}
-                  className="text-white/40 hover:text-white/80 transition-colors"
+                  className="text-foreground-400 dark:text-white/40 hover:text-foreground-800 dark:hover:text-white/80 transition-colors"
                   tabIndex={-1}
                 >
                   <X className="w-3.5 h-3.5" />
@@ -380,7 +380,7 @@ export function PhilippineAddressSelect({
             </div>
           </div>
           {showProvinceSuggestions && !selectedProvince && (
-            <div className="absolute z-50 mt-1 w-full bg-surface-900 border border-border-subtle rounded-lg shadow-lg max-h-60 overflow-y-auto">
+            <div className="absolute z-50 mt-1 w-full bg-background-50 dark:bg-background-800 border border-foreground-950/10 dark:border-white/10 rounded-lg shadow-lg max-h-60 overflow-y-auto">
               {renderSuggestions({
                 items: provinceSuggestions,
                 state: provinceState,
@@ -393,7 +393,7 @@ export function PhilippineAddressSelect({
         </div>
         <div className="relative">
           <div className="relative">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-white/40 pointer-events-none" />
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-foreground-400 dark:text-white/40 pointer-events-none" />
             <input
               type="text"
               value={cityInput}
@@ -412,13 +412,13 @@ export function PhilippineAddressSelect({
             />
             <div className="absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center">
               {cityState === 'loading' && (
-                <Spinner className="w-3.5 h-3.5" color="text-accent-cyan" />
+                <Spinner className="w-3.5 h-3.5" color="text-accent-500" />
               )}
               {selectedCity && cityState !== 'loading' && (
                 <button
                   type="button"
                   onClick={clearCity}
-                  className="text-white/40 hover:text-white/80 transition-colors"
+                  className="text-foreground-400 dark:text-white/40 hover:text-foreground-800 dark:hover:text-white/80 transition-colors"
                   tabIndex={-1}
                 >
                   <X className="w-3.5 h-3.5" />
@@ -427,7 +427,7 @@ export function PhilippineAddressSelect({
             </div>
           </div>
           {showCitySuggestions && !selectedCity && selectedProvince && (
-            <div className="absolute z-50 mt-1 w-full bg-surface-900 border border-border-subtle rounded-lg shadow-lg max-h-60 overflow-y-auto">
+            <div className="absolute z-50 mt-1 w-full bg-background-50 dark:bg-background-800 border border-foreground-950/10 dark:border-white/10 rounded-lg shadow-lg max-h-60 overflow-y-auto">
               {renderSuggestions({
                 items: citySuggestions,
                 state: cityState,
@@ -444,7 +444,7 @@ export function PhilippineAddressSelect({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
         <div className="relative">
           <div className="relative">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-white/40 pointer-events-none" />
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-foreground-400 dark:text-white/40 pointer-events-none" />
             <input
               type="text"
               value={barangayInput}
@@ -463,13 +463,13 @@ export function PhilippineAddressSelect({
             />
             <div className="absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center">
               {barangayState === 'loading' && (
-                <Spinner className="w-3.5 h-3.5" color="text-accent-cyan" />
+                <Spinner className="w-3.5 h-3.5" color="text-accent-500" />
               )}
               {selectedBarangay && barangayState !== 'loading' && (
                 <button
                   type="button"
                   onClick={clearBarangay}
-                  className="text-white/40 hover:text-white/80 transition-colors"
+                  className="text-foreground-400 dark:text-white/40 hover:text-foreground-800 dark:hover:text-white/80 transition-colors"
                   tabIndex={-1}
                 >
                   <X className="w-3.5 h-3.5" />
@@ -478,7 +478,7 @@ export function PhilippineAddressSelect({
             </div>
           </div>
           {showBarangaySuggestions && !selectedBarangay && selectedCity && (
-            <div className="absolute z-50 mt-1 w-full bg-surface-900 border border-border-subtle rounded-lg shadow-lg max-h-60 overflow-y-auto">
+            <div className="absolute z-50 mt-1 w-full bg-background-50 dark:bg-background-800 border border-foreground-950/10 dark:border-white/10 rounded-lg shadow-lg max-h-60 overflow-y-auto">
               {renderSuggestions({
                 items: barangaySuggestions,
                 state: barangayState,

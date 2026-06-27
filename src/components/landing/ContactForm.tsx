@@ -8,10 +8,12 @@ import { PhilippineAddressSelect } from '@/components/ui/PhilippineAddressSelect
 import { roundMoney } from '@/lib/money';
 
 const PHONE_REGEX = /^(09\d{9}|\+639\d{9})$/;
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 interface FormErrors {
   fullName?: string;
   phone?: string;
+  email?: string;
   province?: string;
   monthlyBillPhp?: string;
 }
@@ -50,6 +52,7 @@ export function ContactForm() {
     const newErrors: FormErrors = {};
     if (form.fullName.length < 2) newErrors.fullName = t('nameError');
     if (!PHONE_REGEX.test(form.phone)) newErrors.phone = t('phoneError');
+    if (form.email && !EMAIL_REGEX.test(form.email)) newErrors.email = t('emailError');
     if (!form.province) newErrors.province = t('provinceError');
     if (!form.monthlyBillPhp || form.monthlyBillPhp < 1) newErrors.monthlyBillPhp = t('billError');
     setErrors(newErrors);
@@ -120,7 +123,7 @@ export function ContactForm() {
     } text-foreground-950 focus:outline-none focus:ring-2 focus:ring-primary-500/50`;
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-3">
+    <form onSubmit={handleSubmit} noValidate className="space-y-3">
       <input ref={honeypotRef} type="text" name="_gotcha" className="hidden" tabIndex={-1} autoComplete="off" />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -154,8 +157,9 @@ export function ContactForm() {
           type="email"
           value={form.email}
           onChange={(e) => setForm({ ...form, email: e.target.value })}
-          className={fieldClass()}
+          className={fieldClass(!!errors.email)}
         />
+        {errors.email && <p className="text-xs text-rose-500 mt-0.5">{errors.email}</p>}
       </div>
 
       <PhilippineAddressSelect

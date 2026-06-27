@@ -54,6 +54,7 @@ export function Calculator() {
   const debouncedSearch = useDebounce(utilitySearch, 300);
 
   const [manualRate, setManualRate] = useState('');
+  const [rateError, setRateError] = useState('');
 
   useEffect(() => {
     fetch('/api/energy/utility-rates')
@@ -84,7 +85,9 @@ export function Calculator() {
     );
   }, [debouncedSearch, utilities]);
 
-  const rate = selectedUtility?.rateRu ? selectedUtility.rateRu / 10000 : parseFloat(manualRate) || 0;
+  const parsedManual = manualRate.trim() === '' ? undefined : parseFloat(manualRate);
+  const isValidManual = parsedManual !== undefined && isFinite(parsedManual) && parsedManual > 0 && parsedManual < 1000;
+  const rate = selectedUtility?.rateRu ? selectedUtility.rateRu / 10000 : (isValidManual ? parsedManual! : 0);
 
   const backupOption = BACKUP_OPTIONS.find((b) => b.id === backupId)!;
 
@@ -111,6 +114,18 @@ export function Calculator() {
   }));
 
   const handleCalculate = () => {
+    if (!selectedUtility) {
+      const parsed = parseFloat(manualRate);
+      if (manualRate.trim() !== '' && (!isFinite(parsed) || parsed <= 0)) {
+        setRateError('Please enter a valid positive rate');
+        return;
+      }
+      if (manualRate.trim() !== '' && parsed >= 1000) {
+        setRateError('Rate seems too high. Please check your input.');
+        return;
+      }
+    }
+    setRateError('');
     setLoading(true);
     setShowResults(false);
     setTimeout(() => {
@@ -203,11 +218,14 @@ export function Calculator() {
                       step="0.1"
                       min="0"
                       value={manualRate}
-                      onChange={(e) => setManualRate(e.target.value)}
+                      onChange={(e) => { setManualRate(e.target.value); setRateError(''); }}
                       placeholder="e.g. 12.88"
                   className="w-full px-3 py-1.5 rounded-lg bg-background-100/40 dark:bg-background-800/40 border border-foreground-950/10 text-foreground-950 text-sm placeholder:text-foreground-400 focus:outline-none focus:ring-2 focus:ring-primary-500"
                   />
                 </div>
+                )}
+                {rateError && (
+                  <p className="text-xs text-rose-500 mt-1">{rateError}</p>
                 )}
               </div>
             </div>
@@ -248,7 +266,7 @@ export function Calculator() {
                       className={`px-3 py-2 rounded-xl text-xs font-medium transition-all duration-200 border ${
                         backupId === opt.id
                           ? 'bg-accent-500 text-background-50 border-accent-500 shadow-lg shadow-accent-500/20'
-                          : 'bg-background-100/40 dark:bg-background-800/40 text-foreground-600 dark:text-foreground-300 border-foreground-950/10 hover:border-foreground-950/20 hover:bg-background-100/60 dark:hover:bg-background-700/60'
+                          : 'bg-background-100/40 dark:bg-background-800/40 text-foreground-700 dark:text-foreground-300 border-foreground-950/10 hover:border-foreground-950/20 hover:bg-background-100/60 dark:hover:bg-background-700/60'
                       }`}
                     >
                       {t(opt.label)}

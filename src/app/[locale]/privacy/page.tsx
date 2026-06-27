@@ -1,4 +1,4 @@
-import { getTranslations } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { Navbar } from '@/components/ui/Navbar';
 import { Footer } from '@/components/ui/Footer';
 import { WhatsAppButton } from '@/components/landing/WhatsAppButton';
@@ -6,22 +6,26 @@ import { ScrollToTop } from '@/components/landing/ScrollToTop';
 import { AnimatedSection } from '@/components/ui/AnimatedSection';
 
 export const metadata = {
-  title: 'Terms of Service | OptiCore Energy Solutions',
-  description: 'Terms and conditions governing the use of OptiCore Energy Solutions platform and services.',
+  title: 'Privacy Policy | OptiCore Energy Solutions',
+  description: 'How OptiCore Energy Solutions collects, uses, and protects your personal data.',
 };
 
-export default async function TermsPage() {
-  const t = await getTranslations('terms');
+export default async function PrivacyPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+  const t = await getTranslations('privacy');
 
   const sections = [
-    { key: 'services', contentKeys: ['p1', 'p2', 'p3'] },
-    { key: 'assessments', contentKeys: ['p1', 'p2', 'p3'] },
-    { key: 'calculator', contentKeys: ['p1', 'p2', 'p3', 'p4'] },
-    { key: 'warranties', contentKeys: ['p1', 'p2', 'p3'] },
-    { key: 'intellectualProperty', contentKeys: ['p1', 'p2'] },
-    { key: 'liability', contentKeys: ['p1', 'p2', 'p3'] },
-    { key: 'governingLaw', contentKeys: ['p1'] },
-    { key: 'changes', contentKeys: ['p1'] },
+    { key: 'informationCollection', contentKeys: ['p1', 'p2', 'p3', 'p4'] },
+    { key: 'howWeUse', contentKeys: ['p1', 'p2', 'p3', 'p4', 'p5'] },
+    { key: 'sharing', contentKeys: ['p1', 'p2', 'p3'] },
+    { key: 'dataSecurity', contentKeys: ['p1'] },
+    { key: 'yourRights', contentKeys: ['p1', 'p2', 'p3', 'p4', 'p5'] },
+    { key: 'cookies', contentKeys: ['p1', 'p2'] },
     { key: 'contact', contentKeys: ['p1'] },
   ];
 
