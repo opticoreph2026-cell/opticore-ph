@@ -56,15 +56,22 @@ export function Navbar() {
             <Logo />
 
             <nav className="hidden md:flex items-center gap-1">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className="px-4 py-2 text-base font-medium text-foreground-600 hover:text-foreground-950 rounded-lg hover:bg-background-100 transition-all duration-150"
-                >
-                  {link.label}
-                </Link>
-              ))}
+              {navLinks.map((link) => {
+                const isActive = pathname === link.href || pathname.startsWith(link.href + '/');
+                return (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className={`px-4 py-2 text-base font-medium rounded-lg transition-all duration-150 ${
+                      isActive
+                        ? 'text-primary-500 bg-primary-500/10'
+                        : 'text-foreground-600 hover:text-foreground-950 hover:bg-background-100'
+                    }`}
+                  >
+                    {link.label}
+                  </Link>
+                );
+              })}
             </nav>
 
             <div className="hidden md:flex items-center gap-2">
@@ -97,7 +104,6 @@ export function Navbar() {
             </div>
 
             <div className="md:hidden flex items-center gap-2">
-              <LocaleSwitcher />
               <ThemeToggle />
               <button
                 className="p-2 text-foreground-600 hover:text-foreground-950 rounded-lg hover:bg-background-100 transition-colors"
@@ -124,12 +130,19 @@ export function Navbar() {
                 key={link.href}
                 href={link.href}
                 onClick={() => setMobileOpen(false)}
-                className="block px-4 py-3 text-sm font-medium text-foreground-600 hover:text-foreground-950 hover:bg-background-100 rounded-xl transition-colors"
+                className={`block px-4 py-3 text-sm font-medium rounded-xl transition-colors ${
+                  pathname === link.href
+                    ? 'text-primary-500 bg-primary-500/10'
+                    : 'text-foreground-600 hover:text-foreground-950 hover:bg-background-100'
+                }`}
               >
                 {link.label}
               </Link>
             ))}
-            <div className="pt-3 border-t border-foreground-950/10 mt-3 space-y-2">
+            <div className="flex items-center gap-2 pt-3 border-t border-foreground-950/10 mt-3">
+              <LocaleSwitcher />
+            </div>
+            <div className="space-y-2">
               <Link
                 href="/login"
                 onClick={() => setMobileOpen(false)}

@@ -1,20 +1,55 @@
 'use client';
 
+import { useState, useEffect, useRef } from 'react';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/routing';
-import { motion } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
+
+const slides = [
+  { image: '/hero-bg.png' },
+  { image: '/commercial.png' },
+  { image: '/residential.png' },
+  { image: '/solar-panel.png' },
+  { image: '/sunset.png' },
+];
 
 export function Hero() {
   const t = useTranslations('hero');
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start start', 'end start'] });
+  const bgY = useTransform(scrollYProgress, [0, 1], ['0%', '30%']);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % slides.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
-    <section className="relative min-h-[820px] flex items-center justify-center overflow-hidden pt-20">
-      {/* Subtle gradient background */}
-      <div className="absolute inset-0 bg-gradient-to-b from-primary-500/5 via-transparent to-transparent pointer-events-none" />
+    <section ref={sectionRef} className="relative min-h-[820px] flex items-center justify-center overflow-hidden pt-20">
+      {slides.map((slide, index) => (
+        <motion.div
+          key={slide.image}
+          role="img"
+          aria-label="OptiCore Energy Solutions solar energy background"
+          style={{
+            y: index === currentSlide ? bgY : 0,
+            backgroundImage: `url(${slide.image})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+          }}
+          className={`absolute inset-0 transition-opacity duration-1000 ${
+            index === currentSlide ? 'opacity-80' : 'opacity-0'
+          }`}
+        />
+      ))}
+      {/* Navy overlay per Readdy Version 4 */}
+      <div className="absolute inset-0 bg-gradient-to-b from-accent-950/20 via-accent-950/10 to-accent-950/15 pointer-events-none" />
 
       <div className="max-w-5xl mx-auto px-6 relative z-10 text-center">
-        {/* Badge / Pill */}
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
@@ -26,7 +61,6 @@ export function Hero() {
           </div>
         </motion.div>
 
-        {/* Heading */}
         <motion.h1
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
@@ -39,7 +73,6 @@ export function Hero() {
           </span>
         </motion.h1>
 
-        {/* Subtitle */}
         <motion.p
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
@@ -49,7 +82,6 @@ export function Hero() {
           {t('subtitle')}
         </motion.p>
 
-        {/* CTA Buttons */}
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
@@ -70,6 +102,20 @@ export function Hero() {
             {t('ctaSecondary')}
           </Link>
         </motion.div>
+
+        <div className="flex items-center justify-center gap-2 mt-8">
+          {slides.map((_, index) => (
+            <button
+              key={index}
+              type="button"
+              onClick={() => setCurrentSlide(index)}
+              className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                index === currentSlide ? 'bg-primary-500 w-6' : 'bg-foreground-950/20'
+              }`}
+              aria-label={`Slide ${index + 1}`}
+            />
+          ))}
+        </div>
       </div>
     </section>
   );

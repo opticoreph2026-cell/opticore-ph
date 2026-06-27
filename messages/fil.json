@@ -208,6 +208,131 @@
   "scrollToTop": {
     "ariaLabel": "Bumalik sa itaas"
   },
+  "login": {
+    "title": "Mag-sign in sa iyong portal",
+    "emailLabel": "Email address",
+    "emailPlaceholder": "you@example.com",
+    "passwordLabel": "Password",
+    "forgotPassword": "Nakalimutan?",
+    "signIn": "Mag-log in",
+    "otpOption": "Magpadala ng OTP",
+    "otpResend": "I-resend ang OTP",
+    "otpTitle": "Ilagay ang 6-digit code na ipinadala sa iyong email",
+    "otpPlaceholder": "000000",
+    "verifyOtp": "I-verify at Mag-sign In",
+    "backToLogin": "Bumalik sa login",
+    "noAccount": "Wala pang account?",
+    "signUp": "Mag-sign up dito",
+    "turnstileError": "Mangyaring kumpletuhin ang security check bago mag-login.",
+    "invalidCredentials": "Maling email o password",
+    "otpSent": "Naipadala na ang OTP! Tingnan ang iyong email.",
+    "customerPortal": "Customer Portal",
+    "customerPortalDesc": "Tingnan ang data ng iyong system at mga bayarin",
+    "partnerPortal": "Partner Portal",
+    "partnerPortalDesc": "Pamahalaan ang mga lead at installation",
+    "noAccountFound": "Walang nakitang account gamit ang email na ito. Mangyaring mag-sign up muna.",
+    "otpFailed": "Hindi maipadala ang OTP",
+    "loginFailed": "Hindi matagumpay ang login. Subukan muli.",
+    "verificationFailed": "Hindi matagumpay ang verification"
+  },
+  "privacy": {
+    "title": "Patakaran sa Privacy",
+    "lastUpdated": "Huling na-update: Hunyo 2026",
+    "informationCollection": {
+      "heading": "Impormasyong Aming Kinokolekta",
+      "p1": "Kinokolekta namin ang personal na impormasyon na ibinibigay mo kapag pinupunan ang mga form sa aming website, kabilang ang iyong pangalan, email address, numero ng telepono, at iba pa.",
+      "p2": "Awtomatiko kaming kumokolekta ng ilang teknikal na impormasyon kapag bumisita ka sa aming site, kabilang ang iyong IP address, browser type, at operating system.",
+      "p3": "Maaari kaming mangolekta ng impormasyon tungkol sa iyong ari-arian at paggamit ng enerhiya sa pamamagitan ng aming libreng site assessment process.",
+      "p4": "Ang impormasyon ng pagbabayad ay kinokolekta kapag ginamit mo ang aming mga serbisyo, na pinoproseso nang secure sa pamamagitan ng aming third-party payment processor."
+    },
+    "howWeUse": {
+      "heading": "Paano Namin Ginagamit ang Iyong Impormasyon",
+      "p1": "Upang magbigay ng solar at ESS design, sizing, at installation services na iyong hinihiling.",
+      "p2": "Upang makipag-ugnayan sa iyo tungkol sa iyong assessment, system design, installation schedule, at after-sales support.",
+      "p3": "Upang mapabuti ang aming website at serbisyo sa pamamagitan ng analytics at feedback.",
+      "p4": "Upang sumunod sa mga legal na obligasyon at regulatory requirements.",
+      "p5": "Hindi namin ibinebenta ang iyong personal na impormasyon sa mga third parties."
+    },
+    "sharing": {
+      "heading": "Pagbabahagi ng Impormasyon",
+      "p1": "Ibinabahagi namin ang impormasyon sa aming installation partners at suppliers kung kinakailangan upang maihatid ang aming mga serbisyo.",
+      "p2": "Maaari kaming magbahagi ng impormasyon sa mga regulatory bodies (ERC, DOE) kung kinakailangan para sa pagsunod sa Philippine energy regulations.",
+      "p3": "Gumagamit kami ng third-party service providers para sa email delivery at payment processing."
+    },
+    "dataSecurity": {
+      "heading": "Seguridad ng Data",
+      "p1": "Nagpapatupad kami ng industry-standard security measures kabilang ang encryption at access controls upang protektahan ang iyong personal na impormasyon."
+    },
+    "yourRights": {
+      "heading": "Iyong Mga Karapatan",
+      "p1": "May karapatan kang i-access ang personal data na hawak namin tungkol sa iyo.",
+      "p2": "May karapatan kang humiling ng pagwawasto ng hindi tumpak o hindi kumpletong data.",
+      "p3": "May karapatan kang humiling ng pagtanggal ng iyong personal data, subject sa legal retention requirements.",
+      "p4": "May karapatan kang bawiin ang pahintulot para sa marketing communications anumang oras.",
+      "p5": "Upang gamitin ang mga karapatang ito, makipag-ugnayan sa amin sa engineering@opticore.ph."
+    },
+    "cookies": {
+      "heading": "Cookies",
+      "p1": "Gumagamit kami ng essential cookies para sa authentication at site functionality. Gumagamit din kami ng analytics cookies.",
+      "p2": "Maaari mong kontrolin ang cookie preferences sa pamamagitan ng iyong browser settings."
+    },
+    "contact": {
+      "heading": "Makipag-ugnayan sa Amin",
+      "p1": "Para sa mga tanong tungkol sa privacy policy na ito, makipag-ugnayan kay Julius Rey Gisto sa engineering@opticore.ph."
+    }
+  },
+  "terms": {
+    "title": "Mga Tuntunin ng Serbisyo",
+    "lastUpdated": "Huling na-update: Hunyo 2026",
+    "services": {
+      "heading": "Mga Serbisyo",
+      "p1": "Ang OptiCore Energy Solutions ay nagbibigay ng solar PV at ESS design, sizing, installation, at after-sales support services para sa residential at commercial clients sa Cebu, Bohol, at Leyte.",
+      "p2": "Ang lahat ng engineering designs ay inihahanda at nilalagdaan ng isang Registered Mechanical Engineer (RME) bilang pagsunod sa Philippine regulations.",
+      "p3": "Ang mga serbisyo ay subject sa site assessment at utility coordination requirements."
+    },
+    "assessments": {
+      "heading": "Site Assessments",
+      "p1": "Ang libreng site assessment ay inaalok sa mga kwalipikadong property sa loob ng aming service areas.",
+      "p2": "Ang assessment results ay estimates batay sa visual inspection at bill analysis.",
+      "p3": "May karapatan kaming tumanggi sa serbisyo kung ang site ay hindi angkop para sa solar PV o ESS installation."
+    },
+    "calculator": {
+      "heading": "ROI Calculator Disclaimer",
+      "p1": "Ang solar ROI calculator ay nagbibigay ng estimates lamang at hindi bumubuo ng formal proposal o quote.",
+      "p2": "Ang calculations ay batay sa user-provided inputs at publicly available utility rate data.",
+      "p3": "Ang payback period estimates ay assume ng 5% annual electricity rate escalation.",
+      "p4": "Ang formal engineering proposal ay ibibigay pagkatapos ng site assessment at system design."
+    },
+    "warranties": {
+      "heading": "Product Warranties",
+      "p1": "Ang product warranties ay ibinibigay ng respective manufacturers at ipinapasa sa client.",
+      "p2": "Ang installation workmanship ay warranted ng OptiCore Energy Solutions sa loob ng isang taon mula sa commissioning date.",
+      "p3": "Ang warranty claims ay dapat i-report sa loob ng warranty period."
+    },
+    "intellectualProperty": {
+      "heading": "Intellectual Property",
+      "p1": "Ang lahat ng system designs at engineering plans na inihanda ng OptiCore ay nananatiling aming intellectual property hanggang sa makatanggap ng buong bayad.",
+      "p2": "Pagkatapos ng buong bayad, ang client ay makakatanggap ng license na gamitin ang engineering documents para sa specific installation project."
+    },
+    "liability": {
+      "heading": "Limitasyon ng Pananagutan",
+      "p1": "Ang pananagutan ng OptiCore Energy Solutions ay limitado sa halaga ng mga serbisyong ibinigay.",
+      "p2": "Hindi namin ginagarantiya na ang system ay makakatugon sa specific energy production targets.",
+      "p3": "Ang mga client ay responsable sa pagkuha ng necessary permits mula sa kanilang local government unit."
+    },
+    "governingLaw": {
+      "heading": "Namamahalang Batas",
+      "p1": "Ang mga tuntuning ito ay pinamamahalaan ng mga batas ng Republika ng Pilipinas."
+    },
+    "changes": {
+      "heading": "Mga Pagbabago sa Tuntunin",
+      "p1": "May karapatan kaming i-update ang mga tuntuning ito anumang oras. Ang mga pagbabago ay ipo-post sa pahinang ito."
+    },
+    "contact": {
+      "heading": "Makipag-ugnayan",
+      "p1": "Para sa mga tanong tungkol sa mga tuntuning ito, makipag-ugnayan sa engineering@opticore.ph o tumawag sa +63 950 469 2442."
+    }
+  },
   "locale": {
     "en": "English",
     "fil": "Filipino"

@@ -151,7 +151,7 @@ export function Calculator() {
                   step="500"
                   value={bill}
                   onChange={(e) => setBill(Number(e.target.value))}
-                  className="w-full h-2 bg-foreground-950/10 rounded-lg appearance-none cursor-pointer accent-primary-500"
+                  className="w-full opt-slider"
                 />
               </div>
 

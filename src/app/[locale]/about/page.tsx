@@ -38,16 +38,16 @@ export default async function AboutPage({
   return (
     <>
       <Navbar />
-      <main className="bg-surface-1000 text-white min-h-screen pt-24 pb-16">
+      <main className="bg-background-50 min-h-screen pt-24 pb-16">
         <div className="max-w-4xl mx-auto px-6">
           <AnimatedSection className="text-center mb-16">
-            <h1 className="text-4xl md:text-5xl font-display font-bold mb-4">{t('title')}</h1>
-            <p className="text-gray-400">{t('subtitle')}</p>
+            <h1 className="text-4xl md:text-5xl font-display font-bold text-foreground-950 mb-4">{t('title')}</h1>
+            <p className="text-foreground-600">{t('subtitle')}</p>
           </AnimatedSection>
 
           <AnimatedSection className="glass-panel rounded-3xl p-8 md:p-12 mb-10" delay={0.1}>
             <div className="flex flex-col md:flex-row gap-8 items-start">
-              <div className="relative w-40 h-40 md:w-48 md:h-48 rounded-2xl overflow-hidden bg-surface-800 flex-shrink-0 mx-auto md:mx-0">
+              <div className="relative w-40 h-40 md:w-48 md:h-48 rounded-2xl overflow-hidden bg-background-100/40 flex-shrink-0 mx-auto md:mx-0">
                 <Image
                   src="/julius-placeholder.png"
                   alt="Julius Rey S. Gisto, RME"
@@ -57,21 +57,21 @@ export default async function AboutPage({
               </div>
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-2">
-                  <Award className="w-5 h-5 text-accent-blue" />
-                  <p className="text-sm text-accent-blue uppercase tracking-widest">
+                  <Award className="w-5 h-5 text-primary-500" />
+                  <p className="text-sm text-primary-500 uppercase tracking-widest">
                     {t('founderTitle')}
                   </p>
                 </div>
-                <h2 className="text-2xl font-display font-bold mb-3">{t('founderName')}</h2>
-                <p className="text-gray-400 leading-relaxed mb-6">{t('founderBio')}</p>
+                <h2 className="text-2xl font-display font-bold text-foreground-950 mb-3">{t('founderName')}</h2>
+                <p className="text-foreground-600 leading-relaxed mb-6">{t('founderBio')}</p>
 
-                <h3 className="text-sm font-semibold text-white/80 uppercase tracking-widest mb-3">
+                <h3 className="text-sm font-semibold text-foreground-700 uppercase tracking-widest mb-3">
                   {t('credentials')}
                 </h3>
                 <ul className="space-y-2">
                   {['cred1', 'cred2', 'cred3', 'cred4'].map((key) => (
-                    <li key={key} className="flex items-start gap-2 text-sm text-gray-400">
-                      <CheckCircle className="w-4 h-4 text-accent-emerald mt-0.5 flex-shrink-0" />
+                    <li key={key} className="flex items-start gap-2 text-sm text-foreground-600">
+                      <CheckCircle className="w-4 h-4 text-secondary-500 mt-0.5 flex-shrink-0" />
                       <span>{t(key)}</span>
                     </li>
                   ))}
@@ -82,42 +82,42 @@ export default async function AboutPage({
 
           <AnimatedSection className="glass-panel rounded-3xl p-8 md:p-12 mb-10" delay={0.2}>
             <div className="flex items-center gap-3 mb-8">
-              <Users className="w-6 h-6 text-accent-cyan" />
-              <h2 className="text-xl font-display font-bold">{t('partners')}</h2>
+              <Users className="w-6 h-6 text-accent-500" />
+              <h2 className="text-xl font-display font-bold text-foreground-950">{t('partners')}</h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="bento-card">
-                <h3 className="font-bold text-white mb-1">{t('partner1Name')}</h3>
-                <p className="text-xs text-accent-cyan mb-3">{t('partner1Role')}</p>
-                <p className="text-sm text-gray-400">{t('partner1Bio')}</p>
+                <h3 className="font-bold text-foreground-950 mb-1">{t('partner1Name')}</h3>
+                <p className="text-xs text-accent-500 mb-3">{t('partner1Role')}</p>
+                <p className="text-sm text-foreground-600">{t('partner1Bio')}</p>
               </div>
               <div className="bento-card">
-                <h3 className="font-bold text-white mb-1">{t('partner2Name')}</h3>
-                <p className="text-xs text-accent-cyan mb-3">{t('partner2Role')}</p>
-                <p className="text-sm text-gray-400">{t('partner2Bio')}</p>
+                <h3 className="font-bold text-foreground-950 mb-1">{t('partner2Name')}</h3>
+                <p className="text-xs text-accent-500 mb-3">{t('partner2Role')}</p>
+                <p className="text-sm text-foreground-600">{t('partner2Bio')}</p>
               </div>
             </div>
           </AnimatedSection>
 
           <AnimatedSection className="glass-panel rounded-3xl p-8 md:p-12 mb-10" delay={0.3}>
             <div className="flex items-start gap-4">
-              <Target className="w-8 h-8 text-accent-blue flex-shrink-0" />
+              <Target className="w-8 h-8 text-primary-500 flex-shrink-0" />
               <div>
-                <h2 className="text-xl font-display font-bold mb-3">{t('missionTitle')}</h2>
-                <p className="text-gray-400 leading-relaxed">{t('mission')}</p>
+                <h2 className="text-xl font-display font-bold text-foreground-950 mb-3">{t('missionTitle')}</h2>
+                <p className="text-foreground-600 leading-relaxed">{t('mission')}</p>
               </div>
             </div>
           </AnimatedSection>
 
           <AnimatedSection className="glass-panel rounded-3xl p-8 md:p-12 mb-10" delay={0.4}>
             <div className="flex items-start gap-4">
-              <Globe className="w-8 h-8 text-accent-emerald flex-shrink-0" />
+              <Globe className="w-8 h-8 text-secondary-500 flex-shrink-0" />
               <div>
-                <h2 className="text-xl font-display font-bold mb-4">{t('territories')}</h2>
+                <h2 className="text-xl font-display font-bold text-foreground-950 mb-4">{t('territories')}</h2>
                 <div className="space-y-3">
                   {['territoryCebu', 'territoryBohol', 'territoryLeyte'].map((key) => (
-                    <div key={key} className="flex items-center gap-3 text-sm text-gray-400">
-                      <MapPin className="w-4 h-4 text-accent-blue flex-shrink-0" />
+                    <div key={key} className="flex items-center gap-3 text-sm text-foreground-600">
+                      <MapPin className="w-4 h-4 text-primary-500 flex-shrink-0" />
                       <span>{t(key)}</span>
                     </div>
                   ))}
@@ -129,7 +129,7 @@ export default async function AboutPage({
           <AnimatedSection className="text-center" delay={0.5}>
             <Link
               href="/contact"
-              className="inline-block px-8 py-3 rounded-full bg-accent-blue text-white font-semibold hover:bg-accent-blue/90 transition-colors"
+              className="inline-block px-8 py-3 rounded-xl bg-primary-500 text-background-50 font-semibold hover:bg-primary-600 transition-colors cta-primary"
             >
               Book a Free Site Visit →
             </Link>

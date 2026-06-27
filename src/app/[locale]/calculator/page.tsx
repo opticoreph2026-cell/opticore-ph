@@ -36,10 +36,10 @@ export default async function CalculatorPage({
   return (
     <>
       <Navbar />
-      <main className="bg-[#08080B] text-white min-h-screen pt-24">
+      <main className="bg-background-50 min-h-screen pt-24">
         <AnimatedSection className="max-w-4xl mx-auto px-6 text-center mb-4">
-          <h1 className="text-4xl md:text-5xl font-display font-bold mb-4">{t('pageTitle')}</h1>
-          <p className="text-gray-400">{t('pageSubtitle')}</p>
+          <h1 className="text-4xl md:text-5xl font-display font-bold text-foreground-950 mb-4">{t('pageTitle')}</h1>
+          <p className="text-foreground-600">{t('pageSubtitle')}</p>
         </AnimatedSection>
         <Calculator />
       </main>

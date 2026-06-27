@@ -208,6 +208,131 @@
   "scrollToTop": {
     "ariaLabel": "Scroll to top"
   },
+  "login": {
+    "title": "Sign in to your portal",
+    "emailLabel": "Email address",
+    "emailPlaceholder": "you@example.com",
+    "passwordLabel": "Password",
+    "forgotPassword": "Forgot?",
+    "signIn": "Log in",
+    "otpOption": "Send OTP instead",
+    "otpResend": "Resend OTP",
+    "otpTitle": "Enter the 6-digit code sent to your email",
+    "otpPlaceholder": "000000",
+    "verifyOtp": "Verify & Sign In",
+    "backToLogin": "Back to login",
+    "noAccount": "No account yet?",
+    "signUp": "Sign up here",
+    "turnstileError": "Please complete the security check before logging in.",
+    "invalidCredentials": "Invalid email or password",
+    "otpSent": "OTP sent! Check your email inbox.",
+    "customerPortal": "Customer Portal",
+    "customerPortalDesc": "View your system data and bills",
+    "partnerPortal": "Partner Portal",
+    "partnerPortalDesc": "Manage leads and installations",
+    "noAccountFound": "No account found with this email. Please sign up first.",
+    "otpFailed": "Failed to send OTP",
+    "loginFailed": "Login failed. Try again.",
+    "verificationFailed": "Verification failed"
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "lastUpdated": "Last updated: June 2026",
+    "informationCollection": {
+      "heading": "Information We Collect",
+      "p1": "We collect personal information you provide when filling out forms on our website, including your name, email address, phone number, property address, and monthly electric bill amount.",
+      "p2": "We automatically collect certain technical information when you visit our site, including your IP address, browser type, operating system, referring URLs, and pages visited.",
+      "p3": "We may collect information about your property and energy usage through our free site assessment process, including roof dimensions, electrical panel specifications, and existing utility connections.",
+      "p4": "Payment and billing information is collected when you engage our services, processed securely through our third-party payment processor."
+    },
+    "howWeUse": {
+      "heading": "How We Use Your Information",
+      "p1": "To provide solar and ESS design, sizing, and installation services you request.",
+      "p2": "To communicate with you about your assessment, system design, installation schedule, and after-sales support.",
+      "p3": "To improve our website, services, and customer experience through analytics and feedback.",
+      "p4": "To comply with legal obligations, regulatory requirements, and industry standards.",
+      "p5": "We do not sell your personal information to third parties. Your data is used exclusively for OptiCore Energy Solutions business operations."
+    },
+    "sharing": {
+      "heading": "Information Sharing",
+      "p1": "We share information with our installation partners and suppliers as necessary to deliver our services, including Bytewatt Inc. for product warranties.",
+      "p2": "We may share information with regulatory bodies (ERC, DOE) as required for compliance with Philippine energy regulations.",
+      "p3": "We use third-party service providers for email delivery, payment processing, and analytics who are bound by data processing agreements."
+    },
+    "dataSecurity": {
+      "heading": "Data Security",
+      "p1": "We implement industry-standard security measures including encryption, access controls, and regular security audits to protect your personal information from unauthorized access, alteration, or disclosure."
+    },
+    "yourRights": {
+      "heading": "Your Rights",
+      "p1": "You have the right to access the personal data we hold about you.",
+      "p2": "You have the right to request correction of inaccurate or incomplete data.",
+      "p3": "You have the right to request deletion of your personal data, subject to legal retention requirements.",
+      "p4": "You have the right to withdraw consent for marketing communications at any time.",
+      "p5": "To exercise any of these rights, contact us at engineering@opticore.ph."
+    },
+    "cookies": {
+      "heading": "Cookies",
+      "p1": "We use essential cookies for authentication and site functionality. We also use analytics cookies to understand how visitors interact with our website.",
+      "p2": "You can control cookie preferences through your browser settings. Disabling cookies may affect certain features of our website."
+    },
+    "contact": {
+      "heading": "Contact Us",
+      "p1": "For questions about this privacy policy or your personal data, contact Julius Rey Gisto at engineering@opticore.ph or call +63 950 469 2442."
+    }
+  },
+  "terms": {
+    "title": "Terms of Service",
+    "lastUpdated": "Last updated: June 2026",
+    "services": {
+      "heading": "Services",
+      "p1": "OptiCore Energy Solutions provides solar PV and energy storage system (ESS) design, sizing, procurement, installation, and after-sales support services for residential and commercial clients in Cebu, Bohol, and Leyte.",
+      "p2": "All engineering designs are prepared and stamped by a Registered Mechanical Engineer (RME) in compliance with Philippine regulations.",
+      "p3": "Services are subject to site assessment, structural analysis, and utility coordination requirements."
+    },
+    "assessments": {
+      "heading": "Site Assessments",
+      "p1": "Free site assessments are offered to qualifying properties within our service areas. Assessment availability depends on location, scheduling, and site accessibility.",
+      "p2": "Assessment results are estimates based on visual inspection and bill analysis. Final system design may vary after detailed engineering review.",
+      "p3": "We reserve the right to decline service if the site is deemed unsuitable for solar PV or ESS installation."
+    },
+    "calculator": {
+      "heading": "ROI Calculator Disclaimer",
+      "p1": "The solar ROI calculator provides estimates only and does not constitute a formal proposal or quote.",
+      "p2": "Calculations are based on user-provided inputs and publicly available utility rate data. Actual savings depend on system design, installation quality, weather conditions, and future rate changes.",
+      "p3": "Payback period estimates assume 5% annual electricity rate escalation. Past performance does not guarantee future results.",
+      "p4": "A formal engineering proposal with guaranteed pricing will be provided after site assessment and system design."
+    },
+    "warranties": {
+      "heading": "Product Warranties",
+      "p1": "Product warranties are provided by the respective manufacturers (Bytewatt Inc., Neovolt) and passed through to the client. Warranty terms vary by product.",
+      "p2": "Installation workmanship is warranted by OptiCore Energy Solutions for a period of one year from the date of commissioning.",
+      "p3": "Warranty claims must be reported within the warranty period and are subject to manufacturer inspection and approval."
+    },
+    "intellectualProperty": {
+      "heading": "Intellectual Property",
+      "p1": "All system designs, single-line diagrams, load calculations, and engineering plans prepared by OptiCore remain our intellectual property until full payment is received.",
+      "p2": "Upon full payment, the client receives a license to use the engineering documents for the specific installation project."
+    },
+    "liability": {
+      "heading": "Limitation of Liability",
+      "p1": "OptiCore Energy Solutions' liability is limited to the value of services rendered. We are not liable for consequential damages including but not limited to lost savings, business interruption, or property damage.",
+      "p2": "We do not guarantee that the system will meet specific energy production targets, as actual performance depends on factors beyond our control including weather, roof orientation, and utility grid conditions.",
+      "p3": "Clients are responsible for obtaining necessary permits and approvals from their local government unit and electric utility."
+    },
+    "governingLaw": {
+      "heading": "Governing Law",
+      "p1": "These terms are governed by the laws of the Republic of the Philippines. Any disputes shall be resolved in the courts of Cebu City."
+    },
+    "changes": {
+      "heading": "Changes to Terms",
+      "p1": "We reserve the right to update these terms at any time. Changes will be posted on this page with an updated revision date."
+    },
+    "contact": {
+      "heading": "Contact",
+      "p1": "For questions about these terms, contact engineering@opticore.ph or call +63 950 469 2442."
+    }
+  },
   "locale": {
     "en": "English",
     "fil": "Filipino"
