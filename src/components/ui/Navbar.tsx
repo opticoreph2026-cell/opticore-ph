@@ -1,11 +1,12 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { Link, usePathname } from '@/i18n/routing';
 import { Logo } from './Logo';
 import { useAuth } from './AuthProvider';
 import { LocaleSwitcher } from './LocaleSwitcher';
+import { ThemeToggle } from './ThemeToggle';
 import { Menu, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -46,7 +47,7 @@ export function Navbar() {
       <header
         className={`fixed top-0 w-full z-50 transition-all duration-300 ${
           scrolled
-            ? 'bg-[#08080B]/95 backdrop-blur-xl border-b border-white/5 shadow-xl shadow-black/30'
+            ? 'bg-background-50/90 backdrop-blur-xl border-b border-foreground-950/10 shadow-sm'
             : 'bg-transparent'
         }`}
       >
@@ -59,20 +60,21 @@ export function Navbar() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="px-4 py-2 text-base font-medium text-white/60 hover:text-white rounded-lg hover:bg-white/5 transition-all duration-150"
+                  className="px-4 py-2 text-base font-medium text-foreground-600 hover:text-foreground-950 rounded-lg hover:bg-background-100 transition-all duration-150"
                 >
                   {link.label}
                 </Link>
               ))}
             </nav>
 
-            <div className="hidden md:flex items-center gap-3">
+            <div className="hidden md:flex items-center gap-2">
               <LocaleSwitcher />
+              <ThemeToggle />
               {!loading &&
                 (user ? (
                   <Link
                     href={dashboardHref}
-                    className="px-4 py-2 text-base font-medium rounded-xl bg-white/8 hover:bg-white/12 text-white border border-white/10 transition-all"
+                    className="px-4 py-2 text-base font-medium rounded-xl bg-background-100/70 hover:bg-background-200 text-foreground-950 border border-foreground-950/10 transition-all"
                   >
                     {t('dashboard')} →
                   </Link>
@@ -80,13 +82,13 @@ export function Navbar() {
                   <>
                     <Link
                       href="/login"
-                      className="px-4 py-2 text-base font-medium text-white/70 hover:text-white transition-colors"
+                      className="px-4 py-2 text-base font-medium text-foreground-600 hover:text-foreground-950 transition-colors"
                     >
                       {t('signIn')}
                     </Link>
                     <Link
                       href="/contact"
-                      className="px-5 py-2 text-base font-semibold rounded-xl bg-accent-blue text-white hover:bg-accent-blue/90 transition-all shadow-lg shadow-accent-blue/20"
+                      className="px-5 py-2 text-base font-semibold rounded-xl bg-primary-500 text-background-50 hover:bg-primary-600 transition-all shadow-lg btn-icon"
                     >
                       {t('getQuote')}
                     </Link>
@@ -96,8 +98,9 @@ export function Navbar() {
 
             <div className="md:hidden flex items-center gap-2">
               <LocaleSwitcher />
+              <ThemeToggle />
               <button
-                className="p-2 text-white/60 hover:text-white rounded-lg hover:bg-white/5 transition-colors"
+                className="p-2 text-foreground-600 hover:text-foreground-950 rounded-lg hover:bg-background-100 transition-colors"
                 onClick={() => setMobileOpen(!mobileOpen)}
                 aria-label="Toggle menu"
               >
@@ -114,30 +117,30 @@ export function Navbar() {
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.2, ease: 'easeInOut' }}
-              className="md:hidden bg-[#0F0F14] border-t border-white/5 px-4 py-4 space-y-1 max-h-[80vh] overflow-y-auto"
+              className="md:hidden bg-background-50 border-t border-foreground-950/10 px-4 py-4 space-y-1 max-h-[80vh] overflow-y-auto"
             >
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
                 onClick={() => setMobileOpen(false)}
-                className="block px-4 py-3 text-sm font-medium text-white/70 hover:text-white hover:bg-white/5 rounded-xl transition-colors"
+                className="block px-4 py-3 text-sm font-medium text-foreground-600 hover:text-foreground-950 hover:bg-background-100 rounded-xl transition-colors"
               >
                 {link.label}
               </Link>
             ))}
-            <div className="pt-3 border-t border-white/5 mt-3 space-y-2">
+            <div className="pt-3 border-t border-foreground-950/10 mt-3 space-y-2">
               <Link
                 href="/login"
                 onClick={() => setMobileOpen(false)}
-                className="block px-4 py-3 text-sm font-medium text-center text-white/70 hover:text-white hover:bg-white/5 rounded-xl transition-colors border border-white/10"
+                className="block px-4 py-3 text-sm font-medium text-center text-foreground-600 hover:text-foreground-950 hover:bg-background-100 rounded-xl transition-colors border border-foreground-950/10"
               >
                 {t('signIn')}
               </Link>
               <Link
                 href="/contact"
                 onClick={() => setMobileOpen(false)}
-                className="block px-4 py-3 text-sm font-semibold text-center rounded-xl bg-accent-blue text-white hover:bg-accent-blue/90 transition-all"
+                className="block px-4 py-3 text-sm font-semibold text-center rounded-xl bg-primary-500 text-background-50 hover:bg-primary-600 transition-all"
               >
                 {t('getQuote')}
               </Link>
