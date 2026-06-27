@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { Link, usePathname } from '@/i18n/routing';
 import { Logo } from './Logo';
-import { useAuth } from './AuthProvider';
 import { LocaleSwitcher } from './LocaleSwitcher';
 import { ThemeToggle } from './ThemeToggle';
 import { Menu, X } from 'lucide-react';
@@ -13,7 +12,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 export function Navbar() {
   const t = useTranslations('nav');
   const pathname = usePathname();
-  const { user, loading } = useAuth();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -34,13 +32,6 @@ export function Navbar() {
     (route) => pathname.startsWith(route),
   );
   if (isAppRoute) return null;
-
-  const dashboardHref =
-    user?.role === 'customer'
-      ? '/customer'
-      : user?.role === 'partner_admin' || user?.role === 'partner_installer'
-        ? '/partner'
-        : '/crm';
 
   return (
     <>
@@ -77,30 +68,20 @@ export function Navbar() {
             <div className="hidden md:flex items-center gap-2">
               <LocaleSwitcher />
               <ThemeToggle />
-              {!loading &&
-                (user ? (
-                  <Link
-                    href={dashboardHref}
-                    className="px-4 py-2 text-base font-medium rounded-xl bg-background-100/70 hover:bg-background-200 text-foreground-950 border border-foreground-950/10 transition-all"
-                  >
-                    {t('dashboard')} →
-                  </Link>
-                ) : (
-                  <>
-                    <Link
-                      href="/login"
-                      className="px-4 py-2 text-base font-medium text-foreground-600 hover:text-foreground-950 transition-colors"
-                    >
-                      {t('signIn')}
-                    </Link>
-                    <Link
-                      href="/contact"
-                      className="px-5 py-2 text-base font-semibold rounded-xl bg-primary-500 text-background-50 hover:bg-primary-600 transition-all shadow-lg btn-icon"
-                    >
-                      {t('getQuote')}
-                    </Link>
-                  </>
-                ))}
+              <>
+                <Link
+                  href="/login"
+                  className="px-4 py-2 text-base font-medium text-foreground-600 hover:text-foreground-950 transition-colors"
+                >
+                  {t('signIn')}
+                </Link>
+                <Link
+                  href="/contact"
+                  className="px-5 py-2 text-base font-semibold rounded-xl bg-primary-500 text-background-50 hover:bg-primary-600 transition-all shadow-lg btn-icon"
+                >
+                  {t('getQuote')}
+                </Link>
+              </>
             </div>
 
             <div className="md:hidden flex items-center gap-2">
