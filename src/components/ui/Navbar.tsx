@@ -43,7 +43,7 @@ export function Navbar() {
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-20">
+          <div className="flex justify-between items-center h-16">
             <Logo />
 
             <nav className="hidden md:flex items-center gap-1">
@@ -53,7 +53,7 @@ export function Navbar() {
                   <Link
                     key={link.href}
                     href={link.href}
-                    className={`px-4 py-2 text-base font-medium rounded-lg transition-all duration-150 ${
+                    className={`px-3 py-1.5 text-sm font-medium rounded-lg transition-all duration-150 ${
                       isActive
                         ? 'text-primary-500 bg-primary-500/10'
                         : 'text-foreground-600 hover:text-foreground-950 hover:bg-background-100'
@@ -71,13 +71,13 @@ export function Navbar() {
               <>
                 <Link
                   href="/login"
-                  className="px-4 py-2 text-base font-medium text-foreground-600 hover:text-foreground-950 transition-colors"
+                  className="px-3 py-1.5 text-sm font-medium text-foreground-600 hover:text-foreground-950 transition-colors"
                 >
                   {t('signIn')}
                 </Link>
                 <Link
                   href="/contact"
-                  className="px-5 py-2 text-base font-semibold rounded-xl bg-primary-500 text-background-50 hover:bg-primary-600 transition-all shadow-lg btn-icon"
+                  className="px-4 py-1.5 text-sm font-semibold rounded-xl bg-primary-500 text-background-50 hover:bg-primary-600 transition-all shadow-lg btn-icon"
                 >
                   {t('getQuote')}
                 </Link>
@@ -144,7 +144,7 @@ export function Navbar() {
         </AnimatePresence>
       </header>
 
-      {pathname !== '/' && <div className="h-20" />}
+      {pathname !== '/' && <div className="h-16" />}
     </>
   );
 }
