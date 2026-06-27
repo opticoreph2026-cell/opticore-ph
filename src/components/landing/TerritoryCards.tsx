@@ -37,10 +37,10 @@ export function TerritoryCards() {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <h2 className="text-3xl md:text-5xl font-display font-bold text-foreground mb-4">
+          <h2 className="text-3xl md:text-5xl font-display font-bold text-white mb-4">
             {t('title')}
           </h2>
-          <p className="text-foreground-muted">{t('subtitle')}</p>
+          <p className="text-gray-400">{t('subtitle')}</p>
         </motion.div>
 
         <motion.div
@@ -54,13 +54,13 @@ export function TerritoryCards() {
             <motion.div
               key={territory.key}
               variants={itemVariants}
-              className={`bg-white dark:bg-white/5 backdrop-blur-xl border border-black/5 dark:border-white/10 rounded-2xl p-6 shadow-sm border-l-4 ${territory.color}`}
+              className={`bento-card border-l-4 ${territory.color}`}
             >
               <div className="flex items-center gap-2 mb-4">
-                <MapPin className="w-5 h-5 text-foreground-muted" />
-                <h3 className="text-lg font-bold text-foreground">{t(`${territory.key}`)}</h3>
+                <MapPin className="w-5 h-5 text-white/60" />
+                <h3 className="text-lg font-bold text-white">{t(`${territory.key}`)}</h3>
               </div>
-              <p className="text-sm text-foreground-muted leading-relaxed">
+              <p className="text-sm text-gray-400 leading-relaxed">
                 {t(`${territory.key}Desc`)}
               </p>
             </motion.div>

@@ -1,9 +1,6 @@
-'use client';
-
 import React from 'react';
 import Link from 'next/link';
 import { Logo } from './Logo';
-import { useAuth } from './AuthProvider';
 
 const footerLinks = {
   Solutions: [
@@ -27,16 +24,8 @@ const footerLinks = {
 };
 
 export function Footer() {
-  const { user } = useAuth();
-
-  const portalHref = (label: string) => {
-    if (label === 'Customer Portal') return user ? '/customer' : '/login?callbackUrl=/customer';
-    if (label === 'Partner Portal') return user ? '/partner' : '/login?callbackUrl=/partner';
-    return null;
-  };
-
   return (
-    <footer className="bg-surface-50 dark:bg-[#08080B] border-t border-black/5 dark:border-white/5">
+    <footer className="bg-[#08080B] border-t border-white/5">
       <div className="max-w-7xl mx-auto px-6 py-16">
         <div className="grid grid-cols-1 md:grid-cols-5 gap-12">
           {/* Brand column */}
@@ -71,19 +60,16 @@ export function Footer() {
                 {title}
               </h3>
               <ul className="space-y-3">
-                {links.map((link) => {
-                  const href = portalHref(link.label) ?? link.href;
-                  return (
-                    <li key={link.label}>
-                      <Link
-                        href={href}
-                        className="text-sm text-white/40 hover:text-white transition-colors"
-                      >
-                        {link.label}
-                      </Link>
-                    </li>
-                  );
-                })}
+                {links.map((link) => (
+                  <li key={link.label}>
+                    <Link
+                      href={link.href}
+                      className="text-sm text-white/40 hover:text-white transition-colors"
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
               </ul>
             </div>
           ))}

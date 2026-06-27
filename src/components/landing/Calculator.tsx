@@ -125,20 +125,20 @@ export function Calculator() {
     <section id="calculator" className="py-24 relative">
       <div className="max-w-4xl mx-auto px-6 relative z-10">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-5xl font-display font-bold text-foreground mb-4">
+          <h2 className="text-3xl md:text-5xl font-display font-bold text-white mb-4">
             {t('title')}
           </h2>
-          <p className="text-foreground-muted">{t('subtitle')}</p>
+          <p className="text-gray-400">{t('subtitle')}</p>
         </div>
 
         <div className="glass-panel rounded-3xl p-8 md:p-12">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
             <div className="space-y-6">
               <div>
-                <label className="block text-sm font-medium text-foreground-muted mb-2">
+                <label className="block text-sm font-medium text-gray-400 mb-2">
                   {t('monthlyBill')}
                 </label>
-                <div className="flex items-center justify-between text-2xl font-bold text-foreground mb-2">
+                <div className="flex items-center justify-between text-2xl font-bold text-white mb-2">
                   <span>₱500</span>
                   <span className="text-accent-blue">₱{bill.toLocaleString()}</span>
                   <span>₱50,000</span>
@@ -155,7 +155,7 @@ export function Calculator() {
               </div>
 
               <div className="relative">
-                <label className="block text-sm font-medium text-foreground-muted mb-2">
+                <label className="block text-sm font-medium text-gray-400 mb-2">
                   {t('electricUtility')}
                 </label>
                 <input
@@ -164,7 +164,7 @@ export function Calculator() {
                   onChange={(e) => { setUtilitySearch(e.target.value); setSelectedUtility(null); setShowUtilitySuggestions(true); }}
                   onFocus={() => setShowUtilitySuggestions(true)}
                   placeholder="Search electric company..."
-                   className="w-full px-4 py-2.5 rounded-xl bg-surface-800 border border-border-subtle text-foreground focus:outline-none focus:ring-2 focus:ring-accent-blue"
+                  className="w-full px-4 py-2.5 rounded-xl bg-surface-800 border border-border-subtle text-white focus:outline-none focus:ring-2 focus:ring-accent-blue"
                 />
                 {utilityLoading && (
                   <div className="absolute right-3 top-9"><Spinner className="w-4 h-4" /></div>
@@ -176,10 +176,10 @@ export function Calculator() {
                         key={u.id}
                         type="button"
                         onClick={() => { setSelectedUtility(u); setUtilitySearch(''); setShowUtilitySuggestions(false); }}
-                        className="w-full text-left px-4 py-2.5 text-sm text-foreground hover:bg-black/5 dark:hover:bg-white/5 hover:text-foreground transition-colors"
+                        className="w-full text-left px-4 py-2.5 text-sm text-white/80 hover:bg-white/5 hover:text-white transition-colors"
                       >
                         <span className="font-medium">{u.name}</span>
-                        <span className="text-foreground-muted/60 ml-2">({u.code})</span>
+                        <span className="text-white/40 ml-2">({u.code})</span>
                         {u.rateRu && (
                           <span className="text-accent-cyan ml-2">₱{(u.rateRu / 10000).toFixed(4)}/kWh</span>
                         )}
@@ -197,7 +197,7 @@ export function Calculator() {
                       value={manualRate}
                       onChange={(e) => setManualRate(e.target.value)}
                       placeholder="e.g. 12.88"
-                       className="w-full px-3 py-1.5 rounded-lg bg-surface-800 border border-border-subtle text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-accent-blue"
+                      className="w-full px-3 py-1.5 rounded-lg bg-surface-800 border border-border-subtle text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent-blue"
                     />
                   </div>
                 )}
@@ -205,8 +205,8 @@ export function Calculator() {
             </div>
 
             <div className="space-y-6">
-               <div>
-                <label className="block text-sm font-medium text-foreground-muted mb-2">
+              <div>
+                <label className="block text-sm font-medium text-gray-400 mb-2">
                   {t('propertyType')}
                 </label>
                 <div className="grid grid-cols-2 gap-3">
@@ -218,7 +218,7 @@ export function Calculator() {
                       className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-all border ${
                         propertyType === type
                           ? 'bg-accent-blue text-white border-accent-blue'
-                          : 'bg-surface-800 text-foreground/70 border-border-subtle hover:border-accent-blue/50'
+                          : 'bg-surface-800 text-white/60 border-border-subtle hover:border-white/20'
                       }`}
                     >
                       {t(type)}
@@ -228,7 +228,7 @@ export function Calculator() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-foreground-muted mb-2">
+                <label className="block text-sm font-medium text-gray-400 mb-2">
                   {t('backupHours')}
                 </label>
                 <div className="grid grid-cols-2 gap-2">
@@ -240,7 +240,7 @@ export function Calculator() {
                       className={`px-3 py-2 rounded-xl text-xs font-medium transition-all border ${
                         backupId === opt.id
                           ? 'bg-accent-blue text-white border-accent-blue'
-                          : 'bg-surface-800 text-foreground/70 border-border-subtle hover:border-accent-blue/50'
+                          : 'bg-surface-800 text-white/60 border-border-subtle hover:border-white/20'
                       }`}
                     >
                       {t(opt.label)}
@@ -274,7 +274,7 @@ export function Calculator() {
               >
                 <div className="flex flex-col items-center gap-3">
                   <Spinner className="w-8 h-8" />
-                  <p className="text-sm text-foreground-muted">{t('calculating')}</p>
+                  <p className="text-sm text-gray-400">{t('calculating')}</p>
                 </div>
               </motion.div>
             )}
@@ -288,7 +288,7 @@ export function Calculator() {
                 transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
                 className="mt-8 space-y-6"
               >
-                <h3 className="text-xl font-display font-bold text-foreground text-center">
+                <h3 className="text-xl font-display font-bold text-white text-center">
                   {t('results')}
                 </h3>
 
@@ -305,14 +305,14 @@ export function Calculator() {
                     { label: t('co2Offset'), value: `${co2Offset} tonnes/yr`, color: 'text-accent-blue' },
                   ].map((item) => (
                     <div key={item.label} className="bento-card p-4 text-center">
-                      <p className="text-xs text-foreground-muted mb-1">{item.label}</p>
+                      <p className="text-xs text-gray-400 mb-1">{item.label}</p>
                       <p className={`text-sm font-bold ${item.color}`}>{item.value}</p>
                     </div>
                   ))}
                 </div>
 
                 <div className="bento-card p-6">
-                  <h4 className="text-sm font-semibold text-foreground mb-4 text-center">
+                  <h4 className="text-sm font-semibold text-white mb-4 text-center">
                     {t('tenYearChart')}
                   </h4>
                   <div className="h-48">

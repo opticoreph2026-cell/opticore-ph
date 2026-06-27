@@ -25,10 +25,10 @@ export function TrustBar() {
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true, margin: '-50px' }}
               transition={{ duration: 0.5, delay: index * 0.1, ease: [0.16, 1, 0.3, 1] }}
-              className={`flex items-center gap-3 px-5 py-4 rounded-xl ${badge.bg} border border-black/5 dark:border-white/10 backdrop-blur-sm`}
+              className={`flex items-center gap-3 px-5 py-4 rounded-xl ${badge.bg} border border-white/10 backdrop-blur-sm`}
             >
               <badge.icon className={`w-6 h-6 ${badge.color} flex-shrink-0`} />
-              <span className="text-sm font-medium text-foreground">{badge.label}</span>
+              <span className="text-sm font-medium text-white">{badge.label}</span>
             </motion.div>
           ))}
         </div>

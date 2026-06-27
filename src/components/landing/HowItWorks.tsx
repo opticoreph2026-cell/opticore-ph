@@ -50,7 +50,7 @@ export function HowItWorks() {
   ];
 
   return (
-    <section className="py-24 bg-surface-50 dark:bg-surface-900/30 relative">
+    <section className="py-24 bg-surface-900/30 relative">
       <div className="max-w-6xl mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -59,10 +59,10 @@ export function HowItWorks() {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <h2 className="text-3xl md:text-5xl font-display font-bold text-foreground mb-4">
+          <h2 className="text-3xl md:text-5xl font-display font-bold text-white mb-4">
             {t('title')}
           </h2>
-          <p className="text-foreground-muted max-w-2xl mx-auto">{t('subtitle')}</p>
+          <p className="text-gray-400 max-w-2xl mx-auto">{t('subtitle')}</p>
         </motion.div>
 
         <motion.div
@@ -74,22 +74,22 @@ export function HowItWorks() {
         >
           {steps.map((step, index) => (
             <motion.div key={step.title} variants={itemVariants} className="group">
-              <div className="bg-white dark:bg-white/5 backdrop-blur-xl border border-black/5 dark:border-white/10 rounded-2xl p-0 overflow-hidden h-full hover:border-black/20 dark:hover:border-white/20 transition-colors shadow-sm">
-                <div className="relative h-48 overflow-hidden bg-surface-200 dark:bg-surface-800">
+              <div className="bento-card p-0 overflow-hidden h-full hover:border-white/20 transition-colors">
+                <div className="relative h-48 overflow-hidden bg-surface-800">
                   <Image
                     src={step.image}
                     alt={step.title}
                     fill
                     className="object-cover group-hover:scale-105 transition-transform duration-500"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 dark:from-surface-900/80 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-surface-900/80 to-transparent" />
                 </div>
                 <div className="p-6 relative">
                   <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-4 ${step.bg} backdrop-blur-sm`}>
                     <step.icon className={`w-5 h-5 ${step.color}`} />
                   </div>
-                  <h3 className="text-lg font-bold text-foreground mb-2">{step.title}</h3>
-                  <p className="text-sm text-foreground-muted leading-relaxed">{step.desc}</p>
+                  <h3 className="text-lg font-bold text-white mb-2">{step.title}</h3>
+                  <p className="text-sm text-gray-400 leading-relaxed">{step.desc}</p>
                 </div>
               </div>
             </motion.div>
