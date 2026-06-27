@@ -168,7 +168,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     },
     async jwt({ token, user, account }) {
       const now = Date.now();
-      const THIRTY_MIN = 30 * 60 * 1000;
+      const FIFTEEN_MIN = 15 * 60 * 1000;
       const WRITE_THROTTLE = 60 * 1000;
 
       if (user) {
@@ -177,7 +177,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         token.organizationId = (user as { organizationId?: string }).organizationId;
       } else {
         const lastActivity = token.lastActivityAt as number | undefined;
-        if (lastActivity && now - lastActivity > THIRTY_MIN) {
+        if (lastActivity && now - lastActivity > FIFTEEN_MIN) {
           return {};
         }
         if (!lastActivity || now - lastActivity > WRITE_THROTTLE) {
