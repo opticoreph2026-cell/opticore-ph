@@ -52,7 +52,7 @@ export default function LoginPage() {
         if (sessionData?.user?.role) { role = sessionData.user.role; break; }
         await new Promise((r) => setTimeout(r, 300));
       }
-      document.cookie = 'opticore_session=1; path=/; max-age=604800; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : '');
+      document.cookie = 'opticore_session=1; path=/; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : '');
       router.push(getPostLoginRedirect(role));
       router.refresh();
     } catch (err) {
@@ -136,7 +136,7 @@ export default function LoginPage() {
         if (sessionData?.user?.role) { role = sessionData.user.role; break; }
         await new Promise((r) => setTimeout(r, 300));
       }
-      document.cookie = 'opticore_session=1; path=/; max-age=604800; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : '');
+      document.cookie = 'opticore_session=1; path=/; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : '');
       router.push(getPostLoginRedirect(role));
       router.refresh();
     } catch (err) {

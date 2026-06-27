@@ -1,4 +1,5 @@
 import React from 'react';
+import { db } from '@/lib/db';
 import { getSession } from '@/lib/session';
 import { canAccessCrm } from '@/lib/energy-auth';
 import { redirect } from 'next/navigation';
@@ -12,6 +13,14 @@ export default async function CrmLayout({
 }) {
   const session = await getSession();
   if (!session || !canAccessCrm(session as any)) {
+    redirect('/login');
+  }
+
+  const userRecord = await db.client.findUnique({
+    where: { id: session.sub },
+    select: { suspended: true, lastSignedInAt: true },
+  });
+  if (userRecord?.suspended) {
     redirect('/login');
   }
 

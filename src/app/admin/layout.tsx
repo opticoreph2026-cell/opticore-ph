@@ -1,5 +1,6 @@
 import React from 'react';
 import { redirect } from 'next/navigation';
+import { db } from '@/lib/db';
 import { getCurrentUser } from '@/lib/session';
 import Link from 'next/link';
 import {
@@ -48,6 +49,14 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
   if (!user || user.role !== 'opticore_owner') {
     redirect('/crm');
+  }
+
+  const userRecord = await db.client.findUnique({
+    where: { id: user.sub },
+    select: { suspended: true },
+  });
+  if (userRecord?.suspended) {
+    redirect('/login');
   }
 
   const initials = ((user as any).name || user.email || 'JG').slice(0, 2).toUpperCase();

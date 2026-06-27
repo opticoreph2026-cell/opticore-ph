@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import { db } from '@/lib/db';
 import { getSession } from '@/lib/session';
 import { redirect } from 'next/navigation';
 import { canAccessPartnerPortal } from '@/lib/energy-auth';
@@ -33,6 +34,14 @@ export default async function PartnerLayout({
 }) {
   const session = await getSession();
   if (!session || !canAccessPartnerPortal(session as any)) {
+    redirect('/login');
+  }
+
+  const userRecord = await db.client.findUnique({
+    where: { id: session.sub },
+    select: { suspended: true, lastSignedInAt: true },
+  });
+  if (userRecord?.suspended) {
     redirect('/login');
   }
 
