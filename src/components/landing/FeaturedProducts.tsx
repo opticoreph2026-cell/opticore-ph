@@ -43,9 +43,11 @@ const containerVariants = {
   },
 };
 
+const easeCurve: [number, number, number, number] = [0.16, 1, 0.3, 1];
+
 const itemVariants = {
   hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] as const as const } },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: easeCurve } },
 };
 
 export function FeaturedProducts() {
@@ -58,7 +60,7 @@ export function FeaturedProducts() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-80px' }}
-          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] as const }}
+          transition={{ duration: 0.6, ease: easeCurve }}
           className="text-center mb-16"
         >
           <h2 className="text-3xl md:text-5xl font-display font-bold text-foreground-950 mb-4">
@@ -104,7 +106,7 @@ export function FeaturedProducts() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-80px' }}
-          transition={{ duration: 0.5, delay: 0.3, ease: [0.16, 1, 0.3, 1] as const }}
+          transition={{ duration: 0.5, delay: 0.3, ease: easeCurve }}
           className="mt-12 text-center"
         >
           <Link

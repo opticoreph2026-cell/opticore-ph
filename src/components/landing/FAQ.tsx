@@ -5,6 +5,8 @@ import { useLocale } from 'next-intl';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
 
+const easeCurve: [number, number, number, number] = [0.16, 1, 0.3, 1];
+
 interface FaqItem {
   id: string;
   question: string;
@@ -49,7 +51,7 @@ export function FAQ() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-80px' }}
-          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] as const }}
+          transition={{ duration: 0.6, ease: easeCurve }}
           className="text-center mb-16"
         >
           <h2 className="text-3xl md:text-5xl font-display font-bold text-foreground-950 mb-4">
@@ -114,7 +116,7 @@ export function FAQ() {
                                 initial={{ height: 0, opacity: 0 }}
                                 animate={{ height: 'auto', opacity: 1 }}
                                 exit={{ height: 0, opacity: 0 }}
-                                transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] as const }}
+                                transition={{ duration: 0.3, ease: easeCurve }}
                                 className="overflow-hidden"
                               >
                                 <p className="text-sm text-foreground-600 leading-relaxed mt-4 pt-4 border-t border-foreground-950/10">

@@ -8,6 +8,8 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import { Spinner } from '@/components/ui/Spinner';
 import { NEOVOLT_INVERTERS_SINGLE } from '@/data/neovolt-products';
 
+const easeCurve: [number, number, number, number] = [0.16, 1, 0.3, 1];
+
 interface UtilityOption {
   id: string;
   code: string;
@@ -291,7 +293,7 @@ export function Calculator() {
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] as const }}
+                transition={{ duration: 0.6, ease: easeCurve }}
                 className="mt-8 space-y-6"
               >
                 <div className="text-center mb-8">
