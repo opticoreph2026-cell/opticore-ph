@@ -49,7 +49,7 @@ export function FAQ() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-80px' }}
-          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] as const }}
           className="text-center mb-16"
         >
           <h2 className="text-3xl md:text-5xl font-display font-bold text-foreground-950 mb-4">
@@ -114,7 +114,7 @@ export function FAQ() {
                                 initial={{ height: 0, opacity: 0 }}
                                 animate={{ height: 'auto', opacity: 1 }}
                                 exit={{ height: 0, opacity: 0 }}
-                                transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                                transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] as const }}
                                 className="overflow-hidden"
                               >
                                 <p className="text-sm text-foreground-600 leading-relaxed mt-4 pt-4 border-t border-foreground-950/10">
