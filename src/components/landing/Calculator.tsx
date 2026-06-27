@@ -117,32 +117,37 @@ export function Calculator() {
     }, 1000);
   };
 
-  const activeBtn = (isActive: boolean) =>
-    isActive
-      ? 'bg-primary-500 text-background-50 border-primary-500'
-      : 'bg-background-100/40 text-foreground-600 border-foreground-950/10 hover:border-foreground-950/20';
-
   return (
-    <section id="calculator" className="py-24 relative">
+    <section id="calculator" className="py-24 relative overflow-hidden">
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-primary-500/5 blur-3xl" />
+        <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] rounded-full bg-accent-500/5 blur-3xl" />
+      </div>
       <div className="max-w-4xl mx-auto px-6 relative z-10">
         <div className="text-center mb-12">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary-500/10 border border-primary-500/20 mb-6">
+            <span className="w-2 h-2 rounded-full bg-primary-500 opt-pulse-dot" />
+            <span className="text-[10px] font-semibold text-primary-500 uppercase tracking-widest">
+              ROI Calculator
+            </span>
+          </div>
           <h2 className="text-3xl md:text-5xl font-display font-bold text-foreground-950 mb-4">
             {t('title')}
           </h2>
-          <p className="text-foreground-600">{t('subtitle')}</p>
+          <p className="text-foreground-600 max-w-2xl mx-auto">{t('subtitle')}</p>
         </div>
 
         <div className="glass-panel rounded-3xl p-8 md:p-12">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-            <div className="space-y-6">
+            <div className="space-y-8">
               <div>
-                <label className="block text-sm font-medium text-foreground-600 mb-2">
+                <label className="block text-sm font-medium text-foreground-600 mb-3">
                   {t('monthlyBill')}
                 </label>
-                <div className="flex items-center justify-between text-2xl font-bold text-foreground-950 mb-2">
-                  <span className="text-foreground-500">₱500</span>
-                  <span className="text-primary-500">₱{bill.toLocaleString()}</span>
-                  <span className="text-foreground-500">₱50,000</span>
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-xs text-foreground-500">₱500</span>
+                  <span className="text-2xl font-bold text-primary-500 tabular-nums">₱{bill.toLocaleString()}</span>
+                  <span className="text-xs text-foreground-500">₱50,000</span>
                 </div>
                 <input
                   type="range"
@@ -205,9 +210,9 @@ export function Calculator() {
               </div>
             </div>
 
-            <div className="space-y-6">
+            <div className="space-y-8">
               <div>
-                <label className="block text-sm font-medium text-foreground-600 mb-2">
+                <label className="block text-sm font-medium text-foreground-600 mb-3">
                   {t('propertyType')}
                 </label>
                 <div className="grid grid-cols-2 gap-3">
@@ -216,7 +221,11 @@ export function Calculator() {
                       key={type}
                       type="button"
                       onClick={() => setPropertyType(type)}
-                      className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-all border ${activeBtn(propertyType === type)}`}
+                      className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 border ${
+                        propertyType === type
+                          ? 'bg-primary-500 text-background-50 border-primary-500 shadow-lg shadow-primary-500/20'
+                          : 'bg-background-100/40 text-foreground-600 border-foreground-950/10 hover:border-foreground-950/20 hover:bg-background-100/60'
+                      }`}
                     >
                       {t(type)}
                     </button>
@@ -225,7 +234,7 @@ export function Calculator() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-foreground-600 mb-2">
+                <label className="block text-sm font-medium text-foreground-600 mb-3">
                   {t('backupHours')}
                 </label>
                 <div className="grid grid-cols-2 gap-2">
@@ -234,7 +243,11 @@ export function Calculator() {
                       key={opt.id}
                       type="button"
                       onClick={() => setBackupId(opt.id)}
-                      className={`px-3 py-2 rounded-xl text-xs font-medium transition-all border ${activeBtn(backupId === opt.id)}`}
+                      className={`px-3 py-2 rounded-xl text-xs font-medium transition-all duration-200 border ${
+                        backupId === opt.id
+                          ? 'bg-accent-500 text-background-50 border-accent-500 shadow-lg shadow-accent-500/20'
+                          : 'bg-background-100/40 text-foreground-600 border-foreground-950/10 hover:border-foreground-950/20 hover:bg-background-100/60'
+                      }`}
                     >
                       {t(opt.label)}
                     </button>
@@ -248,12 +261,12 @@ export function Calculator() {
             type="button"
             onClick={handleCalculate}
             disabled={loading}
-            className="w-full py-3 rounded-xl bg-primary-500 text-background-50 font-semibold hover:bg-primary-600 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+            className="w-full py-3.5 rounded-xl bg-primary-500 text-background-50 font-semibold hover:bg-primary-600 transition-all disabled:opacity-50 flex items-center justify-center gap-2 cta-primary shadow-lg shadow-primary-500/20"
           >
             {loading ? (
               <><Spinner className="w-5 h-5" /> {t('calculating')}</>
             ) : (
-              t('calculate')
+              <span className="flex items-center gap-2">{t('calculate')} <span className="text-lg">→</span></span>
             )}
           </button>
 
@@ -281,25 +294,34 @@ export function Calculator() {
                 transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
                 className="mt-8 space-y-6"
               >
-                <h3 className="text-xl font-display font-bold text-foreground-950 text-center">
-                  {t('results')}
-                </h3>
+                <div className="text-center mb-8">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary-500/10 border border-secondary-500/20 mb-3">
+                    <span className="w-1.5 h-1.5 rounded-full bg-secondary-500" />
+                    <span className="text-[10px] font-semibold text-secondary-500 uppercase tracking-widest">Your Results</span>
+                  </div>
+                  <h3 className="text-2xl font-display font-bold text-foreground-950">
+                    {t('results')}
+                  </h3>
+                </div>
 
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                   {[
-                    { label: t('dailyConsumption'), value: `${dailyKwh} kWh`, color: 'text-primary-500' },
-                    { label: t('recommendedInverter'), value: selectedInverter.sku, color: 'text-accent-500' },
-                    { label: t('pvArray'), value: `${requiredKwp} kWp (${panelCount} panels)`, color: 'text-secondary-500' },
-                    { label: t('recommendedBattery'), value: `${batteryCount}× BW-BAT-10.1P (${totalStorage} kWh)`, color: 'text-accent-500' },
-                    { label: t('backupAutonomy'), value: `~${backupHours} hours`, color: 'text-primary-500' },
-                    { label: t('monthlySavings'), value: `₱${monthlySavings.toLocaleString()}`, color: 'text-secondary-500' },
-                    { label: t('annualSavings'), value: `₱${annualSavings.toLocaleString()}`, color: 'text-secondary-500' },
-                    { label: t('paybackPeriod'), value: `~${paybackYears} years`, color: 'text-accent-500' },
-                    { label: t('co2Offset'), value: `${co2Offset} tonnes/yr`, color: 'text-primary-500' },
+                    { label: t('dailyConsumption'), value: `${dailyKwh} kWh`, color: 'text-primary-500', badge: 'primary' },
+                    { label: t('recommendedInverter'), value: selectedInverter.sku, color: 'text-accent-500', badge: 'accent' },
+                    { label: t('pvArray'), value: `${requiredKwp} kWp (${panelCount} panels)`, color: 'text-secondary-500', badge: 'secondary' },
+                    { label: t('recommendedBattery'), value: `${batteryCount}× BW-BAT-10.1P (${totalStorage} kWh)`, color: 'text-accent-500', badge: 'accent' },
+                    { label: t('backupAutonomy'), value: `~${backupHours} hours`, color: 'text-primary-500', badge: 'primary' },
+                    { label: t('monthlySavings'), value: `₱${monthlySavings.toLocaleString()}`, color: 'text-secondary-500', badge: 'secondary' },
+                    { label: t('annualSavings'), value: `₱${annualSavings.toLocaleString()}`, color: 'text-secondary-500', badge: 'secondary' },
+                    { label: t('paybackPeriod'), value: `~${paybackYears} years`, color: 'text-accent-500', badge: 'accent' },
+                    { label: t('co2Offset'), value: `${co2Offset} tonnes/yr`, color: 'text-primary-500', badge: 'primary' },
                   ].map((item) => (
-                    <div key={item.label} className="bento-card p-4 text-center">
+                    <div key={item.label} className="bento-card p-4 text-center relative overflow-hidden">
+                      <div className={`absolute top-0 left-0 right-0 h-0.5 ${
+                        item.badge === 'primary' ? 'bg-primary-500' : item.badge === 'accent' ? 'bg-accent-500' : 'bg-secondary-500'
+                      }`} />
                       <p className="text-xs text-foreground-600 mb-1">{item.label}</p>
-                      <p className={`text-sm font-bold ${item.color}`}>{item.value}</p>
+                      <p className={`text-sm font-bold ${item.color} tabular-nums`}>{item.value}</p>
                     </div>
                   ))}
                 </div>
@@ -311,28 +333,28 @@ export function Calculator() {
                   <div className="h-48">
                     <ResponsiveContainer width="100%" height="100%">
                       <BarChart data={chartData}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.06)" />
-                        <XAxis dataKey="year" tick={{ fill: '#64748b', fontSize: 11 }} />
-                        <YAxis tick={{ fill: '#64748b', fontSize: 11 }} />
+                        <CartesianGrid strokeDasharray="3 3" stroke="oklch(var(--foreground-950) / 0.06)" />
+                        <XAxis dataKey="year" tick={{ fill: 'oklch(var(--foreground-500))', fontSize: 11 }} />
+                        <YAxis tick={{ fill: 'oklch(var(--foreground-500))', fontSize: 11 }} />
                         <Tooltip
                           contentStyle={{
-                            background: 'color-mix(in oklch, var(--color-background-50), transparent 10%)',
-                            border: '1px solid oklch(var(--color-foreground-950) / 0.1)',
+                            background: 'color-mix(in oklch, var(--background-50), transparent 10%)',
+                            border: '1px solid oklch(var(--foreground-950) / 0.1)',
                             borderRadius: '12px',
-                            color: 'oklch(var(--color-foreground-950))',
+                            color: 'oklch(var(--foreground-950))',
                           }}
                         />
-                        <Bar dataKey="savings" fill="#2563EB" radius={[4, 4, 0, 0]} />
+                        <Bar dataKey="savings" fill="oklch(var(--primary-500))" radius={[6, 6, 0, 0]} />
                       </BarChart>
                     </ResponsiveContainer>
                   </div>
                 </div>
 
-                <p className="text-xs text-foreground-500 text-center">{t('disclaimer')}</p>
+                <p className="text-xs text-foreground-500 text-center max-w-lg mx-auto leading-relaxed">{t('disclaimer')}</p>
 
                 <Link
                   href={`/contact?bill=${bill}&province=${selectedUtility?.code || ''}&type=${propertyType}`}
-                  className="block w-full py-3 text-center bg-primary-500 text-background-50 font-semibold rounded-xl hover:bg-primary-600 transition-colors"
+                  className="block w-full py-3.5 text-center bg-primary-500 text-background-50 font-semibold rounded-xl hover:bg-primary-600 transition-all cta-primary shadow-lg shadow-primary-500/20"
                 >
                   {t('cta')}
                 </Link>

@@ -4,9 +4,15 @@ import { Navbar } from '@/components/ui/Navbar';
 import { Footer } from '@/components/ui/Footer';
 import { WhatsAppButton } from '@/components/landing/WhatsAppButton';
 import { ScrollToTop } from '@/components/landing/ScrollToTop';
-import { Award, MapPin, Target, CheckCircle, Users, Globe } from 'lucide-react';
+import { Award, MapPin, Target, CheckCircle, Users, Globe, Zap, Clock, ShieldCheck } from 'lucide-react';
 import Image from 'next/image';
-import { AnimatedSection } from '@/components/ui/AnimatedSection';
+
+const stats = [
+  { value: '5+', label: 'Years Experience', icon: Clock },
+  { value: '50+', label: 'Projects Completed', icon: Zap },
+  { value: '3', label: 'Provinces Covered', icon: Globe },
+  { value: '2', label: 'Installation Partners', icon: Users },
+];
 
 export async function generateMetadata({
   params,
@@ -38,16 +44,37 @@ export default async function AboutPage({
   return (
     <>
       <Navbar />
-      <main className="bg-background-50 min-h-screen pt-24 pb-16">
-        <div className="max-w-4xl mx-auto px-6">
-          <AnimatedSection className="text-center mb-16">
-            <h1 className="text-4xl md:text-5xl font-display font-bold text-foreground-950 mb-4">{t('title')}</h1>
-            <p className="text-foreground-600">{t('subtitle')}</p>
-          </AnimatedSection>
+      <main className="bg-background-50 min-h-screen pb-16">
+        <div className="max-w-4xl mx-auto px-6 pt-32">
+          {/* Hero */}
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary-500/10 border border-primary-500/20 mb-6">
+              <span className="w-2 h-2 rounded-full bg-primary-500 opt-pulse-dot" />
+              <span className="text-[10px] font-semibold text-primary-500 uppercase tracking-widest">About Us</span>
+            </div>
+            <h1 className="text-4xl md:text-6xl font-display font-bold text-foreground-950 mb-4">{t('title')}</h1>
+            <p className="text-foreground-600 max-w-2xl mx-auto text-lg">{t('subtitle')}</p>
+          </div>
 
-          <AnimatedSection className="glass-panel rounded-3xl p-8 md:p-12 mb-10" delay={0.1}>
-            <div className="flex flex-col md:flex-row gap-8 items-start">
-              <div className="relative w-40 h-40 md:w-48 md:h-48 rounded-2xl overflow-hidden bg-background-100/40 flex-shrink-0 mx-auto md:mx-0">
+          {/* Stats */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16">
+            {stats.map((stat) => {
+              const Icon = stat.icon;
+              return (
+                <div key={stat.label} className="bento-card text-center">
+                  <Icon className="w-6 h-6 text-primary-500 mx-auto mb-2" />
+                  <p className="text-2xl font-bold text-foreground-950 font-display tabular-nums">{stat.value}</p>
+                  <p className="text-xs text-foreground-500 mt-1">{stat.label}</p>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Founder */}
+          <div className="glass-panel rounded-3xl p-8 md:p-12 mb-10 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-primary-500/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+            <div className="flex flex-col md:flex-row gap-8 items-start relative z-10">
+              <div className="relative w-40 h-40 md:w-48 md:h-48 rounded-2xl overflow-hidden bg-background-100/40 flex-shrink-0 mx-auto md:mx-0 ring-2 ring-primary-500/20">
                 <Image
                   src="/julius-placeholder.png"
                   alt="Julius Rey S. Gisto, RME"
@@ -56,16 +83,16 @@ export default async function AboutPage({
                 />
               </div>
               <div className="flex-1">
-                <div className="flex items-center gap-2 mb-2">
+                <div className="flex items-center gap-2 mb-3">
                   <Award className="w-5 h-5 text-primary-500" />
-                  <p className="text-sm text-primary-500 uppercase tracking-widest">
+                  <p className="text-xs text-primary-500 uppercase tracking-widest font-semibold">
                     {t('founderTitle')}
                   </p>
                 </div>
                 <h2 className="text-2xl font-display font-bold text-foreground-950 mb-3">{t('founderName')}</h2>
                 <p className="text-foreground-600 leading-relaxed mb-6">{t('founderBio')}</p>
-
-                <h3 className="text-sm font-semibold text-foreground-700 uppercase tracking-widest mb-3">
+                <h3 className="text-xs font-semibold text-foreground-700 uppercase tracking-widest mb-3 flex items-center gap-2">
+                  <ShieldCheck className="w-4 h-4 text-secondary-500" />
                   {t('credentials')}
                 </h3>
                 <ul className="space-y-2">
@@ -78,62 +105,63 @@ export default async function AboutPage({
                 </ul>
               </div>
             </div>
-          </AnimatedSection>
+          </div>
 
-          <AnimatedSection className="glass-panel rounded-3xl p-8 md:p-12 mb-10" delay={0.2}>
+          {/* Partners */}
+          <div className="glass-panel rounded-3xl p-8 md:p-12 mb-10">
             <div className="flex items-center gap-3 mb-8">
               <Users className="w-6 h-6 text-accent-500" />
               <h2 className="text-xl font-display font-bold text-foreground-950">{t('partners')}</h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="bento-card">
+              <div className="bento-card relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-1 h-full bg-accent-500" />
                 <h3 className="font-bold text-foreground-950 mb-1">{t('partner1Name')}</h3>
-                <p className="text-xs text-accent-500 mb-3">{t('partner1Role')}</p>
+                <p className="text-xs text-accent-500 mb-3 font-semibold">{t('partner1Role')}</p>
                 <p className="text-sm text-foreground-600">{t('partner1Bio')}</p>
               </div>
-              <div className="bento-card">
+              <div className="bento-card relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-1 h-full bg-secondary-500" />
                 <h3 className="font-bold text-foreground-950 mb-1">{t('partner2Name')}</h3>
-                <p className="text-xs text-accent-500 mb-3">{t('partner2Role')}</p>
+                <p className="text-xs text-secondary-500 mb-3 font-semibold">{t('partner2Role')}</p>
                 <p className="text-sm text-foreground-600">{t('partner2Bio')}</p>
               </div>
             </div>
-          </AnimatedSection>
+          </div>
 
-          <AnimatedSection className="glass-panel rounded-3xl p-8 md:p-12 mb-10" delay={0.3}>
-            <div className="flex items-start gap-4">
-              <Target className="w-8 h-8 text-primary-500 flex-shrink-0" />
-              <div>
-                <h2 className="text-xl font-display font-bold text-foreground-950 mb-3">{t('missionTitle')}</h2>
-                <p className="text-foreground-600 leading-relaxed">{t('mission')}</p>
+          {/* Mission + Territories */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+            <div className="glass-panel rounded-3xl p-8 relative overflow-hidden">
+              <div className="absolute bottom-0 right-0 w-48 h-48 bg-primary-500/5 rounded-full blur-2xl pointer-events-none" />
+              <Target className="w-8 h-8 text-primary-500 mb-4" />
+              <h2 className="text-xl font-display font-bold text-foreground-950 mb-3">{t('missionTitle')}</h2>
+              <p className="text-foreground-600 leading-relaxed text-sm">{t('mission')}</p>
+            </div>
+            <div className="glass-panel rounded-3xl p-8 relative overflow-hidden">
+              <div className="absolute bottom-0 left-0 w-48 h-48 bg-secondary-500/5 rounded-full blur-2xl pointer-events-none" />
+              <Globe className="w-8 h-8 text-secondary-500 mb-4" />
+              <h2 className="text-xl font-display font-bold text-foreground-950 mb-4">{t('territories')}</h2>
+              <div className="space-y-3">
+                {['territoryCebu', 'territoryBohol', 'territoryLeyte'].map((key) => (
+                  <div key={key} className="flex items-center gap-3 text-sm text-foreground-600">
+                    <MapPin className="w-4 h-4 text-primary-500 flex-shrink-0" />
+                    <span>{t(key)}</span>
+                  </div>
+                ))}
               </div>
             </div>
-          </AnimatedSection>
+          </div>
 
-          <AnimatedSection className="glass-panel rounded-3xl p-8 md:p-12 mb-10" delay={0.4}>
-            <div className="flex items-start gap-4">
-              <Globe className="w-8 h-8 text-secondary-500 flex-shrink-0" />
-              <div>
-                <h2 className="text-xl font-display font-bold text-foreground-950 mb-4">{t('territories')}</h2>
-                <div className="space-y-3">
-                  {['territoryCebu', 'territoryBohol', 'territoryLeyte'].map((key) => (
-                    <div key={key} className="flex items-center gap-3 text-sm text-foreground-600">
-                      <MapPin className="w-4 h-4 text-primary-500 flex-shrink-0" />
-                      <span>{t(key)}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </AnimatedSection>
-
-          <AnimatedSection className="text-center" delay={0.5}>
+          {/* CTA */}
+          <div className="text-center">
             <Link
               href="/contact"
-              className="inline-block px-8 py-3 rounded-xl bg-primary-500 text-background-50 font-semibold hover:bg-primary-600 transition-colors cta-primary"
+              className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl bg-primary-500 text-background-50 font-semibold hover:bg-primary-600 transition-all cta-primary shadow-lg shadow-primary-500/20"
             >
-              Book a Free Site Visit →
+              Book a Free Site Visit
+              <span className="text-lg">→</span>
             </Link>
-          </AnimatedSection>
+          </div>
         </div>
       </main>
       <Footer />

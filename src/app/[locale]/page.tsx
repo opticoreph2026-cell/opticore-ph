@@ -5,7 +5,9 @@ import { Hero } from '@/components/landing/Hero';
 import { TrustBar } from '@/components/landing/TrustBar';
 import { HowItWorks } from '@/components/landing/HowItWorks';
 import { Calculator } from '@/components/landing/Calculator';
+import { FeaturedProducts } from '@/components/landing/FeaturedProducts';
 import { Features } from '@/components/landing/Features';
+import { FAQ } from '@/components/landing/FAQ';
 import { TerritoryCards } from '@/components/landing/TerritoryCards';
 import { WhatsAppButton } from '@/components/landing/WhatsAppButton';
 import { ScrollToTop } from '@/components/landing/ScrollToTop';
@@ -65,7 +67,9 @@ export default async function HomePage({
         <TrustBar />
         <HowItWorks />
         <Calculator />
+        <FeaturedProducts />
         <Features />
+        <FAQ />
         <TerritoryCards />
       </main>
       <Footer />

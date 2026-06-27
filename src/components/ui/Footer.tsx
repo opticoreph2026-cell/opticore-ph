@@ -21,6 +21,8 @@ const footerLinks = {
   Support: [
     { label: 'Privacy Policy', href: '/privacy' as const },
     { label: 'Terms of Service', href: '/terms' as const },
+    { label: 'Customer Portal', href: '/customer' as const, portal: true },
+    { label: 'Partner Portal', href: '/partner' as const, portal: true },
   ],
 };
 
@@ -34,7 +36,7 @@ export function Footer() {
   return (
     <footer className="bg-background-1000 border-t border-foreground-950/10">
       <div className="max-w-7xl mx-auto px-6 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
           <div className="md:col-span-2 space-y-5">
             <Logo />
             <p className="text-sm text-foreground-600 max-w-xs leading-relaxed">
@@ -66,7 +68,10 @@ export function Footer() {
               <ul className="space-y-3">
                 {links.map((link) => (
                   <li key={link.label}>
-                    <Link href={link.href} className="text-sm text-foreground-500 hover:text-foreground-950 transition-colors">
+                    <Link
+                      href={'portal' in link && link.portal ? createPortalLink(link.href) : link.href}
+                      className="text-sm text-foreground-500 hover:text-foreground-950 transition-colors"
+                    >
                       {link.label}
                     </Link>
                   </li>
@@ -75,29 +80,7 @@ export function Footer() {
             </div>
           ))}
 
-          <div>
-            <h3 className="text-xs font-semibold text-foreground-950 uppercase tracking-widest mb-5 font-display">
-              Portals
-            </h3>
-            <ul className="space-y-3">
-              <li>
-                <Link
-                  href={createPortalLink('/customer')}
-                  className="text-sm text-foreground-500 hover:text-foreground-950 transition-colors"
-                >
-                  Customer Portal
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href={createPortalLink('/partner')}
-                  className="text-sm text-foreground-500 hover:text-foreground-950 transition-colors"
-                >
-                  Partner Portal
-                </Link>
-              </li>
-            </ul>
-          </div>
+
         </div>
 
         <div className="mt-16 pt-8 border-t border-foreground-950/10 flex flex-col md:flex-row justify-between items-center gap-4">

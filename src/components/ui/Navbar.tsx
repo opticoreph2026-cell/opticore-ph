@@ -67,7 +67,6 @@ export function Navbar() {
 
             <div className="hidden md:flex items-center gap-2">
               <LocaleSwitcher />
-              <ThemeToggle />
               <>
                 <Link
                   href="/login"
@@ -75,6 +74,7 @@ export function Navbar() {
                 >
                   {t('signIn')}
                 </Link>
+                <ThemeToggle />
                 <Link
                   href="/contact"
                   className="px-4 py-1.5 text-sm font-semibold rounded-xl bg-primary-500 text-background-50 hover:bg-primary-600 transition-all shadow-lg btn-icon"

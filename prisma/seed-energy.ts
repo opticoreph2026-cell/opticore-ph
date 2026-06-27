@@ -684,6 +684,25 @@ async function seedUsers() {
   });
 
   console.log('  ✅ Users seeded: Julius (opticore_owner), Jeric (partner_admin), Aldrean (partner_admin)');
+
+  // ── 12. FAQ Entries ─────────────────────────────────────────────────────────
+
+  const faqData = [
+    { question: 'How much does a solar system cost?', answer: 'A typical residential solar + battery system in the Philippines ranges from ₱250,000 to ₱850,000 depending on your monthly consumption, backup requirements, and roof type. Use our ROI calculator for a personalized estimate, or book a free site assessment for an exact quotation.', locale: 'en', category: 'pricing', sortOrder: 1 },
+    { question: 'Do I need a net metering permit?', answer: 'Our hybrid inverters support zero-export mode, which means you can install without a net metering permit. The system powers your loads during the day and charges batteries — excess solar is simply throttled. If you want to sell power back to the grid, we can help with the net metering application process.', locale: 'en', category: 'installation', sortOrder: 2 },
+    { question: 'How long does installation take?', answer: 'A standard residential installation takes 1–3 days. This includes mounting panels, installing the inverter and batteries, running conduit, and commissioning. Commercial projects typically take 3–7 days depending on system size and complexity.', locale: 'en', category: 'installation', sortOrder: 3 },
+    { question: 'What areas do you serve?', answer: 'We serve Cebu, Bohol, and Leyte provinces — including Cebu City, Mandaue, Lapu-Lapu, Talisay, Danao, Tagbilaran, Ormoc, and Tacloban. For areas outside these provinces, we offer remote design consultations.', locale: 'en', category: 'general', sortOrder: 4 },
+    { question: 'What warranty do your systems come with?', answer: 'Neovolt inverters come with a 5-year warranty, and LFP batteries carry a 10-year warranty. Solar panels are warranted for 25 years (linear performance). All installations by OptiCore include a 1-year workmanship warranty.', locale: 'en', category: 'pricing', sortOrder: 5 },
+    { question: 'Magkano ang solar system?', answer: 'Ang presyo ng residential solar + battery system ay karaniwang ₱250,000 hanggang ₱850,000 depende sa inyong monthly consumption, backup requirements, at roof type. Gamitin ang aming ROI calculator para sa personal na tantiya, o mag-book ng libreng site assessment para sa eksaktong quotation.', locale: 'fil', category: 'pricing', sortOrder: 1 },
+    { question: 'Gaano katagal ang installation?', answer: 'Ang karaniwang residential installation ay tumatagal ng 1–3 araw. Kasama rito ang pag-mount ng panels, pag-install ng inverter at batteries, pag-conduct ng conduit, at commissioning. Ang commercial projects ay karaniwang 3–7 araw depende sa system size.', locale: 'fil', category: 'installation', sortOrder: 2 },
+    { question: 'Anong lugar ang inyong sineserbisyuhan?', answer: 'Kami ay nagse-serve sa Cebu, Bohol, at Leyte provinces — kabilang ang Cebu City, Mandaue, Lapu-Lapu, Talisay, Danao, Tagbilaran, Ormoc, at Tacloban. Para sa mga lugar sa labas ng mga probinsyang ito, nag-aalok kami ng remote design consultations.', locale: 'fil', category: 'general', sortOrder: 3 },
+  ];
+
+  for (const faq of faqData) {
+    await db.faqEntry.create({ data: faq });
+  }
+
+  console.log('  ✅ FAQ entries seeded: 8 (5 EN + 3 FIL)');
 }
 
 main()

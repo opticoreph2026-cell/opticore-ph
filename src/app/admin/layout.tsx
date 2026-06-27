@@ -15,6 +15,7 @@ import {
   Bell,
   Settings,
   TrendingUp,
+  HelpCircle,
 } from 'lucide-react';
 import { Logo } from '@/components/ui/Logo';
 import { NotificationBell } from '@/components/ui/NotificationBell';
@@ -28,6 +29,7 @@ const adminNavItems = [
   { href: '/admin/energy/organizations', label: 'Organizations', icon: Building2 },
   { href: '/admin/energy/rules', label: 'Utility Rates', icon: Zap },
   { href: '/admin/reports', label: 'Reports', icon: ShieldCheck },
+  { href: '/admin/faq', label: 'FAQ Management', icon: HelpCircle },
   { href: '/admin/alerts', label: 'System Alerts', icon: Bell },
   { href: '/admin/settings', label: 'Settings', icon: Settings },
 ];
