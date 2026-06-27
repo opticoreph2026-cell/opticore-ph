@@ -56,7 +56,7 @@ export function Navbar() {
                     className={`px-3 py-1.5 text-sm font-medium rounded-lg transition-all duration-150 ${
                       isActive
                         ? 'text-primary-500 bg-primary-500/10'
-                        : 'text-foreground-600 hover:text-foreground-950 hover:bg-background-100'
+                        : 'text-foreground-600 dark:text-foreground-300 hover:text-foreground-950 dark:hover:text-white hover:bg-background-100 dark:hover:bg-background-800/50'
                     }`}
                   >
                     {link.label}
@@ -114,7 +114,7 @@ export function Navbar() {
                 className={`block px-4 py-3 text-sm font-medium rounded-xl transition-colors ${
                   pathname === link.href
                     ? 'text-primary-500 bg-primary-500/10'
-                    : 'text-foreground-600 hover:text-foreground-950 hover:bg-background-100'
+                    : 'text-foreground-600 dark:text-foreground-300 hover:text-foreground-950 dark:hover:text-white hover:bg-background-100 dark:hover:bg-background-800/50'
                 }`}
               >
                 {link.label}
@@ -127,7 +127,7 @@ export function Navbar() {
               <Link
                 href="/login"
                 onClick={() => setMobileOpen(false)}
-                className="block px-4 py-3 text-sm font-medium text-center text-foreground-600 hover:text-foreground-950 hover:bg-background-100 rounded-xl transition-colors border border-foreground-950/10"
+                className="block px-4 py-3 text-sm font-medium text-center text-foreground-600 dark:text-foreground-300 hover:text-foreground-950 dark:hover:text-white hover:bg-background-100 dark:hover:bg-background-800/50 rounded-xl transition-colors border border-foreground-950/10"
               >
                 {t('signIn')}
               </Link>

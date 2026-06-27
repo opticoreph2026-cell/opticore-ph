@@ -99,10 +99,10 @@ export function Calculator() {
   const totalStorage = round(batteryCount * 9.6);
   const backupHours = batteryCount > 0 ? round((batteryCount * 9.6 * 0.95) / (dailyKwh / 24 * 0.4)) : 0;
   const annualGen = round(requiredKwp * 4.5 * 365 * 0.8);
-  const annualSavings = round(annualGen * rate);
-  const monthlySavings = round(annualSavings / 12);
+  const annualSavings = Math.max(0, round(annualGen * rate));
+  const monthlySavings = Math.max(0, round(annualSavings / 12));
   const systemCost = round(requiredKwp * 85000);
-  const paybackYears = systemCost > 0 && annualSavings > 0 ? Math.round((systemCost / annualSavings) * 10) / 10 : 0;
+  const paybackYears = systemCost > 0 && annualSavings > 0 ? Math.max(0, Math.round((systemCost / annualSavings) * 10) / 10) : 0;
   const co2Offset = round(annualGen * 0.5281 / 1000);
 
   const inverterIndex = peakLoad > 6.0 ? 3 : peakLoad > 5.0 ? 2 : peakLoad > 3.68 ? 1 : 0;
@@ -113,14 +113,21 @@ export function Calculator() {
     savings: round(annualSavings * (i + 1)),
   }));
 
+  const RATE_REGEX = /^\d+(\.\d+)?$/;
+
   const handleCalculate = () => {
     if (!selectedUtility) {
-      const parsed = parseFloat(manualRate);
-      if (manualRate.trim() !== '' && (!isFinite(parsed) || parsed <= 0)) {
+      const raw = manualRate.trim();
+      if (raw !== '' && !RATE_REGEX.test(raw)) {
+        setRateError('Please enter a valid positive rate (numbers only)');
+        return;
+      }
+      const parsed = parseFloat(raw);
+      if (raw !== '' && (!isFinite(parsed) || parsed <= 0)) {
         setRateError('Please enter a valid positive rate');
         return;
       }
-      if (manualRate.trim() !== '' && parsed >= 1000) {
+      if (raw !== '' && parsed >= 1000) {
         setRateError('Rate seems too high. Please check your input.');
         return;
       }
@@ -214,9 +221,8 @@ export function Calculator() {
                   <div className="mt-2">
                     <label className="block text-xs text-foreground-500 mb-1">Or enter rate manually (₱/kWh)</label>
                     <input
-                      type="number"
-                      step="0.1"
-                      min="0"
+                      type="text"
+                      inputMode="decimal"
                       value={manualRate}
                       onChange={(e) => { setManualRate(e.target.value); setRateError(''); }}
                       placeholder="e.g. 12.88"
@@ -244,7 +250,7 @@ export function Calculator() {
                       className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 border ${
                         propertyType === type
                           ? 'bg-primary-500 text-background-50 border-primary-500 shadow-lg shadow-primary-500/20'
-                          : 'bg-background-100/40 dark:bg-background-800/40 text-foreground-600 dark:text-foreground-300 border-foreground-950/10 hover:border-foreground-950/20 hover:bg-background-100/60 dark:hover:bg-background-700/60'
+                          : 'bg-background-100/40 dark:bg-background-700/60 text-foreground-600 dark:text-foreground-300 border-foreground-950/10 dark:border-white/15 hover:border-foreground-950/20 hover:bg-background-100/60 dark:hover:bg-background-600/60'
                       }`}
                     >
                       {t(type)}
@@ -266,7 +272,7 @@ export function Calculator() {
                       className={`px-3 py-2 rounded-xl text-xs font-medium transition-all duration-200 border ${
                         backupId === opt.id
                           ? 'bg-accent-500 text-background-50 border-accent-500 shadow-lg shadow-accent-500/20'
-                          : 'bg-background-100/40 dark:bg-background-800/40 text-foreground-700 dark:text-foreground-300 border-foreground-950/10 hover:border-foreground-950/20 hover:bg-background-100/60 dark:hover:bg-background-700/60'
+                          : 'bg-background-100/40 dark:bg-background-700/60 text-foreground-700 dark:text-foreground-300 border-foreground-950/10 dark:border-white/15 hover:border-foreground-950/20 hover:bg-background-100/60 dark:hover:bg-background-600/60'
                       }`}
                     >
                       {t(opt.label)}
