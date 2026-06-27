@@ -286,7 +286,7 @@ export function PhilippineAddressSelect({
   };
 
   const inputClass =
-    'appearance-none block w-full pl-9 pr-9 py-1.5 border border-foreground-950/10 dark:border-white/10 rounded-lg bg-background-100 dark:bg-background-800 text-foreground-950 dark:text-white placeholder:text-foreground-400 dark:placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-accent-500 disabled:opacity-70 disabled:cursor-not-allowed disabled:placeholder:text-foreground-500';
+    'appearance-none block w-full pl-9 pr-9 py-1.5 border border-foreground-950/10 dark:border-white/10 rounded-lg bg-background-100 dark:bg-background-800 text-foreground-950 dark:text-white placeholder:text-foreground-400 dark:placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-accent-500 disabled:opacity-70 disabled:cursor-not-allowed disabled:placeholder:text-foreground-600';
 
   function renderSuggestions<T extends { id: string; name: string }>({
     items,

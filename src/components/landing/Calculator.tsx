@@ -250,7 +250,7 @@ export function Calculator() {
                       className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 border ${
                         propertyType === type
                           ? 'bg-primary-500 text-background-50 border-primary-500 shadow-lg shadow-primary-500/20'
-                          : 'bg-background-100/40 dark:bg-background-700/60 text-foreground-600 dark:text-foreground-300 border-foreground-950/10 dark:border-white/15 hover:border-foreground-950/20 hover:bg-background-100/60 dark:hover:bg-background-600/60'
+                          : 'bg-background-100/40 dark:bg-background-500/40 text-foreground-600 dark:text-foreground-600 border-foreground-950/10 dark:border-white/25 hover:border-foreground-950/20 hover:bg-background-100/60 dark:hover:bg-background-500/60'
                       }`}
                     >
                       {t(type)}
@@ -272,7 +272,7 @@ export function Calculator() {
                       className={`px-3 py-2 rounded-xl text-xs font-medium transition-all duration-200 border ${
                         backupId === opt.id
                           ? 'bg-accent-500 text-background-50 border-accent-500 shadow-lg shadow-accent-500/20'
-                          : 'bg-background-100/40 dark:bg-background-700/60 text-foreground-700 dark:text-foreground-300 border-foreground-950/10 dark:border-white/15 hover:border-foreground-950/20 hover:bg-background-100/60 dark:hover:bg-background-600/60'
+                          : 'bg-background-100/40 dark:bg-background-500/40 text-foreground-700 dark:text-foreground-600 border-foreground-950/10 dark:border-white/25 hover:border-foreground-950/20 hover:bg-background-100/60 dark:hover:bg-background-500/60'
                       }`}
                     >
                       {t(opt.label)}
