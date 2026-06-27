@@ -4,6 +4,7 @@ import { Inter, Outfit, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
 import { AuthProvider } from '@/components/ui/AuthProvider';
 import { ToastProvider } from '@/components/ui/Toast';
+import { ThemeProvider } from '@/components/ui/ThemeProvider';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 const outfit = Outfit({ subsets: ['latin'], variable: '--font-outfit' });
@@ -37,13 +38,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${inter.variable} ${outfit.variable} ${jetbrainsMono.variable} scroll-smooth`}>
-      <body className="bg-surface-1000 text-white font-body min-h-screen antialiased selection:bg-accent-cyan/30">
-        <AuthProvider>
-          <ToastProvider>
-            {children}
-          </ToastProvider>
-        </AuthProvider>
+    <html lang="en" suppressHydrationWarning className={`${inter.variable} ${outfit.variable} ${jetbrainsMono.variable} scroll-smooth`}>
+      <body className="bg-bg-primary text-foreground font-body min-h-screen antialiased">
+        <ThemeProvider>
+          <AuthProvider>
+            <ToastProvider>
+              {children}
+            </ToastProvider>
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

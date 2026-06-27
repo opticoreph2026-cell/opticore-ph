@@ -29,7 +29,7 @@ export function Features() {
   ] as const;
 
   return (
-    <section id="solutions" className="py-24 bg-surface-900/20 relative">
+    <section id="solutions" className="py-24 bg-surface-100/50 dark:bg-surface-900/20 relative">
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -41,10 +41,10 @@ export function Features() {
           <h2 className="text-sm font-semibold text-accent-blue tracking-wider uppercase mb-3">
             {t('eyebrow')}
           </h2>
-          <p className="text-3xl md:text-5xl font-display font-bold text-white mb-4">
+          <p className="text-3xl md:text-5xl font-display font-bold text-foreground mb-4">
             {t('title')}
           </p>
-          <p className="text-gray-400 max-w-2xl mx-auto">{t('subtitle')}</p>
+          <p className="text-foreground-muted max-w-2xl mx-auto">{t('subtitle')}</p>
         </motion.div>
 
         <motion.div
@@ -58,15 +58,15 @@ export function Features() {
             <motion.div
               key={feature.key}
               variants={itemVariants}
-              className="bento-card hover:bg-white/[0.07] transition-colors group"
+              className="bg-white dark:bg-white/5 backdrop-blur-xl border border-black/5 dark:border-white/10 rounded-2xl p-6 shadow-sm hover:bg-gray-50 dark:hover:bg-white/[0.07] transition-colors group"
             >
               <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-6 ${feature.bg} backdrop-blur-sm`}>
                 <feature.icon className={`w-6 h-6 ${feature.color}`} />
               </div>
-              <h3 className="text-lg font-bold text-white mb-3 font-display">
+              <h3 className="text-lg font-bold text-foreground mb-3 font-display">
                 {t(`${feature.key}.title`)}
               </h3>
-              <p className="text-sm text-gray-400 leading-relaxed font-body">
+              <p className="text-sm text-foreground-muted leading-relaxed font-body">
                 {t(`${feature.key}.description`)}
               </p>
             </motion.div>
