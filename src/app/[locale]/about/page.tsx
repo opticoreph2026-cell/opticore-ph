@@ -4,15 +4,8 @@ import { Navbar } from '@/components/ui/Navbar';
 import { Footer } from '@/components/ui/Footer';
 import { WhatsAppButton } from '@/components/landing/WhatsAppButton';
 import { ScrollToTop } from '@/components/landing/ScrollToTop';
-import { Award, MapPin, Target, CheckCircle, Users, Globe, Zap, Clock, ShieldCheck } from 'lucide-react';
+import { Award, MapPin, Target, CheckCircle, Users, Globe, ShieldCheck } from 'lucide-react';
 import Image from 'next/image';
-
-const stats = [
-  { value: '5+', label: 'Years Experience', icon: Clock },
-  { value: '50+', label: 'Projects Completed', icon: Zap },
-  { value: '3', label: 'Provinces Covered', icon: Globe },
-  { value: '2', label: 'Installation Partners', icon: Users },
-];
 
 export async function generateMetadata({
   params,
@@ -46,7 +39,7 @@ export default async function AboutPage({
       <Navbar />
       <main className="bg-background-50 min-h-screen pb-16">
         <div className="max-w-4xl mx-auto px-6 pt-32">
-          {/* Hero */}
+          {/* Hero — Design: Readdy-style hero with gradient accent heading */}
           <div className="text-center mb-16">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary-500/10 border border-primary-500/20 mb-6">
               <span className="w-2 h-2 rounded-full bg-primary-500 opt-pulse-dot" />
@@ -54,20 +47,6 @@ export default async function AboutPage({
             </div>
             <h1 className="text-4xl md:text-6xl font-display font-bold text-foreground-950 mb-4">{t('title')}</h1>
             <p className="text-foreground-600 max-w-2xl mx-auto text-lg">{t('subtitle')}</p>
-          </div>
-
-          {/* Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16">
-            {stats.map((stat) => {
-              const Icon = stat.icon;
-              return (
-                <div key={stat.label} className="bento-card text-center">
-                  <Icon className="w-6 h-6 text-primary-500 mx-auto mb-2" />
-                  <p className="text-2xl font-bold text-foreground-950 font-display tabular-nums">{stat.value}</p>
-                  <p className="text-xs text-foreground-500 mt-1">{stat.label}</p>
-                </div>
-              );
-            })}
           </div>
 
           {/* Founder */}

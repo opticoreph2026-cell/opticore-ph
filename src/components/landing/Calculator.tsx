@@ -172,22 +172,22 @@ export function Calculator() {
                   onChange={(e) => { setUtilitySearch(e.target.value); setSelectedUtility(null); setShowUtilitySuggestions(true); }}
                   onFocus={() => setShowUtilitySuggestions(true)}
                   placeholder="Search electric company..."
-                  className="w-full px-4 py-2.5 rounded-xl bg-background-100/40 border border-foreground-950/10 text-foreground-950 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="w-full px-4 py-2.5 rounded-xl bg-background-100/40 dark:bg-background-800/40 border border-foreground-950/10 text-foreground-950 placeholder:text-foreground-400 focus:outline-none focus:ring-2 focus:ring-primary-500"
                 />
                 {utilityLoading && (
                   <div className="absolute right-3 top-9"><Spinner className="w-4 h-4" /></div>
                 )}
                 {showUtilitySuggestions && utilitySuggestions.length > 0 && !selectedUtility && (
-                  <div className="absolute z-20 mt-1 w-full bg-background-50 border border-foreground-950/10 rounded-xl max-h-48 overflow-y-auto shadow-xl">
+                  <div className="absolute z-20 mt-1 w-full bg-background-50 dark:bg-background-800 border border-foreground-950/10 rounded-xl max-h-48 overflow-y-auto shadow-xl">
                     {utilitySuggestions.map((u) => (
                       <button
                         key={u.id}
                         type="button"
                         onClick={() => { setSelectedUtility(u); setUtilitySearch(''); setShowUtilitySuggestions(false); }}
-                        className="w-full text-left px-4 py-2.5 text-sm text-foreground-600 hover:bg-foreground-950/5 hover:text-foreground-950 transition-colors"
+                        className="w-full text-left px-4 py-2.5 text-sm text-foreground-600 dark:text-foreground-300 hover:bg-foreground-950/5 hover:text-foreground-950 dark:hover:text-foreground-50 transition-colors"
                       >
                         <span className="font-medium">{u.name}</span>
-                        <span className="text-foreground-400 ml-2">({u.code})</span>
+                        <span className="text-foreground-400 dark:text-foreground-500 ml-2">({u.code})</span>
                         {u.rateRu && (
                           <span className="text-accent-500 ml-2">₱{(u.rateRu / 10000).toFixed(4)}/kWh</span>
                         )}
@@ -205,9 +205,9 @@ export function Calculator() {
                       value={manualRate}
                       onChange={(e) => setManualRate(e.target.value)}
                       placeholder="e.g. 12.88"
-                      className="w-full px-3 py-1.5 rounded-lg bg-background-100/40 border border-foreground-950/10 text-foreground-950 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
-                    />
-                  </div>
+                  className="w-full px-3 py-1.5 rounded-lg bg-background-100/40 dark:bg-background-800/40 border border-foreground-950/10 text-foreground-950 text-sm placeholder:text-foreground-400 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  />
+                </div>
                 )}
               </div>
             </div>
@@ -226,7 +226,7 @@ export function Calculator() {
                       className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 border ${
                         propertyType === type
                           ? 'bg-primary-500 text-background-50 border-primary-500 shadow-lg shadow-primary-500/20'
-                          : 'bg-background-100/40 text-foreground-600 border-foreground-950/10 hover:border-foreground-950/20 hover:bg-background-100/60'
+                          : 'bg-background-100/40 dark:bg-background-800/40 text-foreground-600 dark:text-foreground-300 border-foreground-950/10 hover:border-foreground-950/20 hover:bg-background-100/60 dark:hover:bg-background-700/60'
                       }`}
                     >
                       {t(type)}
@@ -248,7 +248,7 @@ export function Calculator() {
                       className={`px-3 py-2 rounded-xl text-xs font-medium transition-all duration-200 border ${
                         backupId === opt.id
                           ? 'bg-accent-500 text-background-50 border-accent-500 shadow-lg shadow-accent-500/20'
-                          : 'bg-background-100/40 text-foreground-600 border-foreground-950/10 hover:border-foreground-950/20 hover:bg-background-100/60'
+                          : 'bg-background-100/40 dark:bg-background-800/40 text-foreground-600 dark:text-foreground-300 border-foreground-950/10 hover:border-foreground-950/20 hover:bg-background-100/60 dark:hover:bg-background-700/60'
                       }`}
                     >
                       {t(opt.label)}
