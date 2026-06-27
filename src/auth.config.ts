@@ -12,7 +12,7 @@ export const authConfig = {
     authorized({ auth, request }) {
       let { pathname } = request.nextUrl;
       pathname = pathname.replace(/^\/(en|fil)\//, '/');
-      const protectedPrefixes = ['/crm', '/partner', '/customer', '/admin'];
+      const protectedPrefixes = ['/crm', '/partner', '/customer', '/admin', '/dashboard'];
       const isProtected = protectedPrefixes.some((p) => pathname.startsWith(p));
       const isEnergyApi =
         pathname.startsWith('/api/energy') &&

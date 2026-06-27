@@ -30,7 +30,7 @@ export function Navbar() {
     return () => window.removeEventListener('scroll', handler);
   }, []);
 
-  const isAppRoute = ['/customer', '/admin', '/crm', '/partner', '/login', '/signup', '/onboarding'].some(
+  const isAppRoute = ['/customer', '/admin', '/crm', '/partner', '/login', '/signup', '/onboarding', '/dashboard'].some(
     (route) => pathname.startsWith(route),
   );
   if (isAppRoute) return null;
