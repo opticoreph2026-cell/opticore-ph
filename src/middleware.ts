@@ -8,7 +8,7 @@ const intlMiddleware = createMiddleware(routing);
 
 const { auth } = NextAuth(authConfig);
 
-const appPrefixes = ['/crm', '/partner', '/customer', '/admin', '/login', '/signup', '/api', '/onboarding', '/dashboard'];
+const appPrefixes = ['/crm', '/partner', '/customer', '/admin', '/login', '/signup', '/forgot-password', '/api', '/onboarding', '/dashboard'];
 
 export default auth((request) => {
   const { pathname } = request.nextUrl;

@@ -8,6 +8,10 @@ import { AnimatedSection } from '@/components/ui/AnimatedSection';
 export const metadata = {
   title: 'Privacy Policy | OptiCore Energy Solutions',
   description: 'How OptiCore Energy Solutions collects, uses, and protects your personal data.',
+  openGraph: {
+    title: 'Privacy Policy | OptiCore Energy Solutions',
+    description: 'How OptiCore Energy Solutions collects, uses, and protects your personal data.',
+  },
 };
 
 export default async function PrivacyPage({

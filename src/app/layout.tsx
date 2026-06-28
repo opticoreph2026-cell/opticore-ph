@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'OptiCore Energy Solutions | Solar & ESS for Cebu, Bohol & Leyte',
     description: 'Cebu-based solar PV and ESS installation by a Registered Mechanical Engineer.',
-    url: 'https://opticore-ph.vercel.app',
+    url: '/',
     siteName: 'OptiCore Energy Solutions',
     images: [{ url: '/og-image.png', width: 1200, height: 630 }],
     locale: 'en_PH',

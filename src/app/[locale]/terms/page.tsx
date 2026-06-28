@@ -8,6 +8,10 @@ import { AnimatedSection } from '@/components/ui/AnimatedSection';
 export const metadata = {
   title: 'Terms of Service | OptiCore Energy Solutions',
   description: 'Terms and conditions governing the use of OptiCore Energy Solutions platform and services.',
+  openGraph: {
+    title: 'Terms of Service | OptiCore Energy Solutions',
+    description: 'Terms and conditions governing the use of OptiCore Energy Solutions platform and services.',
+  },
 };
 
 export default async function TermsPage({
