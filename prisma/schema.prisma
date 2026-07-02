@@ -38,6 +38,7 @@ model Client {
   consentGiven        Boolean   @default(true)
   onboardingComplete  Boolean   @default(false)
   lastLoginAt         DateTime?
+  lastSignedInAt      DateTime?
   locale              String    @default("en")
   suspended           Boolean   @default(false)
   otpCode             String?
