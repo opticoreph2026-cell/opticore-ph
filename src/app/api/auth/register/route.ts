@@ -44,15 +44,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    await db.authProvider.create({
-      data: {
-        clientId: client.id,
-        provider: 'PASSWORD',
-        providerId: client.email,
-        email: client.email,
-        emailVerified: false,
-      },
-    });
+
 
     try {
       await sendWelcomeEmail({ name: client.name || '', email: client.email });
