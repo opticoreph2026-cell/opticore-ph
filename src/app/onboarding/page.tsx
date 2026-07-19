@@ -57,7 +57,7 @@ export default function OnboardingPage() {
       <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10">
         <div className="flex justify-between items-center mb-8">
           {[1, 2, 3].map((i) => (
-            <div key={i} className={`h-1 flex-1 mx-1 rounded-full ${i <= step ? 'bg-accent-cyan' : 'bg-white/10'}`} />
+            <div key={i} className={`h-1 flex-1 mx-1 rounded-full ${i <= step ? 'bg-accent-cyan' : 'bg-foreground-950/10'}`} />
           ))}
         </div>
 
@@ -71,25 +71,25 @@ export default function OnboardingPage() {
         >
           {step === 1 && (
             <div className="space-y-6">
-              <h2 className="text-2xl font-bold text-white font-display">Welcome to OptiCore</h2>
-              <p className="text-gray-400 font-body">Let's set up your energy profile.</p>
+              <h2 className="text-2xl font-bold text-foreground-950 font-display">Welcome to OptiCore</h2>
+              <p className="text-foreground-400 font-body">Let's set up your energy profile.</p>
               
               <div>
-                <label className="block text-sm font-medium text-white/80 mb-2">Site Address</label>
+                <label className="block text-sm font-medium text-foreground-950/80 mb-2">Site Address</label>
                 <input
                   type="text"
                   required
                   value={formData.siteAddress}
                   onChange={(e) => setFormData({ ...formData, siteAddress: e.target.value })}
                   placeholder="e.g. Metro Manila"
-                  className="w-full px-4 py-3 bg-background-800 border border-white/10 rounded-xl text-white focus:outline-none focus:border-accent-cyan"
+                  className="w-full px-4 py-3 bg-background-800 border border-foreground-950/10 rounded-xl text-foreground-950 focus:outline-none focus:border-accent-cyan"
                 />
               </div>
 
               <button
                 onClick={handleNext}
                 disabled={!formData.siteAddress}
-                className="w-full py-3 bg-primary-500 text-white font-semibold rounded-xl disabled:opacity-50"
+                className="w-full py-3 bg-primary-500 text-foreground-950 font-semibold rounded-xl disabled:opacity-50"
               >
                 Continue
               </button>
@@ -98,8 +98,8 @@ export default function OnboardingPage() {
 
           {step === 2 && (
             <div className="space-y-6">
-              <h2 className="text-2xl font-bold text-white font-display">Utility Provider</h2>
-              <p className="text-gray-400 font-body">Who provides your electricity?</p>
+              <h2 className="text-2xl font-bold text-foreground-950 font-display">Utility Provider</h2>
+              <p className="text-foreground-400 font-body">Who provides your electricity?</p>
               
               <div className="space-y-3">
                 {['MERALCO', 'MORE_POWER', 'VECO', 'DLPC'].map((provider) => (
@@ -109,7 +109,7 @@ export default function OnboardingPage() {
                     className={`w-full p-4 text-left rounded-xl border transition-all ${
                       formData.utilityCompanyId === provider 
                         ? 'bg-accent-cyan/10 border-accent-cyan text-accent-cyan' 
-                        : 'bg-background-800 border-white/10 text-white hover:bg-white/5'
+                        : 'bg-background-800 border-foreground-950/10 text-foreground-950 hover:bg-foreground-950/5'
                     }`}
                   >
                     {provider.replace('_', ' ')}
@@ -118,16 +118,16 @@ export default function OnboardingPage() {
               </div>
 
               <div className="flex gap-4">
-                <button onClick={handleBack} className="px-6 py-3 text-white bg-background-800 border border-white/10 rounded-xl">Back</button>
-                <button onClick={handleNext} className="flex-1 py-3 bg-primary-500 text-white font-semibold rounded-xl">Continue</button>
+                <button onClick={handleBack} className="px-6 py-3 text-foreground-950 bg-background-800 border border-foreground-950/10 rounded-xl">Back</button>
+                <button onClick={handleNext} className="flex-1 py-3 bg-primary-500 text-foreground-950 font-semibold rounded-xl">Continue</button>
               </div>
             </div>
           )}
 
           {step === 3 && (
             <div className="space-y-6">
-              <h2 className="text-2xl font-bold text-white font-display">Energy Usage</h2>
-              <p className="text-gray-400 font-body">What is your average monthly bill?</p>
+              <h2 className="text-2xl font-bold text-foreground-950 font-display">Energy Usage</h2>
+              <p className="text-foreground-400 font-body">What is your average monthly bill?</p>
               
               <div className="py-8">
                 <div className="text-center text-4xl font-bold text-accent-emerald mb-6">
@@ -148,11 +148,11 @@ export default function OnboardingPage() {
                 </div>
               )}
               <div className="flex gap-4">
-                <button onClick={handleBack} disabled={loading} className="px-6 py-3 text-white bg-background-800 border border-white/10 rounded-xl disabled:opacity-50">Back</button>
+                <button onClick={handleBack} disabled={loading} className="px-6 py-3 text-foreground-950 bg-background-800 border border-foreground-950/10 rounded-xl disabled:opacity-50">Back</button>
                 <button 
                   onClick={handleSubmit} 
                   disabled={loading}
-                  className="flex-1 py-3 bg-gradient-to-r from-accent-cyan to-accent-emerald text-white font-semibold rounded-xl disabled:opacity-50"
+                  className="flex-1 py-3 bg-gradient-to-r from-accent-cyan to-accent-emerald text-foreground-950 font-semibold rounded-xl disabled:opacity-50"
                 >
                   {loading ? 'Creating Profile...' : 'Complete Setup'}
                 </button>

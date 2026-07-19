@@ -61,11 +61,11 @@ export function UtilityTable({ initialUtilities }: { initialUtilities: UtilityRo
     <div className="space-y-8">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-display font-bold text-white tracking-tight flex items-center gap-3">
+          <h1 className="text-3xl font-display font-bold text-foreground-950 tracking-tight flex items-center gap-3">
             <Zap className="w-8 h-8 text-accent-emerald" />
             Utility Companies
           </h1>
-          <p className="text-white/60 mt-1">Manage DUs, co-ops, and their current rate schedules.</p>
+          <p className="text-foreground-950/60 mt-1">Manage DUs, co-ops, and their current rate schedules.</p>
         </div>
         <AddUtilityDialog />
       </div>
@@ -74,20 +74,20 @@ export function UtilityTable({ initialUtilities }: { initialUtilities: UtilityRo
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="border-b border-border-subtle bg-white/[0.02]">
-                <th className="p-4 text-xs font-semibold text-white/60 uppercase tracking-wider">Utility Company</th>
-                <th className="p-4 text-xs font-semibold text-white/60 uppercase tracking-wider">Code</th>
-                <th className="p-4 text-xs font-semibold text-white/60 uppercase tracking-wider">Territory</th>
-                <th className="p-4 text-xs font-semibold text-white/60 uppercase tracking-wider text-right">All-In Rate (₱/kWh)</th>
-                <th className="p-4 text-xs font-semibold text-white/60 uppercase tracking-wider text-right">Effective Date</th>
-                <th className="p-4 text-xs font-semibold text-white/60 uppercase tracking-wider text-right">Actions</th>
+              <tr className="border-b border-border-subtle bg-foreground-950/[0.02]">
+                <th className="p-4 text-xs font-semibold text-foreground-950/60 uppercase tracking-wider">Utility Company</th>
+                <th className="p-4 text-xs font-semibold text-foreground-950/60 uppercase tracking-wider">Code</th>
+                <th className="p-4 text-xs font-semibold text-foreground-950/60 uppercase tracking-wider">Territory</th>
+                <th className="p-4 text-xs font-semibold text-foreground-950/60 uppercase tracking-wider text-right">All-In Rate (₱/kWh)</th>
+                <th className="p-4 text-xs font-semibold text-foreground-950/60 uppercase tracking-wider text-right">Effective Date</th>
+                <th className="p-4 text-xs font-semibold text-foreground-950/60 uppercase tracking-wider text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border-subtle">
               {utilities.map((u) => {
                 const latestRate = u.rateSchedules[0];
                 return (
-                  <tr key={u.id} className="hover:bg-white/[0.02] transition-colors">
+                  <tr key={u.id} className="hover:bg-foreground-950/[0.02] transition-colors">
                     <td className="p-4">
                       <div className="flex items-center gap-3">
                         <div className="w-8 h-8 rounded-full bg-surface-1000 border border-border-subtle flex items-center justify-center text-xs font-bold text-accent-emerald">
@@ -98,10 +98,10 @@ export function UtilityTable({ initialUtilities }: { initialUtilities: UtilityRo
                             type="text"
                             value={editForm.name}
                             onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
-                            className="bg-surface-800 border border-border-subtle rounded px-2 py-1 text-sm text-white w-48"
+                            className="bg-surface-800 border border-border-subtle rounded px-2 py-1 text-sm text-foreground-950 w-48"
                           />
                         ) : (
-                          <p className="text-sm font-medium text-white">{u.name}</p>
+                          <p className="text-sm font-medium text-foreground-950">{u.name}</p>
                         )}
                       </div>
                     </td>
@@ -111,7 +111,7 @@ export function UtilityTable({ initialUtilities }: { initialUtilities: UtilityRo
                           type="text"
                           value={editForm.code}
                           onChange={(e) => setEditForm({ ...editForm, code: e.target.value })}
-                          className="bg-surface-800 border border-border-subtle rounded px-2 py-1 text-sm text-white font-mono w-24"
+                          className="bg-surface-800 border border-border-subtle rounded px-2 py-1 text-sm text-foreground-950 font-mono w-24"
                         />
                       ) : (
                         <span className="text-xs font-mono text-accent-cyan">{u.code}</span>
@@ -123,22 +123,22 @@ export function UtilityTable({ initialUtilities }: { initialUtilities: UtilityRo
                           type="text"
                           value={editForm.territory}
                           onChange={(e) => setEditForm({ ...editForm, territory: e.target.value })}
-                          className="bg-surface-800 border border-border-subtle rounded px-2 py-1 text-sm text-white w-32"
+                          className="bg-surface-800 border border-border-subtle rounded px-2 py-1 text-sm text-foreground-950 w-32"
                         />
                       ) : (
-                        <span className="text-sm text-white/60">{u.territory || '—'}</span>
+                        <span className="text-sm text-foreground-950/60">{u.territory || '—'}</span>
                       )}
                     </td>
                     <td className="p-4 text-right">
                       {latestRate ? (
-                        <span className="text-sm font-medium text-white">
+                        <span className="text-sm font-medium text-foreground-950">
                           ₱{(latestRate.allInRateRu / 10000).toFixed(4)}
                         </span>
                       ) : (
-                        <span className="text-sm text-white/40">—</span>
+                        <span className="text-sm text-foreground-950/40">—</span>
                       )}
                     </td>
-                    <td className="p-4 text-right text-sm text-white/60">
+                    <td className="p-4 text-right text-sm text-foreground-950/60">
                       {latestRate
                         ? new Date(latestRate.effectiveDate).toLocaleDateString('en-PH', { month: 'short', day: 'numeric', year: 'numeric' })
                         : '—'}
@@ -149,7 +149,7 @@ export function UtilityTable({ initialUtilities }: { initialUtilities: UtilityRo
                           <button onClick={() => handleDelete(u)} className="p-1 text-accent-rose hover:bg-accent-rose/10 rounded transition-colors" title="Confirm delete">
                             <Check className="w-4 h-4" />
                           </button>
-                          <button onClick={() => setConfirmDelete(null)} className="p-1 text-white/40 hover:text-white rounded transition-colors" title="Cancel">
+                          <button onClick={() => setConfirmDelete(null)} className="p-1 text-foreground-950/40 hover:text-foreground-950 rounded transition-colors" title="Cancel">
                             <X className="w-4 h-4" />
                           </button>
                         </div>
@@ -158,16 +158,16 @@ export function UtilityTable({ initialUtilities }: { initialUtilities: UtilityRo
                           <button onClick={() => saveEdit(u)} className="p-1 text-accent-emerald hover:bg-accent-emerald/10 rounded transition-colors" title="Save">
                             <Check className="w-4 h-4" />
                           </button>
-                          <button onClick={cancelEdit} className="p-1 text-white/40 hover:text-white rounded transition-colors" title="Cancel">
+                          <button onClick={cancelEdit} className="p-1 text-foreground-950/40 hover:text-foreground-950 rounded transition-colors" title="Cancel">
                             <X className="w-4 h-4" />
                           </button>
                         </div>
                       ) : (
                         <div className="flex items-center justify-end gap-2">
-                          <button onClick={() => startEdit(u)} className="p-1 text-white/40 hover:text-accent-cyan rounded transition-colors" title="Edit">
+                          <button onClick={() => startEdit(u)} className="p-1 text-foreground-950/40 hover:text-accent-cyan rounded transition-colors" title="Edit">
                             <Edit2 className="w-4 h-4" />
                           </button>
-                          <button onClick={() => setConfirmDelete(u.id)} className="p-1 text-white/40 hover:text-accent-rose rounded transition-colors" title="Delete">
+                          <button onClick={() => setConfirmDelete(u.id)} className="p-1 text-foreground-950/40 hover:text-accent-rose rounded transition-colors" title="Delete">
                             <Trash2 className="w-4 h-4" />
                           </button>
                         </div>
@@ -178,7 +178,7 @@ export function UtilityTable({ initialUtilities }: { initialUtilities: UtilityRo
               })}
               {utilities.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="p-8 text-center text-white/60 text-sm">
+                  <td colSpan={6} className="p-8 text-center text-foreground-950/60 text-sm">
                     No utility companies configured yet.
                   </td>
                 </tr>

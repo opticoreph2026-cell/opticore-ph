@@ -28,8 +28,8 @@ export default async function AdminEnergyCatalog() {
     <div className="space-y-6">
       <div className="flex justify-between items-center mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-white mb-2">Energy Catalog</h1>
-          <p className="text-gray-400">Manage components: Inverters, Batteries, and Solar Panels.</p>
+          <h1 className="text-3xl font-bold text-foreground-950 mb-2">Energy Catalog</h1>
+          <p className="text-foreground-400">Manage components: Inverters, Batteries, and Solar Panels.</p>
         </div>
       </div>
 

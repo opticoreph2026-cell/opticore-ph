@@ -65,41 +65,41 @@ export function PartnerLeadDetailClient({ lead, userId }: { lead: Lead; userId?:
     <div className="space-y-6 max-w-3xl mx-auto">
       <button
         onClick={() => router.push('/partner/leads')}
-        className="flex items-center gap-2 text-sm text-white/50 hover:text-white transition-colors"
+        className="flex items-center gap-2 text-sm text-foreground-950/50 hover:text-foreground-950 transition-colors"
       >
         <ArrowLeft className="w-4 h-4" />
         Back to Leads
       </button>
 
-      <div className="bg-background-800 border border-white/5 rounded-2xl overflow-hidden">
+      <div className="bg-background-800 border border-foreground-950/5 rounded-2xl overflow-hidden">
         <div className="p-6">
           <div className="flex items-start justify-between mb-6">
             <div>
-              <h1 className="text-2xl font-bold text-white">{lead.fullName}</h1>
-              <p className="text-sm text-white/50 mt-1 capitalize">{lead.customerType.replace(/_/g, ' ')} prospect</p>
+              <h1 className="text-2xl font-bold text-foreground-950">{lead.fullName}</h1>
+              <p className="text-sm text-foreground-950/50 mt-1 capitalize">{lead.customerType.replace(/_/g, ' ')} prospect</p>
             </div>
-            <span className={`inline-flex px-3 py-1 rounded-full text-xs font-medium capitalize ${statusColors[lead.status] ?? 'bg-white/5 text-gray-400'}`}>
+            <span className={`inline-flex px-3 py-1 rounded-full text-xs font-medium capitalize ${statusColors[lead.status] ?? 'bg-foreground-950/5 text-foreground-400'}`}>
               {lead.status.replace(/_/g, ' ')}
             </span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-4">
-              <h3 className="text-sm font-semibold text-white/60 uppercase tracking-wider">Contact</h3>
+              <h3 className="text-sm font-semibold text-foreground-950/60 uppercase tracking-wider">Contact</h3>
               {lead.email && (
-                <div className="flex items-center gap-3 text-sm text-white/70">
+                <div className="flex items-center gap-3 text-sm text-foreground-950/70">
                   <Mail className="w-4 h-4 text-accent-cyan" />
                   {lead.email}
                 </div>
               )}
               {lead.phone && (
-                <div className="flex items-center gap-3 text-sm text-white/70">
+                <div className="flex items-center gap-3 text-sm text-foreground-950/70">
                   <Phone className="w-4 h-4 text-accent-emerald" />
                   {lead.phone}
                 </div>
               )}
               {lead.addressLine && (
-                <div className="flex items-start gap-3 text-sm text-white/70">
+                <div className="flex items-start gap-3 text-sm text-foreground-950/70">
                   <MapPin className="w-4 h-4 text-accent-cyan mt-0.5" />
                   <span>{[lead.addressLine, lead.city, lead.province].filter(Boolean).join(', ')}</span>
                 </div>
@@ -107,43 +107,43 @@ export function PartnerLeadDetailClient({ lead, userId }: { lead: Lead; userId?:
             </div>
 
             <div className="space-y-4">
-              <h3 className="text-sm font-semibold text-white/60 uppercase tracking-wider">Details</h3>
-              <div className="flex items-center gap-3 text-sm text-white/70">
+              <h3 className="text-sm font-semibold text-foreground-950/60 uppercase tracking-wider">Details</h3>
+              <div className="flex items-center gap-3 text-sm text-foreground-950/70">
                 <Zap className="w-4 h-4 text-accent-rose" />
                 Est. bill: {formatPHP(lead.monthlyBill)}/mo
               </div>
               {lead.utilityCompany && (
-                <div className="flex items-center gap-3 text-sm text-white/70">
+                <div className="flex items-center gap-3 text-sm text-foreground-950/70">
                   <Zap className="w-4 h-4 text-accent-cyan" />
                   {lead.utilityCompany.name} ({lead.utilityCompany.code})
                 </div>
               )}
-              <div className="flex items-center gap-3 text-sm text-white/70">
-                <Calendar className="w-4 h-4 text-white/40" />
+              <div className="flex items-center gap-3 text-sm text-foreground-950/70">
+                <Calendar className="w-4 h-4 text-foreground-950/40" />
                 {new Date(lead.createdAt).toLocaleDateString('en-PH', { month: 'long', day: 'numeric', year: 'numeric' })}
               </div>
             </div>
           </div>
 
           {lead.notes && (
-            <div className="mt-6 pt-6 border-t border-white/5">
-              <h3 className="text-sm font-semibold text-white/60 uppercase tracking-wider mb-2">Notes</h3>
-              <p className="text-sm text-white/70">{lead.notes}</p>
+            <div className="mt-6 pt-6 border-t border-foreground-950/5">
+              <h3 className="text-sm font-semibold text-foreground-950/60 uppercase tracking-wider mb-2">Notes</h3>
+              <p className="text-sm text-foreground-950/70">{lead.notes}</p>
             </div>
           )}
 
           {lead.assignedOrg && (
-            <div className="mt-6 pt-6 border-t border-white/5">
-              <h3 className="text-sm font-semibold text-white/60 uppercase tracking-wider mb-2">Assigned Partner</h3>
-              <p className="text-sm text-white/70">{lead.assignedOrg.name}</p>
+            <div className="mt-6 pt-6 border-t border-foreground-950/5">
+              <h3 className="text-sm font-semibold text-foreground-950/60 uppercase tracking-wider mb-2">Assigned Partner</h3>
+              <p className="text-sm text-foreground-950/70">{lead.assignedOrg.name}</p>
             </div>
           )}
 
-          <div className="mt-6 pt-6 border-t border-white/5 flex gap-3">
+          <div className="mt-6 pt-6 border-t border-foreground-950/5 flex gap-3">
             <button
               onClick={handleClaim}
               disabled={claiming}
-              className="px-6 py-2.5 bg-accent-emerald text-white font-medium rounded-lg hover:bg-accent-emerald/90 disabled:opacity-50 transition-colors text-sm"
+              className="px-6 py-2.5 bg-accent-emerald text-foreground-950 font-medium rounded-lg hover:bg-accent-emerald/90 disabled:opacity-50 transition-colors text-sm"
             >
               {claiming ? 'Claiming...' : 'Claim & Start Contacting'}
             </button>

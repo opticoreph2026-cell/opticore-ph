@@ -11,7 +11,7 @@ interface LogoProps {
 export function Logo({ className = 'h-9', compact = false, href = '/' }: LogoProps) {
   return (
     <Link href={href} className={`flex items-center group ${className}`}>
-      <div className="h-9 rounded-lg px-1.5 flex items-center justify-center transition-all bg-white/95 backdrop-blur-sm">
+      <div className="h-9 rounded-lg px-1.5 flex items-center justify-center transition-all bg-foreground-950/95 backdrop-blur-sm">
         <Image src="/logo.png" alt="OptiCore Energy Solutions" className="h-7 w-auto" width={140} height={28} priority />
       </div>
     </Link>

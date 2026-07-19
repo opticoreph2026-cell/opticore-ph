@@ -58,15 +58,15 @@ export function FeeConfigClient({ config }: { config: FeeConfig }) {
     label: string; value: string; onChange: (v: string) => void; suffix?: string; type?: string;
   }) => (
     <div>
-      <label className="block text-sm font-medium text-white/70 mb-1.5">{label}</label>
+      <label className="block text-sm font-medium text-foreground-950/70 mb-1.5">{label}</label>
       <div className="relative">
         <input
           type={type}
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className="w-full bg-background-800 border border-white/10 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-accent-cyan"
+          className="w-full bg-background-800 border border-foreground-950/10 rounded-lg px-4 py-2.5 text-foreground-950 focus:outline-none focus:ring-2 focus:ring-accent-cyan"
         />
-        {suffix && <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-white/40">{suffix}</span>}
+        {suffix && <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-foreground-950/40">{suffix}</span>}
       </div>
     </div>
   );
@@ -74,8 +74,8 @@ export function FeeConfigClient({ config }: { config: FeeConfig }) {
   return (
     <div className="space-y-6 max-w-2xl">
       <div>
-        <h1 className="text-2xl font-bold text-white">Fee Configuration</h1>
-        <p className="text-sm text-white/50 mt-1">Set default fees used across all quotations and designs.</p>
+        <h1 className="text-2xl font-bold text-foreground-950">Fee Configuration</h1>
+        <p className="text-sm text-foreground-950/50 mt-1">Set default fees used across all quotations and designs.</p>
       </div>
 
       <SpotlightCard className="p-6 space-y-6">
@@ -110,14 +110,14 @@ export function FeeConfigClient({ config }: { config: FeeConfig }) {
           />
         </div>
 
-        <div className="pt-4 border-t border-white/5 flex items-center justify-between">
-          <p className="text-xs text-white/30">
+        <div className="pt-4 border-t border-foreground-950/5 flex items-center justify-between">
+          <p className="text-xs text-foreground-950/30">
             Last updated: {new Date(config.updatedAt).toLocaleString()}
           </p>
           <button
             onClick={handleSave}
             disabled={saving}
-            className="flex items-center gap-2 px-6 py-2.5 bg-accent-blue text-white font-medium rounded-lg hover:bg-accent-blue/90 disabled:opacity-50 transition-colors text-sm"
+            className="flex items-center gap-2 px-6 py-2.5 bg-accent-blue text-foreground-950 font-medium rounded-lg hover:bg-accent-blue/90 disabled:opacity-50 transition-colors text-sm"
           >
             <Save className="w-4 h-4" />
             {saving ? 'Saving...' : 'Save'}
@@ -125,14 +125,14 @@ export function FeeConfigClient({ config }: { config: FeeConfig }) {
         </div>
       </SpotlightCard>
 
-      <div className="bg-background-800 border border-white/5 rounded-xl p-5">
-        <h3 className="text-sm font-semibold text-white/70 mb-2">How values are used</h3>
-        <ul className="text-xs text-white/50 space-y-1.5">
-          <li>• <strong className="text-white/70">Design Fee</strong> — Flat fee added to every quotation</li>
-          <li>• <strong className="text-white/70">Installation Fee</strong> — Percentage of hardware subtotal (1500 = 15%)</li>
-          <li>• <strong className="text-white/70">Permit Fee</strong> — Flat fee for utility/engineering permits</li>
-          <li>• <strong className="text-white/70">Deposit Required</strong> — Percentage of grand total due upfront</li>
-          <li>• Panel prices are read from <strong className="text-white/70">SolarPanel.unitPriceCentavos</strong> in the catalog</li>
+      <div className="bg-background-800 border border-foreground-950/5 rounded-xl p-5">
+        <h3 className="text-sm font-semibold text-foreground-950/70 mb-2">How values are used</h3>
+        <ul className="text-xs text-foreground-950/50 space-y-1.5">
+          <li>• <strong className="text-foreground-950/70">Design Fee</strong> — Flat fee added to every quotation</li>
+          <li>• <strong className="text-foreground-950/70">Installation Fee</strong> — Percentage of hardware subtotal (1500 = 15%)</li>
+          <li>• <strong className="text-foreground-950/70">Permit Fee</strong> — Flat fee for utility/engineering permits</li>
+          <li>• <strong className="text-foreground-950/70">Deposit Required</strong> — Percentage of grand total due upfront</li>
+          <li>• Panel prices are read from <strong className="text-foreground-950/70">SolarPanel.unitPriceCentavos</strong> in the catalog</li>
         </ul>
       </div>
     </div>

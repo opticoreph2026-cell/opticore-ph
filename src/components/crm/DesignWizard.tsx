@@ -301,16 +301,16 @@ export function DesignWizard({ basePath = '/crm' }: { basePath?: string }) {
   return (
     <div className="max-w-4xl mx-auto space-y-8">
       <div>
-        <h1 className="text-2xl font-display font-bold text-white mb-2">Engineering Calculator</h1>
-        <p className="text-sm text-white/40">
+        <h1 className="text-2xl font-display font-bold text-foreground-950 mb-2">Engineering Calculator</h1>
+        <p className="text-sm text-foreground-950/40">
           6-step Neovolt sizing, ROI analysis, and proposal generation.
         </p>
       </div>
 
       {/* Progress */}
-      <div className="bg-background-900 border border-white/5 rounded-2xl p-6">
+      <div className="bg-background-900 border border-foreground-950/5 rounded-2xl p-6">
         <div className="flex items-center justify-between relative">
-          <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-[2px] bg-white/5 z-0" />
+          <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-[2px] bg-foreground-950/5 z-0" />
           <div
             className="absolute left-0 top-1/2 -translate-y-1/2 h-[2px] bg-accent-cyan z-0 transition-all duration-500"
             style={{ width: `${((step - 1) / (STEPS.length - 1)) * 100}%` }}
@@ -327,14 +327,14 @@ export function DesignWizard({ basePath = '/crm' }: { basePath?: string }) {
                       ? 'bg-accent-cyan text-background-950 scale-110'
                       : isPast
                         ? 'bg-accent-emerald text-background-950'
-                        : 'bg-background-800 border border-white/10 text-white/30'
+                        : 'bg-background-800 border border-foreground-950/10 text-foreground-950/30'
                   }`}
                 >
                   {isPast ? <CheckCircle2 className="w-4 h-4" /> : <Icon className="w-4 h-4" />}
                 </div>
                 <span
                   className={`text-[10px] font-medium uppercase tracking-wide hidden sm:block ${
-                    isActive || isPast ? 'text-white' : 'text-white/30'
+                    isActive || isPast ? 'text-foreground-950' : 'text-foreground-950/30'
                   }`}
                 >
                   {s.label}
@@ -351,21 +351,21 @@ export function DesignWizard({ basePath = '/crm' }: { basePath?: string }) {
         </div>
       )}
 
-      <div className="bg-background-900 border border-white/5 rounded-2xl overflow-hidden">
+      <div className="bg-background-900 border border-foreground-950/5 rounded-2xl overflow-hidden">
         {/* Step 1 — Client */}
         {step === 1 && (
           <div className="p-8 space-y-6">
             <div>
-              <h2 className="text-xl font-display font-bold text-white">Client & Site</h2>
-              <p className="text-sm text-white/40">Select lead, utility profile, and system pathway.</p>
+              <h2 className="text-xl font-display font-bold text-foreground-950">Client & Site</h2>
+              <p className="text-sm text-foreground-950/40">Select lead, utility profile, and system pathway.</p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div className="md:col-span-2">
-                <label className="block text-xs font-semibold text-white/60 uppercase mb-1.5">Lead</label>
+                <label className="block text-xs font-semibold text-foreground-950/60 uppercase mb-1.5">Lead</label>
                 <select
                   value={form.leadId}
                   onChange={(e) => onLeadChange(e.target.value)}
-                  className="w-full bg-background-800 border border-white/10 rounded-xl px-4 py-3 text-white text-sm"
+                  className="w-full bg-background-800 border border-foreground-950/10 rounded-xl px-4 py-3 text-foreground-950 text-sm"
                 >
                   <option value="">— Select lead —</option>
                   {leads.map((l) => (
@@ -376,7 +376,7 @@ export function DesignWizard({ basePath = '/crm' }: { basePath?: string }) {
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-semibold text-white/60 uppercase mb-1.5">Grid Type</label>
+                <label className="block text-xs font-semibold text-foreground-950/60 uppercase mb-1.5">Grid Type</label>
                 <select
                   value={form.gridConnectionType}
                   onChange={(e) =>
@@ -385,14 +385,14 @@ export function DesignWizard({ basePath = '/crm' }: { basePath?: string }) {
                       gridConnectionType: e.target.value as WizardForm['gridConnectionType'],
                     }))
                   }
-                  className="w-full bg-background-800 border border-white/10 rounded-xl px-4 py-3 text-white text-sm"
+                  className="w-full bg-background-800 border border-foreground-950/10 rounded-xl px-4 py-3 text-foreground-950 text-sm"
                 >
                   <option value="single_phase">Single-Phase (230V)</option>
                   <option value="three_phase">Three-Phase (400V)</option>
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-semibold text-white/60 uppercase mb-1.5">Pathway</label>
+                <label className="block text-xs font-semibold text-foreground-950/60 uppercase mb-1.5">Pathway</label>
                 <select
                   value={form.designPathway}
                   onChange={(e) =>
@@ -401,7 +401,7 @@ export function DesignWizard({ basePath = '/crm' }: { basePath?: string }) {
                       designPathway: e.target.value as WizardForm['designPathway'],
                     }))
                   }
-                  className="w-full bg-background-800 border border-white/10 rounded-xl px-4 py-3 text-white text-sm"
+                  className="w-full bg-background-800 border border-foreground-950/10 rounded-xl px-4 py-3 text-foreground-950 text-sm"
                 >
                   <option value="zero_export_hybrid">Zero-Export Hybrid (default)</option>
                   <option value="grid_tied_net_metered">Grid-Tied Net Metering</option>
@@ -409,17 +409,17 @@ export function DesignWizard({ basePath = '/crm' }: { basePath?: string }) {
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-semibold text-white/60 uppercase mb-1.5">Peak Sun Hours</label>
+                <label className="block text-xs font-semibold text-foreground-950/60 uppercase mb-1.5">Peak Sun Hours</label>
                 <input
                   type="number"
                   step="0.1"
                   value={form.peakSunHours}
                   onChange={(e) => setForm((f) => ({ ...f, peakSunHours: Number(e.target.value) }))}
-                  className="w-full bg-background-800 border border-white/10 rounded-xl px-4 py-3 text-white text-sm"
+                  className="w-full bg-background-800 border border-foreground-950/10 rounded-xl px-4 py-3 text-foreground-950 text-sm"
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-white/60 uppercase mb-1.5">Solar Panel</label>
+                <label className="block text-xs font-semibold text-foreground-950/60 uppercase mb-1.5">Solar Panel</label>
                 <select
                   value={form.panelModelId}
                   onChange={(e) => {
@@ -431,7 +431,7 @@ export function DesignWizard({ basePath = '/crm' }: { basePath?: string }) {
                       panelWattage: panel?.wattage ?? f.panelWattage,
                     }));
                   }}
-                  className="w-full bg-background-800 border border-white/10 rounded-xl px-4 py-3 text-white text-sm"
+                  className="w-full bg-background-800 border border-foreground-950/10 rounded-xl px-4 py-3 text-foreground-950 text-sm"
                 >
                   <option value="">— Select panel —</option>
                   {panels.map((p) => (
@@ -441,18 +441,18 @@ export function DesignWizard({ basePath = '/crm' }: { basePath?: string }) {
                   ))}
                 </select>
                 {form.panelWattage > 0 && (
-                  <p className="text-xs text-white/40 mt-1.5">{form.panelWattage}W selected</p>
+                  <p className="text-xs text-foreground-950/40 mt-1.5">{form.panelWattage}W selected</p>
                 )}
               </div>
               <div className="relative">
-                <label className="block text-xs font-semibold text-white/60 uppercase mb-1.5">Utility Rate (₱/kWh)</label>
+                <label className="block text-xs font-semibold text-foreground-950/60 uppercase mb-1.5">Utility Rate (₱/kWh)</label>
                 <input
                   type="text"
                   value={selectedUtility ? `${selectedUtility.name} (${selectedUtility.code})` : utilitySearch}
                   onChange={(e) => { setUtilitySearch(e.target.value); setSelectedUtility(null); setShowUtilitySuggestions(true); }}
                   onFocus={() => setShowUtilitySuggestions(true)}
                   placeholder="Search electric company..."
-                  className="w-full bg-background-800 border border-white/10 rounded-xl px-4 py-3 text-white text-sm"
+                  className="w-full bg-background-800 border border-foreground-950/10 rounded-xl px-4 py-3 text-foreground-950 text-sm"
                 />
                 {showUtilitySuggestions && utilitySuggestions.length > 0 && !selectedUtility && (
                   <div className="absolute z-20 mt-1 w-full bg-surface-900 border border-border-subtle rounded-xl max-h-48 overflow-y-auto shadow-xl">
@@ -473,10 +473,10 @@ export function DesignWizard({ basePath = '/crm' }: { basePath?: string }) {
                             }));
                           }
                         }}
-                        className="w-full text-left px-4 py-2.5 text-sm text-white/80 hover:bg-white/5 hover:text-white transition-colors"
+                        className="w-full text-left px-4 py-2.5 text-sm text-foreground-950/80 hover:bg-foreground-950/5 hover:text-foreground-950 transition-colors"
                       >
                         <span className="font-medium">{u.name}</span>
-                        <span className="text-white/40 ml-2">({u.code})</span>
+                        <span className="text-foreground-950/40 ml-2">({u.code})</span>
                         {u.rateRu && (
                           <span className="text-accent-cyan ml-2">₱{(u.rateRu / 10000).toFixed(4)}/kWh</span>
                         )}
@@ -486,7 +486,7 @@ export function DesignWizard({ basePath = '/crm' }: { basePath?: string }) {
                 )}
                 {!selectedUtility && (
                   <div className="mt-2">
-                    <label className="block text-xs text-gray-500 mb-1">Or enter manually</label>
+                    <label className="block text-xs text-foreground-500 mb-1">Or enter manually</label>
                     <input
                       type="number"
                       step="0.1"
@@ -500,7 +500,7 @@ export function DesignWizard({ basePath = '/crm' }: { basePath?: string }) {
                           averageMonthlyKwh: Math.round(f.averageMonthlyBill / rate) || f.averageMonthlyKwh,
                         }));
                       }}
-                      className="w-full bg-background-800 border border-white/10 rounded-xl px-4 py-3 text-white text-sm"
+                      className="w-full bg-background-800 border border-foreground-950/10 rounded-xl px-4 py-3 text-foreground-950 text-sm"
                     />
                   </div>
                 )}
@@ -518,12 +518,12 @@ export function DesignWizard({ basePath = '/crm' }: { basePath?: string }) {
         {step === 2 && (
           <div className="p-8 space-y-6">
             <div>
-              <h2 className="text-xl font-display font-bold text-white">Load Analysis</h2>
-              <p className="text-sm text-white/40">Bill data and critical backup loads (PEC 1.25 safety factor applied in engine).</p>
+              <h2 className="text-xl font-display font-bold text-foreground-950">Load Analysis</h2>
+              <p className="text-sm text-foreground-950/40">Bill data and critical backup loads (PEC 1.25 safety factor applied in engine).</p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div>
-                <label className="block text-xs font-semibold text-white/60 uppercase mb-1.5">Monthly Bill (₱)</label>
+                <label className="block text-xs font-semibold text-foreground-950/60 uppercase mb-1.5">Monthly Bill (₱)</label>
                 <input
                   type="number"
                   value={form.averageMonthlyBill}
@@ -535,20 +535,20 @@ export function DesignWizard({ basePath = '/crm' }: { basePath?: string }) {
                       averageMonthlyKwh: Math.round(bill / f.allInRatePhp),
                     }));
                   }}
-                  className="w-full bg-background-800 border border-white/10 rounded-xl px-4 py-3 text-white text-sm"
+                  className="w-full bg-background-800 border border-foreground-950/10 rounded-xl px-4 py-3 text-foreground-950 text-sm"
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-white/60 uppercase mb-1.5">Monthly kWh</label>
+                <label className="block text-xs font-semibold text-foreground-950/60 uppercase mb-1.5">Monthly kWh</label>
                 <input
                   type="number"
                   value={form.averageMonthlyKwh}
                   onChange={(e) => setForm((f) => ({ ...f, averageMonthlyKwh: Number(e.target.value) }))}
-                  className="w-full bg-background-800 border border-white/10 rounded-xl px-4 py-3 text-white text-sm"
+                  className="w-full bg-background-800 border border-foreground-950/10 rounded-xl px-4 py-3 text-foreground-950 text-sm"
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-white/60 uppercase mb-1.5">Target Offset %</label>
+                <label className="block text-xs font-semibold text-foreground-950/60 uppercase mb-1.5">Target Offset %</label>
                 <input
                   type="range"
                   min={50}
@@ -560,21 +560,21 @@ export function DesignWizard({ basePath = '/crm' }: { basePath?: string }) {
                 <p className="text-sm text-accent-cyan mt-1">{form.targetOffsetPct}%</p>
               </div>
               <div>
-                <label className="block text-xs font-semibold text-white/60 uppercase mb-1.5">Backup Hours</label>
+                <label className="block text-xs font-semibold text-foreground-950/60 uppercase mb-1.5">Backup Hours</label>
                 <input
                   type="number"
                   min={1}
                   max={24}
                   value={form.backupAutonomyHours}
                   onChange={(e) => setForm((f) => ({ ...f, backupAutonomyHours: Number(e.target.value) }))}
-                  className="w-full bg-background-800 border border-white/10 rounded-xl px-4 py-3 text-white text-sm"
+                  className="w-full bg-background-800 border border-foreground-950/10 rounded-xl px-4 py-3 text-foreground-950 text-sm"
                 />
               </div>
             </div>
 
             <div>
               <div className="flex items-center justify-between mb-3">
-                <h3 className="text-sm font-semibold text-white/80">Critical Loads (optional)</h3>
+                <h3 className="text-sm font-semibold text-foreground-950/80">Critical Loads (optional)</h3>
                 <button
                   type="button"
                   onClick={addLoad}
@@ -584,7 +584,7 @@ export function DesignWizard({ basePath = '/crm' }: { basePath?: string }) {
                 </button>
               </div>
               {form.criticalLoads.length === 0 ? (
-                <p className="text-sm text-white/30 italic">
+                <p className="text-sm text-foreground-950/30 italic">
                   Leave empty — engine will estimate from bill data.
                 </p>
               ) : (
@@ -595,28 +595,28 @@ export function DesignWizard({ basePath = '/crm' }: { basePath?: string }) {
                         placeholder="Name"
                         value={load.name}
                         onChange={(e) => updateLoad(i, { name: e.target.value })}
-                        className="col-span-4 bg-background-800 border border-white/10 rounded-lg px-3 py-2 text-sm text-white"
+                        className="col-span-4 bg-background-800 border border-foreground-950/10 rounded-lg px-3 py-2 text-sm text-foreground-950"
                       />
                       <input
                         type="number"
                         placeholder="W"
                         value={load.watts}
                         onChange={(e) => updateLoad(i, { watts: Number(e.target.value) })}
-                        className="col-span-2 bg-background-800 border border-white/10 rounded-lg px-3 py-2 text-sm text-white"
+                        className="col-span-2 bg-background-800 border border-foreground-950/10 rounded-lg px-3 py-2 text-sm text-foreground-950"
                       />
                       <input
                         type="number"
                         placeholder="Qty"
                         value={load.quantity}
                         onChange={(e) => updateLoad(i, { quantity: Number(e.target.value) })}
-                        className="col-span-1 bg-background-800 border border-white/10 rounded-lg px-3 py-2 text-sm text-white"
+                        className="col-span-1 bg-background-800 border border-foreground-950/10 rounded-lg px-3 py-2 text-sm text-foreground-950"
                       />
                       <input
                         type="number"
                         placeholder="Hrs"
                         value={load.hoursPerDay}
                         onChange={(e) => updateLoad(i, { hoursPerDay: Number(e.target.value) })}
-                        className="col-span-2 bg-background-800 border border-white/10 rounded-lg px-3 py-2 text-sm text-white"
+                        className="col-span-2 bg-background-800 border border-foreground-950/10 rounded-lg px-3 py-2 text-sm text-foreground-950"
                       />
                       <button
                         type="button"
@@ -648,8 +648,8 @@ export function DesignWizard({ basePath = '/crm' }: { basePath?: string }) {
         {step === 3 && computeResult && (
           <div className="p-8 space-y-6">
             <div>
-              <h2 className="text-xl font-display font-bold text-white">System Sizing</h2>
-              <p className="text-sm text-white/40">Auto-computed from load profile and Neovolt catalog.</p>
+              <h2 className="text-xl font-display font-bold text-foreground-950">System Sizing</h2>
+              <p className="text-sm text-foreground-950/40">Auto-computed from load profile and Neovolt catalog.</p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <SizingCard
@@ -680,12 +680,12 @@ export function DesignWizard({ basePath = '/crm' }: { basePath?: string }) {
             )}
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div className="bg-background-800 rounded-xl p-4">
-                <p className="text-white/40 mb-1">Annual PV Yield</p>
-                <p className="text-white font-bold">{Math.round(computeResult.annualYieldKwh).toLocaleString()} kWh/yr</p>
+                <p className="text-foreground-950/40 mb-1">Annual PV Yield</p>
+                <p className="text-foreground-950 font-bold">{Math.round(computeResult.annualYieldKwh).toLocaleString()} kWh/yr</p>
               </div>
               <div className="bg-background-800 rounded-xl p-4">
-                <p className="text-white/40 mb-1">Peak Load (backup)</p>
-                <p className="text-white font-bold">{computeResult.backup.totalCriticalLoadKw.toFixed(2)} kW</p>
+                <p className="text-foreground-950/40 mb-1">Peak Load (backup)</p>
+                <p className="text-foreground-950 font-bold">{computeResult.backup.totalCriticalLoadKw.toFixed(2)} kW</p>
               </div>
             </div>
             <NavButtons onPrev={() => setStep(2)} onNext={() => setStep(4)} nextLabel="Next: Products & Pricing" />
@@ -696,20 +696,20 @@ export function DesignWizard({ basePath = '/crm' }: { basePath?: string }) {
         {step === 4 && computeResult && (
           <div className="p-8 space-y-6">
             <div>
-              <h2 className="text-xl font-display font-bold text-white">Products & Pricing</h2>
-              <p className="text-sm text-white/40">
+              <h2 className="text-xl font-display font-bold text-foreground-950">Products & Pricing</h2>
+              <p className="text-sm text-foreground-950/40">
                 Estimated pricing — edit in Settings when distributor prices are confirmed.
               </p>
             </div>
             <table className="w-full text-sm text-left">
-              <thead className="text-xs uppercase text-white/30 border-b border-white/5">
+              <thead className="text-xs uppercase text-foreground-950/30 border-b border-foreground-950/5">
                 <tr>
                   <th className="py-3">Item</th>
                   <th className="py-3 text-right">Qty</th>
                   <th className="py-3 text-right">Amount</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/5 text-white/70">
+              <tbody className="divide-y divide-white/5 text-foreground-950/70">
                 {computeResult.bom.map((item, i) => (
                   <tr key={i}>
                     <td className="py-3">{item.description}</td>
@@ -734,8 +734,8 @@ export function DesignWizard({ basePath = '/crm' }: { basePath?: string }) {
                 </tr>
               </tbody>
               <tfoot>
-                <tr className="border-t border-white/10">
-                  <td colSpan={2} className="py-4 text-right font-semibold text-white">
+                <tr className="border-t border-foreground-950/10">
+                  <td colSpan={2} className="py-4 text-right font-semibold text-foreground-950">
                     Grand Total (excl. VAT):
                   </td>
                   <td className="py-4 text-right text-xl font-bold text-accent-cyan">
@@ -752,11 +752,11 @@ export function DesignWizard({ basePath = '/crm' }: { basePath?: string }) {
         {step === 5 && computeResult && (
           <div className="p-8 space-y-6">
             <div>
-              <h2 className="text-xl font-display font-bold text-white">ROI Analysis</h2>
-              <p className="text-sm text-white/40">Adjust self-consumption rate for battery-backed systems.</p>
+              <h2 className="text-xl font-display font-bold text-foreground-950">ROI Analysis</h2>
+              <p className="text-sm text-foreground-950/40">Adjust self-consumption rate for battery-backed systems.</p>
             </div>
             <div>
-              <label className="block text-xs font-semibold text-white/60 uppercase mb-1.5">
+              <label className="block text-xs font-semibold text-foreground-950/60 uppercase mb-1.5">
                 Self-Consumption: {form.selfConsumptionPct}%
               </label>
               <input
@@ -767,14 +767,14 @@ export function DesignWizard({ basePath = '/crm' }: { basePath?: string }) {
                 onChange={(e) => setForm((f) => ({ ...f, selfConsumptionPct: Number(e.target.value) }))}
                 className="w-full accent-emerald"
               />
-              <p className="text-xs text-white/40 mt-2">
+              <p className="text-xs text-foreground-950/40 mt-2">
                 Zero-export default: 70%. With battery time-shifting, residential typically 65–85%.
               </p>
             </div>
             <div className="bg-background-800 rounded-xl p-5 border border-accent-blue/20">
-              <p className="text-sm text-white/60 mb-1">System Investment</p>
-              <p className="text-2xl font-bold text-white">{formatPhp(computeResult.grandTotal)}</p>
-              <p className="text-xs text-white/40 mt-2">
+              <p className="text-sm text-foreground-950/60 mb-1">System Investment</p>
+              <p className="text-2xl font-bold text-foreground-950">{formatPhp(computeResult.grandTotal)}</p>
+              <p className="text-xs text-foreground-950/40 mt-2">
                 25-year projection with {form.allInRatePhp} ₱/kWh + 5% annual rate escalation
               </p>
             </div>
@@ -815,7 +815,7 @@ export function DesignWizard({ basePath = '/crm' }: { basePath?: string }) {
                   type="button"
                   onClick={createQuotation}
                   disabled={loading}
-                  className="inline-flex items-center gap-2 px-8 py-3 bg-accent-blue text-white font-semibold rounded-xl hover:bg-accent-blue/90 disabled:opacity-50"
+                  className="inline-flex items-center gap-2 px-8 py-3 bg-accent-blue text-foreground-950 font-semibold rounded-xl hover:bg-accent-blue/90 disabled:opacity-50"
                 >
                   {loading ? <Spinner className="w-5 h-5" /> : <FileText className="w-5 h-5" />}
                   Create Quotation
@@ -824,15 +824,15 @@ export function DesignWizard({ basePath = '/crm' }: { basePath?: string }) {
             ) : (
               <div className="text-center py-8 space-y-4">
                 <CheckCircle2 className="w-12 h-12 text-accent-emerald mx-auto" />
-                <h2 className="text-2xl font-display font-bold text-white">Proposal Ready</h2>
-                <p className="text-white/40">
+                <h2 className="text-2xl font-display font-bold text-foreground-950">Proposal Ready</h2>
+                <p className="text-foreground-950/40">
                   Quote <span className="text-accent-cyan font-mono">{quotation.quoteNumber}</span> saved as draft.
                 </p>
                 <div className="flex flex-col sm:flex-row justify-center gap-3 pt-4">
                   <button
                     type="button"
                     onClick={() => router.push(`${basePath}/roi/${designId}`)}
-                    className="px-6 py-3 bg-white/5 text-white rounded-xl hover:bg-white/10"
+                    className="px-6 py-3 bg-foreground-950/5 text-foreground-950 rounded-xl hover:bg-foreground-950/10"
                   >
                     View ROI Chart
                   </button>
@@ -865,19 +865,19 @@ function SizingCard({
   color: string;
 }) {
   return (
-    <div className="bg-background-800 border border-white/5 p-5 rounded-2xl">
-      <p className="text-xs text-white/40 uppercase tracking-widest mb-2">{label}</p>
-      <p className={`text-lg font-bold text-white mb-1 ${color}`}>{value}</p>
-      <p className="text-xs text-white/50">{sub}</p>
+    <div className="bg-background-800 border border-foreground-950/5 p-5 rounded-2xl">
+      <p className="text-xs text-foreground-950/40 uppercase tracking-widest mb-2">{label}</p>
+      <p className={`text-lg font-bold text-foreground-950 mb-1 ${color}`}>{value}</p>
+      <p className="text-xs text-foreground-950/50">{sub}</p>
     </div>
   );
 }
 
 function MetricCard({ label, value }: { label: string; value: string }) {
   return (
-    <div className="bg-background-800 rounded-xl p-4 text-center border border-white/5">
-      <p className="text-xs text-white/40 mb-1">{label}</p>
-      <p className="text-lg font-bold text-white">{value}</p>
+    <div className="bg-background-800 rounded-xl p-4 text-center border border-foreground-950/5">
+      <p className="text-xs text-foreground-950/40 mb-1">{label}</p>
+      <p className="text-lg font-bold text-foreground-950">{value}</p>
     </div>
   );
 }
@@ -896,12 +896,12 @@ function NavButtons({
   loading?: boolean;
 }) {
   return (
-    <div className="flex justify-between pt-6 border-t border-white/5">
+    <div className="flex justify-between pt-6 border-t border-foreground-950/5">
       {onPrev ? (
         <button
           type="button"
           onClick={onPrev}
-          className="inline-flex items-center gap-2 px-6 py-3 bg-white/5 text-white/70 font-semibold rounded-xl hover:bg-white/10"
+          className="inline-flex items-center gap-2 px-6 py-3 bg-foreground-950/5 text-foreground-950/70 font-semibold rounded-xl hover:bg-foreground-950/10"
         >
           <ChevronLeft className="w-4 h-4" /> Back
         </button>
@@ -913,7 +913,7 @@ function NavButtons({
           type="button"
           onClick={onNext}
           disabled={nextDisabled}
-          className="inline-flex items-center gap-2 px-6 py-3 bg-accent-blue text-white font-semibold rounded-xl hover:bg-accent-blue/90 disabled:opacity-50"
+          className="inline-flex items-center gap-2 px-6 py-3 bg-accent-blue text-foreground-950 font-semibold rounded-xl hover:bg-accent-blue/90 disabled:opacity-50"
         >
           {loading ? <Spinner className="w-4 h-4" /> : null}
           {nextLabel} <ChevronRight className="w-4 h-4" />

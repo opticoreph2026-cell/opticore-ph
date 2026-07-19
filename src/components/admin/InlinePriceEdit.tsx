@@ -41,19 +41,19 @@ export function InlinePriceEdit({ id, category, currentPrice, isConfirmed, apiPa
   if (editing) {
     return (
       <div className="flex items-center gap-2">
-        <span className="text-xs text-white/40">\u20B1</span>
+        <span className="text-xs text-foreground-950/40">\u20B1</span>
         <input
           type="number"
           value={price}
           onChange={(e) => setPrice(e.target.value)}
-          className="w-24 bg-surface-1000 border border-border-subtle rounded px-2 py-1 text-sm text-white font-mono"
+          className="w-24 bg-surface-1000 border border-border-subtle rounded px-2 py-1 text-sm text-foreground-950 font-mono"
           step="0.01"
           min="0"
         />
         <button onClick={handleSave} disabled={saving} className="text-xs text-accent-emerald hover:opacity-70 disabled:opacity-40">
           {saving ? '...' : 'Save'}
         </button>
-        <button onClick={() => setEditing(false)} className="text-xs text-white/40 hover:text-white">
+        <button onClick={() => setEditing(false)} className="text-xs text-foreground-950/40 hover:text-foreground-950">
           Cancel
         </button>
       </div>
@@ -68,7 +68,7 @@ export function InlinePriceEdit({ id, category, currentPrice, isConfirmed, apiPa
     <button
       type="button"
       onClick={() => { setEditing(true); setPrice(String(currentPrice)); }}
-      className="text-sm text-white font-mono hover:text-accent-cyan transition-colors"
+      className="text-sm text-foreground-950 font-mono hover:text-accent-cyan transition-colors"
       title="Click to edit price"
     >
       \u20B1{currentPrice.toLocaleString('en-PH', { minimumFractionDigits: 2 })}

@@ -25,10 +25,10 @@ export function ProjectAdminClient({ projects }: { projects: Project[] }) {
           in_progress: 'bg-accent-cyan/10 text-accent-cyan',
           commissioned: 'bg-accent-emerald/10 text-accent-emerald',
           warranty_registered: 'bg-purple-400/10 text-purple-400',
-          closed: 'bg-white/5 text-white/60',
+          closed: 'bg-foreground-950/5 text-foreground-950/60',
         };
         return (
-          <span className={`inline-flex px-2 py-0.5 rounded text-xs font-medium capitalize ${colors[p.status] ?? 'bg-white/5 text-white/60'}`}>
+          <span className={`inline-flex px-2 py-0.5 rounded text-xs font-medium capitalize ${colors[p.status] ?? 'bg-foreground-950/5 text-foreground-950/60'}`}>
             {p.status.replace(/_/g, ' ')}
           </span>
         );

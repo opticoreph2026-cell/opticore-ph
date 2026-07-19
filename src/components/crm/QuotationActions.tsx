@@ -62,10 +62,10 @@ export function QuotationActions({ quotationId, currentStatus }: QuotationAction
             disabled={loading}
             className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors disabled:opacity-50 ${
               action.variant === 'primary'
-                ? 'bg-accent-blue text-white hover:bg-accent-blue/90'
+                ? 'bg-accent-blue text-foreground-950 hover:bg-accent-blue/90'
                 : action.variant === 'success'
-                ? 'bg-accent-emerald text-white hover:bg-accent-emerald/90'
-                : 'bg-accent-rose text-white hover:bg-accent-rose/90'
+                ? 'bg-accent-emerald text-foreground-950 hover:bg-accent-emerald/90'
+                : 'bg-accent-rose text-foreground-950 hover:bg-accent-rose/90'
             }`}
           >
             {loading ? 'Updating...' : action.label}

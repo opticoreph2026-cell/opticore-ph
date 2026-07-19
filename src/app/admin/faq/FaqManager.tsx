@@ -116,7 +116,7 @@ export function FaqManager({ initialEntries }: { initialEntries: FaqRow[] }) {
               key={f}
               onClick={() => setFilter(f)}
               className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
-                filter === f ? 'bg-primary-500/20 text-primary-400 border border-primary-500/30' : 'text-white/50 hover:text-white/70 bg-white/5 border border-white/10'
+                filter === f ? 'bg-primary-500/20 text-primary-400 border border-primary-500/30' : 'text-foreground-950/50 hover:text-foreground-950/70 bg-foreground-950/5 border border-foreground-950/10'
               }`}
             >
               {f === 'all' ? 'All' : f === 'en' ? 'English' : 'Filipino'}
@@ -125,7 +125,7 @@ export function FaqManager({ initialEntries }: { initialEntries: FaqRow[] }) {
         </div>
         <button
           onClick={() => setShowNew(!showNew)}
-          className="flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-xl bg-primary-500 text-white hover:bg-primary-600 transition-all"
+          className="flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-xl bg-primary-500 text-foreground-950 hover:bg-primary-600 transition-all"
         >
           <Plus className="w-4 h-4" />
           New FAQ
@@ -134,24 +134,24 @@ export function FaqManager({ initialEntries }: { initialEntries: FaqRow[] }) {
 
       {showNew && (
         <div className="bg-surface-800 border border-border-subtle rounded-xl p-6 space-y-4">
-          <h3 className="text-lg font-semibold text-white">New FAQ Entry</h3>
+          <h3 className="text-lg font-semibold text-foreground-950">New FAQ Entry</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <label className="text-xs text-white/60 font-medium">Question</label>
+              <label className="text-xs text-foreground-950/60 font-medium">Question</label>
               <input
                 type="text"
                 value={newForm.question}
                 onChange={(e) => setNewForm({ ...newForm, question: e.target.value })}
-                className="w-full bg-surface-900 border border-border-subtle rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-primary-500/50"
+                className="w-full bg-surface-900 border border-border-subtle rounded-lg px-3 py-2 text-sm text-foreground-950 focus:outline-none focus:border-primary-500/50"
                 placeholder="Enter question"
               />
             </div>
             <div className="space-y-1.5">
-              <label className="text-xs text-white/60 font-medium">Locale</label>
+              <label className="text-xs text-foreground-950/60 font-medium">Locale</label>
               <select
                 value={newForm.locale}
                 onChange={(e) => setNewForm({ ...newForm, locale: e.target.value })}
-                className="w-full bg-surface-900 border border-border-subtle rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-primary-500/50"
+                className="w-full bg-surface-900 border border-border-subtle rounded-lg px-3 py-2 text-sm text-foreground-950 focus:outline-none focus:border-primary-500/50"
               >
                 <option value="en">English</option>
                 <option value="fil">Filipino</option>
@@ -159,46 +159,46 @@ export function FaqManager({ initialEntries }: { initialEntries: FaqRow[] }) {
             </div>
           </div>
           <div className="space-y-1.5">
-            <label className="text-xs text-white/60 font-medium">Answer</label>
+            <label className="text-xs text-foreground-950/60 font-medium">Answer</label>
             <textarea
               value={newForm.answer}
               onChange={(e) => setNewForm({ ...newForm, answer: e.target.value })}
               rows={3}
-              className="w-full bg-surface-900 border border-border-subtle rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-primary-500/50 resize-none"
+              className="w-full bg-surface-900 border border-border-subtle rounded-lg px-3 py-2 text-sm text-foreground-950 focus:outline-none focus:border-primary-500/50 resize-none"
               placeholder="Enter answer"
             />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <label className="text-xs text-white/60 font-medium">Category</label>
+              <label className="text-xs text-foreground-950/60 font-medium">Category</label>
               <input
                 type="text"
                 value={newForm.category}
                 onChange={(e) => setNewForm({ ...newForm, category: e.target.value })}
-                className="w-full bg-surface-900 border border-border-subtle rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-primary-500/50"
+                className="w-full bg-surface-900 border border-border-subtle rounded-lg px-3 py-2 text-sm text-foreground-950 focus:outline-none focus:border-primary-500/50"
                 placeholder="e.g. billing, installation"
               />
             </div>
             <div className="space-y-1.5">
-              <label className="text-xs text-white/60 font-medium">Sort Order</label>
+              <label className="text-xs text-foreground-950/60 font-medium">Sort Order</label>
               <input
                 type="number"
                 value={newForm.sortOrder}
                 onChange={(e) => setNewForm({ ...newForm, sortOrder: parseInt(e.target.value) || 0 })}
-                className="w-full bg-surface-900 border border-border-subtle rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-primary-500/50"
+                className="w-full bg-surface-900 border border-border-subtle rounded-lg px-3 py-2 text-sm text-foreground-950 focus:outline-none focus:border-primary-500/50"
               />
             </div>
           </div>
           <div className="flex gap-2 pt-2">
             <button
               onClick={createEntry}
-              className="px-4 py-2 text-sm font-semibold rounded-xl bg-primary-500 text-white hover:bg-primary-600 transition-all"
+              className="px-4 py-2 text-sm font-semibold rounded-xl bg-primary-500 text-foreground-950 hover:bg-primary-600 transition-all"
             >
               Create
             </button>
             <button
               onClick={() => setShowNew(false)}
-              className="px-4 py-2 text-sm font-medium rounded-xl bg-white/5 text-white/60 hover:text-white hover:bg-white/10 transition-all"
+              className="px-4 py-2 text-sm font-medium rounded-xl bg-foreground-950/5 text-foreground-950/60 hover:text-foreground-950 hover:bg-foreground-950/10 transition-all"
             >
               Cancel
             </button>
@@ -208,7 +208,7 @@ export function FaqManager({ initialEntries }: { initialEntries: FaqRow[] }) {
 
       <div className="bg-surface-800 border border-border-subtle rounded-xl overflow-hidden">
         <table className="w-full text-left text-sm">
-          <thead className="bg-surface-900 border-b border-border-subtle text-white/60">
+          <thead className="bg-surface-900 border-b border-border-subtle text-foreground-950/60">
             <tr>
               <th className="px-6 py-4 font-medium">Question</th>
               <th className="px-6 py-4 font-medium">Locale</th>
@@ -221,7 +221,7 @@ export function FaqManager({ initialEntries }: { initialEntries: FaqRow[] }) {
           <tbody className="divide-y divide-border-subtle">
             {filteredEntries.length === 0 && (
               <tr>
-                <td colSpan={6} className="px-6 py-12 text-center text-white/30">
+                <td colSpan={6} className="px-6 py-12 text-center text-foreground-950/30">
                   No FAQ entries found.
                 </td>
               </tr>
@@ -234,14 +234,14 @@ export function FaqManager({ initialEntries }: { initialEntries: FaqRow[] }) {
                       type="text"
                       value={editForm.question}
                       onChange={(e) => setEditForm({ ...editForm, question: e.target.value })}
-                      className="w-full bg-surface-900 border border-border-subtle rounded px-2 py-1 text-sm text-white"
+                      className="w-full bg-surface-900 border border-border-subtle rounded px-2 py-1 text-sm text-foreground-950"
                     />
                   ) : (
-                    <span className="text-white font-medium line-clamp-1">{entry.question}</span>
+                    <span className="text-foreground-950 font-medium line-clamp-1">{entry.question}</span>
                   )}
                 </td>
                 <td className="px-6 py-4">
-                  <span className="text-xs font-mono uppercase text-white/50">{entry.locale}</span>
+                  <span className="text-xs font-mono uppercase text-foreground-950/50">{entry.locale}</span>
                 </td>
                 <td className="px-6 py-4">
                   {editingId === entry.id ? (
@@ -249,10 +249,10 @@ export function FaqManager({ initialEntries }: { initialEntries: FaqRow[] }) {
                       type="text"
                       value={editForm.category}
                       onChange={(e) => setEditForm({ ...editForm, category: e.target.value })}
-                      className="w-full bg-surface-900 border border-border-subtle rounded px-2 py-1 text-sm text-white"
+                      className="w-full bg-surface-900 border border-border-subtle rounded px-2 py-1 text-sm text-foreground-950"
                     />
                   ) : (
-                    <span className="text-white/60">{entry.category || '—'}</span>
+                    <span className="text-foreground-950/60">{entry.category || '—'}</span>
                   )}
                 </td>
                 <td className="px-6 py-4">
@@ -261,10 +261,10 @@ export function FaqManager({ initialEntries }: { initialEntries: FaqRow[] }) {
                       type="number"
                       value={editForm.sortOrder}
                       onChange={(e) => setEditForm({ ...editForm, sortOrder: parseInt(e.target.value) || 0 })}
-                      className="w-20 bg-surface-900 border border-border-subtle rounded px-2 py-1 text-sm text-white"
+                      className="w-20 bg-surface-900 border border-border-subtle rounded px-2 py-1 text-sm text-foreground-950"
                     />
                   ) : (
-                    <span className="text-white/60">{entry.sortOrder}</span>
+                    <span className="text-foreground-950/60">{entry.sortOrder}</span>
                   )}
                 </td>
                 <td className="px-6 py-4">
@@ -302,7 +302,7 @@ export function FaqManager({ initialEntries }: { initialEntries: FaqRow[] }) {
                       <>
                         <button
                           onClick={() => startEdit(entry)}
-                          className="p-1.5 text-white/40 hover:text-primary-400 hover:bg-primary-500/10 rounded-lg transition-colors"
+                          className="p-1.5 text-foreground-950/40 hover:text-primary-400 hover:bg-primary-500/10 rounded-lg transition-colors"
                           title="Edit"
                         >
                           <Edit2 className="w-4 h-4" />
@@ -319,7 +319,7 @@ export function FaqManager({ initialEntries }: { initialEntries: FaqRow[] }) {
                             </button>
                             <button
                               onClick={() => setConfirmDelete(null)}
-                              className="p-1.5 text-white/40 hover:text-white/60 rounded-lg transition-colors"
+                              className="p-1.5 text-foreground-950/40 hover:text-foreground-950/60 rounded-lg transition-colors"
                               title="Cancel delete"
                             >
                               <X className="w-4 h-4" />
@@ -328,7 +328,7 @@ export function FaqManager({ initialEntries }: { initialEntries: FaqRow[] }) {
                         ) : (
                           <button
                             onClick={() => setConfirmDelete(entry.id)}
-                            className="p-1.5 text-white/40 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-colors"
+                            className="p-1.5 text-foreground-950/40 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-colors"
                             title="Delete"
                           >
                             <Trash2 className="w-4 h-4" />

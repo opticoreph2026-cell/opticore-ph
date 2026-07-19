@@ -22,7 +22,7 @@ const statusColors: Record<string, string> = {
   in_progress: 'bg-accent-cyan/10 text-accent-cyan',
   commissioned: 'bg-accent-emerald/10 text-accent-emerald',
   warranty_registered: 'bg-purple-400/10 text-purple-400',
-  closed: 'bg-white/5 text-gray-400',
+  closed: 'bg-foreground-950/5 text-foreground-400',
 };
 
 export function PartnerStats({ initialData }: { initialData: PartnerData }) {
@@ -36,32 +36,32 @@ export function PartnerStats({ initialData }: { initialData: PartnerData }) {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold text-white mb-2">My Projects</h1>
-        <p className="text-gray-400">Overview of your installation projects and milestones.</p>
+        <h1 className="text-3xl font-bold text-foreground-950 mb-2">My Projects</h1>
+        <p className="text-foreground-400">Overview of your installation projects and milestones.</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-background-800 p-6 rounded-2xl border border-white/5">
-          <div className="text-sm font-medium text-gray-400 mb-1">Active Projects</div>
+        <div className="bg-background-800 p-6 rounded-2xl border border-foreground-950/5">
+          <div className="text-sm font-medium text-foreground-400 mb-1">Active Projects</div>
           <div className="text-4xl font-bold text-accent-cyan">{activeCount}</div>
         </div>
-        <div className="bg-background-800 p-6 rounded-2xl border border-white/5">
-          <div className="text-sm font-medium text-gray-400 mb-1">Completed</div>
+        <div className="bg-background-800 p-6 rounded-2xl border border-foreground-950/5">
+          <div className="text-sm font-medium text-foreground-400 mb-1">Completed</div>
           <div className="text-4xl font-bold text-accent-emerald">{completedCount}</div>
         </div>
-        <div className="bg-background-800 p-6 rounded-2xl border border-white/5">
-          <div className="text-sm font-medium text-gray-400 mb-1">Scheduled</div>
+        <div className="bg-background-800 p-6 rounded-2xl border border-foreground-950/5">
+          <div className="text-sm font-medium text-foreground-400 mb-1">Scheduled</div>
           <div className="text-4xl font-bold text-accent-cyan">{scheduledCount}</div>
         </div>
       </div>
 
-      <div className="bg-background-800 border border-white/5 rounded-xl overflow-hidden">
-        <div className="px-6 py-5 border-b border-white/5 bg-white/5">
-          <h2 className="text-lg font-bold text-white">Installation Projects</h2>
+      <div className="bg-background-800 border border-foreground-950/5 rounded-xl overflow-hidden">
+        <div className="px-6 py-5 border-b border-foreground-950/5 bg-foreground-950/5">
+          <h2 className="text-lg font-bold text-foreground-950">Installation Projects</h2>
         </div>
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm text-gray-300">
-            <thead className="bg-background-900 text-xs uppercase text-gray-400">
+          <table className="w-full text-left text-sm text-foreground-300">
+            <thead className="bg-background-900 text-xs uppercase text-foreground-400">
               <tr>
                 <th className="px-6 py-4 font-medium">Customer</th>
                 <th className="px-6 py-4 font-medium">Status</th>
@@ -73,24 +73,24 @@ export function PartnerStats({ initialData }: { initialData: PartnerData }) {
             <tbody className="divide-y divide-white/5">
               {projects.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center text-gray-500">
-                    <Briefcase className="w-8 h-8 mx-auto mb-2 text-gray-600" />
-                    <p className="font-medium text-gray-400">No projects yet</p>
-                    <p className="text-xs text-gray-600 mt-1">Projects will appear once a contract is signed.</p>
+                  <td colSpan={5} className="px-6 py-12 text-center text-foreground-500">
+                    <Briefcase className="w-8 h-8 mx-auto mb-2 text-foreground-600" />
+                    <p className="font-medium text-foreground-400">No projects yet</p>
+                    <p className="text-xs text-foreground-600 mt-1">Projects will appear once a contract is signed.</p>
                   </td>
                 </tr>
               ) : (
                 projects.map((proj) => (
-                  <tr key={proj.id} className="hover:bg-white/5 transition-colors">
-                    <td className="px-6 py-4 font-medium text-white">
+                  <tr key={proj.id} className="hover:bg-foreground-950/5 transition-colors">
+                    <td className="px-6 py-4 font-medium text-foreground-950">
                       {proj.contract?.quotation?.customer?.fullName || 'Unknown'}
                     </td>
                     <td className="px-6 py-4">
                       <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-medium capitalize ${
-                        statusColors[proj.status] ?? 'bg-white/5 text-gray-400'
+                        statusColors[proj.status] ?? 'bg-foreground-950/5 text-foreground-400'
                       }`}>{proj.status.replace(/_/g, ' ')}</span>
                     </td>
-                    <td className="px-6 py-4 text-gray-400">
+                    <td className="px-6 py-4 text-foreground-400">
                       {proj.scheduledInstallDate
                         ? new Date(proj.scheduledInstallDate).toLocaleDateString('en-PH', { month: 'short', day: 'numeric', year: 'numeric' })
                         : '\u2014'}
@@ -99,12 +99,12 @@ export function PartnerStats({ initialData }: { initialData: PartnerData }) {
                       <div className="flex flex-col gap-0.5">
                         {proj.milestones.length > 0
                           ? proj.milestones.map((m, i) => (
-                              <span key={i} className="text-xs text-gray-500 capitalize">{m.milestone.replace(/_/g, ' ')}</span>
+                              <span key={i} className="text-xs text-foreground-500 capitalize">{m.milestone.replace(/_/g, ' ')}</span>
                             ))
-                          : <span className="text-xs text-gray-600">None yet</span>}
+                          : <span className="text-xs text-foreground-600">None yet</span>}
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-gray-500">
+                    <td className="px-6 py-4 text-foreground-500">
                       {new Date(proj.createdAt).toLocaleDateString('en-PH', { month: 'short', day: 'numeric', year: 'numeric' })}
                     </td>
                   </tr>

@@ -31,7 +31,7 @@ export function DismissButton({ id, isRead }: DismissButtonProps) {
       type="button"
       onClick={handleDismiss}
       disabled={loading}
-      className="p-1 text-white/20 hover:text-accent-rose transition-colors rounded disabled:opacity-40"
+      className="p-1 text-foreground-950/20 hover:text-accent-rose transition-colors rounded disabled:opacity-40"
       title="Dismiss"
     >
       <X className="w-4 h-4" />

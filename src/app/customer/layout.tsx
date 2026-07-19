@@ -46,7 +46,7 @@ export default async function CustomerLayout({
   const initials = (name || email || 'C').slice(0, 2).toUpperCase();
 
   return (
-    <div className="flex min-h-screen bg-background-950 text-white">
+    <div className="flex min-h-screen bg-background-950 text-foreground-950">
       <MobileDashboardNav
         navItems={navItems.map(({ label, href }) => ({ label, href }))}
         initials={initials}
@@ -57,13 +57,13 @@ export default async function CustomerLayout({
       />
 
       {/* Sidebar */}
-      <aside className="w-64 bg-background-900 border-r border-white/5 flex flex-col h-screen sticky top-0 hidden md:flex">
-        <div className="h-16 flex items-center px-5 border-b border-white/5 flex-shrink-0">
+      <aside className="w-64 bg-background-900 border-r border-foreground-950/5 flex flex-col h-screen sticky top-0 hidden md:flex">
+        <div className="h-16 flex items-center px-5 border-b border-foreground-950/5 flex-shrink-0">
           <Logo href="/customer" />
         </div>
 
         <div className="px-4 pt-5 pb-2">
-          <p className="text-[10px] font-semibold text-white/25 uppercase tracking-widest font-mono px-3">
+          <p className="text-[10px] font-semibold text-foreground-950/25 uppercase tracking-widest font-mono px-3">
             Customer Portal
           </p>
         </div>
@@ -75,29 +75,29 @@ export default async function CustomerLayout({
               <Link
                 key={item.href}
                 href={item.href}
-                className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-white/50 hover:text-white hover:bg-white/5 transition-all duration-150 group"
+                className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-foreground-950/50 hover:text-foreground-950 hover:bg-foreground-950/5 transition-all duration-150 group"
               >
-                <Icon className="w-4 h-4 flex-shrink-0 text-white/40 group-hover:text-accent-cyan transition-colors" />
+                <Icon className="w-4 h-4 flex-shrink-0 text-foreground-950/40 group-hover:text-accent-cyan transition-colors" />
                 {item.label}
               </Link>
             );
           })}
         </nav>
 
-        <div className="p-3 border-t border-white/5 flex-shrink-0">
-          <div className="flex items-center gap-3 px-2 py-2 rounded-xl hover:bg-white/5 transition-colors">
+        <div className="p-3 border-t border-foreground-950/5 flex-shrink-0">
+          <div className="flex items-center gap-3 px-2 py-2 rounded-xl hover:bg-foreground-950/5 transition-colors">
             <div className="w-8 h-8 rounded-xl bg-accent-cyan/20 flex items-center justify-center text-accent-cyan text-xs font-bold flex-shrink-0">
               {initials}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-xs font-semibold text-white truncate">{name || email}</p>
+              <p className="text-xs font-semibold text-foreground-950 truncate">{name || email}</p>
               <p className="text-[10px] text-accent-cyan/70 truncate">Customer</p>
             </div>
             <form action="/api/auth/logout" method="POST">
               <button
                 type="submit"
                 title="Sign out"
-                className="p-1.5 text-white/30 hover:text-accent-rose transition-colors rounded-lg hover:bg-accent-rose/10"
+                className="p-1.5 text-foreground-950/30 hover:text-accent-rose transition-colors rounded-lg hover:bg-accent-rose/10"
               >
                 <LogOut className="w-4 h-4" />
               </button>
@@ -108,8 +108,8 @@ export default async function CustomerLayout({
 
       {/* Main content */}
       <main className="flex-1 flex flex-col min-w-0">
-        <header className="hidden md:flex h-14 items-center justify-between px-6 bg-background-900/60 backdrop-blur border-b border-white/5 flex-shrink-0">
-          <div className="flex items-center gap-2 text-sm text-white/40">
+        <header className="hidden md:flex h-14 items-center justify-between px-6 bg-background-900/60 backdrop-blur border-b border-foreground-950/5 flex-shrink-0">
+          <div className="flex items-center gap-2 text-sm text-foreground-950/40">
               <Sun className="w-4 h-4 text-accent-cyan" />
             <span className="font-medium">My OptiCore System</span>
           </div>

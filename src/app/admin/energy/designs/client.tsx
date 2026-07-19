@@ -28,12 +28,12 @@ export function DesignAdminClient({ designs }: { designs: Design[] }) {
       key: 'status', label: 'Status',
       render: (d) => {
         const colors: Record<string, string> = {
-          draft: 'bg-white/10 text-white/60',
+          draft: 'bg-foreground-950/10 text-foreground-950/60',
           finalized: 'bg-accent-emerald/10 text-accent-emerald',
           approved_by_customer: 'bg-accent-cyan/10 text-accent-cyan',
         };
         return (
-          <span className={`inline-flex px-2 py-0.5 rounded text-xs font-medium capitalize ${colors[d.status] ?? 'bg-white/5 text-white/60'}`}>
+          <span className={`inline-flex px-2 py-0.5 rounded text-xs font-medium capitalize ${colors[d.status] ?? 'bg-foreground-950/5 text-foreground-950/60'}`}>
             {d.status.replace(/_/g, ' ')}
           </span>
         );

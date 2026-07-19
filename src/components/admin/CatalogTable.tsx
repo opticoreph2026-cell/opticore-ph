@@ -72,7 +72,7 @@ export function CatalogTable({ initialProducts }: { initialProducts: ProductRow[
 
       <div className="bg-surface-800 border border-border-subtle rounded-xl overflow-hidden">
         <table className="w-full text-left text-sm">
-          <thead className="bg-surface-900 border-b border-border-subtle text-white/60">
+          <thead className="bg-surface-900 border-b border-border-subtle text-foreground-950/60">
             <tr>
               <th className="px-6 py-4 font-medium">Model</th>
               <th className="px-6 py-4 font-medium">SKU</th>
@@ -82,35 +82,35 @@ export function CatalogTable({ initialProducts }: { initialProducts: ProductRow[
               <th className="px-6 py-4 font-medium">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-border-subtle text-white/80">
+          <tbody className="divide-y divide-border-subtle text-foreground-950/80">
             {products.map((p) => (
-              <tr key={p.id} className="hover:bg-white/5 transition-colors">
+              <tr key={p.id} className="hover:bg-foreground-950/5 transition-colors">
                 <td className="px-6 py-4">
                   {editingId === p.id ? (
                     <input
                       type="text"
                       value={editForm.modelName}
                       onChange={(e) => setEditForm({ ...editForm, modelName: e.target.value })}
-                      className="w-full bg-surface-1000 border border-border-subtle rounded px-2 py-1 text-sm text-white"
+                      className="w-full bg-surface-1000 border border-border-subtle rounded px-2 py-1 text-sm text-foreground-950"
                     />
                   ) : (
-                    <span className="font-medium text-white">{p.modelName}</span>
+                    <span className="font-medium text-foreground-950">{p.modelName}</span>
                   )}
                 </td>
-                <td className="px-6 py-4 font-mono text-xs text-white/60">
+                <td className="px-6 py-4 font-mono text-xs text-foreground-950/60">
                   {editingId === p.id ? (
                     <input
                       type="text"
                       value={editForm.sku}
                       onChange={(e) => setEditForm({ ...editForm, sku: e.target.value })}
-                      className="w-full bg-surface-1000 border border-border-subtle rounded px-2 py-1 text-sm text-white font-mono"
+                      className="w-full bg-surface-1000 border border-border-subtle rounded px-2 py-1 text-sm text-foreground-950 font-mono"
                     />
                   ) : (
                     p.sku
                   )}
                 </td>
                 <td className="px-6 py-4 uppercase text-xs tracking-wider text-accent-cyan">{p._category}</td>
-                <td className="px-6 py-4 text-white/60 text-xs">{p._spec}</td>
+                <td className="px-6 py-4 text-foreground-950/60 text-xs">{p._spec}</td>
                 <td className="px-6 py-4">
                   <InlinePriceEdit
                     id={p.id}
@@ -133,7 +133,7 @@ export function CatalogTable({ initialProducts }: { initialProducts: ProductRow[
                       </button>
                       <button
                         onClick={() => setConfirmDelete(null)}
-                        className="p-1 text-white/40 hover:text-white rounded transition-colors"
+                        className="p-1 text-foreground-950/40 hover:text-foreground-950 rounded transition-colors"
                         title="Cancel"
                       >
                         <X className="w-4 h-4" />
@@ -144,16 +144,16 @@ export function CatalogTable({ initialProducts }: { initialProducts: ProductRow[
                       <button onClick={() => saveEdit(p)} className="p-1 text-accent-emerald hover:bg-accent-emerald/10 rounded transition-colors" title="Save">
                         <Check className="w-4 h-4" />
                       </button>
-                      <button onClick={cancelEdit} className="p-1 text-white/40 hover:text-white rounded transition-colors" title="Cancel">
+                      <button onClick={cancelEdit} className="p-1 text-foreground-950/40 hover:text-foreground-950 rounded transition-colors" title="Cancel">
                         <X className="w-4 h-4" />
                       </button>
                     </div>
                   ) : (
                     <div className="flex items-center gap-2">
-                      <button onClick={() => startEdit(p)} className="p-1 text-white/40 hover:text-accent-cyan rounded transition-colors" title="Edit">
+                      <button onClick={() => startEdit(p)} className="p-1 text-foreground-950/40 hover:text-accent-cyan rounded transition-colors" title="Edit">
                         <Edit2 className="w-4 h-4" />
                       </button>
-                      <button onClick={() => setConfirmDelete(p.id)} className="p-1 text-white/40 hover:text-accent-rose rounded transition-colors" title="Delete">
+                      <button onClick={() => setConfirmDelete(p.id)} className="p-1 text-foreground-950/40 hover:text-accent-rose rounded transition-colors" title="Delete">
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
@@ -163,7 +163,7 @@ export function CatalogTable({ initialProducts }: { initialProducts: ProductRow[
             ))}
             {products.length === 0 && (
               <tr>
-                <td colSpan={6} className="px-6 py-8 text-center text-white/40">
+                <td colSpan={6} className="px-6 py-8 text-center text-foreground-950/40">
                   No products in catalog.
                 </td>
               </tr>

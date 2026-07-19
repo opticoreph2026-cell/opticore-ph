@@ -88,9 +88,9 @@ export function ChangePasswordForm() {
       <button
         type="submit"
         disabled={loading || !currentPassword || !newPassword || !confirmPassword}
-        className="w-full flex justify-center py-2.5 px-4 rounded-lg text-sm font-medium text-white bg-gradient-to-r from-accent-cyan to-accent-emerald hover:opacity-90 disabled:opacity-50 transition-opacity"
+        className="w-full flex justify-center py-2.5 px-4 rounded-lg text-sm font-medium text-foreground-950 bg-gradient-to-r from-accent-cyan to-accent-emerald hover:opacity-90 disabled:opacity-50 transition-opacity"
       >
-        {loading ? <Spinner className="w-5 h-5 text-white" /> : 'Change Password'}
+        {loading ? <Spinner className="w-5 h-5 text-foreground-950" /> : 'Change Password'}
       </button>
     </form>
   );

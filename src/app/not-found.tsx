@@ -13,16 +13,16 @@ export default function NotFound() {
         
         <div className="text-center">
           <p className="text-sm font-semibold text-accent-cyan tracking-wider uppercase mb-2">404 Error</p>
-          <h1 className="text-4xl md:text-5xl font-display font-bold text-white tracking-tight mb-4">
+          <h1 className="text-4xl md:text-5xl font-display font-bold text-foreground-950 tracking-tight mb-4">
             Page not found
           </h1>
-          <p className="text-base text-white/60 mb-8 max-w-sm mx-auto">
+          <p className="text-base text-foreground-950/60 mb-8 max-w-sm mx-auto">
             Sorry, we couldn't find the page you're looking for. It might have been moved or deleted.
           </p>
           
           <Link 
             href="/" 
-            className="inline-flex px-6 py-3 text-sm font-medium rounded-xl bg-white/10 hover:bg-white/20 text-white border border-border-subtle transition-colors"
+            className="inline-flex px-6 py-3 text-sm font-medium rounded-xl bg-foreground-950/10 hover:bg-foreground-950/20 text-foreground-950 border border-border-subtle transition-colors"
           >
             Return to Home
           </Link>

@@ -13,15 +13,15 @@ export default function CrmSettingsPage() {
           <Settings className="w-5 h-5 text-accent-cyan" />
         </div>
         <div>
-          <h1 className="text-xl font-display font-bold text-white">Settings</h1>
-          <p className="text-sm text-white/40">Manage your account security</p>
+          <h1 className="text-xl font-display font-bold text-foreground-950">Settings</h1>
+          <p className="text-sm text-foreground-950/40">Manage your account security</p>
         </div>
       </div>
 
       <div className="bg-surface-900/60 backdrop-blur-sm border border-border-subtle rounded-2xl p-6 space-y-6">
         <div className="flex items-center gap-3 pb-4 border-b border-border-subtle">
           <Shield className="w-5 h-5 text-accent-emerald" />
-          <h2 className="text-base font-semibold text-white">Change Password</h2>
+          <h2 className="text-base font-semibold text-foreground-950">Change Password</h2>
         </div>
         <ChangePasswordForm />
       </div>

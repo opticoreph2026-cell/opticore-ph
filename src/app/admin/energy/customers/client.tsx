@@ -18,10 +18,10 @@ interface Customer {
 export function CustomerAdminClient({ customers }: { customers: Customer[] }) {
   const columns: Column<Customer>[] = [
     { key: 'fullName', label: 'Customer' },
-    { key: 'contactEmail', label: 'Email', render: (c) => <span className="text-white/60">{c.contactEmail || '—'}</span> },
-    { key: 'contactPhone', label: 'Phone', render: (c) => <span className="text-white/60">{c.contactPhone || '—'}</span> },
+    { key: 'contactEmail', label: 'Email', render: (c) => <span className="text-foreground-950/60">{c.contactEmail || '—'}</span> },
+    { key: 'contactPhone', label: 'Phone', render: (c) => <span className="text-foreground-950/60">{c.contactPhone || '—'}</span> },
     { key: 'customerType', label: 'Type', render: (c) => <span className="capitalize">{c.customerType.replace(/_/g, ' ')}</span> },
-    { key: 'billingAddress', label: 'Address', render: (c) => <span className="text-white/60 truncate max-w-[200px] inline-block">{c.billingAddress || '—'}</span> },
+    { key: 'billingAddress', label: 'Address', render: (c) => <span className="text-foreground-950/60 truncate max-w-[200px] inline-block">{c.billingAddress || '—'}</span> },
     { key: 'quotations', label: 'Quotations', render: (c) => c._count.quotations },
     { key: 'sites', label: 'Sites', render: (c) => c.sites.length },
   ];

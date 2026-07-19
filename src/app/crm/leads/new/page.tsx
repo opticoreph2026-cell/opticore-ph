@@ -76,13 +76,13 @@ export default function NewLeadPage() {
       <div className="flex items-center gap-4">
         <Link
           href="/crm/leads"
-          className="p-2 rounded-lg hover:bg-white/5 text-white/40 hover:text-white transition-colors"
+          className="p-2 rounded-lg hover:bg-foreground-950/5 text-foreground-950/40 hover:text-foreground-950 transition-colors"
         >
           <ArrowLeft className="w-5 h-5" />
         </Link>
         <div>
-          <h1 className="text-2xl font-bold text-white mb-1">New Lead</h1>
-          <p className="text-sm text-gray-400">Add a new solar prospect to the pipeline.</p>
+          <h1 className="text-2xl font-bold text-foreground-950 mb-1">New Lead</h1>
+          <p className="text-sm text-foreground-400">Add a new solar prospect to the pipeline.</p>
         </div>
       </div>
 
@@ -93,76 +93,76 @@ export default function NewLeadPage() {
       )}
 
       <form onSubmit={handleSubmit} className="space-y-5">
-        <div className="bg-background-800 border border-white/5 rounded-xl p-6 space-y-5">
+        <div className="bg-background-800 border border-foreground-950/5 rounded-xl p-6 space-y-5">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="sm:col-span-2">
-              <label className="block text-sm font-medium text-gray-300 mb-1.5">Full Name *</label>
+              <label className="block text-sm font-medium text-foreground-300 mb-1.5">Full Name *</label>
               <input
                 name="fullName"
                 value={form.fullName}
                 onChange={handleChange}
                 placeholder="Juan Dela Cruz"
-                className="w-full bg-background-900 border border-white/5 rounded-lg px-3 py-2 text-sm text-white placeholder-white/20 focus:outline-none focus:border-accent-blue/50 focus:ring-1 focus:ring-accent-blue/50"
+                className="w-full bg-background-900 border border-foreground-950/5 rounded-lg px-3 py-2 text-sm text-foreground-950 placeholder-white/20 focus:outline-none focus:border-accent-blue/50 focus:ring-1 focus:ring-accent-blue/50"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1.5">Phone</label>
+              <label className="block text-sm font-medium text-foreground-300 mb-1.5">Phone</label>
               <input
                 name="phone"
                 value={form.phone}
                 onChange={handleChange}
                 placeholder="0917 123 4567"
-                className="w-full bg-background-900 border border-white/5 rounded-lg px-3 py-2 text-sm text-white placeholder-white/20 focus:outline-none focus:border-accent-blue/50 focus:ring-1 focus:ring-accent-blue/50"
+                className="w-full bg-background-900 border border-foreground-950/5 rounded-lg px-3 py-2 text-sm text-foreground-950 placeholder-white/20 focus:outline-none focus:border-accent-blue/50 focus:ring-1 focus:ring-accent-blue/50"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1.5">Email</label>
+              <label className="block text-sm font-medium text-foreground-300 mb-1.5">Email</label>
               <input
                 name="email"
                 type="email"
                 value={form.email}
                 onChange={handleChange}
                 placeholder="juan@example.com"
-                className="w-full bg-background-900 border border-white/5 rounded-lg px-3 py-2 text-sm text-white placeholder-white/20 focus:outline-none focus:border-accent-blue/50 focus:ring-1 focus:ring-accent-blue/50"
+                className="w-full bg-background-900 border border-foreground-950/5 rounded-lg px-3 py-2 text-sm text-foreground-950 placeholder-white/20 focus:outline-none focus:border-accent-blue/50 focus:ring-1 focus:ring-accent-blue/50"
               />
             </div>
             <div className="sm:col-span-2">
-              <label className="block text-sm font-medium text-gray-300 mb-1.5">Address</label>
+              <label className="block text-sm font-medium text-foreground-300 mb-1.5">Address</label>
               <input
                 name="addressLine"
                 value={form.addressLine}
                 onChange={handleChange}
                 placeholder="123 Rizal St, Barangay Poblacion"
-                className="w-full bg-background-900 border border-white/5 rounded-lg px-3 py-2 text-sm text-white placeholder-white/20 focus:outline-none focus:border-accent-blue/50 focus:ring-1 focus:ring-accent-blue/50"
+                className="w-full bg-background-900 border border-foreground-950/5 rounded-lg px-3 py-2 text-sm text-foreground-950 placeholder-white/20 focus:outline-none focus:border-accent-blue/50 focus:ring-1 focus:ring-accent-blue/50"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1.5">City</label>
+              <label className="block text-sm font-medium text-foreground-300 mb-1.5">City</label>
               <input
                 name="city"
                 value={form.city}
                 onChange={handleChange}
                 placeholder="Cebu City"
-                className="w-full bg-background-900 border border-white/5 rounded-lg px-3 py-2 text-sm text-white placeholder-white/20 focus:outline-none focus:border-accent-blue/50 focus:ring-1 focus:ring-accent-blue/50"
+                className="w-full bg-background-900 border border-foreground-950/5 rounded-lg px-3 py-2 text-sm text-foreground-950 placeholder-white/20 focus:outline-none focus:border-accent-blue/50 focus:ring-1 focus:ring-accent-blue/50"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1.5">Province</label>
+              <label className="block text-sm font-medium text-foreground-300 mb-1.5">Province</label>
               <input
                 name="province"
                 value={form.province}
                 onChange={handleChange}
                 placeholder="Cebu"
-                className="w-full bg-background-900 border border-white/5 rounded-lg px-3 py-2 text-sm text-white placeholder-white/20 focus:outline-none focus:border-accent-blue/50 focus:ring-1 focus:ring-accent-blue/50"
+                className="w-full bg-background-900 border border-foreground-950/5 rounded-lg px-3 py-2 text-sm text-foreground-950 placeholder-white/20 focus:outline-none focus:border-accent-blue/50 focus:ring-1 focus:ring-accent-blue/50"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1.5">Customer Type</label>
+              <label className="block text-sm font-medium text-foreground-300 mb-1.5">Customer Type</label>
               <select
                 name="customerType"
                 value={form.customerType}
                 onChange={handleChange}
-                className="w-full bg-background-900 border border-white/5 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-accent-blue/50 focus:ring-1 focus:ring-accent-blue/50"
+                className="w-full bg-background-900 border border-foreground-950/5 rounded-lg px-3 py-2 text-sm text-foreground-950 focus:outline-none focus:border-accent-blue/50 focus:ring-1 focus:ring-accent-blue/50"
               >
                 {CUSTOMER_TYPES.map((t) => (
                   <option key={t.value} value={t.value}>{t.label}</option>
@@ -170,23 +170,23 @@ export default function NewLeadPage() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1.5">Est. Monthly Bill (₱)</label>
+              <label className="block text-sm font-medium text-foreground-300 mb-1.5">Est. Monthly Bill (?)</label>
               <input
                 name="monthlyBillPhp"
                 type="number"
                 value={form.monthlyBillPhp}
                 onChange={handleChange}
                 placeholder="5000"
-                className="w-full bg-background-900 border border-white/5 rounded-lg px-3 py-2 text-sm text-white placeholder-white/20 focus:outline-none focus:border-accent-blue/50 focus:ring-1 focus:ring-accent-blue/50"
+                className="w-full bg-background-900 border border-foreground-950/5 rounded-lg px-3 py-2 text-sm text-foreground-950 placeholder-white/20 focus:outline-none focus:border-accent-blue/50 focus:ring-1 focus:ring-accent-blue/50"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1.5">Source</label>
+              <label className="block text-sm font-medium text-foreground-300 mb-1.5">Source</label>
               <select
                 name="source"
                 value={form.source}
                 onChange={handleChange}
-                className="w-full bg-background-900 border border-white/5 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-accent-blue/50 focus:ring-1 focus:ring-accent-blue/50"
+                className="w-full bg-background-900 border border-foreground-950/5 rounded-lg px-3 py-2 text-sm text-foreground-950 focus:outline-none focus:border-accent-blue/50 focus:ring-1 focus:ring-accent-blue/50"
               >
                 {SOURCES.map((s) => (
                   <option key={s.value} value={s.value}>{s.label}</option>
@@ -194,14 +194,14 @@ export default function NewLeadPage() {
               </select>
             </div>
             <div className="sm:col-span-2">
-              <label className="block text-sm font-medium text-gray-300 mb-1.5">Notes</label>
+              <label className="block text-sm font-medium text-foreground-300 mb-1.5">Notes</label>
               <textarea
                 name="notes"
                 value={form.notes}
                 onChange={handleChange}
                 rows={3}
                 placeholder="Any additional information about this prospect..."
-                className="w-full bg-background-900 border border-white/5 rounded-lg px-3 py-2 text-sm text-white placeholder-white/20 focus:outline-none focus:border-accent-blue/50 focus:ring-1 focus:ring-accent-blue/50 resize-none"
+                className="w-full bg-background-900 border border-foreground-950/5 rounded-lg px-3 py-2 text-sm text-foreground-950 placeholder-white/20 focus:outline-none focus:border-accent-blue/50 focus:ring-1 focus:ring-accent-blue/50 resize-none"
               />
             </div>
           </div>
@@ -210,14 +210,14 @@ export default function NewLeadPage() {
         <div className="flex justify-end gap-3">
           <Link
             href="/crm/leads"
-            className="px-4 py-2 rounded-lg border border-white/10 text-sm text-gray-300 hover:bg-white/5 transition-colors"
+            className="px-4 py-2 rounded-lg border border-foreground-950/10 text-sm text-foreground-300 hover:bg-foreground-950/5 transition-colors"
           >
             Cancel
           </Link>
           <button
             type="submit"
             disabled={saving}
-            className="inline-flex items-center gap-2 px-5 py-2 rounded-lg bg-accent-blue text-white text-sm font-semibold hover:bg-accent-blue/90 transition-colors disabled:opacity-50"
+            className="inline-flex items-center gap-2 px-5 py-2 rounded-lg bg-accent-blue text-foreground-950 text-sm font-semibold hover:bg-accent-blue/90 transition-colors disabled:opacity-50"
           >
             <Save className="w-4 h-4" />
             {saving ? 'Saving...' : 'Save Lead'}

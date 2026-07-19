@@ -30,16 +30,16 @@ export default async function InventoryPage() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold text-white mb-1">Inventory Management</h1>
-          <p className="text-sm text-gray-400">Track consigned and owned hardware units by serial number.</p>
+          <h1 className="text-2xl font-bold text-foreground-950 mb-1">Inventory Management</h1>
+          <p className="text-sm text-foreground-400">Track consigned and owned hardware units by serial number.</p>
         </div>
         <AddUnitDialog />
       </div>
 
-      <div className="bg-background-800 border border-white/5 rounded-xl overflow-hidden">
+      <div className="bg-background-800 border border-foreground-950/5 rounded-xl overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm text-gray-300">
-            <thead className="bg-white/5 text-xs uppercase text-gray-400">
+          <table className="w-full text-left text-sm text-foreground-300">
+            <thead className="bg-foreground-950/5 text-xs uppercase text-foreground-400">
               <tr>
                 <th className="px-6 py-4 font-medium">Serial / Model</th>
                 <th className="px-6 py-4 font-medium">Type</th>
@@ -51,16 +51,16 @@ export default async function InventoryPage() {
             <tbody className="divide-y divide-white/5">
               {inventory.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-8 text-center text-gray-500">
+                  <td colSpan={5} className="px-6 py-8 text-center text-foreground-500">
                     No inventory units found.
                   </td>
                 </tr>
               ) : (
                 inventory.map((item) => (
-                  <tr key={item.id} className="hover:bg-white/5 transition-colors cursor-pointer">
+                  <tr key={item.id} className="hover:bg-foreground-950/5 transition-colors cursor-pointer">
                     <td className="px-6 py-4">
-                      <div className="font-medium text-white">{item.serialNumber}</div>
-                      <div className="text-xs text-gray-500">
+                      <div className="font-medium text-foreground-950">{item.serialNumber}</div>
+                      <div className="text-xs text-foreground-500">
                         {item.inverter?.modelName || item.battery?.modelName || '—'}
                       </div>
                     </td>
@@ -73,7 +73,7 @@ export default async function InventoryPage() {
                           ? 'bg-accent-emerald/10 text-accent-emerald'
                           : item.ownershipStatus === 'reserved'
                           ? 'bg-accent-cyan/10 text-accent-cyan'
-                          : 'bg-white/5 text-gray-400'
+                          : 'bg-foreground-950/5 text-foreground-400'
                       }`}>
                         {item.ownershipStatus.replace(/_/g, ' ')}
                       </span>
@@ -81,7 +81,7 @@ export default async function InventoryPage() {
                     <td className="px-6 py-4 text-xs">
                       {item.consignmentRemitStatus.replace(/_/g, ' ')}
                     </td>
-                    <td className="px-6 py-4 text-gray-500">
+                    <td className="px-6 py-4 text-foreground-500">
                       {item.receivedDate.toLocaleDateString()}
                     </td>
                   </tr>

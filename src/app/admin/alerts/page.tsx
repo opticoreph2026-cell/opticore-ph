@@ -34,40 +34,40 @@ export default async function AdminAlertsPage() {
     <div className="space-y-8 animate-in fade-in duration-500">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-display font-bold text-white tracking-tight flex items-center gap-3">
+          <h1 className="text-3xl font-display font-bold text-foreground-950 tracking-tight flex items-center gap-3">
             <Bell className="w-8 h-8 text-amber-500" />
             Global Alerts
           </h1>
-          <p className="text-white/60 mt-1">System notifications, security events, and platform telemetry.</p>
+          <p className="text-foreground-950/60 mt-1">System notifications, security events, and platform telemetry.</p>
         </div>
       </div>
 
       <SpotlightCard className="p-6">
-        <h2 className="text-xl font-medium text-white mb-6">Recent Admin Notifications</h2>
+        <h2 className="text-xl font-medium text-foreground-950 mb-6">Recent Admin Notifications</h2>
         
         {notifications.length === 0 ? (
           <div className="p-12 flex flex-col items-center justify-center text-center border border-dashed border-border-subtle rounded-2xl">
-            <Bell className="w-12 h-12 text-white/20 mb-4" />
-            <h3 className="text-lg font-medium text-white mb-2">All Clear</h3>
-            <p className="text-sm text-white/60">There are no recent alerts or notifications.</p>
+            <Bell className="w-12 h-12 text-foreground-950/20 mb-4" />
+            <h3 className="text-lg font-medium text-foreground-950 mb-2">All Clear</h3>
+            <p className="text-sm text-foreground-950/60">There are no recent alerts or notifications.</p>
           </div>
         ) : (
           <div className="space-y-4">
             {notifications.map((notif: any) => (
-              <div key={notif.id} className={`p-4 rounded-xl border flex gap-4 ${notif.isRead ? 'bg-surface-1000 border-border-subtle opacity-70' : 'bg-surface-900 border-white/10'}`}>
+              <div key={notif.id} className={`p-4 rounded-xl border flex gap-4 ${notif.isRead ? 'bg-surface-1000 border-border-subtle opacity-70' : 'bg-surface-900 border-foreground-950/10'}`}>
                 <div className={`w-10 h-10 rounded-xl shrink-0 flex items-center justify-center border ${getBg(notif.type)}`}>
                   {getIcon(notif.type)}
                 </div>
                 <div className="flex-1">
                   <div className="flex items-start justify-between gap-4">
-                    <h3 className={`text-sm font-medium ${notif.isRead ? 'text-white/80' : 'text-white'}`}>
+                    <h3 className={`text-sm font-medium ${notif.isRead ? 'text-foreground-950/80' : 'text-foreground-950'}`}>
                       {notif.title}
                     </h3>
-                    <span className="text-xs font-mono text-white/40 shrink-0">
+                    <span className="text-xs font-mono text-foreground-950/40 shrink-0">
                       {new Date(notif.createdAt).toLocaleString()}
                     </span>
                   </div>
-                  <p className="text-sm text-white/60 mt-1">{notif.message}</p>
+                  <p className="text-sm text-foreground-950/60 mt-1">{notif.message}</p>
                 </div>
                 <div className="shrink-0 flex items-start">
                   <DismissButton id={notif.id} isRead={notif.isRead} />

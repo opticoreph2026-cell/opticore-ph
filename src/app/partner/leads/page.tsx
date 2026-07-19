@@ -15,7 +15,7 @@ export default async function PartnerLeadsPage() {
   if (!orgId) {
     return (
       <div className="py-12 text-center">
-        <p className="text-white/60">No organization assigned. Contact OptiCore admin.</p>
+        <p className="text-foreground-950/60">No organization assigned. Contact OptiCore admin.</p>
       </div>
     );
   }

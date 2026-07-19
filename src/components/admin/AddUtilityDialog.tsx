@@ -47,7 +47,7 @@ export function AddUtilityDialog() {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="flex items-center gap-2 px-4 py-2 bg-accent-blue text-white font-medium rounded-lg hover:bg-accent-blue/90 transition-colors text-sm"
+        className="flex items-center gap-2 px-4 py-2 bg-accent-blue text-foreground-950 font-medium rounded-lg hover:bg-accent-blue/90 transition-colors text-sm"
       >
         <Plus className="w-4 h-4" />
         Add Utility
@@ -58,67 +58,67 @@ export function AddUtilityDialog() {
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setOpen(false)} />
           <div className="relative bg-surface-900 border border-border-subtle rounded-2xl p-6 w-full max-w-lg mx-4 shadow-2xl">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-lg font-bold text-white">Add Utility Company</h2>
-              <button onClick={() => setOpen(false)} className="p-1 text-white/40 hover:text-white rounded-lg hover:bg-white/5">
+              <h2 className="text-lg font-bold text-foreground-950">Add Utility Company</h2>
+              <button onClick={() => setOpen(false)} className="p-1 text-foreground-950/40 hover:text-foreground-950 rounded-lg hover:bg-foreground-950/5">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-white/80 mb-1">Code *</label>
+                <label className="block text-sm font-medium text-foreground-950/80 mb-1">Code *</label>
                 <input
                   type="text"
                   required
                   value={form.code}
                   onChange={(e) => setForm({ ...form, code: e.target.value })}
                   placeholder="e.g. VECO, CEBECO_I"
-                  className="w-full px-3 py-2 bg-surface-800 border border-border-subtle rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent-blue"
+                  className="w-full px-3 py-2 bg-surface-800 border border-border-subtle rounded-lg text-foreground-950 text-sm focus:outline-none focus:ring-2 focus:ring-accent-blue"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-white/80 mb-1">Name *</label>
+                <label className="block text-sm font-medium text-foreground-950/80 mb-1">Name *</label>
                 <input
                   type="text"
                   required
                   value={form.name}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
                   placeholder="e.g. Visayan Electric Company"
-                  className="w-full px-3 py-2 bg-surface-800 border border-border-subtle rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent-blue"
+                  className="w-full px-3 py-2 bg-surface-800 border border-border-subtle rounded-lg text-foreground-950 text-sm focus:outline-none focus:ring-2 focus:ring-accent-blue"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-white/80 mb-1">Territory</label>
+                <label className="block text-sm font-medium text-foreground-950/80 mb-1">Territory</label>
                 <input
                   type="text"
                   value={form.territory}
                   onChange={(e) => setForm({ ...form, territory: e.target.value })}
                   placeholder="e.g. Cebu"
-                  className="w-full px-3 py-2 bg-surface-800 border border-border-subtle rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent-blue"
+                  className="w-full px-3 py-2 bg-surface-800 border border-border-subtle rounded-lg text-foreground-950 text-sm focus:outline-none focus:ring-2 focus:ring-accent-blue"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-white/80 mb-1">Net Metering URL</label>
+                <label className="block text-sm font-medium text-foreground-950/80 mb-1">Net Metering URL</label>
                 <input
                   type="url"
                   value={form.netMeteringApplicationUrl}
                   onChange={(e) => setForm({ ...form, netMeteringApplicationUrl: e.target.value })}
                   placeholder="https://..."
-                  className="w-full px-3 py-2 bg-surface-800 border border-border-subtle rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent-blue"
+                  className="w-full px-3 py-2 bg-surface-800 border border-border-subtle rounded-lg text-foreground-950 text-sm focus:outline-none focus:ring-2 focus:ring-accent-blue"
                 />
               </div>
 
               <div className="flex justify-end gap-3 pt-2">
-                <button type="button" onClick={() => setOpen(false)} className="px-4 py-2 text-sm text-white/60 hover:text-white transition-colors">
+                <button type="button" onClick={() => setOpen(false)} className="px-4 py-2 text-sm text-foreground-950/60 hover:text-foreground-950 transition-colors">
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={saving || !form.code.trim() || !form.name.trim()}
-                  className="px-4 py-2 text-sm font-medium bg-accent-blue text-white rounded-lg hover:bg-accent-blue/90 disabled:opacity-50 transition-colors"
+                  className="px-4 py-2 text-sm font-medium bg-accent-blue text-foreground-950 rounded-lg hover:bg-accent-blue/90 disabled:opacity-50 transition-colors"
                 >
                   {saving ? 'Saving...' : 'Add Utility'}
                 </button>

@@ -75,7 +75,7 @@ function ResetPasswordForm() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
         </div>
-        <p className="text-white/80 text-sm mb-6">Your password has been reset successfully.</p>
+        <p className="text-foreground-950/80 text-sm mb-6">Your password has been reset successfully.</p>
         <Link
           href="/login"
           className="text-sm text-accent-cyan hover:text-accent-cyan/80 transition-colors font-medium"
@@ -109,12 +109,12 @@ function ResetPasswordForm() {
       <button
         type="submit"
         disabled={loading || !password || !confirmPassword}
-        className="w-full flex justify-center py-2.5 px-4 rounded-lg text-sm font-medium text-white bg-gradient-to-r from-accent-cyan to-accent-emerald hover:opacity-90 disabled:opacity-50"
+        className="w-full flex justify-center py-2.5 px-4 rounded-lg text-sm font-medium text-foreground-950 bg-gradient-to-r from-accent-cyan to-accent-emerald hover:opacity-90 disabled:opacity-50"
       >
-        {loading ? <Spinner className="w-5 h-5 text-white" /> : 'Reset Password'}
+        {loading ? <Spinner className="w-5 h-5 text-foreground-950" /> : 'Reset Password'}
       </button>
 
-      <p className="text-center text-xs text-white/40">
+      <p className="text-center text-xs text-foreground-950/40">
         Remember your password?{' '}
         <Link href="/login" className="font-medium text-accent-cyan hover:text-accent-cyan/80 transition-colors">
           Sign in
@@ -131,15 +131,15 @@ export default function ResetPasswordPage() {
 
       <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10 flex flex-col items-center">
         <Logo className="mb-6 h-12" />
-        <h2 className="text-center text-3xl font-display font-bold text-white tracking-tight">
+        <h2 className="text-center text-3xl font-display font-bold text-foreground-950 tracking-tight">
           Reset Password
         </h2>
-        <p className="mt-2 text-center text-sm text-white/60">Choose a new password for your account</p>
+        <p className="mt-2 text-center text-sm text-foreground-950/60">Choose a new password for your account</p>
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md relative z-10">
         <div className="bg-surface-900/80 backdrop-blur-md py-8 px-4 shadow-2xl border border-border-subtle sm:rounded-2xl sm:px-10">
-          <Suspense fallback={<Spinner className="w-6 h-6 text-white/40 mx-auto" />}>
+          <Suspense fallback={<Spinner className="w-6 h-6 text-foreground-950/40 mx-auto" />}>
             <ResetPasswordForm />
           </Suspense>
         </div>

@@ -33,8 +33,8 @@ export default function CustomerSupportPage() {
   return (
     <div className="max-w-2xl space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-white mb-2">Support</h1>
-        <p className="text-gray-400">Get help with your solar system or account.</p>
+        <h1 className="text-3xl font-bold text-foreground-950 mb-2">Support</h1>
+        <p className="text-foreground-400">Get help with your solar system or account.</p>
       </div>
 
       {status === 'success' && (
@@ -50,24 +50,24 @@ export default function CustomerSupportPage() {
       )}
 
       <form onSubmit={handleSubmit} className="space-y-5">
-        <div className="bg-background-800 border border-white/5 rounded-xl p-6 space-y-5">
+        <div className="bg-background-800 border border-foreground-950/5 rounded-xl p-6 space-y-5">
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-1.5">Subject</label>
+            <label className="block text-sm font-medium text-foreground-300 mb-1.5">Subject</label>
             <input
               value={subject}
               onChange={(e) => setSubject(e.target.value)}
               placeholder="Brief description of your issue"
-              className="w-full bg-background-900 border border-white/5 rounded-lg px-3 py-2 text-sm text-white placeholder-white/20 focus:outline-none focus:border-accent-cyan/50 focus:ring-1 focus:ring-accent-cyan/50"
+              className="w-full bg-background-900 border border-foreground-950/5 rounded-lg px-3 py-2 text-sm text-foreground-950 placeholder-white/20 focus:outline-none focus:border-accent-cyan/50 focus:ring-1 focus:ring-accent-cyan/50"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-1.5">Message</label>
+            <label className="block text-sm font-medium text-foreground-300 mb-1.5">Message</label>
             <textarea
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               rows={6}
               placeholder="Describe your concern in detail..."
-              className="w-full bg-background-900 border border-white/5 rounded-lg px-3 py-2 text-sm text-white placeholder-white/20 focus:outline-none focus:border-accent-cyan/50 focus:ring-1 focus:ring-accent-cyan/50 resize-none"
+              className="w-full bg-background-900 border border-foreground-950/5 rounded-lg px-3 py-2 text-sm text-foreground-950 placeholder-white/20 focus:outline-none focus:border-accent-cyan/50 focus:ring-1 focus:ring-accent-cyan/50 resize-none"
             />
           </div>
         </div>

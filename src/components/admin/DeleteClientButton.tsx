@@ -32,7 +32,7 @@ export function DeleteClientButton({ clientId, clientEmail }: DeleteClientButton
       <button
         type="button"
         onClick={() => setConfirming(true)}
-        className="p-1.5 rounded-lg text-white/30 hover:text-accent-rose hover:bg-accent-rose/10 transition-colors"
+        className="p-1.5 rounded-lg text-foreground-950/30 hover:text-accent-rose hover:bg-accent-rose/10 transition-colors"
         title="Delete user"
       >
         <Trash2 className="w-4 h-4" />
@@ -41,9 +41,9 @@ export function DeleteClientButton({ clientId, clientEmail }: DeleteClientButton
       {confirming && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
           <div className="bg-surface-900 border border-border-subtle rounded-2xl p-6 w-full max-w-sm mx-4 shadow-2xl">
-            <h3 className="text-lg font-semibold text-white mb-2">Delete User</h3>
-            <p className="text-sm text-white/60 mb-6">
-              Are you sure you want to delete <strong className="text-white">{clientEmail}</strong>?
+            <h3 className="text-lg font-semibold text-foreground-950 mb-2">Delete User</h3>
+            <p className="text-sm text-foreground-950/60 mb-6">
+              Are you sure you want to delete <strong className="text-foreground-950">{clientEmail}</strong>?
               This action cannot be undone. Their profile and account data will be permanently removed.
             </p>
             <div className="flex items-center justify-end gap-3">
@@ -51,7 +51,7 @@ export function DeleteClientButton({ clientId, clientEmail }: DeleteClientButton
                 type="button"
                 onClick={() => { setConfirming(false); setLoading(false); }}
                 disabled={loading}
-                className="px-4 py-2 text-sm text-white/60 hover:text-white transition-colors disabled:opacity-50"
+                className="px-4 py-2 text-sm text-foreground-950/60 hover:text-foreground-950 transition-colors disabled:opacity-50"
               >
                 Cancel
               </button>
@@ -59,7 +59,7 @@ export function DeleteClientButton({ clientId, clientEmail }: DeleteClientButton
                 type="button"
                 onClick={handleDelete}
                 disabled={loading}
-                className="px-4 py-2 text-sm font-medium text-white bg-accent-rose rounded-xl hover:bg-accent-rose/90 transition-colors disabled:opacity-50"
+                className="px-4 py-2 text-sm font-medium text-foreground-950 bg-accent-rose rounded-xl hover:bg-accent-rose/90 transition-colors disabled:opacity-50"
               >
                 {loading ? 'Deleting...' : 'Delete'}
               </button>

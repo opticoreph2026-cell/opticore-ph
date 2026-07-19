@@ -43,12 +43,12 @@ export default function PartnerROIPage() {
   }, [designId]);
 
   if (loading) {
-    return <div className="p-8 text-gray-400">Loading ROI data...</div>;
+    return <div className="p-8 text-foreground-400">Loading ROI data...</div>;
   }
 
   if (!scenario?.parsed) {
     return (
-      <div className="p-8 text-gray-400">
+      <div className="p-8 text-foreground-400">
         No ROI model found. Complete the engineering calculator wizard first.
       </div>
     );
@@ -69,8 +69,8 @@ export default function PartnerROIPage() {
   return (
     <div className="max-w-6xl mx-auto space-y-8">
       <div>
-        <h1 className="text-3xl font-display font-bold text-white mb-1">Financial Analysis & ROI</h1>
-        <p className="text-white/40">
+        <h1 className="text-3xl font-display font-bold text-foreground-950 mb-1">Financial Analysis & ROI</h1>
+        <p className="text-foreground-950/40">
           {scenario.design?.site?.customer?.fullName ?? 'Customer'} &middot; {scenario.scenarioLabel}
         </p>
       </div>
@@ -94,8 +94,8 @@ export default function PartnerROIPage() {
       </div>
 
       {chartData.length > 0 && (
-        <div className="bg-background-900 p-6 rounded-2xl border border-white/5">
-          <h2 className="text-lg font-bold text-white mb-6">25-Year Cumulative Cash Flow</h2>
+        <div className="bg-background-900 p-6 rounded-2xl border border-foreground-950/5">
+          <h2 className="text-lg font-bold text-foreground-950 mb-6">25-Year Cumulative Cash Flow</h2>
           <div className="h-[400px]">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={chartData}>
@@ -152,13 +152,13 @@ function MetricCard({
       className={`rounded-2xl p-5 border text-center ${
         highlight
           ? 'bg-accent-cyan/10 border-accent-cyan/20'
-          : 'bg-background-800 border-white/5'
+          : 'bg-background-800 border-foreground-950/5'
       }`}
     >
-      <p className="text-xs text-white/40 mb-2">{label}</p>
+      <p className="text-xs text-foreground-950/40 mb-2">{label}</p>
       <p
         className={`text-2xl font-bold ${
-          accent ? 'text-accent-emerald' : highlight ? 'text-accent-cyan' : 'text-white'
+          accent ? 'text-accent-emerald' : highlight ? 'text-accent-cyan' : 'text-foreground-950'
         }`}
       >
         {value}

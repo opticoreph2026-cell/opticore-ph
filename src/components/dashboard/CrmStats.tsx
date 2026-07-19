@@ -29,7 +29,7 @@ const statusColors: Record<string, string> = {
   negotiating: 'bg-amber-500/15 text-amber-400',
   won: 'bg-accent-emerald/20 text-accent-emerald font-semibold',
   lost: 'bg-accent-rose/15 text-accent-rose',
-  disqualified: 'bg-white/5 text-white/30',
+  disqualified: 'bg-foreground-950/5 text-foreground-950/30',
   converted: 'bg-accent-emerald/20 text-accent-emerald font-semibold',
 };
 
@@ -52,16 +52,16 @@ export function CrmStats({ initialData, firstName, isOwner }: { initialData: Crm
     <div className="space-y-8 max-w-7xl">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-display font-bold text-white">
+          <h1 className="text-2xl font-display font-bold text-foreground-950">
             Good morning, {firstName}
           </h1>
-          <p className="text-sm text-white/40 mt-1">
+          <p className="text-sm text-foreground-950/40 mt-1">
             Here&apos;s what&apos;s happening at OptiCore Energy Solutions today.
           </p>
         </div>
         <Link
           href="/crm/leads"
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-accent-blue text-white text-sm font-semibold hover:bg-accent-blue/90 transition-colors shadow-lg shadow-accent-blue/20"
+          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-accent-blue text-foreground-950 text-sm font-semibold hover:bg-accent-blue/90 transition-colors shadow-lg shadow-accent-blue/20"
         >
           <PlusCircle className="w-4 h-4" />
           New Lead
@@ -77,24 +77,24 @@ export function CrmStats({ initialData, firstName, isOwner }: { initialData: Crm
           { label: 'Commissioned', value: stats.commissioned, icon: Handshake, color: 'text-accent-emerald', bg: 'bg-accent-emerald/10', href: '/crm/projects' },
         ].map((stat) => (
           <Link key={stat.label} href={stat.href}
-            className="group bg-background-900 border border-white/5 rounded-2xl p-5 hover:border-white/10 hover:bg-background-800 transition-all duration-200"
+            className="group bg-background-900 border border-foreground-950/5 rounded-2xl p-5 hover:border-foreground-950/10 hover:bg-background-800 transition-all duration-200"
           >
             <div className="flex items-start justify-between mb-4">
               <div className={`w-10 h-10 rounded-xl ${stat.bg} flex items-center justify-center`}>
                 <stat.icon className={`w-5 h-5 ${stat.color}`} />
               </div>
-              <ArrowRight className="w-4 h-4 text-white/20 group-hover:text-white/50 group-hover:translate-x-0.5 transition-all" />
+              <ArrowRight className="w-4 h-4 text-foreground-950/20 group-hover:text-foreground-950/50 group-hover:translate-x-0.5 transition-all" />
             </div>
-            <p className="text-3xl font-bold text-white font-display">{stat.value}</p>
-            <p className="text-sm text-white/40 mt-1">{stat.label}</p>
+            <p className="text-3xl font-bold text-foreground-950 font-display">{stat.value}</p>
+            <p className="text-sm text-foreground-950/40 mt-1">{stat.label}</p>
           </Link>
         ))}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 bg-background-900 border border-white/5 rounded-2xl overflow-hidden">
-          <div className="flex items-center justify-between px-6 py-4 border-b border-white/5">
-            <h2 className="font-display font-semibold text-white">Recent Leads</h2>
+        <div className="lg:col-span-2 bg-background-900 border border-foreground-950/5 rounded-2xl overflow-hidden">
+          <div className="flex items-center justify-between px-6 py-4 border-b border-foreground-950/5">
+            <h2 className="font-display font-semibold text-foreground-950">Recent Leads</h2>
             <Link href="/crm/leads"
               className="text-xs text-accent-cyan hover:text-accent-cyan/80 flex items-center gap-1 transition-colors"
             >View all <ChevronRight className="w-3 h-3" /></Link>
@@ -102,8 +102,8 @@ export function CrmStats({ initialData, firstName, isOwner }: { initialData: Crm
 
           {recentLeads.length === 0 ? (
             <div className="py-16 text-center">
-              <Users className="w-10 h-10 text-white/10 mx-auto mb-3" />
-              <p className="text-sm text-white/30">No leads yet</p>
+              <Users className="w-10 h-10 text-foreground-950/10 mx-auto mb-3" />
+              <p className="text-sm text-foreground-950/30">No leads yet</p>
               <Link href="/crm/leads"
                 className="mt-4 inline-flex items-center gap-2 text-sm text-accent-blue hover:text-accent-blue/80 transition-colors"
               ><PlusCircle className="w-4 h-4" /> Add your first lead</Link>
@@ -112,24 +112,24 @@ export function CrmStats({ initialData, firstName, isOwner }: { initialData: Crm
             <div className="divide-y divide-white/5">
               {recentLeads.map((lead) => (
                 <Link key={lead.id} href="/crm/leads"
-                  className="flex items-center justify-between px-6 py-4 hover:bg-white/3 transition-colors group"
+                  className="flex items-center justify-between px-6 py-4 hover:bg-foreground-950/3 transition-colors group"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-accent-blue/20 to-accent-cyan/20 flex items-center justify-center text-sm font-bold text-white/60">
+                    <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-accent-blue/20 to-accent-cyan/20 flex items-center justify-center text-sm font-bold text-foreground-950/60">
                       {lead.fullName?.charAt(0) ?? '?'}
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-white/90 group-hover:text-white transition-colors">{lead.fullName}</p>
-                      <p className="text-xs text-white/30 capitalize">{lead.city} · {lead.customerType?.replace(/_/g, ' ')}</p>
+                      <p className="text-sm font-medium text-foreground-950/90 group-hover:text-foreground-950 transition-colors">{lead.fullName}</p>
+                      <p className="text-xs text-foreground-950/30 capitalize">{lead.city} · {lead.customerType?.replace(/_/g, ' ')}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
                     <span
                       className={`text-[11px] font-medium px-2.5 py-1 rounded-full ${
-                        statusColors[lead.status ?? 'new'] ?? 'bg-white/5 text-white/40'
+                        statusColors[lead.status ?? 'new'] ?? 'bg-foreground-950/5 text-foreground-950/40'
                       }`}
                     >{statusLabel[lead.status ?? 'new'] ?? lead.status}</span>
-                    <ChevronRight className="w-4 h-4 text-white/20 group-hover:text-white/50 transition-colors" />
+                    <ChevronRight className="w-4 h-4 text-foreground-950/20 group-hover:text-foreground-950/50 transition-colors" />
                   </div>
                 </Link>
               ))}
@@ -138,9 +138,9 @@ export function CrmStats({ initialData, firstName, isOwner }: { initialData: Crm
         </div>
 
         <div className="space-y-4">
-          <div className="bg-background-900 border border-white/5 rounded-2xl overflow-hidden">
-            <div className="px-6 py-4 border-b border-white/5">
-              <h2 className="font-display font-semibold text-white">Quick Actions</h2>
+          <div className="bg-background-900 border border-foreground-950/5 rounded-2xl overflow-hidden">
+            <div className="px-6 py-4 border-b border-foreground-950/5">
+              <h2 className="font-display font-semibold text-foreground-950">Quick Actions</h2>
             </div>
             <div className="p-4 space-y-2">
               {[
@@ -152,18 +152,18 @@ export function CrmStats({ initialData, firstName, isOwner }: { initialData: Crm
                   : []),
               ].map((action) => (
                 <Link key={action.href} href={action.href}
-                  className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/3 hover:bg-white/6 border border-white/5 hover:border-white/10 transition-all group"
+                  className="flex items-center gap-3 px-4 py-3 rounded-xl bg-foreground-950/3 hover:bg-foreground-950/6 border border-foreground-950/5 hover:border-foreground-950/10 transition-all group"
                 >
                   <action.icon className={`w-4 h-4 ${action.color} flex-shrink-0`} />
-                  <span className="text-sm font-medium text-white/70 group-hover:text-white transition-colors">{action.label}</span>
-                  <ArrowRight className="w-3.5 h-3.5 text-white/20 group-hover:text-white/50 ml-auto transition-colors" />
+                  <span className="text-sm font-medium text-foreground-950/70 group-hover:text-foreground-950 transition-colors">{action.label}</span>
+                  <ArrowRight className="w-3.5 h-3.5 text-foreground-950/20 group-hover:text-foreground-950/50 ml-auto transition-colors" />
                 </Link>
               ))}
             </div>
           </div>
 
-          <div className="bg-background-900 border border-white/5 rounded-2xl p-6">
-            <h3 className="font-semibold text-white text-sm mb-4">Pipeline Health</h3>
+          <div className="bg-background-900 border border-foreground-950/5 rounded-2xl p-6">
+            <h3 className="font-semibold text-foreground-950 text-sm mb-4">Pipeline Health</h3>
             <div className="space-y-3">
               {[
                 { label: 'New → Contacted', pct: stats.newLeads > 0 ? 100 : 0, color: 'bg-accent-cyan' },
@@ -172,8 +172,8 @@ export function CrmStats({ initialData, firstName, isOwner }: { initialData: Crm
                 { label: 'Won / Commissioned', pct: stats.commissioned > 0 ? 20 : 0, color: 'bg-accent-emerald' },
               ].map((stage) => (
                 <div key={stage.label}>
-                  <div className="flex justify-between text-xs text-white/40 mb-1"><span>{stage.label}</span></div>
-                  <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
+                  <div className="flex justify-between text-xs text-foreground-950/40 mb-1"><span>{stage.label}</span></div>
+                  <div className="h-1.5 bg-foreground-950/5 rounded-full overflow-hidden">
                     <div className={`h-full ${stage.color} rounded-full transition-all duration-700`} style={{ width: `${stage.pct}%` }} />
                   </div>
                 </div>

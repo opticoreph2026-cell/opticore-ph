@@ -30,15 +30,15 @@ export default async function AdminEnergyRules() {
     <div className="space-y-6">
       <div className="flex justify-between items-center mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-white mb-2">Utility Rates & Rules</h1>
-          <p className="text-gray-400">Manage distribution utility settings and blended rates.</p>
+          <h1 className="text-3xl font-bold text-foreground-950 mb-2">Utility Rates & Rules</h1>
+          <p className="text-foreground-400">Manage distribution utility settings and blended rates.</p>
         </div>
         <AddUtilityDialog />
       </div>
 
       <div className="bg-surface-800 border border-border-subtle rounded-xl overflow-hidden">
         <table className="w-full text-left text-sm">
-          <thead className="bg-surface-900 border-b border-border-subtle text-white/60">
+          <thead className="bg-surface-900 border-b border-border-subtle text-foreground-950/60">
             <tr>
               <th className="px-6 py-4 font-medium">Code</th>
               <th className="px-6 py-4 font-medium">Name</th>
@@ -47,9 +47,9 @@ export default async function AdminEnergyRules() {
               <th className="px-6 py-4 font-medium"></th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-border-subtle text-white/80">
+          <tbody className="divide-y divide-border-subtle text-foreground-950/80">
             {utilities.map((u: EnergyUtilityCompany & { rateSchedules: UtilityRateSchedule[] }) => (
-              <tr key={u.id} className="hover:bg-white/5 transition-colors">
+              <tr key={u.id} className="hover:bg-foreground-950/5 transition-colors">
                 <td className="px-6 py-4 font-bold text-accent-cyan">{u.code}</td>
                 <td className="px-6 py-4">{u.name}</td>
                 <td className="px-6 py-4">

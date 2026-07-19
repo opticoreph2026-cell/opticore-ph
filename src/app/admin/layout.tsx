@@ -64,7 +64,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const initials = ((user as any).name || user.email || 'JG').slice(0, 2).toUpperCase();
 
   return (
-    <div className="min-h-screen bg-background-950 text-white flex">
+    <div className="min-h-screen bg-background-950 text-foreground-950 flex">
       <MobileDashboardNav
         navItems={adminNavItems.map(({ label, href }) => ({ label, href }))}
         initials={initials}
@@ -75,9 +75,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       />
 
       {/* Admin Sidebar */}
-      <aside className="w-64 border-r border-white/5 bg-background-900 hidden md:flex flex-col h-screen sticky top-0">
+      <aside className="w-64 border-r border-foreground-950/5 bg-background-900 hidden md:flex flex-col h-screen sticky top-0">
         {/* Brand */}
-        <div className="h-16 flex items-center px-5 border-b border-white/5 flex-shrink-0">
+        <div className="h-16 flex items-center px-5 border-b border-foreground-950/5 flex-shrink-0">
           <Logo href="/admin" />
         </div>
 
@@ -86,7 +86,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           <ShieldCheck className="w-4 h-4 text-accent-rose flex-shrink-0" />
           <div>
             <p className="text-xs font-semibold text-accent-rose uppercase tracking-widest">Admin Panel</p>
-            <p className="text-[10px] text-white/30">Full system access</p>
+            <p className="text-[10px] text-foreground-950/30">Full system access</p>
           </div>
         </div>
 
@@ -98,16 +98,16 @@ export default async function AdminLayout({ children }: { children: React.ReactN
               <Link
                 key={item.href}
                 href={item.href}
-                className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-white/50 hover:text-white hover:bg-white/5 transition-all duration-150 group"
+                className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-foreground-950/50 hover:text-foreground-950 hover:bg-foreground-950/5 transition-all duration-150 group"
               >
-                <Icon className="w-4 h-4 flex-shrink-0 text-white/30 group-hover:text-accent-rose transition-colors" />
+                <Icon className="w-4 h-4 flex-shrink-0 text-foreground-950/30 group-hover:text-accent-rose transition-colors" />
                 {item.label}
               </Link>
             );
           })}
 
-          <div className="pt-4 mt-2 border-t border-white/5">
-            <p className="px-3 pb-2 text-[10px] font-semibold text-white/25 uppercase tracking-widest font-mono">
+          <div className="pt-4 mt-2 border-t border-foreground-950/5">
+            <p className="px-3 pb-2 text-[10px] font-semibold text-foreground-950/25 uppercase tracking-widest font-mono">
               Energy CRM
             </p>
             {energyCrmItems.map((item) => {
@@ -116,33 +116,33 @@ export default async function AdminLayout({ children }: { children: React.ReactN
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium text-white/50 hover:text-white hover:bg-white/5 transition-all duration-150 group"
+                  className="flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium text-foreground-950/50 hover:text-foreground-950 hover:bg-foreground-950/5 transition-all duration-150 group"
                 >
-                  <Icon className="w-4 h-4 flex-shrink-0 text-white/30 group-hover:text-accent-cyan transition-colors" />
+                  <Icon className="w-4 h-4 flex-shrink-0 text-foreground-950/30 group-hover:text-accent-cyan transition-colors" />
                   {item.label}
                 </Link>
               );
             })}
           </div>
-          <div className="pt-2 mt-2 border-t border-white/5">
+          <div className="pt-2 mt-2 border-t border-foreground-950/5">
             <Link
               href="/crm"
-              className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-white/50 hover:text-white hover:bg-white/5 transition-all duration-150 group"
+              className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-foreground-950/50 hover:text-foreground-950 hover:bg-foreground-950/5 transition-all duration-150 group"
             >
-              <ArrowLeft className="w-4 h-4 flex-shrink-0 text-white/30 group-hover:text-accent-cyan transition-colors" />
+              <ArrowLeft className="w-4 h-4 flex-shrink-0 text-foreground-950/30 group-hover:text-accent-cyan transition-colors" />
               Back to CRM
             </Link>
           </div>
         </nav>
 
         {/* User footer */}
-        <div className="p-3 border-t border-white/5 flex-shrink-0">
-          <div className="flex items-center gap-3 px-2 py-2 rounded-xl hover:bg-white/5 transition-colors">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-accent-rose/40 to-accent-cyan/40 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+        <div className="p-3 border-t border-foreground-950/5 flex-shrink-0">
+          <div className="flex items-center gap-3 px-2 py-2 rounded-xl hover:bg-foreground-950/5 transition-colors">
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-accent-rose/40 to-accent-cyan/40 flex items-center justify-center text-foreground-950 text-xs font-bold flex-shrink-0">
               {initials}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-xs font-semibold text-white truncate">
+              <p className="text-xs font-semibold text-foreground-950 truncate">
                 {(user as any).name || user.email}
               </p>
               <p className="text-[10px] text-accent-rose/70">Owner · Full Access</p>
@@ -151,7 +151,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
               <button
                 type="submit"
                 title="Sign out"
-                className="p-1.5 text-white/30 hover:text-accent-rose transition-colors rounded-lg hover:bg-accent-rose/10"
+                className="p-1.5 text-foreground-950/30 hover:text-accent-rose transition-colors rounded-lg hover:bg-accent-rose/10"
               >
                 <LogOut className="w-4 h-4" />
               </button>
@@ -163,8 +163,8 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       {/* Main */}
       <main className="flex-1 overflow-x-hidden flex flex-col">
         {/* Top header */}
-        <header className="hidden md:flex h-14 items-center justify-between px-8 bg-background-900/60 backdrop-blur border-b border-white/5 flex-shrink-0">
-          <div className="flex items-center gap-2 text-sm text-white/40">
+        <header className="hidden md:flex h-14 items-center justify-between px-8 bg-background-900/60 backdrop-blur border-b border-foreground-950/5 flex-shrink-0">
+          <div className="flex items-center gap-2 text-sm text-foreground-950/40">
             <ShieldCheck className="w-4 h-4 text-accent-rose" />
             <span>Admin Command Center</span>
           </div>

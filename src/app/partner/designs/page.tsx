@@ -10,7 +10,7 @@ export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 const statusColors: Record<string, string> = {
-  draft: 'bg-white/5 text-white/40',
+  draft: 'bg-foreground-950/5 text-foreground-950/40',
   finalized: 'bg-accent-cyan/15 text-accent-cyan',
   approved_by_customer: 'bg-accent-emerald/15 text-accent-emerald',
 };
@@ -56,26 +56,26 @@ export default async function PartnerDesignsPage() {
     <div className="space-y-6 max-w-7xl">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-display font-bold text-white mb-1">
+          <h1 className="text-2xl font-display font-bold text-foreground-950 mb-1">
             Solar Designs
           </h1>
-          <p className="text-sm text-white/40">
+          <p className="text-sm text-foreground-950/40">
             Engineer solar + ESS system designs for your customers.
           </p>
         </div>
         <Link
           href="/partner/designs/new"
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-accent-emerald text-white text-sm font-semibold hover:bg-accent-emerald/90 transition-colors shadow-lg shadow-accent-emerald/20"
+          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-accent-emerald text-foreground-950 text-sm font-semibold hover:bg-accent-emerald/90 transition-colors shadow-lg shadow-accent-emerald/20"
         >
           <PlusCircle className="w-4 h-4" />
           New Design
         </Link>
       </div>
 
-      <div className="bg-background-900 border border-white/5 rounded-2xl overflow-hidden">
+      <div className="bg-background-900 border border-foreground-950/5 rounded-2xl overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm whitespace-nowrap">
-            <thead className="bg-background-800 text-xs uppercase text-white/30 border-b border-white/5">
+            <thead className="bg-background-800 text-xs uppercase text-foreground-950/30 border-b border-foreground-950/5">
               <tr>
                 <th className="px-6 py-4 font-medium tracking-wider">Customer</th>
                 <th className="px-6 py-4 font-medium tracking-wider">System Size</th>
@@ -85,12 +85,12 @@ export default async function PartnerDesignsPage() {
                 <th className="px-6 py-4 font-medium tracking-wider text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/5 text-white/70">
+            <tbody className="divide-y divide-white/5 text-foreground-950/70">
               {designs.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="px-6 py-16 text-center">
-                    <Calculator className="w-10 h-10 text-white/10 mx-auto mb-3" />
-                    <p className="text-sm text-white/30">No designs created yet</p>
+                    <Calculator className="w-10 h-10 text-foreground-950/10 mx-auto mb-3" />
+                    <p className="text-sm text-foreground-950/30">No designs created yet</p>
                     <Link
                       href="/partner/designs/new"
                       className="mt-4 inline-flex items-center gap-2 text-sm text-accent-emerald hover:text-accent-emerald/80 transition-colors"
@@ -101,28 +101,28 @@ export default async function PartnerDesignsPage() {
                 </tr>
               ) : (
                 designs.map((design: any) => (
-                  <tr key={design.id} className="hover:bg-white/3 transition-colors group">
+                  <tr key={design.id} className="hover:bg-foreground-950/3 transition-colors group">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
                         <div className="w-8 h-8 rounded-xl bg-accent-emerald/10 flex items-center justify-center">
                           <FileText className="w-4 h-4 text-accent-emerald" />
                         </div>
                         <div>
-                          <p className="font-medium text-white group-hover:text-accent-emerald transition-colors">
+                          <p className="font-medium text-foreground-950 group-hover:text-accent-emerald transition-colors">
                             {design.site?.customer?.fullName || 'Unknown'}
                           </p>
-                          <p className="text-xs text-white/30">
+                          <p className="text-xs text-foreground-950/30">
                             {design.designPathway.replace(/_/g, ' ')}
                           </p>
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <p className="text-white font-medium">{design.pvArrayKwp} kWp</p>
-                      <p className="text-xs text-white/30">{design.pvPanelCount} Panels</p>
+                      <p className="text-foreground-950 font-medium">{design.pvArrayKwp} kWp</p>
+                      <p className="text-xs text-foreground-950/30">{design.pvPanelCount} Panels</p>
                     </td>
                     <td className="px-6 py-4">
-                      <p className="text-white/80">{design.inverter?.modelName || '\u2014'}</p>
+                      <p className="text-foreground-950/80">{design.inverter?.modelName || '\u2014'}</p>
                       <p className="text-xs text-accent-cyan">
                         {design.battery ? `${design.battery.usableKwh} kWh Storage` : 'No Storage'}
                       </p>
@@ -130,13 +130,13 @@ export default async function PartnerDesignsPage() {
                     <td className="px-6 py-4">
                       <span
                         className={`inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-medium tracking-wide ${
-                          statusColors[design.status] ?? 'bg-white/5 text-white/40'
+                          statusColors[design.status] ?? 'bg-foreground-950/5 text-foreground-950/40'
                         }`}
                       >
                         {statusLabel[design.status] ?? design.status}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-white/40">
+                    <td className="px-6 py-4 text-foreground-950/40">
                       {new Date(design.createdAt).toLocaleDateString('en-PH', {
                         month: 'short',
                         day: 'numeric',
@@ -146,7 +146,7 @@ export default async function PartnerDesignsPage() {
                     <td className="px-6 py-4 text-right">
                       <Link
                         href={`/partner/roi/${design.id}`}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-white/70 hover:text-white text-xs font-medium transition-all"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-foreground-950/5 hover:bg-foreground-950/10 text-foreground-950/70 hover:text-foreground-950 text-xs font-medium transition-all"
                       >
                         View ROI
                         <ChevronRight className="w-3.5 h-3.5" />
