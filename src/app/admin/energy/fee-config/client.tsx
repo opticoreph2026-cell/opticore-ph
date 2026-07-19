@@ -64,7 +64,7 @@ export function FeeConfigClient({ config }: { config: FeeConfig }) {
           type={type}
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className="w-full bg-[#1A1A24] border border-white/10 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-accent-cyan"
+          className="w-full bg-background-800 border border-white/10 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-accent-cyan"
         />
         {suffix && <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-white/40">{suffix}</span>}
       </div>
@@ -125,7 +125,7 @@ export function FeeConfigClient({ config }: { config: FeeConfig }) {
         </div>
       </SpotlightCard>
 
-      <div className="bg-[#16161D] border border-white/5 rounded-xl p-5">
+      <div className="bg-background-800 border border-white/5 rounded-xl p-5">
         <h3 className="text-sm font-semibold text-white/70 mb-2">How values are used</h3>
         <ul className="text-xs text-white/50 space-y-1.5">
           <li>• <strong className="text-white/70">Design Fee</strong> — Flat fee added to every quotation</li>

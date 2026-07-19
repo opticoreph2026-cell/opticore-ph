@@ -308,7 +308,7 @@ export function DesignWizard({ basePath = '/crm' }: { basePath?: string }) {
       </div>
 
       {/* Progress */}
-      <div className="bg-[#0F0F14] border border-white/5 rounded-2xl p-6">
+      <div className="bg-background-900 border border-white/5 rounded-2xl p-6">
         <div className="flex items-center justify-between relative">
           <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-[2px] bg-white/5 z-0" />
           <div
@@ -324,10 +324,10 @@ export function DesignWizard({ basePath = '/crm' }: { basePath?: string }) {
                 <div
                   className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all ${
                     isActive
-                      ? 'bg-accent-cyan text-[#08080B] scale-110'
+                      ? 'bg-accent-cyan text-background-950 scale-110'
                       : isPast
-                        ? 'bg-[#10B981] text-[#08080B]'
-                        : 'bg-[#16161D] border border-white/10 text-white/30'
+                        ? 'bg-accent-emerald text-background-950'
+                        : 'bg-background-800 border border-white/10 text-white/30'
                   }`}
                 >
                   {isPast ? <CheckCircle2 className="w-4 h-4" /> : <Icon className="w-4 h-4" />}
@@ -351,7 +351,7 @@ export function DesignWizard({ basePath = '/crm' }: { basePath?: string }) {
         </div>
       )}
 
-      <div className="bg-[#0F0F14] border border-white/5 rounded-2xl overflow-hidden">
+      <div className="bg-background-900 border border-white/5 rounded-2xl overflow-hidden">
         {/* Step 1 — Client */}
         {step === 1 && (
           <div className="p-8 space-y-6">
@@ -365,7 +365,7 @@ export function DesignWizard({ basePath = '/crm' }: { basePath?: string }) {
                 <select
                   value={form.leadId}
                   onChange={(e) => onLeadChange(e.target.value)}
-                  className="w-full bg-[#16161D] border border-white/10 rounded-xl px-4 py-3 text-white text-sm"
+                  className="w-full bg-background-800 border border-white/10 rounded-xl px-4 py-3 text-white text-sm"
                 >
                   <option value="">— Select lead —</option>
                   {leads.map((l) => (
@@ -385,7 +385,7 @@ export function DesignWizard({ basePath = '/crm' }: { basePath?: string }) {
                       gridConnectionType: e.target.value as WizardForm['gridConnectionType'],
                     }))
                   }
-                  className="w-full bg-[#16161D] border border-white/10 rounded-xl px-4 py-3 text-white text-sm"
+                  className="w-full bg-background-800 border border-white/10 rounded-xl px-4 py-3 text-white text-sm"
                 >
                   <option value="single_phase">Single-Phase (230V)</option>
                   <option value="three_phase">Three-Phase (400V)</option>
@@ -401,7 +401,7 @@ export function DesignWizard({ basePath = '/crm' }: { basePath?: string }) {
                       designPathway: e.target.value as WizardForm['designPathway'],
                     }))
                   }
-                  className="w-full bg-[#16161D] border border-white/10 rounded-xl px-4 py-3 text-white text-sm"
+                  className="w-full bg-background-800 border border-white/10 rounded-xl px-4 py-3 text-white text-sm"
                 >
                   <option value="zero_export_hybrid">Zero-Export Hybrid (default)</option>
                   <option value="grid_tied_net_metered">Grid-Tied Net Metering</option>
@@ -415,7 +415,7 @@ export function DesignWizard({ basePath = '/crm' }: { basePath?: string }) {
                   step="0.1"
                   value={form.peakSunHours}
                   onChange={(e) => setForm((f) => ({ ...f, peakSunHours: Number(e.target.value) }))}
-                  className="w-full bg-[#16161D] border border-white/10 rounded-xl px-4 py-3 text-white text-sm"
+                  className="w-full bg-background-800 border border-white/10 rounded-xl px-4 py-3 text-white text-sm"
                 />
               </div>
               <div>
@@ -431,7 +431,7 @@ export function DesignWizard({ basePath = '/crm' }: { basePath?: string }) {
                       panelWattage: panel?.wattage ?? f.panelWattage,
                     }));
                   }}
-                  className="w-full bg-[#16161D] border border-white/10 rounded-xl px-4 py-3 text-white text-sm"
+                  className="w-full bg-background-800 border border-white/10 rounded-xl px-4 py-3 text-white text-sm"
                 >
                   <option value="">— Select panel —</option>
                   {panels.map((p) => (
@@ -452,7 +452,7 @@ export function DesignWizard({ basePath = '/crm' }: { basePath?: string }) {
                   onChange={(e) => { setUtilitySearch(e.target.value); setSelectedUtility(null); setShowUtilitySuggestions(true); }}
                   onFocus={() => setShowUtilitySuggestions(true)}
                   placeholder="Search electric company..."
-                  className="w-full bg-[#16161D] border border-white/10 rounded-xl px-4 py-3 text-white text-sm"
+                  className="w-full bg-background-800 border border-white/10 rounded-xl px-4 py-3 text-white text-sm"
                 />
                 {showUtilitySuggestions && utilitySuggestions.length > 0 && !selectedUtility && (
                   <div className="absolute z-20 mt-1 w-full bg-surface-900 border border-border-subtle rounded-xl max-h-48 overflow-y-auto shadow-xl">
@@ -500,7 +500,7 @@ export function DesignWizard({ basePath = '/crm' }: { basePath?: string }) {
                           averageMonthlyKwh: Math.round(f.averageMonthlyBill / rate) || f.averageMonthlyKwh,
                         }));
                       }}
-                      className="w-full bg-[#16161D] border border-white/10 rounded-xl px-4 py-3 text-white text-sm"
+                      className="w-full bg-background-800 border border-white/10 rounded-xl px-4 py-3 text-white text-sm"
                     />
                   </div>
                 )}
@@ -535,7 +535,7 @@ export function DesignWizard({ basePath = '/crm' }: { basePath?: string }) {
                       averageMonthlyKwh: Math.round(bill / f.allInRatePhp),
                     }));
                   }}
-                  className="w-full bg-[#16161D] border border-white/10 rounded-xl px-4 py-3 text-white text-sm"
+                  className="w-full bg-background-800 border border-white/10 rounded-xl px-4 py-3 text-white text-sm"
                 />
               </div>
               <div>
@@ -544,7 +544,7 @@ export function DesignWizard({ basePath = '/crm' }: { basePath?: string }) {
                   type="number"
                   value={form.averageMonthlyKwh}
                   onChange={(e) => setForm((f) => ({ ...f, averageMonthlyKwh: Number(e.target.value) }))}
-                  className="w-full bg-[#16161D] border border-white/10 rounded-xl px-4 py-3 text-white text-sm"
+                  className="w-full bg-background-800 border border-white/10 rounded-xl px-4 py-3 text-white text-sm"
                 />
               </div>
               <div>
@@ -567,7 +567,7 @@ export function DesignWizard({ basePath = '/crm' }: { basePath?: string }) {
                   max={24}
                   value={form.backupAutonomyHours}
                   onChange={(e) => setForm((f) => ({ ...f, backupAutonomyHours: Number(e.target.value) }))}
-                  className="w-full bg-[#16161D] border border-white/10 rounded-xl px-4 py-3 text-white text-sm"
+                  className="w-full bg-background-800 border border-white/10 rounded-xl px-4 py-3 text-white text-sm"
                 />
               </div>
             </div>
@@ -595,28 +595,28 @@ export function DesignWizard({ basePath = '/crm' }: { basePath?: string }) {
                         placeholder="Name"
                         value={load.name}
                         onChange={(e) => updateLoad(i, { name: e.target.value })}
-                        className="col-span-4 bg-[#16161D] border border-white/10 rounded-lg px-3 py-2 text-sm text-white"
+                        className="col-span-4 bg-background-800 border border-white/10 rounded-lg px-3 py-2 text-sm text-white"
                       />
                       <input
                         type="number"
                         placeholder="W"
                         value={load.watts}
                         onChange={(e) => updateLoad(i, { watts: Number(e.target.value) })}
-                        className="col-span-2 bg-[#16161D] border border-white/10 rounded-lg px-3 py-2 text-sm text-white"
+                        className="col-span-2 bg-background-800 border border-white/10 rounded-lg px-3 py-2 text-sm text-white"
                       />
                       <input
                         type="number"
                         placeholder="Qty"
                         value={load.quantity}
                         onChange={(e) => updateLoad(i, { quantity: Number(e.target.value) })}
-                        className="col-span-1 bg-[#16161D] border border-white/10 rounded-lg px-3 py-2 text-sm text-white"
+                        className="col-span-1 bg-background-800 border border-white/10 rounded-lg px-3 py-2 text-sm text-white"
                       />
                       <input
                         type="number"
                         placeholder="Hrs"
                         value={load.hoursPerDay}
                         onChange={(e) => updateLoad(i, { hoursPerDay: Number(e.target.value) })}
-                        className="col-span-2 bg-[#16161D] border border-white/10 rounded-lg px-3 py-2 text-sm text-white"
+                        className="col-span-2 bg-background-800 border border-white/10 rounded-lg px-3 py-2 text-sm text-white"
                       />
                       <button
                         type="button"
@@ -679,11 +679,11 @@ export function DesignWizard({ basePath = '/crm' }: { basePath?: string }) {
               </div>
             )}
             <div className="grid grid-cols-2 gap-4 text-sm">
-              <div className="bg-[#16161D] rounded-xl p-4">
+              <div className="bg-background-800 rounded-xl p-4">
                 <p className="text-white/40 mb-1">Annual PV Yield</p>
                 <p className="text-white font-bold">{Math.round(computeResult.annualYieldKwh).toLocaleString()} kWh/yr</p>
               </div>
-              <div className="bg-[#16161D] rounded-xl p-4">
+              <div className="bg-background-800 rounded-xl p-4">
                 <p className="text-white/40 mb-1">Peak Load (backup)</p>
                 <p className="text-white font-bold">{computeResult.backup.totalCriticalLoadKw.toFixed(2)} kW</p>
               </div>
@@ -765,13 +765,13 @@ export function DesignWizard({ basePath = '/crm' }: { basePath?: string }) {
                 max={95}
                 value={form.selfConsumptionPct}
                 onChange={(e) => setForm((f) => ({ ...f, selfConsumptionPct: Number(e.target.value) }))}
-                className="w-full accent-[#10B981]"
+                className="w-full accent-emerald"
               />
               <p className="text-xs text-white/40 mt-2">
                 Zero-export default: 70%. With battery time-shifting, residential typically 65–85%.
               </p>
             </div>
-            <div className="bg-[#16161D] rounded-xl p-5 border border-accent-blue/20">
+            <div className="bg-background-800 rounded-xl p-5 border border-accent-blue/20">
               <p className="text-sm text-white/60 mb-1">System Investment</p>
               <p className="text-2xl font-bold text-white">{formatPhp(computeResult.grandTotal)}</p>
               <p className="text-xs text-white/40 mt-2">
@@ -839,7 +839,7 @@ export function DesignWizard({ basePath = '/crm' }: { basePath?: string }) {
                   <button
                     type="button"
                     onClick={() => router.push(`${basePath}/designs`)}
-                    className="px-6 py-3 bg-accent-emerald text-[#08080B] font-semibold rounded-xl hover:bg-accent-emerald/90"
+                    className="px-6 py-3 bg-accent-emerald text-background-950 font-semibold rounded-xl hover:bg-accent-emerald/90"
                   >
                     Back to Designs
                   </button>
@@ -865,7 +865,7 @@ function SizingCard({
   color: string;
 }) {
   return (
-    <div className="bg-[#16161D] border border-white/5 p-5 rounded-2xl">
+    <div className="bg-background-800 border border-white/5 p-5 rounded-2xl">
       <p className="text-xs text-white/40 uppercase tracking-widest mb-2">{label}</p>
       <p className={`text-lg font-bold text-white mb-1 ${color}`}>{value}</p>
       <p className="text-xs text-white/50">{sub}</p>
@@ -875,7 +875,7 @@ function SizingCard({
 
 function MetricCard({ label, value }: { label: string; value: string }) {
   return (
-    <div className="bg-[#16161D] rounded-xl p-4 text-center border border-white/5">
+    <div className="bg-background-800 rounded-xl p-4 text-center border border-white/5">
       <p className="text-xs text-white/40 mb-1">{label}</p>
       <p className="text-lg font-bold text-white">{value}</p>
     </div>

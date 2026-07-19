@@ -272,7 +272,7 @@ export default function LeadDetailClient({
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left: Details */}
           <div className="lg:col-span-2 space-y-6">
-            <div className="bg-[#16161D] border border-white/5 rounded-xl p-6 space-y-4">
+            <div className="bg-background-800 border border-white/5 rounded-xl p-6 space-y-4">
               <h3 className="text-sm font-semibold text-white/60 uppercase tracking-wider">Lead Details</h3>
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
@@ -295,7 +295,7 @@ export default function LeadDetailClient({
             </div>
 
             {/* Pipeline Status */}
-            <div className="bg-[#16161D] border border-white/5 rounded-xl p-6 space-y-4">
+            <div className="bg-background-800 border border-white/5 rounded-xl p-6 space-y-4">
               <h3 className="text-sm font-semibold text-white/60 uppercase tracking-wider">Pipeline Status</h3>
               <div className="space-y-3">
                 {/* Current status badge */}
@@ -345,14 +345,14 @@ export default function LeadDetailClient({
             </div>
 
             {/* Assignment */}
-            <div className="bg-[#16161D] border border-white/5 rounded-xl p-6 space-y-4">
+            <div className="bg-background-800 border border-white/5 rounded-xl p-6 space-y-4">
               <h3 className="text-sm font-semibold text-white/60 uppercase tracking-wider">Assignment</h3>
               <div className="flex items-center gap-3">
                 <select
                   value={lead.assignedOrgId || ''}
                   onChange={(e) => handleAssignOrg(e.target.value)}
                   disabled={saving === 'org'}
-                  className="bg-[#0F0F14] border border-white/5 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-accent-blue/50"
+                  className="bg-background-900 border border-white/5 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-accent-blue/50"
                 >
                   <option value="">Unassigned</option>
                   {organizations.map((org) => (
@@ -366,7 +366,7 @@ export default function LeadDetailClient({
             </div>
 
             {/* Notes */}
-            <div className="bg-[#16161D] border border-white/5 rounded-xl p-6 space-y-4">
+            <div className="bg-background-800 border border-white/5 rounded-xl p-6 space-y-4">
               <h3 className="text-sm font-semibold text-white/60 uppercase tracking-wider">Notes</h3>
               <p className="text-sm text-gray-300 whitespace-pre-wrap">{lead.notes || 'No notes yet.'}</p>
               <div className="flex gap-2">
@@ -374,7 +374,7 @@ export default function LeadDetailClient({
                   value={noteInput}
                   onChange={(e) => setNoteInput(e.target.value)}
                   placeholder="Add a note..."
-                  className="flex-1 bg-[#0F0F14] border border-white/5 rounded-lg px-3 py-2 text-sm text-white placeholder-white/20 focus:outline-none focus:border-accent-blue/50"
+                  className="flex-1 bg-background-900 border border-white/5 rounded-lg px-3 py-2 text-sm text-white placeholder-white/20 focus:outline-none focus:border-accent-blue/50"
                 />
                 <button
                   onClick={handleAddNote}
@@ -389,7 +389,7 @@ export default function LeadDetailClient({
 
           {/* Right: Quick Actions */}
           <div className="space-y-4">
-            <div className="bg-[#16161D] border border-white/5 rounded-xl p-5">
+            <div className="bg-background-800 border border-white/5 rounded-xl p-5">
               <h3 className="text-sm font-semibold text-white/60 uppercase tracking-wider mb-3">Actions</h3>
               <div className="space-y-2">
                 <Link
@@ -413,7 +413,7 @@ export default function LeadDetailClient({
       )}
 
       {tab === 'activity' && (
-        <div className="bg-[#16161D] border border-white/5 rounded-xl p-6">
+        <div className="bg-background-800 border border-white/5 rounded-xl p-6">
           {activities.length === 0 ? (
             <div className="text-center py-8 text-gray-500">
               <Activity className="w-8 h-8 mx-auto mb-2 text-gray-600" />
@@ -423,7 +423,7 @@ export default function LeadDetailClient({
             <div className="space-y-0">
               {activities.map((act, i) => (
                 <div key={act.id} className="flex gap-4 pb-4 border-l-2 border-white/5 ml-2 pl-4 relative">
-                  <div className="absolute -left-[9px] top-1 w-4 h-4 rounded-full bg-[#16161D] border-2 border-accent-cyan" />
+                  <div className="absolute -left-[9px] top-1 w-4 h-4 rounded-full bg-background-800 border-2 border-accent-cyan" />
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-white">
                       {ACTION_LABELS[act.action] || act.action.replace(/_/g, ' ')}
@@ -439,7 +439,7 @@ export default function LeadDetailClient({
       )}
 
       {tab === 'customers' && (
-        <div className="bg-[#16161D] border border-white/5 rounded-xl p-6">
+        <div className="bg-background-800 border border-white/5 rounded-xl p-6">
           {lead.customers.length === 0 ? (
             <div className="text-center py-8 text-gray-500">
               <Users className="w-8 h-8 mx-auto mb-2 text-gray-600" />
@@ -451,7 +451,7 @@ export default function LeadDetailClient({
           ) : (
             <div className="space-y-3">
               {lead.customers.map((c) => (
-                <div key={c.id} className="p-4 bg-[#0F0F14] rounded-xl border border-white/5">
+                <div key={c.id} className="p-4 bg-background-900 rounded-xl border border-white/5">
                   <p className="font-medium text-white">{c.fullName}</p>
                   <div className="flex gap-4 mt-2 text-sm text-gray-400">
                     <span>{c.contactPhone || '—'}</span>

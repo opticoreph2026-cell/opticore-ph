@@ -64,7 +64,7 @@ export default function PartnerResourcesPage() {
         {resources.map((section) => {
           const SectionIcon = section.icon;
           return (
-            <div key={section.section} className="bg-[#16161D] border border-white/5 rounded-2xl overflow-hidden">
+            <div key={section.section} className="bg-background-800 border border-white/5 rounded-2xl overflow-hidden">
               <div className="px-6 py-4 border-b border-white/5 bg-white/5 flex items-center gap-3">
                 <SectionIcon className="w-5 h-5 text-accent-emerald" />
                 <h2 className="text-lg font-bold text-white">{section.section}</h2>

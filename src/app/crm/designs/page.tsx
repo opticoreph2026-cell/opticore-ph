@@ -34,8 +34,8 @@ export default async function DesignsPage() {
 
   const statusColors: Record<string, string> = {
     draft: 'bg-white/5 text-white/40',
-    finalized: 'bg-[#06B6D4]/15 text-[#06B6D4]',
-    approved_by_customer: 'bg-[#10B981]/15 text-[#10B981]',
+    finalized: 'bg-accent-cyan/15 text-accent-cyan',
+    approved_by_customer: 'bg-accent-emerald/15 text-accent-emerald',
   };
 
   const statusLabel: Record<string, string> = {
@@ -64,7 +64,7 @@ export default async function DesignsPage() {
         </Link>
       </div>
 
-      <div className="bg-[#0F0F14] border border-white/5 rounded-2xl overflow-hidden">
+      <div className="bg-background-900 border border-white/5 rounded-2xl overflow-hidden">
         {/* Toolbar */}
         <div className="flex items-center px-6 py-4 border-b border-white/5 gap-4">
           <div className="flex-1 relative">
@@ -72,14 +72,14 @@ export default async function DesignsPage() {
             <input
               type="text"
               placeholder="Search designs or customers..."
-              className="w-full bg-[#16161D] border border-white/5 rounded-xl pl-9 pr-4 py-2 text-sm text-white placeholder-white/20 focus:outline-none focus:border-accent-blue/50 focus:ring-1 focus:ring-accent-blue/50 transition-all"
+              className="w-full bg-background-800 border border-white/5 rounded-xl pl-9 pr-4 py-2 text-sm text-white placeholder-white/20 focus:outline-none focus:border-accent-blue/50 focus:ring-1 focus:ring-accent-blue/50 transition-all"
             />
           </div>
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm whitespace-nowrap">
-            <thead className="bg-[#16161D] text-xs uppercase text-white/30 border-b border-white/5">
+            <thead className="bg-background-800 text-xs uppercase text-white/30 border-b border-white/5">
               <tr>
                 <th className="px-6 py-4 font-medium tracking-wider">Customer</th>
                 <th className="px-6 py-4 font-medium tracking-wider">System Size</th>
@@ -127,7 +127,7 @@ export default async function DesignsPage() {
                     </td>
                     <td className="px-6 py-4">
                       <p className="text-white/80">{design.inverter?.modelName || '—'}</p>
-                      <p className="text-xs text-[#06B6D4]">
+                      <p className="text-xs text-accent-cyan">
                         {design.battery ? `${design.battery.usableKwh} kWh Storage` : 'No Storage'}
                       </p>
                     </td>

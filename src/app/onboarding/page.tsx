@@ -51,7 +51,7 @@ export default function OnboardingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#08080B] flex flex-col justify-center py-12 sm:px-6 lg:px-8 relative overflow-hidden">
+    <div className="min-h-screen bg-background-950 flex flex-col justify-center py-12 sm:px-6 lg:px-8 relative overflow-hidden">
       <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-accent-cyan/10 rounded-full blur-[120px] pointer-events-none" />
       
       <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10">
@@ -82,14 +82,14 @@ export default function OnboardingPage() {
                   value={formData.siteAddress}
                   onChange={(e) => setFormData({ ...formData, siteAddress: e.target.value })}
                   placeholder="e.g. Metro Manila"
-                  className="w-full px-4 py-3 bg-[#16161D] border border-white/10 rounded-xl text-white focus:outline-none focus:border-accent-cyan"
+                  className="w-full px-4 py-3 bg-background-800 border border-white/10 rounded-xl text-white focus:outline-none focus:border-accent-cyan"
                 />
               </div>
 
               <button
                 onClick={handleNext}
                 disabled={!formData.siteAddress}
-                className="w-full py-3 bg-white text-black font-semibold rounded-xl disabled:opacity-50"
+                className="w-full py-3 bg-primary-500 text-white font-semibold rounded-xl disabled:opacity-50"
               >
                 Continue
               </button>
@@ -109,7 +109,7 @@ export default function OnboardingPage() {
                     className={`w-full p-4 text-left rounded-xl border transition-all ${
                       formData.utilityCompanyId === provider 
                         ? 'bg-accent-cyan/10 border-accent-cyan text-accent-cyan' 
-                        : 'bg-[#16161D] border-white/10 text-white hover:bg-white/5'
+                        : 'bg-background-800 border-white/10 text-white hover:bg-white/5'
                     }`}
                   >
                     {provider.replace('_', ' ')}
@@ -118,8 +118,8 @@ export default function OnboardingPage() {
               </div>
 
               <div className="flex gap-4">
-                <button onClick={handleBack} className="px-6 py-3 text-white bg-[#16161D] border border-white/10 rounded-xl">Back</button>
-                <button onClick={handleNext} className="flex-1 py-3 bg-white text-black font-semibold rounded-xl">Continue</button>
+                <button onClick={handleBack} className="px-6 py-3 text-white bg-background-800 border border-white/10 rounded-xl">Back</button>
+                <button onClick={handleNext} className="flex-1 py-3 bg-primary-500 text-white font-semibold rounded-xl">Continue</button>
               </div>
             </div>
           )}
@@ -138,7 +138,7 @@ export default function OnboardingPage() {
                   min="1000" max="50000" step="500"
                   value={formData.averageBill}
                   onChange={(e) => setFormData({ ...formData, averageBill: Number(e.target.value) })}
-                  className="w-full h-2 bg-[#16161D] rounded-lg appearance-none cursor-pointer accent-accent-emerald"
+                  className="w-full h-2 bg-background-800 rounded-lg appearance-none cursor-pointer accent-emerald"
                 />
               </div>
 
@@ -148,7 +148,7 @@ export default function OnboardingPage() {
                 </div>
               )}
               <div className="flex gap-4">
-                <button onClick={handleBack} disabled={loading} className="px-6 py-3 text-white bg-[#16161D] border border-white/10 rounded-xl disabled:opacity-50">Back</button>
+                <button onClick={handleBack} disabled={loading} className="px-6 py-3 text-white bg-background-800 border border-white/10 rounded-xl disabled:opacity-50">Back</button>
                 <button 
                   onClick={handleSubmit} 
                   disabled={loading}

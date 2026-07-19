@@ -45,7 +45,7 @@ export default async function ProjectsPage() {
         </div>
       </div>
 
-      <div className="bg-[#16161D] border border-white/5 rounded-xl overflow-hidden">
+      <div className="bg-background-800 border border-white/5 rounded-xl overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm text-gray-300">
             <thead className="bg-white/5 text-xs uppercase text-gray-400">

@@ -20,17 +20,17 @@ interface CrmData {
 }
 
 const statusColors: Record<string, string> = {
-  new: 'bg-[#06B6D4]/15 text-[#06B6D4]',
+  new: 'bg-accent-cyan/15 text-accent-cyan',
   contacted: 'bg-accent-cyan/15 text-accent-cyan',
   site_visit_scheduled: 'bg-purple-500/15 text-purple-400',
   site_visit_done: 'bg-purple-500/25 text-purple-300',
-  qualified: 'bg-[#10B981]/15 text-[#10B981]',
+  qualified: 'bg-accent-emerald/15 text-accent-emerald',
   quote_sent: 'bg-blue-500/15 text-blue-400',
   negotiating: 'bg-amber-500/15 text-amber-400',
-  won: 'bg-[#10B981]/20 text-[#10B981] font-semibold',
+  won: 'bg-accent-emerald/20 text-accent-emerald font-semibold',
   lost: 'bg-accent-rose/15 text-accent-rose',
   disqualified: 'bg-white/5 text-white/30',
-  converted: 'bg-[#10B981]/20 text-[#10B981] font-semibold',
+  converted: 'bg-accent-emerald/20 text-accent-emerald font-semibold',
 };
 
 const statusLabel: Record<string, string> = {
@@ -70,14 +70,14 @@ export function CrmStats({ initialData, firstName, isOwner }: { initialData: Crm
 
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
         {[
-          { label: 'New Leads', value: stats.newLeads, icon: Users, color: 'text-[#06B6D4]', bg: 'bg-[#06B6D4]/10', href: '/crm/leads' },
+          { label: 'New Leads', value: stats.newLeads, icon: Users, color: 'text-accent-cyan', bg: 'bg-accent-cyan/10', href: '/crm/leads' },
           { label: 'Qualified', value: stats.qualified, icon: TrendingUp, color: 'text-accent-cyan', bg: 'bg-accent-cyan/10', href: '/crm/leads' },
           { label: 'Quote Sent', value: stats.quoteSent, icon: FileText, color: 'text-blue-400', bg: 'bg-blue-500/10', href: '/crm/quotations' },
           { label: 'Active Projects', value: stats.activeProjects, icon: Briefcase, color: 'text-purple-400', bg: 'bg-purple-500/10', href: '/crm/projects' },
-          { label: 'Commissioned', value: stats.commissioned, icon: Handshake, color: 'text-[#10B981]', bg: 'bg-[#10B981]/10', href: '/crm/projects' },
+          { label: 'Commissioned', value: stats.commissioned, icon: Handshake, color: 'text-accent-emerald', bg: 'bg-accent-emerald/10', href: '/crm/projects' },
         ].map((stat) => (
           <Link key={stat.label} href={stat.href}
-            className="group bg-[#0F0F14] border border-white/5 rounded-2xl p-5 hover:border-white/10 hover:bg-[#16161D] transition-all duration-200"
+            className="group bg-background-900 border border-white/5 rounded-2xl p-5 hover:border-white/10 hover:bg-background-800 transition-all duration-200"
           >
             <div className="flex items-start justify-between mb-4">
               <div className={`w-10 h-10 rounded-xl ${stat.bg} flex items-center justify-center`}>
@@ -92,11 +92,11 @@ export function CrmStats({ initialData, firstName, isOwner }: { initialData: Crm
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 bg-[#0F0F14] border border-white/5 rounded-2xl overflow-hidden">
+        <div className="lg:col-span-2 bg-background-900 border border-white/5 rounded-2xl overflow-hidden">
           <div className="flex items-center justify-between px-6 py-4 border-b border-white/5">
             <h2 className="font-display font-semibold text-white">Recent Leads</h2>
             <Link href="/crm/leads"
-              className="text-xs text-[#06B6D4] hover:text-[#06B6D4]/80 flex items-center gap-1 transition-colors"
+              className="text-xs text-accent-cyan hover:text-accent-cyan/80 flex items-center gap-1 transition-colors"
             >View all <ChevronRight className="w-3 h-3" /></Link>
           </div>
 
@@ -138,17 +138,17 @@ export function CrmStats({ initialData, firstName, isOwner }: { initialData: Crm
         </div>
 
         <div className="space-y-4">
-          <div className="bg-[#0F0F14] border border-white/5 rounded-2xl overflow-hidden">
+          <div className="bg-background-900 border border-white/5 rounded-2xl overflow-hidden">
             <div className="px-6 py-4 border-b border-white/5">
               <h2 className="font-display font-semibold text-white">Quick Actions</h2>
             </div>
             <div className="p-4 space-y-2">
               {[
-                { href: '/crm/leads', label: 'Add New Lead', icon: Users, color: 'text-[#06B6D4]' },
+                { href: '/crm/leads', label: 'Add New Lead', icon: Users, color: 'text-accent-cyan' },
                 { href: '/crm/designs/new', label: 'Start ROI Design', icon: Calculator, color: 'text-accent-blue' },
                 { href: '/crm/projects', label: 'View Projects', icon: Briefcase, color: 'text-purple-400' },
                 ...(isOwner
-                  ? [{ href: '/crm/inventory', label: 'Manage Inventory', icon: Package, color: 'text-[#10B981]' }]
+                  ? [{ href: '/crm/inventory', label: 'Manage Inventory', icon: Package, color: 'text-accent-emerald' }]
                   : []),
               ].map((action) => (
                 <Link key={action.href} href={action.href}
@@ -162,14 +162,14 @@ export function CrmStats({ initialData, firstName, isOwner }: { initialData: Crm
             </div>
           </div>
 
-          <div className="bg-[#0F0F14] border border-white/5 rounded-2xl p-6">
+          <div className="bg-background-900 border border-white/5 rounded-2xl p-6">
             <h3 className="font-semibold text-white text-sm mb-4">Pipeline Health</h3>
             <div className="space-y-3">
               {[
-                { label: 'New → Contacted', pct: stats.newLeads > 0 ? 100 : 0, color: 'bg-[#06B6D4]' },
+                { label: 'New → Contacted', pct: stats.newLeads > 0 ? 100 : 0, color: 'bg-accent-cyan' },
                 { label: 'Site Visit Done', pct: stats.qualified > 0 ? 60 : 0, color: 'bg-purple-500' },
                 { label: 'Quote Sent', pct: stats.quoteSent > 0 ? 40 : 0, color: 'bg-blue-500' },
-                { label: 'Won / Commissioned', pct: stats.commissioned > 0 ? 20 : 0, color: 'bg-[#10B981]' },
+                { label: 'Won / Commissioned', pct: stats.commissioned > 0 ? 20 : 0, color: 'bg-accent-emerald' },
               ].map((stage) => (
                 <div key={stage.label}>
                   <div className="flex justify-between text-xs text-white/40 mb-1"><span>{stage.label}</span></div>

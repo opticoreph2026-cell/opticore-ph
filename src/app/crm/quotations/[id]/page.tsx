@@ -76,7 +76,7 @@ export default async function QuotationDetailPage({
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-[#16161D] border border-white/5 rounded-xl p-6 space-y-4">
+        <div className="bg-background-800 border border-white/5 rounded-xl p-6 space-y-4">
           <h3 className="text-sm font-semibold text-white/60 uppercase tracking-wider">Quote Details</h3>
           <div className="space-y-3 text-sm">
             <div className="flex justify-between">
@@ -102,7 +102,7 @@ export default async function QuotationDetailPage({
           </div>
         </div>
 
-        <div className="bg-[#16161D] border border-white/5 rounded-xl p-6 space-y-4">
+        <div className="bg-background-800 border border-white/5 rounded-xl p-6 space-y-4">
           <h3 className="text-sm font-semibold text-white/60 uppercase tracking-wider">System</h3>
           <div className="space-y-3 text-sm">
             <div className="flex justify-between">
@@ -129,7 +129,7 @@ export default async function QuotationDetailPage({
         </div>
       </div>
 
-      <div className="bg-[#16161D] border border-white/5 rounded-xl p-6 space-y-4">
+      <div className="bg-background-800 border border-white/5 rounded-xl p-6 space-y-4">
         <h3 className="text-sm font-semibold text-white/60 uppercase tracking-wider">Pricing</h3>
         <div className="space-y-3 text-sm">
           <div className="flex justify-between">
@@ -162,7 +162,7 @@ export default async function QuotationDetailPage({
       </div>
 
       {quotation.notes && (
-        <div className="bg-[#16161D] border border-white/5 rounded-xl p-6 space-y-2">
+        <div className="bg-background-800 border border-white/5 rounded-xl p-6 space-y-2">
           <h3 className="text-sm font-semibold text-white/60 uppercase tracking-wider">Notes</h3>
           <p className="text-sm text-gray-300 whitespace-pre-wrap">{quotation.notes}</p>
         </div>

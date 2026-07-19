@@ -50,14 +50,14 @@ export default function CustomerSupportPage() {
       )}
 
       <form onSubmit={handleSubmit} className="space-y-5">
-        <div className="bg-[#16161D] border border-white/5 rounded-xl p-6 space-y-5">
+        <div className="bg-background-800 border border-white/5 rounded-xl p-6 space-y-5">
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-1.5">Subject</label>
             <input
               value={subject}
               onChange={(e) => setSubject(e.target.value)}
               placeholder="Brief description of your issue"
-              className="w-full bg-[#0F0F14] border border-white/5 rounded-lg px-3 py-2 text-sm text-white placeholder-white/20 focus:outline-none focus:border-[#06B6D4]/50 focus:ring-1 focus:ring-[#06B6D4]/50"
+              className="w-full bg-background-900 border border-white/5 rounded-lg px-3 py-2 text-sm text-white placeholder-white/20 focus:outline-none focus:border-accent-cyan/50 focus:ring-1 focus:ring-accent-cyan/50"
             />
           </div>
           <div>
@@ -67,7 +67,7 @@ export default function CustomerSupportPage() {
               onChange={(e) => setMessage(e.target.value)}
               rows={6}
               placeholder="Describe your concern in detail..."
-              className="w-full bg-[#0F0F14] border border-white/5 rounded-lg px-3 py-2 text-sm text-white placeholder-white/20 focus:outline-none focus:border-[#06B6D4]/50 focus:ring-1 focus:ring-[#06B6D4]/50 resize-none"
+              className="w-full bg-background-900 border border-white/5 rounded-lg px-3 py-2 text-sm text-white placeholder-white/20 focus:outline-none focus:border-accent-cyan/50 focus:ring-1 focus:ring-accent-cyan/50 resize-none"
             />
           </div>
         </div>
@@ -76,7 +76,7 @@ export default function CustomerSupportPage() {
           <button
             type="submit"
             disabled={sending || !subject.trim() || !message.trim()}
-            className="px-6 py-2.5 rounded-xl bg-[#06B6D4] text-[#08080B] text-sm font-semibold hover:bg-[#06B6D4]/90 transition-colors disabled:opacity-50"
+            className="px-6 py-2.5 rounded-xl bg-accent-cyan text-background-950 text-sm font-semibold hover:bg-accent-cyan/90 transition-colors disabled:opacity-50"
           >
             {sending ? 'Sending...' : 'Send Message'}
           </button>

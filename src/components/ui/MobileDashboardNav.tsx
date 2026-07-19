@@ -94,7 +94,7 @@ export function MobileDashboardNav({
                   <button
                     type="submit"
                     title="Sign out"
-                    className="p-1.5 text-white/30 hover:text-[#F43F5E] transition-colors rounded-lg hover:bg-[#F43F5E]/10"
+                    className="p-1.5 text-white/30 hover:text-accent-rose transition-colors rounded-lg hover:bg-accent-rose/10"
                   >
                     <LogOut className="w-4 h-4" />
                   </button>

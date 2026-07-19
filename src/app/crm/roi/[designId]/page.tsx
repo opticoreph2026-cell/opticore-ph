@@ -94,7 +94,7 @@ export default function ROIConsultationPage() {
       </div>
 
       {chartData.length > 0 && (
-        <div className="bg-[#0F0F14] p-6 rounded-2xl border border-white/5">
+        <div className="bg-background-900 p-6 rounded-2xl border border-white/5">
           <h2 className="text-lg font-bold text-white mb-6">25-Year Cumulative Cash Flow</h2>
           <div className="h-[400px]">
             <ResponsiveContainer width="100%" height="100%">
@@ -107,7 +107,7 @@ export default function ROIConsultationPage() {
                   tickFormatter={(v) => `₱${(v / 1000).toFixed(0)}k`}
                 />
                 <Tooltip
-                  contentStyle={{ backgroundColor: '#0F0F14', borderColor: '#333', color: '#fff' }}
+                  contentStyle={{ backgroundColor: 'var(--surface-900)', borderColor: '#333', color: '#fff' }}
                   formatter={(value: number) => [formatPhp(value * 100), '']}
                 />
                 <Line

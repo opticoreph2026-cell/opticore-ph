@@ -62,7 +62,7 @@ export default async function CustomerDocumentsPage() {
       </div>
 
       {!customerId ? (
-        <div className="bg-[#16161D] border border-white/5 rounded-xl p-12 text-center text-gray-500">
+        <div className="bg-background-800 border border-white/5 rounded-xl p-12 text-center text-gray-500">
           <FileText className="w-10 h-10 mx-auto mb-3 text-gray-600" />
           <p className="font-medium text-gray-400">No account linked</p>
           <p className="text-sm text-gray-600 mt-1">
@@ -70,7 +70,7 @@ export default async function CustomerDocumentsPage() {
           </p>
         </div>
       ) : documents.length === 0 ? (
-        <div className="bg-[#16161D] border border-white/5 rounded-xl p-12 text-center text-gray-500">
+        <div className="bg-background-800 border border-white/5 rounded-xl p-12 text-center text-gray-500">
           <FileText className="w-10 h-10 mx-auto mb-3 text-gray-600" />
           <p className="font-medium text-gray-400">No documents yet</p>
           <p className="text-sm text-gray-600 mt-1">
@@ -79,7 +79,7 @@ export default async function CustomerDocumentsPage() {
         </div>
       ) : (
         Object.entries(grouped).map(([docType, docs]) => (
-          <div key={docType} className="bg-[#16161D] border border-white/5 rounded-2xl overflow-hidden">
+          <div key={docType} className="bg-background-800 border border-white/5 rounded-2xl overflow-hidden">
             <div className="px-6 py-4 border-b border-white/5 bg-white/5">
               <h2 className="text-lg font-bold text-white">{docTypeLabels[docType] || docType}</h2>
             </div>

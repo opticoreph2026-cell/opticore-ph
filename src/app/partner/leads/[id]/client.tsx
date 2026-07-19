@@ -71,7 +71,7 @@ export function PartnerLeadDetailClient({ lead, userId }: { lead: Lead; userId?:
         Back to Leads
       </button>
 
-      <div className="bg-[#16161D] border border-white/5 rounded-2xl overflow-hidden">
+      <div className="bg-background-800 border border-white/5 rounded-2xl overflow-hidden">
         <div className="p-6">
           <div className="flex items-start justify-between mb-6">
             <div>

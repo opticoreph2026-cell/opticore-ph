@@ -40,7 +40,7 @@ export function PartnerLeadsClient({ leads }: { leads: Lead[] }) {
         <p className="text-sm text-gray-400">Solar leads assigned to your organization.</p>
       </div>
 
-      <div className="bg-[#16161D] border border-white/5 rounded-xl overflow-hidden">
+      <div className="bg-background-800 border border-white/5 rounded-xl overflow-hidden">
         {leads.length === 0 ? (
           <div className="py-12 text-center">
             <Users className="w-8 h-8 text-gray-600 mx-auto mb-3" />

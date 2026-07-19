@@ -46,7 +46,7 @@ export function CustomerStats({ initialData, email }: { initialData: CustomerDat
       </div>
 
       {!customer ? (
-        <div className="bg-[#16161D] p-8 rounded-2xl border border-white/5 text-center">
+        <div className="bg-background-800 p-8 rounded-2xl border border-white/5 text-center">
           <div className="w-16 h-16 bg-accent-cyan/20 text-accent-cyan rounded-full flex items-center justify-center mx-auto mb-4">
             <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -64,7 +64,7 @@ export function CustomerStats({ initialData, email }: { initialData: CustomerDat
       ) : (
         <div className="space-y-6">
           {project ? (
-            <div className="bg-[#16161D] p-6 rounded-2xl border border-white/5">
+            <div className="bg-background-800 p-6 rounded-2xl border border-white/5">
               <h2 className="text-lg font-bold text-white mb-4">Installation Status</h2>
               <div className="flex flex-wrap gap-4 items-center justify-between">
                 <div className="flex items-center gap-4">
@@ -112,13 +112,13 @@ export function CustomerStats({ initialData, email }: { initialData: CustomerDat
               )}
             </div>
           ) : (
-            <div className="bg-[#16161D] p-6 rounded-2xl border border-white/5 text-center text-gray-500">
+            <div className="bg-background-800 p-6 rounded-2xl border border-white/5 text-center text-gray-500">
               <p>Your installation project will appear here once a contract has been signed.</p>
             </div>
           )}
 
           {quotations.length > 0 && (
-            <div className="bg-[#16161D] p-6 rounded-2xl border border-white/5">
+            <div className="bg-background-800 p-6 rounded-2xl border border-white/5">
               <h2 className="text-lg font-bold text-white mb-4">My Proposals</h2>
               <div className="space-y-3">
                 {quotations.map((q) => (
@@ -146,7 +146,7 @@ export function CustomerStats({ initialData, email }: { initialData: CustomerDat
           )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="bg-[#16161D] p-6 rounded-2xl border border-white/5">
+            <div className="bg-background-800 p-6 rounded-2xl border border-white/5">
               <h3 className="text-white font-bold mb-4">Quick Links</h3>
               <ul className="space-y-3">
                 <li>
@@ -163,7 +163,7 @@ export function CustomerStats({ initialData, email }: { initialData: CustomerDat
                 </li>
               </ul>
             </div>
-            <div className="bg-[#16161D] p-6 rounded-2xl border border-white/5">
+            <div className="bg-background-800 p-6 rounded-2xl border border-white/5">
               <h3 className="text-white font-bold mb-4">Account Info</h3>
               <div className="space-y-1.5 text-sm text-gray-400">
                 <p><span className="text-white">Name:</span> {customer.fullName}</p>

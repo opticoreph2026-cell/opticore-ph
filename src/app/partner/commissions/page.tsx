@@ -48,27 +48,27 @@ export default async function PartnerCommissionsPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-[#16161D] p-6 rounded-2xl border border-white/5">
+        <div className="bg-background-800 p-6 rounded-2xl border border-white/5">
           <div className="text-sm font-medium text-gray-400 mb-1">Total Earned</div>
           <div className="text-4xl font-bold text-accent-emerald">₱{Number(totalEarned).toLocaleString()}</div>
         </div>
-        <div className="bg-[#16161D] p-6 rounded-2xl border border-white/5">
+        <div className="bg-background-800 p-6 rounded-2xl border border-white/5">
           <div className="text-sm font-medium text-gray-400 mb-1">Pending Payouts</div>
           <div className="text-4xl font-bold text-accent-cyan">₱{Number(pendingEarned).toLocaleString()}</div>
         </div>
-        <div className="bg-[#16161D] p-6 rounded-2xl border border-white/5">
+        <div className="bg-background-800 p-6 rounded-2xl border border-white/5">
           <div className="text-sm font-medium text-gray-400 mb-1">Paid This Month</div>
           <div className="text-4xl font-bold text-accent-cyan">₱{Number(paidThisMonth).toLocaleString()}</div>
         </div>
       </div>
 
-      <div className="bg-[#16161D] border border-white/5 rounded-xl overflow-hidden">
+      <div className="bg-background-800 border border-white/5 rounded-xl overflow-hidden">
         <div className="px-6 py-5 border-b border-white/5 bg-white/5">
           <h2 className="text-lg font-bold text-white">Commission History</h2>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm text-gray-300">
-            <thead className="bg-[#0F0F14] text-xs uppercase text-gray-400">
+            <thead className="bg-background-900 text-xs uppercase text-gray-400">
               <tr>
                 <th className="px-6 py-4 font-medium">Customer</th>
                 <th className="px-6 py-4 font-medium">Type</th>

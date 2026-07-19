@@ -93,7 +93,7 @@ export default function NewLeadPage() {
       )}
 
       <form onSubmit={handleSubmit} className="space-y-5">
-        <div className="bg-[#16161D] border border-white/5 rounded-xl p-6 space-y-5">
+        <div className="bg-background-800 border border-white/5 rounded-xl p-6 space-y-5">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="sm:col-span-2">
               <label className="block text-sm font-medium text-gray-300 mb-1.5">Full Name *</label>
@@ -102,7 +102,7 @@ export default function NewLeadPage() {
                 value={form.fullName}
                 onChange={handleChange}
                 placeholder="Juan Dela Cruz"
-                className="w-full bg-[#0F0F14] border border-white/5 rounded-lg px-3 py-2 text-sm text-white placeholder-white/20 focus:outline-none focus:border-accent-blue/50 focus:ring-1 focus:ring-accent-blue/50"
+                className="w-full bg-background-900 border border-white/5 rounded-lg px-3 py-2 text-sm text-white placeholder-white/20 focus:outline-none focus:border-accent-blue/50 focus:ring-1 focus:ring-accent-blue/50"
               />
             </div>
             <div>
@@ -112,7 +112,7 @@ export default function NewLeadPage() {
                 value={form.phone}
                 onChange={handleChange}
                 placeholder="0917 123 4567"
-                className="w-full bg-[#0F0F14] border border-white/5 rounded-lg px-3 py-2 text-sm text-white placeholder-white/20 focus:outline-none focus:border-accent-blue/50 focus:ring-1 focus:ring-accent-blue/50"
+                className="w-full bg-background-900 border border-white/5 rounded-lg px-3 py-2 text-sm text-white placeholder-white/20 focus:outline-none focus:border-accent-blue/50 focus:ring-1 focus:ring-accent-blue/50"
               />
             </div>
             <div>
@@ -123,7 +123,7 @@ export default function NewLeadPage() {
                 value={form.email}
                 onChange={handleChange}
                 placeholder="juan@example.com"
-                className="w-full bg-[#0F0F14] border border-white/5 rounded-lg px-3 py-2 text-sm text-white placeholder-white/20 focus:outline-none focus:border-accent-blue/50 focus:ring-1 focus:ring-accent-blue/50"
+                className="w-full bg-background-900 border border-white/5 rounded-lg px-3 py-2 text-sm text-white placeholder-white/20 focus:outline-none focus:border-accent-blue/50 focus:ring-1 focus:ring-accent-blue/50"
               />
             </div>
             <div className="sm:col-span-2">
@@ -133,7 +133,7 @@ export default function NewLeadPage() {
                 value={form.addressLine}
                 onChange={handleChange}
                 placeholder="123 Rizal St, Barangay Poblacion"
-                className="w-full bg-[#0F0F14] border border-white/5 rounded-lg px-3 py-2 text-sm text-white placeholder-white/20 focus:outline-none focus:border-accent-blue/50 focus:ring-1 focus:ring-accent-blue/50"
+                className="w-full bg-background-900 border border-white/5 rounded-lg px-3 py-2 text-sm text-white placeholder-white/20 focus:outline-none focus:border-accent-blue/50 focus:ring-1 focus:ring-accent-blue/50"
               />
             </div>
             <div>
@@ -143,7 +143,7 @@ export default function NewLeadPage() {
                 value={form.city}
                 onChange={handleChange}
                 placeholder="Cebu City"
-                className="w-full bg-[#0F0F14] border border-white/5 rounded-lg px-3 py-2 text-sm text-white placeholder-white/20 focus:outline-none focus:border-accent-blue/50 focus:ring-1 focus:ring-accent-blue/50"
+                className="w-full bg-background-900 border border-white/5 rounded-lg px-3 py-2 text-sm text-white placeholder-white/20 focus:outline-none focus:border-accent-blue/50 focus:ring-1 focus:ring-accent-blue/50"
               />
             </div>
             <div>
@@ -153,7 +153,7 @@ export default function NewLeadPage() {
                 value={form.province}
                 onChange={handleChange}
                 placeholder="Cebu"
-                className="w-full bg-[#0F0F14] border border-white/5 rounded-lg px-3 py-2 text-sm text-white placeholder-white/20 focus:outline-none focus:border-accent-blue/50 focus:ring-1 focus:ring-accent-blue/50"
+                className="w-full bg-background-900 border border-white/5 rounded-lg px-3 py-2 text-sm text-white placeholder-white/20 focus:outline-none focus:border-accent-blue/50 focus:ring-1 focus:ring-accent-blue/50"
               />
             </div>
             <div>
@@ -162,7 +162,7 @@ export default function NewLeadPage() {
                 name="customerType"
                 value={form.customerType}
                 onChange={handleChange}
-                className="w-full bg-[#0F0F14] border border-white/5 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-accent-blue/50 focus:ring-1 focus:ring-accent-blue/50"
+                className="w-full bg-background-900 border border-white/5 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-accent-blue/50 focus:ring-1 focus:ring-accent-blue/50"
               >
                 {CUSTOMER_TYPES.map((t) => (
                   <option key={t.value} value={t.value}>{t.label}</option>
@@ -177,7 +177,7 @@ export default function NewLeadPage() {
                 value={form.monthlyBillPhp}
                 onChange={handleChange}
                 placeholder="5000"
-                className="w-full bg-[#0F0F14] border border-white/5 rounded-lg px-3 py-2 text-sm text-white placeholder-white/20 focus:outline-none focus:border-accent-blue/50 focus:ring-1 focus:ring-accent-blue/50"
+                className="w-full bg-background-900 border border-white/5 rounded-lg px-3 py-2 text-sm text-white placeholder-white/20 focus:outline-none focus:border-accent-blue/50 focus:ring-1 focus:ring-accent-blue/50"
               />
             </div>
             <div>
@@ -186,7 +186,7 @@ export default function NewLeadPage() {
                 name="source"
                 value={form.source}
                 onChange={handleChange}
-                className="w-full bg-[#0F0F14] border border-white/5 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-accent-blue/50 focus:ring-1 focus:ring-accent-blue/50"
+                className="w-full bg-background-900 border border-white/5 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-accent-blue/50 focus:ring-1 focus:ring-accent-blue/50"
               >
                 {SOURCES.map((s) => (
                   <option key={s.value} value={s.value}>{s.label}</option>
@@ -201,7 +201,7 @@ export default function NewLeadPage() {
                 onChange={handleChange}
                 rows={3}
                 placeholder="Any additional information about this prospect..."
-                className="w-full bg-[#0F0F14] border border-white/5 rounded-lg px-3 py-2 text-sm text-white placeholder-white/20 focus:outline-none focus:border-accent-blue/50 focus:ring-1 focus:ring-accent-blue/50 resize-none"
+                className="w-full bg-background-900 border border-white/5 rounded-lg px-3 py-2 text-sm text-white placeholder-white/20 focus:outline-none focus:border-accent-blue/50 focus:ring-1 focus:ring-accent-blue/50 resize-none"
               />
             </div>
           </div>
