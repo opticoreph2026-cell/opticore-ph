@@ -122,12 +122,12 @@ export function NotificationBell() {
       >
         <Bell className="w-5 h-5 text-white/60 group-hover:text-white transition-colors" />
         {unread > 0 && (
-          <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-accent-rose ring-2 ring-[#08080B] animate-pulse" />
+          <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-accent-rose ring-2 ring-background-950 animate-pulse" />
         )}
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full mt-2 w-[380px] z-50 bg-[#0F0F14] border border-white/8 rounded-2xl shadow-2xl shadow-black/60 overflow-hidden max-[420px]:fixed max-[420px]:left-2 max-[420px]:right-2 max-[420px]:w-auto">
+        <div className="absolute right-0 top-full mt-2 w-[380px] z-50 bg-background-900 border border-white/8 rounded-2xl shadow-2xl shadow-black/60 overflow-hidden max-[420px]:fixed max-[420px]:left-2 max-[420px]:right-2 max-[420px]:w-auto">
           <div className="flex items-center justify-between px-5 py-4 border-b border-white/5">
             <div>
               <h3 className="font-display font-semibold text-white">Notifications</h3>
@@ -147,7 +147,7 @@ export function NotificationBell() {
           <div className="max-h-[420px] overflow-y-auto">
             {loading ? (
               <div className="py-12 text-center">
-                <div className="w-6 h-6 border-2 border-accent-amber border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+                <div className="w-6 h-6 border-2 border-accent-cyan border-t-transparent rounded-full animate-spin mx-auto mb-3" />
                 <p className="text-xs text-white/40">Loading...</p>
               </div>
             ) : notifications.length === 0 ? (

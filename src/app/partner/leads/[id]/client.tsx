@@ -100,7 +100,7 @@ export function PartnerLeadDetailClient({ lead, userId }: { lead: Lead; userId?:
               )}
               {lead.addressLine && (
                 <div className="flex items-start gap-3 text-sm text-white/70">
-                  <MapPin className="w-4 h-4 text-accent-amber mt-0.5" />
+                  <MapPin className="w-4 h-4 text-accent-cyan mt-0.5" />
                   <span>{[lead.addressLine, lead.city, lead.province].filter(Boolean).join(', ')}</span>
                 </div>
               )}

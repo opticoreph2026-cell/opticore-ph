@@ -19,10 +19,10 @@ const docTypeLabels: Record<string, string> = {
 const docTypeIcons: Record<string, string> = {
   proposal_pdf: 'text-accent-cyan',
   contract: 'text-accent-emerald',
-  sld: 'text-accent-amber',
+  sld: 'text-accent-cyan',
   coc: 'text-purple-400',
   warranty_cert: 'text-accent-rose',
-  invoice: 'text-accent-amber',
+  invoice: 'text-accent-cyan',
   receipt: 'text-gray-400',
 };
 

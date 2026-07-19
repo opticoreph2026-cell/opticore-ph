@@ -45,7 +45,7 @@ const resources = [
 
 function typeColor(type: string): string {
   if (type === 'PDF') return 'text-accent-rose';
-  if (type === 'ZIP') return 'text-accent-amber';
+  if (type === 'ZIP') return 'text-accent-cyan';
   if (type === 'PPTX') return 'text-accent-cyan';
   return 'text-gray-400';
 }

@@ -2,7 +2,7 @@
 
 export default function Error({ error, reset }: { error: Error; reset: () => void }) {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#08080B]">
+    <div className="min-h-screen flex items-center justify-center bg-background-950">
       <div className="text-center space-y-4 p-8">
         <div className="text-6xl mb-4">⚠️</div>
         <h1 className="text-2xl font-bold text-white">Dashboard Error</h1>

@@ -21,11 +21,11 @@ export default async function AdminClientsPage() {
   });
 
   const roleColors: Record<string, string> = {
-    opticore_owner: 'bg-accent-amber/10 text-accent-amber border border-accent-amber/20',
+    opticore_owner: 'bg-accent-rose/10 text-accent-rose border border-accent-rose/20',
     opticore_staff: 'bg-accent-cyan/10 text-accent-cyan border border-accent-cyan/20',
     partner_admin: 'bg-purple-400/10 text-purple-400 border border-purple-400/20',
     partner_installer: 'bg-blue-400/10 text-blue-400 border border-blue-400/20',
-    customer: 'bg-white/5 text-white/60 border border-border-subtle',
+    customer: 'bg-white/5 text-white/60 border border-foreground-950/10',
   };
 
   return (

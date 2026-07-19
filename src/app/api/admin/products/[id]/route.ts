@@ -20,11 +20,11 @@ export async function PATCH(request: Request, context: { params: Promise<{ id: s
 
     let result: any;
     if (category === 'inverter') {
-      result = await db.productInverter.update({ where: { id }, data, select: { id: true, modelName: true, sku: true, unitPriceCentavos: true, isPriceConfirmed: true } });
+      result = await db.productInverter.update({ where: { id }, data, select: { id: true, modelName: true, sku: true, unitPrice: true, isPriceConfirmed: true } });
     } else if (category === 'battery') {
-      result = await db.productBattery.update({ where: { id }, data, select: { id: true, modelName: true, sku: true, unitPriceCentavos: true, isPriceConfirmed: true } });
+      result = await db.productBattery.update({ where: { id }, data, select: { id: true, modelName: true, sku: true, unitPrice: true, isPriceConfirmed: true } });
     } else if (category === 'panel') {
-      result = await db.solarPanel.update({ where: { id }, data, select: { id: true, modelName: true, sku: true, unitPriceCentavos: true, isPriceConfirmed: true } });
+      result = await db.solarPanel.update({ where: { id }, data, select: { id: true, modelName: true, sku: true, unitPrice: true, isPriceConfirmed: true } });
     } else {
       return NextResponse.json({ error: 'Invalid category' }, { status: 400 });
     }

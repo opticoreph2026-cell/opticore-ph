@@ -21,7 +21,7 @@ export function ProjectAdminClient({ projects }: { projects: Project[] }) {
       key: 'status', label: 'Status',
       render: (p) => {
         const colors: Record<string, string> = {
-          scheduled: 'bg-accent-amber/10 text-accent-amber',
+          scheduled: 'bg-accent-rose/10 text-accent-rose',
           in_progress: 'bg-accent-cyan/10 text-accent-cyan',
           commissioned: 'bg-accent-emerald/10 text-accent-emerald',
           warranty_registered: 'bg-purple-400/10 text-purple-400',

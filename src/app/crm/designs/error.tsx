@@ -7,7 +7,7 @@ export default function Error({ error, reset }: { error: Error; reset: () => voi
         <div className="text-6xl mb-4">⚠️</div>
         <h1 className="text-2xl font-bold text-white">Designs Error</h1>
         <p className="text-gray-400 max-w-md">{error.message || 'An unexpected error occurred.'}</p>
-        <button onClick={reset} className="px-6 py-2 bg-accent-amber text-[#08080B] font-medium rounded-lg hover:bg-accent-amber/90 transition-colors">Try Again</button>
+        <button onClick={reset} className="px-6 py-2 bg-accent-cyan text-white font-medium rounded-lg hover:bg-accent-cyan/90 transition-colors">Try Again</button>
       </div>
     </div>
   );

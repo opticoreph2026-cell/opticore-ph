@@ -65,7 +65,7 @@ export default async function PartnerDesignsPage() {
         </div>
         <Link
           href="/partner/designs/new"
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#F5A524] text-[#08080B] text-sm font-semibold hover:bg-[#F5A524]/90 transition-colors shadow-lg shadow-[#F5A524]/20"
+          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-accent-emerald text-white text-sm font-semibold hover:bg-accent-emerald/90 transition-colors shadow-lg shadow-accent-emerald/20"
         >
           <PlusCircle className="w-4 h-4" />
           New Design
@@ -93,7 +93,7 @@ export default async function PartnerDesignsPage() {
                     <p className="text-sm text-white/30">No designs created yet</p>
                     <Link
                       href="/partner/designs/new"
-                      className="mt-4 inline-flex items-center gap-2 text-sm text-[#F5A524] hover:text-[#F5A524]/80 transition-colors"
+                      className="mt-4 inline-flex items-center gap-2 text-sm text-accent-emerald hover:text-accent-emerald/80 transition-colors"
                     >
                       <PlusCircle className="w-4 h-4" /> Start a new design
                     </Link>
@@ -104,11 +104,11 @@ export default async function PartnerDesignsPage() {
                   <tr key={design.id} className="hover:bg-white/3 transition-colors group">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-xl bg-[#F5A524]/10 flex items-center justify-center">
-                          <FileText className="w-4 h-4 text-[#F5A524]" />
+                        <div className="w-8 h-8 rounded-xl bg-accent-emerald/10 flex items-center justify-center">
+                          <FileText className="w-4 h-4 text-accent-emerald" />
                         </div>
                         <div>
-                          <p className="font-medium text-white group-hover:text-[#F5A524] transition-colors">
+                          <p className="font-medium text-white group-hover:text-accent-emerald transition-colors">
                             {design.site?.customer?.fullName || 'Unknown'}
                           </p>
                           <p className="text-xs text-white/30">

@@ -54,7 +54,7 @@ export default async function PartnerCommissionsPage() {
         </div>
         <div className="bg-[#16161D] p-6 rounded-2xl border border-white/5">
           <div className="text-sm font-medium text-gray-400 mb-1">Pending Payouts</div>
-          <div className="text-4xl font-bold text-accent-amber">₱{Number(pendingEarned).toLocaleString()}</div>
+          <div className="text-4xl font-bold text-accent-cyan">₱{Number(pendingEarned).toLocaleString()}</div>
         </div>
         <div className="bg-[#16161D] p-6 rounded-2xl border border-white/5">
           <div className="text-sm font-medium text-gray-400 mb-1">Paid This Month</div>
@@ -98,7 +98,7 @@ export default async function PartnerCommissionsPage() {
                       <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
                         comm.status === 'paid'
                           ? 'bg-accent-emerald/10 text-accent-emerald'
-                          : 'bg-accent-amber/10 text-accent-amber'
+                          : 'bg-accent-cyan/10 text-accent-cyan'
                       }`}>
                         {comm.status.toUpperCase()}
                       </span>

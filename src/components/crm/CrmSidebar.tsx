@@ -52,7 +52,7 @@ function CrmSidebar({ role, email, name }: CrmSidebarProps) {
   const initials = (name || email || 'U').slice(0, 2).toUpperCase();
 
   return (
-    <aside className="w-64 bg-[#0F0F14] border-r border-white/5 flex flex-col h-screen sticky top-0">
+    <aside className="w-64 bg-background-900 border-r border-white/5 flex flex-col h-screen sticky top-0">
       {/* Brand */}
       <div className="h-16 flex items-center px-5 border-b border-white/5 flex-shrink-0">
         <Logo href="/crm" />
@@ -104,11 +104,11 @@ function CrmSidebar({ role, email, name }: CrmSidebarProps) {
               href="/admin"
               className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 group ${
                 pathname.startsWith('/admin')
-                  ? 'bg-[#F43F5E]/10 text-[#F43F5E]'
+                  ? 'bg-accent-rose/10 text-accent-rose'
                   : 'text-white/50 hover:text-white hover:bg-white/5'
               }`}
             >
-              <Shield className="w-4 h-4 flex-shrink-0 text-[#F43F5E]/70" />
+              <Shield className="w-4 h-4 flex-shrink-0 text-accent-rose/70" />
               <span>Admin Panel</span>
             </Link>
             <Link
@@ -140,7 +140,7 @@ function CrmSidebar({ role, email, name }: CrmSidebarProps) {
             <button
               type="submit"
               title="Sign out"
-              className="p-1.5 text-white/30 hover:text-[#F43F5E] transition-colors rounded-lg hover:bg-[#F43F5E]/10"
+              className="p-1.5 text-white/30 hover:text-accent-rose transition-colors rounded-lg hover:bg-accent-rose/10"
             >
               <LogOut className="w-4 h-4" />
             </button>
@@ -179,7 +179,7 @@ export default function CrmSidebarWrapper({
       )}
 
       {/* Mobile topbar */}
-      <header className="md:hidden fixed top-0 left-0 right-0 z-40 h-14 flex items-center justify-between px-4 bg-[#0F0F14]/95 backdrop-blur border-b border-white/5">
+      <header className="md:hidden fixed top-0 left-0 right-0 z-40 h-14 flex items-center justify-between px-4 bg-background-900/95 backdrop-blur border-b border-white/5">
         <Logo href="/crm" />
         <div className="flex items-center gap-2">
           <NotificationBell />

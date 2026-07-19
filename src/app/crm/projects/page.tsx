@@ -29,7 +29,7 @@ export default async function ProjectsPage() {
   });
 
   const statusColors: Record<string, string> = {
-    scheduled: 'bg-accent-amber/10 text-accent-amber',
+    scheduled: 'bg-accent-cyan/10 text-accent-cyan',
     in_progress: 'bg-accent-cyan/10 text-accent-cyan',
     commissioned: 'bg-accent-emerald/10 text-accent-emerald',
     warranty_registered: 'bg-purple-500/10 text-purple-400',

@@ -16,7 +16,7 @@ export default function CommissionsPage() {
         </p>
         <Link
           href="/crm"
-          className="inline-block text-sm text-accent-amber hover:text-accent-amber/80 transition-colors"
+          className="inline-block text-sm text-accent-cyan hover:text-accent-cyan/80 transition-colors"
         >
           Back to Dashboard
         </Link>

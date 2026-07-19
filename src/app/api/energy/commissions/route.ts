@@ -50,14 +50,14 @@ export async function POST(request: Request) {
       projectId,
       organizationId,
       roleInProject,
-      amountCentavos,
+      amount,
       status,
       paidAt,
       notes,
     } = body;
 
-    if (!projectId || !organizationId || !amountCentavos) {
-      return NextResponse.json({ error: 'projectId, organizationId, and amountCentavos are required' }, { status: 400 });
+    if (!projectId || !organizationId || !amount) {
+      return NextResponse.json({ error: 'projectId, organizationId, and amount are required' }, { status: 400 });
     }
 
     const commission = await db.commissionRecord.create({
@@ -65,7 +65,7 @@ export async function POST(request: Request) {
         projectId,
         organizationId,
         roleInProject: roleInProject || 'hardware_margin',
-        amountCentavos,
+        amount,
         status: status || 'pending',
         paidAt: paidAt ? new Date(paidAt) : null,
         notes,

@@ -28,12 +28,12 @@ export async function POST(request: Request) {
           modelName: data.modelName,
           ratedAcKw: data.ratedAcKw || 0,
           maxPvInputKw: data.maxPvInputKw || 0,
-          unitPriceCentavos: data.unitPriceCentavos || 0,
+          unitPrice: data.unitPrice || 0,
           phase: data.phase || 1,
           family: data.family || 'single_phase_aio',
           transferTimeMs: data.transferTimeMs || 20,
         },
-        select: { id: true, modelName: true, sku: true, unitPriceCentavos: true },
+        select: { id: true, modelName: true, sku: true, unitPrice: true },
       });
     } else if (category === 'battery') {
       result = await db.productBattery.create({
@@ -42,9 +42,9 @@ export async function POST(request: Request) {
           modelName: data.modelName,
           nominalKwh: data.nominalKwh || 0,
           usableKwh: data.usableKwh || 0,
-          unitPriceCentavos: data.unitPriceCentavos || 0,
+          unitPrice: data.unitPrice || 0,
         },
-        select: { id: true, modelName: true, sku: true, unitPriceCentavos: true },
+        select: { id: true, modelName: true, sku: true, unitPrice: true },
       });
     } else if (category === 'panel') {
       result = await db.solarPanel.create({
@@ -53,9 +53,9 @@ export async function POST(request: Request) {
           modelName: data.modelName,
           wattage: data.wattage || 0,
           efficiencyPct: data.efficiencyPct || 0,
-          unitPriceCentavos: data.unitPriceCentavos || 0,
+          unitPrice: data.unitPrice || 0,
         },
-        select: { id: true, modelName: true, sku: true, unitPriceCentavos: true },
+        select: { id: true, modelName: true, sku: true, unitPrice: true },
       });
     } else {
       return NextResponse.json({ error: 'Invalid category' }, { status: 400 });

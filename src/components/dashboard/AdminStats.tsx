@@ -41,7 +41,7 @@ export function AdminStats({ initialData }: { initialData: AdminData }) {
 
         <SpotlightCard className="p-6">
           <div className="flex items-center gap-4 mb-4">
-            <div className="w-12 h-12 bg-accent-amber/10 border border-accent-amber/20 rounded-xl flex items-center justify-center text-accent-amber">
+            <div className="w-12 h-12 bg-accent-cyan/10 border border-accent-cyan/20 rounded-xl flex items-center justify-center text-accent-cyan">
               <TrendingUp className="w-6 h-6" />
             </div>
             <h3 className="text-sm font-medium text-white/60">Total Leads</h3>
@@ -78,9 +78,9 @@ export function AdminStats({ initialData }: { initialData: AdminData }) {
           ) : (
             <div className="space-y-3">
               {recentLeads.map((lead) => (
-                <div key={lead.id} className="flex items-center justify-between py-3 border-b border-border-subtle last:border-0">
+                <div key={lead.id} className="flex items-center justify-between py-3 border-b border-foreground-950/10 last:border-0">
                   <div className="flex items-center gap-3">
-                    <div className="w-2 h-2 rounded-full bg-accent-amber" />
+                    <div className="w-2 h-2 rounded-full bg-accent-cyan" />
                     <div>
                       <span className="text-sm text-white/80">{lead.fullName}</span>
                       <span className="ml-2 text-xs text-white/40 capitalize">{lead.customerType.replace(/_/g, ' ')}</span>
@@ -94,7 +94,7 @@ export function AdminStats({ initialData }: { initialData: AdminData }) {
         </SpotlightCard>
 
         <SpotlightCard className="p-8 flex flex-col items-center justify-center text-center">
-          <div className="w-16 h-16 bg-surface-1000 border border-border-subtle rounded-2xl flex items-center justify-center text-accent-emerald mb-4">
+          <div className="w-16 h-16 bg-background-950 border border-foreground-950/10 rounded-2xl flex items-center justify-center text-accent-emerald mb-4">
             <Zap className="w-8 h-8" />
           </div>
           <h3 className="text-lg font-medium text-white mb-2">All Systems Operational</h3>

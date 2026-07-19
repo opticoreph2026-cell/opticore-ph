@@ -22,7 +22,7 @@ export async function GET() {
         wattage: true,
         efficiencyPct: true,
         cellType: true,
-        unitPriceCentavos: true,
+        unitPrice: true,
         isPriceConfirmed: true,
         datasheetUrl: true,
       },

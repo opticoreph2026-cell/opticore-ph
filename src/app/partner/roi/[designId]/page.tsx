@@ -151,14 +151,14 @@ function MetricCard({
     <div
       className={`rounded-2xl p-5 border text-center ${
         highlight
-          ? 'bg-[#F5A524]/10 border-[#F5A524]/20'
-          : 'bg-[#16161D] border-white/5'
+          ? 'bg-accent-cyan/10 border-accent-cyan/20'
+          : 'bg-background-800 border-white/5'
       }`}
     >
       <p className="text-xs text-white/40 mb-2">{label}</p>
       <p
         className={`text-2xl font-bold ${
-          accent ? 'text-accent-emerald' : highlight ? 'text-[#F5A524]' : 'text-white'
+          accent ? 'text-accent-emerald' : highlight ? 'text-accent-cyan' : 'text-white'
         }`}
       >
         {value}

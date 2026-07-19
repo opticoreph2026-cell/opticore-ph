@@ -64,7 +64,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const initials = ((user as any).name || user.email || 'JG').slice(0, 2).toUpperCase();
 
   return (
-    <div className="min-h-screen bg-[#08080B] text-white flex">
+    <div className="min-h-screen bg-background-950 text-white flex">
       <MobileDashboardNav
         navItems={adminNavItems.map(({ label, href }) => ({ label, href }))}
         initials={initials}
@@ -75,17 +75,17 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       />
 
       {/* Admin Sidebar */}
-      <aside className="w-64 border-r border-white/5 bg-[#0F0F14] hidden md:flex flex-col h-screen sticky top-0">
+      <aside className="w-64 border-r border-white/5 bg-background-900 hidden md:flex flex-col h-screen sticky top-0">
         {/* Brand */}
         <div className="h-16 flex items-center px-5 border-b border-white/5 flex-shrink-0">
           <Logo href="/admin" />
         </div>
 
         {/* Admin badge */}
-        <div className="px-5 py-3 flex items-center gap-2 bg-[#F43F5E]/5 border-b border-[#F43F5E]/10">
-          <ShieldCheck className="w-4 h-4 text-[#F43F5E] flex-shrink-0" />
+        <div className="px-5 py-3 flex items-center gap-2 bg-accent-rose/5 border-b border-accent-rose/10">
+          <ShieldCheck className="w-4 h-4 text-accent-rose flex-shrink-0" />
           <div>
-            <p className="text-xs font-semibold text-[#F43F5E] uppercase tracking-widest">Admin Panel</p>
+            <p className="text-xs font-semibold text-accent-rose uppercase tracking-widest">Admin Panel</p>
             <p className="text-[10px] text-white/30">Full system access</p>
           </div>
         </div>
@@ -100,7 +100,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
                 href={item.href}
                 className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-white/50 hover:text-white hover:bg-white/5 transition-all duration-150 group"
               >
-                <Icon className="w-4 h-4 flex-shrink-0 text-white/30 group-hover:text-[#F43F5E] transition-colors" />
+                <Icon className="w-4 h-4 flex-shrink-0 text-white/30 group-hover:text-accent-rose transition-colors" />
                 {item.label}
               </Link>
             );
@@ -118,7 +118,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
                   href={item.href}
                   className="flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium text-white/50 hover:text-white hover:bg-white/5 transition-all duration-150 group"
                 >
-                  <Icon className="w-4 h-4 flex-shrink-0 text-white/30 group-hover:text-[#06B6D4] transition-colors" />
+                  <Icon className="w-4 h-4 flex-shrink-0 text-white/30 group-hover:text-accent-cyan transition-colors" />
                   {item.label}
                 </Link>
               );
@@ -129,7 +129,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
               href="/crm"
               className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-white/50 hover:text-white hover:bg-white/5 transition-all duration-150 group"
             >
-              <ArrowLeft className="w-4 h-4 flex-shrink-0 text-white/30 group-hover:text-[#06B6D4] transition-colors" />
+              <ArrowLeft className="w-4 h-4 flex-shrink-0 text-white/30 group-hover:text-accent-cyan transition-colors" />
               Back to CRM
             </Link>
           </div>
@@ -138,20 +138,20 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         {/* User footer */}
         <div className="p-3 border-t border-white/5 flex-shrink-0">
           <div className="flex items-center gap-3 px-2 py-2 rounded-xl hover:bg-white/5 transition-colors">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#F43F5E]/40 to-accent-cyan/40 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-accent-rose/40 to-accent-cyan/40 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
               {initials}
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-xs font-semibold text-white truncate">
                 {(user as any).name || user.email}
               </p>
-              <p className="text-[10px] text-[#F43F5E]/70">Owner · Full Access</p>
+              <p className="text-[10px] text-accent-rose/70">Owner · Full Access</p>
             </div>
             <form action="/api/auth/logout" method="POST">
               <button
                 type="submit"
                 title="Sign out"
-                className="p-1.5 text-white/30 hover:text-[#F43F5E] transition-colors rounded-lg hover:bg-[#F43F5E]/10"
+                className="p-1.5 text-white/30 hover:text-accent-rose transition-colors rounded-lg hover:bg-accent-rose/10"
               >
                 <LogOut className="w-4 h-4" />
               </button>
@@ -163,9 +163,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       {/* Main */}
       <main className="flex-1 overflow-x-hidden flex flex-col">
         {/* Top header */}
-        <header className="hidden md:flex h-14 items-center justify-between px-8 bg-[#0F0F14]/60 backdrop-blur border-b border-white/5 flex-shrink-0">
+        <header className="hidden md:flex h-14 items-center justify-between px-8 bg-background-900/60 backdrop-blur border-b border-white/5 flex-shrink-0">
           <div className="flex items-center gap-2 text-sm text-white/40">
-            <ShieldCheck className="w-4 h-4 text-[#F43F5E]" />
+            <ShieldCheck className="w-4 h-4 text-accent-rose" />
             <span>Admin Command Center</span>
           </div>
           <NotificationBell />

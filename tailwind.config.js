@@ -55,6 +55,11 @@ module.exports = {
           950: 'oklch(var(--primary-950) / <alpha-value>)',
         },
         accent: {
+          blue:    '#2563EB',
+          cyan:    '#06B6D4',
+          emerald: '#10B981',
+          rose:    '#F43F5E',
+          amber:   '#F5A524',
           50:  'oklch(var(--accent-50) / <alpha-value>)',
           100: 'oklch(var(--accent-100) / <alpha-value>)',
           200: 'oklch(var(--accent-200) / <alpha-value>)',

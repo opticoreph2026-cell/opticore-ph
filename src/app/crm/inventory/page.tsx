@@ -70,9 +70,9 @@ export default async function InventoryPage() {
                     <td className="px-6 py-4">
                       <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
                         item.ownershipStatus === 'sold_installed'
-                          ? 'bg-[#10B981]/10 text-[#10B981]'
+                          ? 'bg-accent-emerald/10 text-accent-emerald'
                           : item.ownershipStatus === 'reserved'
-                          ? 'bg-[#F5A524]/10 text-[#F5A524]'
+                          ? 'bg-accent-cyan/10 text-accent-cyan'
                           : 'bg-white/5 text-gray-400'
                       }`}>
                         {item.ownershipStatus.replace(/_/g, ' ')}

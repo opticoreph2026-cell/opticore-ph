@@ -9,7 +9,7 @@ interface Commission {
   organization: { name: string };
   project: { id: string; status: string };
   roleInProject: string;
-  amountCentavos: number;
+  amount: number;
   status: string;
   paidAt: string | null;
   createdAt: string;
@@ -24,12 +24,12 @@ export function CommissionAdminClient({
   const columns: Column<Commission>[] = [
     { key: 'organization', label: 'Partner', render: (c) => c.organization?.name || '—' },
     { key: 'roleInProject', label: 'Role', render: (c) => <span className="capitalize">{c.roleInProject.replace(/_/g, ' ')}</span> },
-    { key: 'amountCentavos', label: 'Amount', render: (c) => formatPHP(c.amountCentavos) },
+    { key: 'amount', label: 'Amount', render: (c) => formatPHP(c.amount) },
     {
       key: 'status', label: 'Status',
       render: (c) => {
         const colors: Record<string, string> = {
-          pending: 'bg-accent-amber/10 text-accent-amber',
+          pending: 'bg-accent-rose/10 text-accent-rose',
           paid: 'bg-accent-emerald/10 text-accent-emerald',
         };
         return (

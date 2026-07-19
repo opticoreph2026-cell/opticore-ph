@@ -18,7 +18,7 @@ export function AddProductDialog() {
     usableKwh: '',
     wattage: '',
     efficiencyPct: '',
-    unitPriceCentavos: '',
+    unitPrice: '',
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -30,7 +30,7 @@ export function AddProductDialog() {
         category: form.category,
         modelName: form.modelName.trim(),
         sku: form.sku.trim(),
-        unitPriceCentavos: Math.round(parseFloat(form.unitPriceCentavos || '0') * 100),
+        unitPrice: parseFloat(form.unitPrice || '0'),
       };
 
       if (form.category === 'inverter') {
@@ -52,7 +52,7 @@ export function AddProductDialog() {
       setOpen(false);
       setForm({
         category: 'inverter', modelName: '', sku: '', ratedAcKw: '',
-        nominalKwh: '', usableKwh: '', wattage: '', efficiencyPct: '', unitPriceCentavos: '',
+        nominalKwh: '', usableKwh: '', wattage: '', efficiencyPct: '', unitPrice: '',
       });
       router.refresh();
     } catch (err) {
@@ -76,7 +76,7 @@ export function AddProductDialog() {
       {open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setOpen(false)} />
-          <div className="relative bg-surface-900 border border-border-subtle rounded-2xl p-6 w-full max-w-lg mx-4 shadow-2xl max-h-[90vh] overflow-y-auto">
+          <div className="relative bg-background-800 border border-foreground-950/10 rounded-2xl p-6 w-full max-w-lg mx-4 shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-lg font-bold text-white">Add Product</h2>
               <button onClick={() => setOpen(false)} className="p-1 text-white/40 hover:text-white rounded-lg hover:bg-white/5">
@@ -90,7 +90,7 @@ export function AddProductDialog() {
                 <select
                   value={form.category}
                   onChange={(e) => setForm({ ...form, category: e.target.value })}
-                  className="w-full px-3 py-2 bg-surface-800 border border-border-subtle rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent-blue"
+                  className="w-full px-3 py-2 bg-background-900 border border-foreground-950/10 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent-blue"
                 >
                   <option value="inverter">Inverter</option>
                   <option value="battery">Battery</option>
@@ -105,7 +105,7 @@ export function AddProductDialog() {
                   required
                   value={form.modelName}
                   onChange={(e) => setForm({ ...form, modelName: e.target.value })}
-                  className="w-full px-3 py-2 bg-surface-800 border border-border-subtle rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent-blue"
+                  className="w-full px-3 py-2 bg-background-900 border border-foreground-950/10 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent-blue"
                 />
               </div>
 
@@ -116,7 +116,7 @@ export function AddProductDialog() {
                   required
                   value={form.sku}
                   onChange={(e) => setForm({ ...form, sku: e.target.value })}
-                  className="w-full px-3 py-2 bg-surface-800 border border-border-subtle rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent-blue"
+                  className="w-full px-3 py-2 bg-background-900 border border-foreground-950/10 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent-blue"
                 />
               </div>
 
@@ -128,7 +128,7 @@ export function AddProductDialog() {
                     step="0.1"
                     value={form.ratedAcKw}
                     onChange={(e) => setForm({ ...form, ratedAcKw: e.target.value })}
-                    className="w-full px-3 py-2 bg-surface-800 border border-border-subtle rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent-blue"
+                    className="w-full px-3 py-2 bg-background-900 border border-foreground-950/10 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent-blue"
                   />
                 </div>
               )}
@@ -142,7 +142,7 @@ export function AddProductDialog() {
                       step="0.1"
                       value={form.nominalKwh}
                       onChange={(e) => setForm({ ...form, nominalKwh: e.target.value })}
-                      className="w-full px-3 py-2 bg-surface-800 border border-border-subtle rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent-blue"
+                      className="w-full px-3 py-2 bg-background-900 border border-foreground-950/10 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent-blue"
                     />
                   </div>
                   <div>
@@ -152,7 +152,7 @@ export function AddProductDialog() {
                       step="0.1"
                       value={form.usableKwh}
                       onChange={(e) => setForm({ ...form, usableKwh: e.target.value })}
-                      className="w-full px-3 py-2 bg-surface-800 border border-border-subtle rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent-blue"
+                      className="w-full px-3 py-2 bg-background-900 border border-foreground-950/10 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent-blue"
                     />
                   </div>
                 </>
@@ -166,7 +166,7 @@ export function AddProductDialog() {
                       type="number"
                       value={form.wattage}
                       onChange={(e) => setForm({ ...form, wattage: e.target.value })}
-                      className="w-full px-3 py-2 bg-surface-800 border border-border-subtle rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent-blue"
+                      className="w-full px-3 py-2 bg-background-900 border border-foreground-950/10 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent-blue"
                     />
                   </div>
                   <div>
@@ -176,7 +176,7 @@ export function AddProductDialog() {
                       step="0.1"
                       value={form.efficiencyPct}
                       onChange={(e) => setForm({ ...form, efficiencyPct: e.target.value })}
-                      className="w-full px-3 py-2 bg-surface-800 border border-border-subtle rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent-blue"
+                      className="w-full px-3 py-2 bg-background-900 border border-foreground-950/10 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent-blue"
                     />
                   </div>
                 </>
@@ -187,9 +187,9 @@ export function AddProductDialog() {
                 <input
                   type="number"
                   step="0.01"
-                  value={form.unitPriceCentavos}
-                  onChange={(e) => setForm({ ...form, unitPriceCentavos: e.target.value })}
-                  className="w-full px-3 py-2 bg-surface-800 border border-border-subtle rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent-blue"
+                  value={form.unitPrice}
+                  onChange={(e) => setForm({ ...form, unitPrice: e.target.value })}
+                  className="w-full px-3 py-2 bg-background-900 border border-foreground-950/10 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent-blue"
                 />
               </div>
 

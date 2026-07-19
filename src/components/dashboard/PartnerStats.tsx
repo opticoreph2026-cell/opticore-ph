@@ -18,7 +18,7 @@ interface PartnerData {
 }
 
 const statusColors: Record<string, string> = {
-  scheduled: 'bg-accent-amber/10 text-accent-amber',
+  scheduled: 'bg-accent-cyan/10 text-accent-cyan',
   in_progress: 'bg-accent-cyan/10 text-accent-cyan',
   commissioned: 'bg-accent-emerald/10 text-accent-emerald',
   warranty_registered: 'bg-purple-400/10 text-purple-400',
@@ -51,7 +51,7 @@ export function PartnerStats({ initialData }: { initialData: PartnerData }) {
         </div>
         <div className="bg-[#16161D] p-6 rounded-2xl border border-white/5">
           <div className="text-sm font-medium text-gray-400 mb-1">Scheduled</div>
-          <div className="text-4xl font-bold text-accent-amber">{scheduledCount}</div>
+          <div className="text-4xl font-bold text-accent-cyan">{scheduledCount}</div>
         </div>
       </div>
 

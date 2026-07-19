@@ -56,7 +56,7 @@ export async function POST(request: Request) {
       storageLocation,
       receivedDate,
       consignmentRemitStatus,
-      remitAmountCentavos,
+      remitAmount,
       notes,
     } = body;
 
@@ -73,7 +73,7 @@ export async function POST(request: Request) {
         storageLocation: storageLocation || null,
         receivedDate: receivedDate ? new Date(receivedDate) : new Date(),
         consignmentRemitStatus: consignmentRemitStatus || 'not_applicable',
-        remitAmountCentavos: remitAmountCentavos || 0,
+        remitAmount: remitAmount || 0,
         notes: notes || null,
       },
     });

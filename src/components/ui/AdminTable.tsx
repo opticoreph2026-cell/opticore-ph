@@ -147,7 +147,7 @@ export function AdminTable<T extends { [key: string]: any }>({
         <select
           value={value}
           onChange={(e) => setForm((prev) => ({ ...prev, [field.key]: e.target.value }))}
-          className="w-full bg-[#1A1A24] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-accent-cyan"
+          className="w-full bg-background-900 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-accent-cyan"
         >
           <option value="">Select...</option>
           {field.options.map((opt) => (
@@ -164,7 +164,7 @@ export function AdminTable<T extends { [key: string]: any }>({
           onChange={(e) => setForm((prev) => ({ ...prev, [field.key]: e.target.value }))}
           placeholder={field.placeholder}
           rows={3}
-          className="w-full bg-[#1A1A24] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-accent-cyan resize-none"
+          className="w-full bg-background-900 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-accent-cyan resize-none"
         />
       );
     }
@@ -176,7 +176,7 @@ export function AdminTable<T extends { [key: string]: any }>({
         onChange={(e) => setForm((prev) => ({ ...prev, [field.key]: e.target.value }))}
         placeholder={field.placeholder}
         required={field.required}
-        className="w-full bg-[#1A1A24] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-accent-cyan"
+        className="w-full bg-background-900 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-accent-cyan"
       />
     );
   };
@@ -193,7 +193,7 @@ export function AdminTable<T extends { [key: string]: any }>({
       <div className="fixed inset-0 z-50 flex items-center justify-center" onClick={onClose}>
         <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
         <div
-          className="relative bg-[#16161D] border border-white/10 rounded-2xl w-full max-w-lg mx-4 max-h-[85vh] overflow-y-auto"
+          className="relative bg-background-800 border border-white/10 rounded-2xl w-full max-w-lg mx-4 max-h-[85vh] overflow-y-auto"
           onClick={(e) => e.stopPropagation()}
         >
           <div className="flex items-center justify-between px-6 py-4 border-b border-white/5">
@@ -260,7 +260,7 @@ export function AdminTable<T extends { [key: string]: any }>({
                 value={search}
                 onChange={(e) => { setSearch(e.target.value); setPage(0); }}
                 placeholder="Search..."
-                className="pl-9 pr-3 py-2 text-sm bg-[#1A1A24] border border-white/10 rounded-lg text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-accent-cyan w-48"
+                className="pl-9 pr-3 py-2 text-sm bg-background-900 border border-white/10 rounded-lg text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-accent-cyan w-48"
               />
             </div>
           )}
@@ -284,7 +284,7 @@ export function AdminTable<T extends { [key: string]: any }>({
       )}
 
       {/* Table */}
-      <div className="bg-[#16161D] border border-white/5 rounded-xl overflow-hidden">
+      <div className="bg-background-800 border border-white/5 rounded-xl overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
             <thead className="bg-white/5 text-xs uppercase text-white/40">
@@ -384,7 +384,7 @@ export function AdminTable<T extends { [key: string]: any }>({
         <div className="fixed inset-0 z-50 flex items-center justify-center" onClick={() => setDeleting(null)}>
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
           <div
-            className="relative bg-[#16161D] border border-white/10 rounded-2xl w-full max-w-sm mx-4 p-6"
+            className="relative bg-background-800 border border-white/10 rounded-2xl w-full max-w-sm mx-4 p-6"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="text-center">

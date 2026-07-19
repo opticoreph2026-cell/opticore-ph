@@ -22,7 +22,7 @@ interface CustomerData {
 }
 
 const statusBadge: Record<string, string> = {
-  scheduled: 'bg-accent-amber/10 text-accent-amber',
+  scheduled: 'bg-accent-cyan/10 text-accent-cyan',
   in_progress: 'bg-accent-cyan/10 text-accent-cyan',
   commissioned: 'bg-accent-emerald/10 text-accent-emerald',
   warranty_registered: 'bg-purple-400/10 text-purple-400',
@@ -47,7 +47,7 @@ export function CustomerStats({ initialData, email }: { initialData: CustomerDat
 
       {!customer ? (
         <div className="bg-[#16161D] p-8 rounded-2xl border border-white/5 text-center">
-          <div className="w-16 h-16 bg-accent-amber/20 text-accent-amber rounded-full flex items-center justify-center mx-auto mb-4">
+          <div className="w-16 h-16 bg-accent-cyan/20 text-accent-cyan rounded-full flex items-center justify-center mx-auto mb-4">
             <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
