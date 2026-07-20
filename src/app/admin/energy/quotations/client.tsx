@@ -10,7 +10,7 @@ interface Quotation {
   customer: { fullName: string };
   design: { pvArrayKwp: number; designPathway: string } | null;
   roiScenario: { scenarioLabel: string } | null;
-  grandTotalCentavos: number;
+  grandTotal: number;
   status: string;
   createdAt: string;
 }
@@ -21,8 +21,8 @@ export function QuotationAdminClient({ quotations }: { quotations: Quotation[] }
     { key: 'customer', label: 'Customer', render: (q) => q.customer?.fullName || '—' },
     { key: 'design', label: 'System', render: (q) => q.design ? `${q.design.pvArrayKwp.toFixed(2)} kWp` : '—' },
     {
-      key: 'grandTotalCentavos', label: 'Total',
-      render: (q) => formatPHP(q.grandTotalCentavos),
+      key: 'grandTotal', label: 'Total',
+      render: (q) => formatPHP(q.grandTotal),
     },
     {
       key: 'status', label: 'Status',

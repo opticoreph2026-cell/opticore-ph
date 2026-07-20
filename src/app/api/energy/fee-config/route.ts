@@ -8,7 +8,12 @@ export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 async function getOrCreateConfig() {
-  let config = await db.feeConfiguration.findFirst();
+  let config = await db.feeConfiguration.findFirst({
+    select: {
+      id: true, designFee: true, installationPct: true, permitFee: true,
+      maintenanceAnnualFee: true, depositRequiredPct: true, updatedAt: true,
+    },
+  });
   if (!config) {
     config = await db.feeConfiguration.create({ data: {} });
   }
@@ -38,10 +43,10 @@ export async function PUT(request: Request) {
     const updated = await db.feeConfiguration.update({
       where: { id: config.id },
       data: {
-        designFeeCentavos: body.designFeeCentavos ?? config.designFeeCentavos,
+        designFee: body.designFee ?? config.designFee,
         installationPct: body.installationPct ?? config.installationPct,
-        permitFeeCentavos: body.permitFeeCentavos ?? config.permitFeeCentavos,
-        maintenanceAnnualFeeCentavos: body.maintenanceAnnualFeeCentavos ?? config.maintenanceAnnualFeeCentavos,
+        permitFee: body.permitFee ?? config.permitFee,
+        maintenanceAnnualFee: body.maintenanceAnnualFee ?? config.maintenanceAnnualFee,
         depositRequiredPct: body.depositRequiredPct ?? config.depositRequiredPct,
       },
     });

@@ -193,6 +193,7 @@ interface ProposalPDFProps {
   hardwareCost: number;
   installationFee: number;
   designFee: number;
+  permitFee: number;
   depositPct: number;
   validUntil: string;
   year1Savings: number;
@@ -214,6 +215,7 @@ export function ProposalPDF({
   hardwareCost,
   installationFee,
   designFee,
+  permitFee,
   depositPct,
   validUntil,
   year1Savings,
@@ -278,6 +280,10 @@ export function ProposalPDF({
             <View style={styles.pricingRow}>
               <Text style={styles.pricingLabel}>Design & Engineering</Text>
               <Text style={styles.pricingValue}>₱{designFee.toLocaleString()}</Text>
+            </View>
+            <View style={styles.pricingRow}>
+              <Text style={styles.pricingLabel}>Permits & DU Filing</Text>
+              <Text style={styles.pricingValue}>₱{permitFee.toLocaleString()}</Text>
             </View>
             <View style={styles.totalRow}>
               <Text style={styles.totalLabel}>Total Investment (VAT Inclusive)</Text>

@@ -32,12 +32,20 @@ export async function GET(request: Request) {
     const scenarios = await db.roiScenario.findMany({
       where: { designId },
       orderBy: { createdAt: 'desc' },
-      include: {
+      select: {
+        id: true, designId: true, scenarioLabel: true, pathway: true,
+        selfConsumptionPct: true, exportPct: true, capexTotal: true,
+        capexBreakdownJson: true, financingType: true,
+        loanTermMonths: true, loanInterestRatePct: true,
+        annualDegradationPct: true, annualRateEscalationPct: true,
+        discountRatePct: true, omAnnualCost: true, analysisHorizonYears: true,
+        resultsJson: true, generatedById: true, createdAt: true, updatedAt: true,
         design: {
-          include: {
-            site: { include: { customer: true } },
-            inverter: true,
-            battery: true,
+          select: {
+            pvArrayKwp: true, estimatedAnnualYieldKwh: true, designPathway: true,
+            site: { select: { customer: { select: { fullName: true } } } },
+            inverter: { select: { modelName: true, manufacturer: true } },
+            battery: { select: { modelName: true, manufacturer: true } },
           },
         },
       },
@@ -71,7 +79,7 @@ export async function POST(request: Request) {
       annualRateEscalationPct = 5,
       discountRatePct = 8,
       allInRateRu = 105000,
-      bgcRateRu = 65000,
+      blendedGenerationRateRu = 65000,
       utilityName = 'VECO',
       customerClass = 'residential',
       utilityCompanyId,
@@ -79,7 +87,7 @@ export async function POST(request: Request) {
 
     // DB rate lookup fallback
     let resolvedAllInRateRu = allInRateRu;
-    let resolvedBgcRateRu = bgcRateRu;
+    let resolvedBgcRateRu = blendedGenerationRateRu;
     let resolvedUtilityName = utilityName;
 
     if (utilityCompanyId) {
@@ -87,13 +95,13 @@ export async function POST(request: Request) {
         const latestRate = await db.utilityRateSchedule.findFirst({
           where: { utilityCompanyId },
           orderBy: { effectiveDate: 'desc' },
-          select: { allInRateRu: true, bgcRateRu: true },
+          select: { allInRateRu: true, blendedGenerationRateRu: true },
         });
         if (latestRate) {
           resolvedAllInRateRu = latestRate.allInRateRu;
-          resolvedBgcRateRu = latestRate.bgcRateRu ?? Math.round(latestRate.allInRateRu * 0.65);
+          resolvedBgcRateRu = latestRate.blendedGenerationRateRu ?? Math.round(latestRate.allInRateRu * 0.65);
         }
-        const company = await db.utilityCompany.findUnique({
+        const company = await db.energyUtilityCompany.findUnique({
           where: { id: utilityCompanyId },
           select: { name: true, code: true },
         });

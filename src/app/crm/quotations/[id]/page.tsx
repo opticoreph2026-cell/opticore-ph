@@ -150,6 +150,12 @@ export default async function QuotationDetailPage({
               <span className="text-foreground-950">{formatMoney(quotation.maintenanceContractOffer)}</span>
             </div>
           )}
+          {Number(quotation.permitFee) > 0 && (
+            <div className="flex justify-between">
+              <span className="text-foreground-500">Permits & DU Filing</span>
+              <span className="text-foreground-950">{formatMoney(quotation.permitFee)}</span>
+            </div>
+          )}
           <div className="flex justify-between pt-3 border-t border-foreground-950/5">
             <span className="text-base font-semibold text-foreground-950">Grand Total</span>
             <span className="text-base font-bold text-accent-cyan">{formatMoney(quotation.grandTotal)}</span>

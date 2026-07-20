@@ -50,6 +50,7 @@ export async function GET(
     const hardwareCost = quotation.hardwareSubtotal;
     const installationFee = quotation.installationFee;
     const designFee = quotation.designFee;
+    const permitFee = quotation.permitFee;
     const depositPct = quotation.depositRequiredPct;
     const validUntil = new Date(quotation.validUntil).toLocaleDateString('en-PH', {
       month: 'long', day: 'numeric', year: 'numeric',
@@ -86,6 +87,7 @@ export async function GET(
         hardwareCost={hardwareCost}
         installationFee={installationFee}
         designFee={designFee}
+        permitFee={permitFee}
         depositPct={depositPct}
         validUntil={validUntil}
         year1Savings={year1Savings}

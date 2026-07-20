@@ -4,6 +4,7 @@
  * Pure functions — no DB calls. Money values in pesos (Decimal(10,2)).
  */
 
+import { roundMoney } from '@/lib/money';
 import {
   type BatterySpec,
   type CriticalLoad,
@@ -55,10 +56,10 @@ export const ESTIMATED_UNIT_PRICES: Record<string, number> = {
   'BW-BAT-10.1P': 125000,
 };
 
-export const ESTIMATED_PANEL_PRICE = 7500; // ₱7,500 per 550W panel
+export const ESTIMATED_PANEL_PRICE = roundMoney(7500);
 export const ESTIMATED_INSTALLATION_PCT = 0.15;
-export const ESTIMATED_DESIGN_FEE = 15000; // ₱15,000
-export const ESTIMATED_PERMIT_FEE = 25000; // ₱25,000
+export const ESTIMATED_DESIGN_FEE = roundMoney(15000);
+export const ESTIMATED_PERMIT_FEE = roundMoney(25000);
 
 export interface BomLineItem {
   itemType: string;
@@ -209,17 +210,17 @@ export function runDesignCompute(
       description: 'Mounting, BOS, cabling & breakers',
       quantity: 1,
       unit: 'lot',
-      unitCost: Math.round(pv.pvArrayKwp * 3500),
-      total: Math.round(pv.pvArrayKwp * 3500),
+      unitCost: roundMoney(pv.pvArrayKwp * 3500),
+      total: roundMoney(pv.pvArrayKwp * 3500),
       source: 'third_party',
     },
   ];
 
   const hardwareSubtotal = bom.reduce((s, i) => s + i.total, 0);
   const installPct = input.installationFeePct ?? ESTIMATED_INSTALLATION_PCT;
-  const installationFee = Math.round(hardwareSubtotal * installPct);
-  const designFee = input.designFee ?? ESTIMATED_DESIGN_FEE;
-  const permitFee = input.permitFee ?? ESTIMATED_PERMIT_FEE;
+  const installationFee = roundMoney(hardwareSubtotal * installPct);
+  const designFee = roundMoney(input.designFee ?? ESTIMATED_DESIGN_FEE);
+  const permitFee = roundMoney(input.permitFee ?? ESTIMATED_PERMIT_FEE);
   const grandTotal = hardwareSubtotal + installationFee + designFee + permitFee;
 
   return {

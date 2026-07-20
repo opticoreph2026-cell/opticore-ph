@@ -23,8 +23,9 @@ export async function POST(request: Request) {
     }
 
     const { email, password } = parsed.data;
+    const userAgent = request.headers.get('user-agent') ?? 'unknown';
 
-    const result = await signIn('credentials', { email, password, redirect: false });
+    const result = await signIn('credentials', { email, password, userAgent, redirect: false });
 
     if (!result || result.error) {
       return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });

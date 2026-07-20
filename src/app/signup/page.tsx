@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Logo } from '@/components/ui/Logo';
 import { Spinner } from '@/components/ui/Spinner';
-import { signIn } from 'next-auth/react';
 import { useToast } from '@/components/ui/Toast';
 import { Turnstile } from '@marsidev/react-turnstile';
 import { PasswordInput } from '@/components/ui/PasswordInput';
@@ -44,10 +43,9 @@ export default function SignupPage() {
         throw new Error(data.error || 'Failed to create account');
       }
 
-      await signIn('credentials', { email, password, skipTurnstile: 'true', redirect: false });
-      document.cookie = 'opticore_session=1; path=/; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : '');
-      success('Account created!');
-      router.push('/onboarding');
+      success('Account created! Please sign in.');
+      router.push('/login');
+      return;
     } catch (err: any) {
       error(err.message);
     } finally {

@@ -54,7 +54,7 @@ export default function PartnerROIPage() {
     );
   }
 
-  const { parsed, capexTotalCentavos } = scenario;
+  const { parsed, capexTotal } = scenario;
   const headline = parsed.headline ?? parsed;
   const cashFlow: any[] = parsed.cashFlowByYear ?? [];
 
@@ -63,7 +63,7 @@ export default function PartnerROIPage() {
     .map((c) => ({
       year: `Y${c.year}`,
       cumulative: c.cumulativeCashFlow,
-      cost: capexTotalCentavos,
+      cost: capexTotal,
     }));
 
   return (
@@ -76,7 +76,7 @@ export default function PartnerROIPage() {
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <MetricCard label="Total Investment" value={formatPhp(capexTotalCentavos)} />
+        <MetricCard label="Total Investment" value={formatPhp(capexTotal)} />
         <MetricCard
           label="Year 1 Savings"
           value={formatPhp(headline.yearOneSavingsCentavos ?? parsed.year1SavingsCentavos ?? 0)}

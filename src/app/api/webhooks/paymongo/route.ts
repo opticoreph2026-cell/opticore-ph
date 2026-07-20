@@ -43,7 +43,7 @@ export async function POST(req: Request) {
         const payment = await db.energyPayment.create({
           data: {
             contractId: metadata.contractId,
-            amountCentavos,
+            amount: amountCentavos,
             paymentType,
             method: 'gcash',
             referenceNo: paymentData.id ?? null,

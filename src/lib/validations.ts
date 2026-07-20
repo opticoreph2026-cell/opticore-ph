@@ -73,6 +73,7 @@ export const createQuotationSchema = z.object({
   hardwareSubtotal: z.number().min(0).default(0),
   installationFee: z.number().min(0).default(0),
   designFee: z.number().min(0).default(0),
+  permitFee: z.number().min(0).default(0),
   grandTotal: z.number().min(0).default(0),
   validUntil: z.string().optional().nullable(),
   notes: z.string().max(2000).optional().nullable(),
@@ -86,11 +87,14 @@ const QUOTATION_STATUS_TRANSITIONS: Record<string, string[]> = {
   expired: ['sent'],
 };
 
+const quotationStatusEnum = z.enum(['draft', 'sent', 'accepted', 'rejected', 'expired']);
+
 export const updateQuotationSchema = z.object({
   status: z.string().optional(),
   hardwareSubtotal: z.number().min(0).optional(),
   installationFee: z.number().min(0).optional(),
   designFee: z.number().min(0).optional(),
+  permitFee: z.number().min(0).optional(),
   grandTotal: z.number().min(0).optional(),
   notes: z.string().max(2000).optional().nullable(),
   vatTreatment: z.enum(['vat_inclusive', 'vat_exclusive', 'vat_exempt']).optional(),

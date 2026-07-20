@@ -34,7 +34,14 @@ export async function GET(request: Request) {
     const quotations = await db.energyQuotation.findMany({
       where,
       orderBy: { createdAt: 'desc' },
-      include: {
+      select: {
+        id: true, designId: true, roiScenarioId: true, customerId: true,
+        quoteNumber: true, issueDate: true, validUntil: true,
+        hardwareSubtotal: true, installationFee: true, designFee: true,
+        maintenanceContractOffer: true, vatTreatment: true, grandTotal: true,
+        depositRequiredPct: true, status: true, pdfFileUrl: true,
+        sentAt: true, respondedAt: true, notes: true,
+        createdAt: true, updatedAt: true,
         customer: { select: { fullName: true } },
         design: { select: { pvArrayKwp: true, designPathway: true } },
         roiScenario: { select: { scenarioLabel: true } },
@@ -61,9 +68,9 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: parsed.error.flatten().fieldErrors }, { status: 422 });
     }
 
-    const { customerId, designId, roiScenarioId, hardwareSubtotal, installationFee, designFee, grandTotal, validUntil, notes } = parsed.data;
+    const { customerId, designId, roiScenarioId, hardwareSubtotal, installationFee, designFee, permitFee, grandTotal, validUntil, notes } = parsed.data;
 
-    const computedTotal = (hardwareSubtotal ?? 0) + (installationFee ?? 0) + (designFee ?? 0);
+    const computedTotal = (hardwareSubtotal ?? 0) + (installationFee ?? 0) + (designFee ?? 0) + (permitFee ?? 0);
     const finalTotal = grandTotal ?? computedTotal;
 
     const quotation = await db.energyQuotation.create({
@@ -78,6 +85,7 @@ export async function POST(request: Request) {
         hardwareSubtotal: hardwareSubtotal ?? 0,
         installationFee: installationFee ?? 0,
         designFee: designFee ?? 0,
+        permitFee: permitFee ?? 0,
         grandTotal: finalTotal,
         depositRequiredPct: 50,
         status: 'draft',

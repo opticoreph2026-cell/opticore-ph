@@ -567,6 +567,7 @@ model EnergyQuotation {
   installationFee      Decimal  @default(0)
   designFee            Decimal  @default(0)
   maintenanceContractOffer Decimal @default(0)
+  permitFee               Decimal  @default(0)
   vatTreatment            String   @default("vat_inclusive")
   grandTotal      Decimal  @default(0)
   depositRequiredPct      Float    @default(30.0)

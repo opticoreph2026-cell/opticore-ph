@@ -16,12 +16,12 @@ interface Package {
   inverterQuantity: number;
   batterySku: string;
   batteryQuantity: number;
-  totalHardwareCentavos: number;
-  installationFeeCentavos: number;
-  designFeeCentavos: number;
-  permitFeeCentavos: number;
-  grandTotalCentavos: number;
-  monthlyPaymentEstimateCentavos: number | null;
+  totalHardware: number;
+  installationFee: number;
+  designFee: number;
+  permitFee: number;
+  grandTotal: number;
+  monthlyPaymentEstimate: number | null;
   createdAt: string;
 }
 
@@ -40,7 +40,7 @@ export function PackageAdminClient({
     { key: 'panels', label: 'Panels', render: (p) => `${p.panelQuantity}× ${p.panelSku}` },
     { key: 'inverters', label: 'Inverter', render: (p) => `${p.inverterQuantity}× ${p.inverterSku}` },
     { key: 'batteries', label: 'Battery', render: (p) => `${p.batteryQuantity}× ${p.batterySku}` },
-    { key: 'grandTotalCentavos', label: 'Total', render: (p) => formatPHP(p.grandTotalCentavos) },
+    { key: 'grandTotal', label: 'Total', render: (p) => formatPHP(p.grandTotal) },
   ];
 
   const fields: FieldConfig[] = [

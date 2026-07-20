@@ -29,7 +29,11 @@ export async function GET(request: Request) {
     const leads = await db.energyLead.findMany({
       where,
       orderBy: { createdAt: 'desc' },
-      include: {
+      select: {
+        id: true, fullName: true, phone: true, email: true, addressLine: true,
+        city: true, province: true, barangay: true, utilityCompanyId: true,
+        customerType: true, monthlyBill: true, source: true, status: true,
+        assignedOrgId: true, notes: true, createdAt: true, updatedAt: true,
         utilityCompany: { select: { name: true, code: true } },
         assignedOrg: { select: { name: true } },
       },

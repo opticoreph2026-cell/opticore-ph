@@ -261,6 +261,7 @@ export function DesignWizard({ basePath = '/crm' }: { basePath?: string }) {
           hardwareSubtotal: computeResult.hardwareSubtotal,
           installationFee: computeResult.installationFee,
           designFee: computeResult.designFee,
+          permitFee: computeResult.permitFee,
           grandTotal: computeResult.grandTotal,
         }),
       });

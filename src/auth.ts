@@ -15,12 +15,15 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         email: { label: 'Email', type: 'email' },
         password: { label: 'Password', type: 'password' },
       },
-      async authorize(credentials) {
+      async authorize(credentials, request) {
         try {
           const creds = credentials as Record<string, string> | undefined;
           const email = creds?.email;
           const password = creds?.password;
           const authType = creds?.type;
+          const userAgent = request?.headers?.get?.('user-agent') ?? creds?.userAgent ?? 'unknown';
+          console.log('[auth:authorize] login attempt', { email, userAgent });
+
           if (!email || !password) {
             console.log('[auth:authorize] missing email or password');
             return null;
@@ -49,19 +52,19 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           if (authType === 'otp') {
             const client = await db.client.findUnique({ where: { email } });
             if (!client || client.suspended) {
-              console.log('[auth:authorize] OTP user not found or suspended', email);
+              console.log('[auth:authorize] OTP user not found or suspended', { email, userAgent });
               return null;
             }
             if (!client.otpCode || !client.otpExpiresAt) {
-              console.log('[auth:authorize] no OTP requested', email);
+              console.log('[auth:authorize] no OTP requested', { email, userAgent });
               return null;
             }
             if (client.otpCode !== password) {
-              console.log('[auth:authorize] OTP mismatch', email);
+              console.log('[auth:authorize] OTP mismatch', { email, userAgent });
               return null;
             }
             if (new Date() > client.otpExpiresAt) {
-              console.log('[auth:authorize] OTP expired', email);
+              console.log('[auth:authorize] OTP expired', { email, userAgent });
               return null;
             }
 
@@ -69,6 +72,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
               where: { id: client.id },
               data: { otpCode: null, otpExpiresAt: null, lastLoginAt: new Date(), lastSignedInAt: new Date() },
             });
+
+            console.log('[auth:authorize] OTP login success', { email, userAgent });
 
             const profile = await db.energyProfile.findUnique({
               where: { clientId: client.id },
@@ -84,7 +89,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           }
 
           // ── Turnstile verification (skip for OTP and post-signup auto-login) ──
-          if (!creds?.skipTurnstile && process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY) {
+          if (process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY) {
             const turnstileToken = creds?.turnstileToken;
             if (!turnstileToken) {
               console.log('[auth:authorize] missing turnstile token');
@@ -107,21 +112,21 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           // ── Password login ─────────────────────────────────────────
           const client = await db.client.findUnique({ where: { email } });
           if (!client) {
-            console.log('[auth:authorize] user not found', email);
+            console.log('[auth:authorize] user not found', { email, userAgent });
             return null;
           }
           if (!client.passwordHash) {
-            console.log('[auth:authorize] no password hash', email);
+            console.log('[auth:authorize] no password hash', { email, userAgent });
             return null;
           }
           if (client.suspended) {
-            console.log('[auth:authorize] user suspended', email);
+            console.log('[auth:authorize] user suspended', { email, userAgent });
             return null;
           }
 
           const { valid } = await verifyPassword(password, client.passwordHash);
           if (!valid) {
-            console.log('[auth:authorize] invalid password', email);
+            console.log('[auth:authorize] invalid password', { email, userAgent });
             return null;
           }
 
@@ -135,6 +140,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
               data: { lastLoginAt: new Date(), lastSignedInAt: new Date() },
             })
             .catch(() => {});
+
+          console.log('[auth:authorize] login success', { email, userAgent });
 
           return {
             id: client.id,

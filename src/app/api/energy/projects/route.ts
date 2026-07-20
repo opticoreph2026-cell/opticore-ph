@@ -25,11 +25,16 @@ export async function GET(request: Request) {
     const projects = await db.energyProject.findMany({
       where,
       orderBy: { createdAt: 'desc' },
-      include: {
+      select: {
+        id: true, contractId: true, designId: true, organizationId: true,
+        leadInstallerId: true, scheduledInstallDate: true, actualInstallDate: true,
+        commissioningDate: true, status: true, commissioningChecklistJson: true,
+        commissioningPhotosJson: true, warrantyRegisteredAt: true,
+        createdAt: true, updatedAt: true,
         contract: { select: { quotation: { select: { customer: { select: { fullName: true } } } } } },
         organization: { select: { name: true } },
         leadInstaller: { select: { client: { select: { name: true } } } },
-        milestones: { orderBy: { milestoneDate: 'desc' }, take: 5 },
+        milestones: { select: { id: true, milestone: true, milestoneDate: true, notes: true }, orderBy: { milestoneDate: 'desc' }, take: 5 },
       },
     });
 
@@ -62,6 +67,12 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'contractId and designId are required' }, { status: 400 });
     }
 
+    const validProjectStatuses = ['scheduled', 'in_progress', 'commissioned', 'warranty_registered', 'closed'];
+    const resolvedStatus = status || 'scheduled';
+    if (status && !validProjectStatuses.includes(resolvedStatus)) {
+      return NextResponse.json({ error: `Invalid status. Must be one of: ${validProjectStatuses.join(', ')}` }, { status: 422 });
+    }
+
     const project = await db.energyProject.create({
       data: {
         contractId,
@@ -69,7 +80,7 @@ export async function POST(request: Request) {
         organizationId: organizationId || null,
         leadInstallerId: leadInstallerId || null,
         scheduledInstallDate: scheduledInstallDate ? new Date(scheduledInstallDate) : null,
-        status: status || 'scheduled',
+        status: resolvedStatus,
       },
     });
 

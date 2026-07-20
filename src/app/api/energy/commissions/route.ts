@@ -25,7 +25,9 @@ export async function GET(request: Request) {
     const commissions = await db.commissionRecord.findMany({
       where,
       orderBy: { createdAt: 'desc' },
-      include: {
+      select: {
+        id: true, projectId: true, organizationId: true, roleInProject: true,
+        amount: true, status: true, paidAt: true, createdAt: true, updatedAt: true,
         organization: { select: { name: true } },
         project: { select: { id: true, status: true, scheduledInstallDate: true } },
       },
@@ -60,13 +62,24 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'projectId, organizationId, and amount are required' }, { status: 400 });
     }
 
+    const validRoles = ['hardware_margin', 'installation_fee', 'design_fee', 'sub_dealer_markup', 'referral_fee'];
+    const validStatuses = ['pending', 'paid'];
+    const resolvedRole = roleInProject || 'hardware_margin';
+    const resolvedStatus = status || 'pending';
+    if (!validRoles.includes(resolvedRole)) {
+      return NextResponse.json({ error: `Invalid roleInProject. Must be one of: ${validRoles.join(', ')}` }, { status: 422 });
+    }
+    if (!validStatuses.includes(resolvedStatus)) {
+      return NextResponse.json({ error: `Invalid status. Must be one of: ${validStatuses.join(', ')}` }, { status: 422 });
+    }
+
     const commission = await db.commissionRecord.create({
       data: {
         projectId,
         organizationId,
-        roleInProject: roleInProject || 'hardware_margin',
+        roleInProject: resolvedRole,
         amount,
-        status: status || 'pending',
+        status: resolvedStatus,
         paidAt: paidAt ? new Date(paidAt) : null,
         notes,
       },

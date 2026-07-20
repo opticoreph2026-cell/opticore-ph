@@ -67,6 +67,12 @@
     --font-heading: 'Space Grotesk', 'ui-sans-serif', system-ui, sans-serif;
     --font-body: 'Inter', 'ui-sans-serif', system-ui, sans-serif;
     --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+    --surface-1000: var(--background-1000);
+    --surface-900: var(--background-900);
+    --surface-800: var(--background-800);
+    --border-subtle: rgba(255, 255, 255, 0.06);
+    --border-glow: rgba(255, 255, 255, 0.12);
   }
 
   .dark {
@@ -93,6 +99,9 @@
     --foreground-800: 0.90 0.006 260;
     --foreground-900: 0.95 0.004 260;
     --foreground-950: 0.99 0.002 260;
+
+    --border-subtle: rgba(255, 255, 255, 0.06);
+    --border-glow: rgba(255, 255, 255, 0.12);
   }
 
   html {

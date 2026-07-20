@@ -32,8 +32,6 @@ export async function POST(request: Request) {
     }
 
     if (client.otpCode !== otp) {
-      // Clear OTP on failed attempt to prevent brute-force
-      await db.client.update({ where: { id: client.id }, data: { otpCode: null, otpExpiresAt: null } });
       return NextResponse.json({ error: 'Invalid or expired OTP. Request a new one.' }, { status: 400 });
     }
 

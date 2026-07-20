@@ -3,11 +3,18 @@ import { db } from '@/lib/db';
 import { hashPassword } from '@/lib/password';
 import { sendWelcomeEmail } from '@/lib/email';
 import { registerSchema } from '@/lib/validations';
+import { rateLimit } from '@/lib/rate-limit';
 
 export const dynamic = 'force-dynamic';
 
 export async function POST(req: NextRequest) {
   try {
+    const ip = req.headers.get('x-forwarded-for') ?? req.headers.get('x-real-ip') ?? 'unknown';
+    const throttled = rateLimit(`register:${ip}`, 3, 60_000);
+    if (!throttled.allowed) {
+      return NextResponse.json({ error: 'Too many attempts. Please wait before trying again.' }, { status: 429 });
+    }
+
     const body = await req.json();
     const parsed = registerSchema.safeParse(body);
     if (!parsed.success) {
