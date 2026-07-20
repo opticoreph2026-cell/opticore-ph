@@ -18,12 +18,14 @@ export default function SignupPage() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { error, success } = useToast();
+  const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+  const hasTurnstile = !!turnstileSiteKey;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
-    if (!turnstileToken) {
+    if (hasTurnstile && !turnstileToken) {
       error('Please complete the security check before creating an account.');
       setLoading(false);
       return;
@@ -118,10 +120,12 @@ export default function SignupPage() {
             />
 
             <div className="flex justify-center">
-              <Turnstile
-                siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
-                onSuccess={(token) => setTurnstileToken(token)}
-              />
+                {hasTurnstile && (
+                  <Turnstile
+                    siteKey={turnstileSiteKey!}
+                    onSuccess={(token) => setTurnstileToken(token)}
+                  />
+                )}
             </div>
 
             <div>

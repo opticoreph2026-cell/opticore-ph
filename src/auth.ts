@@ -84,7 +84,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           }
 
           // ── Turnstile verification (skip for OTP and post-signup auto-login) ──
-          if (!creds?.skipTurnstile) {
+          if (!creds?.skipTurnstile && process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY) {
             const turnstileToken = creds?.turnstileToken;
             if (!turnstileToken) {
               console.log('[auth:authorize] missing turnstile token');
@@ -98,7 +98,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
               });
               const outcome = await verifyRes.json();
               if (!outcome.success) {
-                console.log('[auth:authorize] turnstile verification failed');
+                console.error('[auth:authorize] turnstile verification failed', outcome['error-codes']);
                 return null;
               }
             }

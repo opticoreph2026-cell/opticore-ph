@@ -23,11 +23,14 @@ export default function LoginPage() {
   const router = useRouter();
   const { error, success } = useToast();
 
+  const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+  const hasTurnstile = !!turnstileSiteKey;
+
   const handleCredentialsLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
-    if (!turnstileToken) {
+    if (hasTurnstile && !turnstileToken) {
       error('Please complete the security check before logging in.');
       setLoading(false);
       return;
@@ -42,6 +45,7 @@ export default function LoginPage() {
       });
 
       if (result?.error) {
+        console.error('[login] signIn error:', result.error, result.status);
         throw new Error('Invalid email or password');
       }
 
@@ -100,7 +104,7 @@ export default function LoginPage() {
       error('Enter the OTP code from your email');
       return;
     }
-    if (!turnstileToken) {
+    if (hasTurnstile && !turnstileToken) {
       error('Please complete the security check before verifying.');
       return;
     }
@@ -180,12 +184,14 @@ export default function LoginPage() {
                 />
               </div>
 
-              <div className="flex justify-center">
-                <Turnstile
-                  siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
-                  onSuccess={(token) => setTurnstileToken(token)}
-                />
-              </div>
+              {hasTurnstile && (
+                <div className="flex justify-center">
+                  <Turnstile
+                    siteKey={turnstileSiteKey!}
+                    onSuccess={(token) => setTurnstileToken(token)}
+                  />
+                </div>
+              )}
 
               <button
                 type="button"
@@ -251,12 +257,14 @@ export default function LoginPage() {
                 />
               </div>
 
-              <div className="flex justify-center">
-                <Turnstile
-                  siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
-                  onSuccess={(token) => setTurnstileToken(token)}
-                />
-              </div>
+              {hasTurnstile && (
+                <div className="flex justify-center">
+                  <Turnstile
+                    siteKey={turnstileSiteKey!}
+                    onSuccess={(token) => setTurnstileToken(token)}
+                  />
+                </div>
+              )}
 
               <button
                 type="submit"
