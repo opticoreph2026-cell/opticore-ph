@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
     }
 
     const { email, password, name, turnstileToken } = parsed.data;
-    if (process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY && process.env.TURNSTILE_SECRET_KEY) {
+    if (process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY && process.env.TURNSTILE_SECRET) {
       if (!turnstileToken) {
         return NextResponse.json({ error: 'Security check required' }, { status: 403 });
       }
@@ -30,14 +30,15 @@ export async function POST(req: NextRequest) {
         const verifyRes = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
           method: 'POST',
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body: `secret=${process.env.TURNSTILE_SECRET_KEY}&response=${turnstileToken}`,
+          body: new URLSearchParams({ secret: process.env.TURNSTILE_SECRET, response: turnstileToken }),
         });
         const outcome = await verifyRes.json();
         if (!outcome.success) {
-          console.warn('[register] turnstile verification failed — allowing', outcome['error-codes']);
+          return NextResponse.json({ error: 'Security check failed' }, { status: 403 });
         }
       } catch (e) {
-        console.warn('[register] turnstile verify error — allowing', e);
+        console.warn('[register] turnstile verify error', e);
+        return NextResponse.json({ error: 'Security check unavailable' }, { status: 503 });
       }
     }
 
