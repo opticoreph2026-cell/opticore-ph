@@ -23,7 +23,7 @@ const docTypeIcons: Record<string, string> = {
   coc: 'text-accent-cyan',
   warranty_cert: 'text-accent-rose',
   invoice: 'text-accent-cyan',
-  receipt: 'text-foreground-400',
+  receipt: 'text-foreground-950/40',
 };
 
 export default async function CustomerDocumentsPage() {
@@ -58,44 +58,44 @@ export default async function CustomerDocumentsPage() {
     <div className="space-y-8">
       <div>
         <h1 className="text-3xl font-bold text-foreground-950 mb-2">My Documents</h1>
-        <p className="text-foreground-400">Your signed contracts, invoices, certificates, and system diagrams.</p>
+        <p className="text-foreground-950/40">Your signed contracts, invoices, certificates, and system diagrams.</p>
       </div>
 
       {!customerId ? (
-        <div className="bg-background-800 border border-foreground-950/5 rounded-xl p-12 text-center text-foreground-500">
-          <FileText className="w-10 h-10 mx-auto mb-3 text-foreground-600" />
-          <p className="font-medium text-foreground-400">No account linked</p>
-          <p className="text-sm text-foreground-600 mt-1">
+        <div className="bg-background-200 border border-foreground-950/5 rounded-xl p-12 text-center text-foreground-950/50">
+          <FileText className="w-10 h-10 mx-auto mb-3 text-foreground-950/60" />
+          <p className="font-medium text-foreground-950/40">No account linked</p>
+          <p className="text-sm text-foreground-950/60 mt-1">
             Please contact support to link your account.
           </p>
         </div>
       ) : documents.length === 0 ? (
-        <div className="bg-background-800 border border-foreground-950/5 rounded-xl p-12 text-center text-foreground-500">
-          <FileText className="w-10 h-10 mx-auto mb-3 text-foreground-600" />
-          <p className="font-medium text-foreground-400">No documents yet</p>
-          <p className="text-sm text-foreground-600 mt-1">
+        <div className="bg-background-200 border border-foreground-950/5 rounded-xl p-12 text-center text-foreground-950/50">
+          <FileText className="w-10 h-10 mx-auto mb-3 text-foreground-950/60" />
+          <p className="font-medium text-foreground-950/40">No documents yet</p>
+          <p className="text-sm text-foreground-950/60 mt-1">
             Documents will appear here after your first project is created.
           </p>
         </div>
       ) : (
         Object.entries(grouped).map(([docType, docs]) => (
-          <div key={docType} className="bg-background-800 border border-foreground-950/5 rounded-2xl overflow-hidden">
+          <div key={docType} className="bg-background-200 border border-foreground-950/5 rounded-2xl overflow-hidden">
             <div className="px-6 py-4 border-b border-foreground-950/5 bg-foreground-950/5">
               <h2 className="text-lg font-bold text-foreground-950">{docTypeLabels[docType] || docType}</h2>
             </div>
-            <div className="divide-y divide-white/5">
+            <div className="divide-y divide-foreground-950/5">
               {docs.map((doc: any) => (
                 <div
                   key={doc.id}
                   className="flex items-center justify-between px-6 py-4 hover:bg-foreground-950/5 transition-colors"
                 >
                   <div className="flex items-center gap-3">
-                    <FileText className={`w-5 h-5 ${docTypeIcons[docType] || 'text-foreground-500'} flex-shrink-0`} />
+                    <FileText className={`w-5 h-5 ${docTypeIcons[docType] || 'text-foreground-950/50'} flex-shrink-0`} />
                     <div>
                       <p className="text-sm font-medium text-foreground-950">
                         {doc.fileUrl?.split('/').pop() || 'Document'}
                       </p>
-                      <p className="text-xs text-foreground-500">
+                      <p className="text-xs text-foreground-950/50">
                         Uploaded {new Date(doc.uploadedAt).toLocaleDateString('en-PH', {
                           month: 'short', day: 'numeric', year: 'numeric',
                         })}
@@ -106,7 +106,7 @@ export default async function CustomerDocumentsPage() {
                     href={doc.fileUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="p-2 rounded-lg hover:bg-foreground-950/5 text-foreground-400 hover:text-accent-cyan transition-colors"
+                    className="p-2 rounded-lg hover:bg-foreground-950/5 text-foreground-950/40 hover:text-accent-cyan transition-colors"
                     title="Download"
                   >
                     <Download className="w-4 h-4" />

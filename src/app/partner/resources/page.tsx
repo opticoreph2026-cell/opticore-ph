@@ -47,7 +47,7 @@ function typeColor(type: string): string {
   if (type === 'PDF') return 'text-accent-rose';
   if (type === 'ZIP') return 'text-accent-cyan';
   if (type === 'PPTX') return 'text-accent-cyan';
-  return 'text-foreground-50/40';
+  return 'text-foreground-950/40';
 }
 
 export default function PartnerResourcesPage() {
@@ -64,10 +64,10 @@ export default function PartnerResourcesPage() {
         {resources.map((section) => {
           const SectionIcon = section.icon;
           return (
-            <div key={section.section} className="bg-background-800 border border-foreground-950/10 rounded-2xl overflow-hidden">
+            <div key={section.section} className="bg-background-200 border border-foreground-950/10 rounded-2xl overflow-hidden">
               <div className="px-6 py-4 border-b border-foreground-950/10 bg-foreground-950/5 flex items-center gap-3">
                 <SectionIcon className="w-5 h-5 text-accent-emerald" />
-                <h2 className="text-lg font-display font-bold text-foreground-50">{section.section}</h2>
+                <h2 className="text-lg font-display font-bold text-foreground-950">{section.section}</h2>
               </div>
               <div className="divide-y divide-foreground-950/10">
                 {section.items.map((item) => (
@@ -76,10 +76,10 @@ export default function PartnerResourcesPage() {
                     className="flex items-center justify-between px-6 py-4 hover:bg-foreground-950/5 transition-colors"
                   >
                     <div className="flex items-center gap-3">
-                      <FileText className="w-4 h-4 text-foreground-50/50 flex-shrink-0" />
+                      <FileText className="w-4 h-4 text-foreground-950/50 flex-shrink-0" />
                       <div>
-                        <p className="text-sm font-medium text-foreground-50">{item.name}</p>
-                        <p className="text-xs text-foreground-50/50">
+                        <p className="text-sm font-medium text-foreground-950">{item.name}</p>
+                        <p className="text-xs text-foreground-950/50">
                           <span className={typeColor(item.type)}>{item.type}</span>
                           {' · '}{item.size}
                         </p>
@@ -87,7 +87,7 @@ export default function PartnerResourcesPage() {
                     </div>
                     <a
                       href={item.url}
-                      className="p-2 rounded-lg hover:bg-foreground-950/5 text-foreground-50/40 hover:text-accent-cyan transition-colors"
+                      className="p-2 rounded-lg hover:bg-foreground-950/5 text-foreground-950/40 hover:text-accent-cyan transition-colors"
                       title={`Download ${item.name}`}
                     >
                       <Download className="w-4 h-4" />

@@ -147,7 +147,7 @@ export function AdminTable<T extends { [key: string]: any }>({
         <select
           value={value}
           onChange={(e) => setForm((prev) => ({ ...prev, [field.key]: e.target.value }))}
-          className="w-full bg-background-900 border border-foreground-950/10 rounded-lg px-3 py-2 text-sm text-foreground-50 focus:outline-none focus:ring-2 focus:ring-accent-cyan"
+          className="w-full bg-background-100 border border-foreground-950/10 rounded-lg px-3 py-2 text-sm text-foreground-950 focus:outline-none focus:ring-2 focus:ring-accent-cyan"
         >
           <option value="">Select...</option>
           {field.options.map((opt) => (
@@ -164,7 +164,7 @@ export function AdminTable<T extends { [key: string]: any }>({
           onChange={(e) => setForm((prev) => ({ ...prev, [field.key]: e.target.value }))}
           placeholder={field.placeholder}
           rows={3}
-          className="w-full bg-background-900 border border-foreground-950/10 rounded-lg px-3 py-2 text-sm text-foreground-50 focus:outline-none focus:ring-2 focus:ring-accent-cyan resize-none"
+          className="w-full bg-background-100 border border-foreground-950/10 rounded-lg px-3 py-2 text-sm text-foreground-950 focus:outline-none focus:ring-2 focus:ring-accent-cyan resize-none"
         />
       );
     }
@@ -176,7 +176,7 @@ export function AdminTable<T extends { [key: string]: any }>({
         onChange={(e) => setForm((prev) => ({ ...prev, [field.key]: e.target.value }))}
         placeholder={field.placeholder}
         required={field.required}
-        className="w-full bg-background-900 border border-foreground-950/10 rounded-lg px-3 py-2 text-sm text-foreground-50 focus:outline-none focus:ring-2 focus:ring-accent-cyan"
+        className="w-full bg-background-100 border border-foreground-950/10 rounded-lg px-3 py-2 text-sm text-foreground-950 focus:outline-none focus:ring-2 focus:ring-accent-cyan"
       />
     );
   };
@@ -193,19 +193,19 @@ export function AdminTable<T extends { [key: string]: any }>({
       <div className="fixed inset-0 z-50 flex items-center justify-center" onClick={onClose}>
         <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
         <div
-          className="relative bg-background-800 border border-foreground-950/10 rounded-2xl w-full max-w-lg mx-4 max-h-[85vh] overflow-y-auto"
+          className="relative bg-background-200 border border-foreground-950/10 rounded-2xl w-full max-w-lg mx-4 max-h-[85vh] overflow-y-auto"
           onClick={(e) => e.stopPropagation()}
         >
           <div className="flex items-center justify-between px-6 py-4 border-b border-foreground-950/5">
-            <h3 className="text-lg font-semibold text-foreground-50">{submitLabel}</h3>
-            <button onClick={onClose} className="p-1 text-foreground-50/40 hover:text-foreground-50 transition-colors">
+            <h3 className="text-lg font-semibold text-foreground-950">{submitLabel}</h3>
+            <button onClick={onClose} className="p-1 text-foreground-950/40 hover:text-foreground-950 transition-colors">
               <X className="w-5 h-5" />
             </button>
           </div>
           <div className="px-6 py-4 space-y-4">
             {fields.map((field) => (
               <div key={field.key}>
-                <label className="block text-sm font-medium text-foreground-50/70 mb-1">{field.label}</label>
+                <label className="block text-sm font-medium text-foreground-950/70 mb-1">{field.label}</label>
                 {renderField(field)}
               </div>
             ))}
@@ -213,7 +213,7 @@ export function AdminTable<T extends { [key: string]: any }>({
           <div className="flex justify-end gap-3 px-6 py-4 border-t border-foreground-950/10">
             <button
               onClick={onClose}
-              className="px-5 py-2 text-sm text-foreground-50/60 hover:text-foreground-50 transition-colors"
+                  className="px-5 py-2 text-sm text-foreground-950/60 hover:text-foreground-950 transition-colors"
             >
               Cancel
             </button>
@@ -284,10 +284,10 @@ export function AdminTable<T extends { [key: string]: any }>({
       )}
 
       {/* Table */}
-      <div className="bg-background-900 border border-foreground-950/10 rounded-xl overflow-hidden hover:border-foreground-950/20 transition-all duration-200">
+      <div className="bg-background-100 border border-foreground-950/10 rounded-xl overflow-hidden hover:border-foreground-950/20 transition-all duration-200">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
-            <thead className="bg-foreground-950/5 text-xs uppercase text-foreground-50/40">
+            <thead className="bg-foreground-950/5 text-xs uppercase text-foreground-950/40">
               <tr>
                 {columns.map((col) => (
                   <th key={col.key} className="px-5 py-4 font-semibold" style={{ width: col.width }}>
@@ -304,7 +304,7 @@ export function AdminTable<T extends { [key: string]: any }>({
                 <tr>
                   <td
                     colSpan={columns.length + ((onSave || onDelete) ? 1 : 0)}
-                    className="px-5 py-12 text-center text-foreground-50/40"
+                    className="px-5 py-12 text-center text-foreground-950/40"
                   >
                     {search ? 'No results match your search.' : emptyMessage}
                   </td>
@@ -313,7 +313,7 @@ export function AdminTable<T extends { [key: string]: any }>({
                 paginated.map((item, idx) => (
                   <tr key={item[identifierKey] as string ?? idx} className="hover:bg-foreground-950/3 transition-colors">
                     {columns.map((col) => (
-                      <td key={col.key} className="px-5 py-4 text-foreground-50/80">
+                      <td key={col.key} className="px-5 py-4 text-foreground-950/80">
                         {col.render ? col.render(item) : String(item[col.key] ?? '—')}
                       </td>
                     ))}
@@ -323,7 +323,7 @@ export function AdminTable<T extends { [key: string]: any }>({
                           {editFields && onSave && (
                             <button
                               onClick={() => openEdit(item)}
-                              className="p-1.5 text-foreground-50/40 hover:text-accent-cyan transition-colors rounded-lg hover:bg-foreground-950/5"
+                              className="p-1.5 text-foreground-950/40 hover:text-accent-cyan transition-colors rounded-lg hover:bg-foreground-950/5"
                               title="Edit"
                             >
                               <Pencil className="w-4 h-4" />
@@ -332,7 +332,7 @@ export function AdminTable<T extends { [key: string]: any }>({
                           {onDelete && (
                             <button
                               onClick={() => setDeleting(item[identifierKey] as string)}
-                              className="p-1.5 text-foreground-50/40 hover:text-accent-rose transition-colors rounded-lg hover:bg-foreground-950/5"
+                              className="p-1.5 text-foreground-950/40 hover:text-accent-rose transition-colors rounded-lg hover:bg-foreground-950/5"
                               title="Delete"
                             >
                               <Trash2 className="w-4 h-4" />
@@ -351,22 +351,22 @@ export function AdminTable<T extends { [key: string]: any }>({
         {/* Pagination */}
         {totalPages > 1 && (
           <div className="flex items-center justify-between px-5 py-3 border-t border-foreground-950/10">
-            <p className="text-xs text-foreground-50/40">
+            <p className="text-xs text-foreground-950/40">
               Showing {(page * pageSize) + 1}–{Math.min((page + 1) * pageSize, filtered.length)} of {filtered.length}
             </p>
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setPage(Math.max(0, page - 1))}
                 disabled={page === 0}
-                className="p-1.5 text-foreground-50/40 hover:text-foreground-50 disabled:opacity-20 transition-colors"
+                className="p-1.5 text-foreground-950/40 hover:text-foreground-950 disabled:opacity-20 transition-colors"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
-              <span className="text-xs text-foreground-50/40">{page + 1} / {totalPages}</span>
+              <span className="text-xs text-foreground-950/40">{page + 1} / {totalPages}</span>
               <button
                 onClick={() => setPage(Math.min(totalPages - 1, page + 1))}
                 disabled={page >= totalPages - 1}
-                className="p-1.5 text-foreground-50/40 hover:text-foreground-50 disabled:opacity-20 transition-colors"
+                className="p-1.5 text-foreground-950/40 hover:text-foreground-950 disabled:opacity-20 transition-colors"
               >
                 <ChevronRight className="w-4 h-4" />
               </button>
@@ -384,19 +384,19 @@ export function AdminTable<T extends { [key: string]: any }>({
         <div className="fixed inset-0 z-50 flex items-center justify-center" onClick={() => setDeleting(null)}>
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
           <div
-            className="relative bg-background-800 border border-foreground-950/10 rounded-2xl w-full max-w-sm mx-4 p-6"
+            className="relative bg-background-200 border border-foreground-950/10 rounded-2xl w-full max-w-sm mx-4 p-6"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="text-center">
               <div className="w-12 h-12 bg-accent-rose/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
                 <Trash2 className="w-6 h-6 text-accent-rose" />
               </div>
-              <h3 className="text-lg font-semibold text-foreground-50 mb-2">Confirm Delete</h3>
-              <p className="text-sm text-foreground-50/60 mb-6">This action cannot be undone.</p>
+              <h3 className="text-lg font-semibold text-foreground-950 mb-2">Confirm Delete</h3>
+              <p className="text-sm text-foreground-950/60 mb-6">This action cannot be undone.</p>
               <div className="flex gap-3 justify-center">
                 <button
                   onClick={() => setDeleting(null)}
-                  className="px-5 py-2 text-sm text-foreground-50/60 hover:text-foreground-50 transition-colors"
+              className="px-5 py-2 text-sm text-foreground-950/60 hover:text-foreground-950 transition-colors"
                 >
                   Cancel
                 </button>

@@ -36,7 +36,7 @@ export function PackageAdminClient({
   const columns: Column<Package>[] = [
     { key: 'name', label: 'Package' },
     { key: 'category', label: 'Category', render: (p) => <span className="capitalize">{p.category}</span> },
-    { key: 'status', label: 'Status', render: (p) => <span className={`inline-flex px-2 py-0.5 rounded text-xs font-medium capitalize ${p.status === 'active' ? 'bg-accent-emerald/10 text-accent-emerald' : 'bg-foreground-950/10 text-foreground-50/60'}`}>{p.status}</span> },
+    { key: 'status', label: 'Status', render: (p) => <span className={`inline-flex px-2 py-0.5 rounded text-xs font-medium capitalize ${p.status === 'active' ? 'bg-accent-emerald/10 text-accent-emerald' : 'bg-foreground-950/10 text-foreground-950/60'}`}>{p.status}</span> },
     { key: 'panels', label: 'Panels', render: (p) => `${p.panelQuantity}× ${p.panelSku}` },
     { key: 'inverters', label: 'Inverter', render: (p) => `${p.inverterQuantity}× ${p.inverterSku}` },
     { key: 'batteries', label: 'Battery', render: (p) => `${p.batteryQuantity}× ${p.batterySku}` },

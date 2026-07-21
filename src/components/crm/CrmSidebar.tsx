@@ -52,7 +52,7 @@ function CrmSidebar({ role, email, name }: CrmSidebarProps) {
   const initials = (name || email || 'U').slice(0, 2).toUpperCase();
 
   return (
-    <aside className="w-64 bg-background-900 border-r border-foreground-950/5 flex flex-col h-screen sticky top-0">
+    <aside className="w-64 bg-background-100 border-r border-foreground-950/5 flex flex-col h-screen sticky top-0">
       {/* Brand */}
       <div className="h-16 flex items-center px-5 border-b border-foreground-950/5 flex-shrink-0">
         <Logo href="/crm" />
@@ -60,7 +60,7 @@ function CrmSidebar({ role, email, name }: CrmSidebarProps) {
 
       {/* Nav label */}
       <div className="px-4 pt-5 pb-2">
-        <p className="text-[10px] font-semibold text-foreground-50/25 uppercase tracking-widest font-mono px-3">
+        <p className="text-[10px] font-semibold text-foreground-950/25 uppercase tracking-widest font-mono px-3">
           Operations
         </p>
       </div>
@@ -79,12 +79,12 @@ function CrmSidebar({ role, email, name }: CrmSidebarProps) {
               className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 group ${
                 isActive
                   ? 'bg-accent-blue/10 text-accent-blue shadow-sm'
-                  : 'text-foreground-50/50 hover:text-foreground-50 hover:bg-foreground-950/5'
+                  : 'text-foreground-950/50 hover:text-foreground-950 hover:bg-foreground-950/5'
               }`}
             >
               <Icon
                 className={`w-4 h-4 flex-shrink-0 transition-colors ${
-                  isActive ? 'text-accent-blue' : 'text-foreground-50/40 group-hover:text-foreground-50/70'
+                  isActive ? 'text-accent-blue' : 'text-foreground-950/40 group-hover:text-foreground-950/70'
                 }`}
               />
               <span className="flex-1">{item.label}</span>
@@ -96,7 +96,7 @@ function CrmSidebar({ role, email, name }: CrmSidebarProps) {
         {isOwner && (
           <>
             <div className="pt-4 pb-2">
-              <p className="text-[10px] font-semibold text-foreground-50/25 uppercase tracking-widest font-mono px-3">
+              <p className="text-[10px] font-semibold text-foreground-950/25 uppercase tracking-widest font-mono px-3">
                 Administration
               </p>
             </div>
@@ -105,7 +105,7 @@ function CrmSidebar({ role, email, name }: CrmSidebarProps) {
               className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 group ${
                 pathname.startsWith('/admin')
                   ? 'bg-accent-rose/10 text-accent-rose'
-                  : 'text-foreground-50/50 hover:text-foreground-50 hover:bg-foreground-950/5'
+                  : 'text-foreground-950/50 hover:text-foreground-950 hover:bg-foreground-950/5'
               }`}
             >
               <Shield className="w-4 h-4 flex-shrink-0 text-accent-rose/70" />
@@ -116,10 +116,10 @@ function CrmSidebar({ role, email, name }: CrmSidebarProps) {
               className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 group ${
                 pathname === '/crm/settings'
                   ? 'bg-accent-blue/10 text-accent-blue'
-                  : 'text-foreground-50/50 hover:text-foreground-50 hover:bg-foreground-950/5'
+                  : 'text-foreground-950/50 hover:text-foreground-950 hover:bg-foreground-950/5'
               }`}
             >
-              <Settings className="w-4 h-4 flex-shrink-0 text-foreground-50/40 group-hover:text-foreground-50/70" />
+              <Settings className="w-4 h-4 flex-shrink-0 text-foreground-950/40 group-hover:text-foreground-950/70" />
               <span>System Settings</span>
             </Link>
           </>
@@ -129,18 +129,18 @@ function CrmSidebar({ role, email, name }: CrmSidebarProps) {
       {/* User footer */}
       <div className="p-3 border-t border-foreground-950/5 flex-shrink-0">
         <div className="flex items-center gap-3 px-2 py-2 rounded-xl hover:bg-foreground-950/5 transition-colors">
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-accent-blue to-accent-cyan flex items-center justify-center text-foreground-50 text-xs font-bold flex-shrink-0">
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-accent-blue to-accent-cyan flex items-center justify-center text-foreground-950 text-xs font-bold flex-shrink-0">
             {initials}
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-xs font-semibold text-foreground-50 truncate">{name || email}</p>
-            <p className="text-[10px] text-foreground-50/40 truncate">{displayRole}</p>
+            <p className="text-xs font-semibold text-foreground-950 truncate">{name || email}</p>
+            <p className="text-[10px] text-foreground-950/40 truncate">{displayRole}</p>
           </div>
           <form action="/api/auth/logout" method="POST">
             <button
               type="submit"
               title="Sign out"
-              className="p-1.5 text-foreground-50/30 hover:text-accent-rose transition-colors rounded-lg hover:bg-accent-rose/10"
+                className="p-1.5 text-foreground-950/30 hover:text-accent-rose transition-colors rounded-lg hover:bg-accent-rose/10"
             >
               <LogOut className="w-4 h-4" />
             </button>
@@ -179,13 +179,13 @@ export default function CrmSidebarWrapper({
       )}
 
       {/* Mobile topbar */}
-      <header className="md:hidden fixed top-0 left-0 right-0 z-40 h-14 flex items-center justify-between px-4 bg-background-900/95 backdrop-blur border-b border-foreground-950/5">
+      <header className="md:hidden fixed top-0 left-0 right-0 z-40 h-14 flex items-center justify-between px-4 bg-background-100/95 backdrop-blur border-b border-foreground-950/5">
         <Logo href="/crm" />
         <div className="flex items-center gap-2">
           <NotificationBell />
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="p-2 text-foreground-50/60 hover:text-foreground-50 rounded-lg hover:bg-foreground-950/5 transition-colors"
+            className="p-2 text-foreground-950/60 hover:text-foreground-950 rounded-lg hover:bg-foreground-950/5 transition-colors"
           >
             {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>

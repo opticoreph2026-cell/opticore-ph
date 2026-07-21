@@ -105,7 +105,6 @@
     --border-subtle: oklch(var(--foreground-950) / 0.08);
     --border-glow: oklch(var(--foreground-950) / 0.15);
   }
-}
 
   html {
     scroll-behavior: smooth;

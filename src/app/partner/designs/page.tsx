@@ -10,7 +10,7 @@ export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 const statusColors: Record<string, string> = {
-    draft: 'bg-foreground-950/5 text-foreground-50/40',
+    draft: 'bg-foreground-950/5 text-foreground-950/40',
   finalized: 'bg-accent-cyan/15 text-accent-cyan',
   approved_by_customer: 'bg-accent-emerald/15 text-accent-emerald',
 };
@@ -72,10 +72,10 @@ export default async function PartnerDesignsPage() {
         </Link>
       </div>
 
-      <div className="bg-background-900 border border-foreground-950/5 rounded-2xl overflow-hidden">
+      <div className="bg-background-100 border border-foreground-950/5 rounded-2xl overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm whitespace-nowrap">
-            <thead className="bg-background-800 text-xs uppercase text-foreground-50/30 border-b border-foreground-950/5">
+            <thead className="bg-background-200 text-xs uppercase text-foreground-950/30 border-b border-foreground-950/5">
               <tr>
                 <th className="px-6 py-4 font-medium tracking-wider">Customer</th>
                 <th className="px-6 py-4 font-medium tracking-wider">System Size</th>
@@ -85,12 +85,12 @@ export default async function PartnerDesignsPage() {
                 <th className="px-6 py-4 font-medium tracking-wider text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/5 text-foreground-50/70">
+            <tbody className="divide-y divide-white/5 text-foreground-950/70">
               {designs.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="px-6 py-16 text-center">
-                    <Calculator className="w-10 h-10 text-foreground-50/10 mx-auto mb-3" />
-                    <p className="text-sm text-foreground-50/30">No designs created yet</p>
+                    <Calculator className="w-10 h-10 text-foreground-950/10 mx-auto mb-3" />
+                    <p className="text-sm text-foreground-950/30">No designs created yet</p>
                     <Link
                       href="/partner/designs/new"
                       className="mt-4 inline-flex items-center gap-2 text-sm text-accent-emerald hover:text-accent-emerald/80 transition-colors"
@@ -108,21 +108,21 @@ export default async function PartnerDesignsPage() {
                           <FileText className="w-4 h-4 text-accent-emerald" />
                         </div>
                         <div>
-                          <p className="font-medium text-foreground-50 group-hover:text-accent-emerald transition-colors">
+                          <p className="font-medium text-foreground-950 group-hover:text-accent-emerald transition-colors">
                             {design.site?.customer?.fullName || 'Unknown'}
                           </p>
-                          <p className="text-xs text-foreground-50/30">
+                          <p className="text-xs text-foreground-950/30">
                             {design.designPathway.replace(/_/g, ' ')}
                           </p>
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <p className="text-foreground-50 font-medium">{design.pvArrayKwp} kWp</p>
-                      <p className="text-xs text-foreground-50/30">{design.pvPanelCount} Panels</p>
+                      <p className="text-foreground-950 font-medium">{design.pvArrayKwp} kWp</p>
+                      <p className="text-xs text-foreground-950/30">{design.pvPanelCount} Panels</p>
                     </td>
                     <td className="px-6 py-4">
-                      <p className="text-foreground-50/80">{design.inverter?.modelName || '\u2014'}</p>
+                      <p className="text-foreground-950/80">{design.inverter?.modelName || '\u2014'}</p>
                       <p className="text-xs text-accent-cyan">
                         {design.battery ? `${design.battery.usableKwh} kWh Storage` : 'No Storage'}
                       </p>
@@ -130,13 +130,13 @@ export default async function PartnerDesignsPage() {
                     <td className="px-6 py-4">
                       <span
                         className={`inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-medium tracking-wide ${
-                          statusColors[design.status] ?? 'bg-foreground-950/5 text-foreground-50/40'
+                          statusColors[design.status] ?? 'bg-foreground-950/5 text-foreground-950/40'
                         }`}
                       >
                         {statusLabel[design.status] ?? design.status}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-foreground-50/40">
+                    <td className="px-6 py-4 text-foreground-950/40">
                       {new Date(design.createdAt).toLocaleDateString('en-PH', {
                         month: 'short',
                         day: 'numeric',
@@ -146,7 +146,7 @@ export default async function PartnerDesignsPage() {
                     <td className="px-6 py-4 text-right">
                       <Link
                         href={`/partner/roi/${design.id}`}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-foreground-950/5 hover:bg-foreground-950/10 text-foreground-50/70 hover:text-foreground-50 text-xs font-medium transition-all"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-foreground-950/5 hover:bg-foreground-950/10 text-foreground-950/70 hover:text-foreground-950 text-xs font-medium transition-all"
                       >
                         View ROI
                         <ChevronRight className="w-3.5 h-3.5" />

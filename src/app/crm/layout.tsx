@@ -29,14 +29,14 @@ export default async function CrmLayout({
   const name = (session as any).name as string | undefined;
 
   return (
-    <div className="flex min-h-screen bg-background-950 text-foreground-50">
+    <div className="flex min-h-screen bg-background-50 text-foreground-950">
       {/* Sidebar (desktop) + mobile topbar */}
       <CrmSidebarWrapper role={role} email={email} name={name} />
 
       {/* Main content */}
       <main className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* Desktop top header */}
-        <header className="hidden md:flex h-14 items-center justify-between px-8 bg-background-900/60 backdrop-blur border-b border-foreground-950/10 flex-shrink-0">
+        <header className="hidden md:flex h-14 items-center justify-between px-8 bg-background-100/60 backdrop-blur border-b border-foreground-950/10 flex-shrink-0">
           <div className="text-sm text-foreground-950/40 font-medium">
             OptiCore Energy Solutions — Internal CRM
           </div>
