@@ -167,7 +167,7 @@ export function CrmStats({ initialData, firstName, isOwner }: { initialData: Crm
             <div className="space-y-3">
               {[
                 { label: 'New → Contacted', pct: stats.newLeads > 0 ? 100 : 0, color: 'bg-accent-cyan' },
-                { label: 'Site Visit Done', pct: stats.qualified > 0 ? 60 : 0, color: 'bg-purple-500' },
+                { label: 'Site Visit Done', pct: stats.qualified > 0 ? 60 : 0, color: 'bg-accent-cyan' },
                 { label: 'Quote Sent', pct: stats.quoteSent > 0 ? 40 : 0, color: 'bg-accent-cyan' },
                 { label: 'Won / Commissioned', pct: stats.commissioned > 0 ? 20 : 0, color: 'bg-accent-emerald' },
               ].map((stage) => (

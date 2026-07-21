@@ -94,7 +94,7 @@ export default function ForgotPasswordPage() {
                 {loading ? <Spinner className="w-5 h-5 text-background-50" /> : 'Send Reset Link'}
               </button>
 
-              <p className="text-center text-xs text-foreground-400 dark:text-white/40">
+              <p className="text-center text-xs text-foreground-950/40 dark:text-white/40">
                 Remember your password?{' '}
                 <Link href="/login" className="font-medium text-accent-500 hover:text-accent-600 transition-colors">
                   Sign in

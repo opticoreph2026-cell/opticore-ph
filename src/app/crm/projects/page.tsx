@@ -32,7 +32,7 @@ export default async function ProjectsPage() {
     scheduled: 'bg-accent-cyan/10 text-accent-cyan',
     in_progress: 'bg-accent-cyan/10 text-accent-cyan',
     commissioned: 'bg-accent-emerald/10 text-accent-emerald',
-    warranty_registered: 'bg-purple-500/10 text-purple-400',
+    warranty_registered: 'bg-accent-cyan/10 text-accent-cyan',
     closed: 'bg-foreground-950/5 text-foreground-950/40',
   };
 

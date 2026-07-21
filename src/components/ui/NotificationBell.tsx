@@ -16,7 +16,7 @@ interface Notification {
 
 const typeConfig: Record<string, { icon: React.ElementType; color: string; bg: string }> = {
   lead: { icon: Users, color: 'text-accent-cyan', bg: 'bg-accent-cyan/10' },
-  project: { icon: Zap, color: 'text-amber-400', bg: 'bg-amber-400/10' },
+  project: { icon: Zap, color: 'text-accent-amber', bg: 'bg-accent-amber/10' },
   payment: { icon: TrendingUp, color: 'text-accent-emerald', bg: 'bg-accent-emerald/10' },
   system: { icon: Package, color: 'text-foreground-950/60', bg: 'bg-foreground-950/5' },
   alert: { icon: AlertCircle, color: 'text-accent-rose', bg: 'bg-accent-rose/10' },

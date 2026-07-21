@@ -24,7 +24,7 @@ export function ProjectAdminClient({ projects }: { projects: Project[] }) {
           scheduled: 'bg-accent-rose/10 text-accent-rose',
           in_progress: 'bg-accent-cyan/10 text-accent-cyan',
           commissioned: 'bg-accent-emerald/10 text-accent-emerald',
-          warranty_registered: 'bg-purple-400/10 text-purple-400',
+          warranty_registered: 'bg-accent-cyan/10 text-accent-cyan',
           closed: 'bg-foreground-950/5 text-foreground-950/60',
         };
         return (

@@ -9,11 +9,11 @@ import { useToast } from '@/components/ui/Toast';
 const STATUS_OPTIONS = [
   { value: 'new', label: 'New', color: 'text-accent-cyan' },
   { value: 'contacted', label: 'Contacted', color: 'text-accent-cyan' },
-  { value: 'site_visit_scheduled', label: 'Site Visit Scheduled', color: 'text-purple-400' },
-  { value: 'site_visit_done', label: 'Site Visit Done', color: 'text-purple-300' },
+  { value: 'site_visit_scheduled', label: 'Site Visit Scheduled', color: 'text-accent-cyan' },
+  { value: 'site_visit_done', label: 'Site Visit Done', color: 'text-accent-cyan/80' },
   { value: 'qualified', label: 'Qualified', color: 'text-accent-emerald' },
-  { value: 'quote_sent', label: 'Quote Sent', color: 'text-blue-400' },
-  { value: 'negotiating', label: 'Negotiating', color: 'text-amber-400' },
+  { value: 'quote_sent', label: 'Quote Sent', color: 'text-accent-blue' },
+  { value: 'negotiating', label: 'Negotiating', color: 'text-accent-amber' },
   { value: 'won', label: 'Won', color: 'text-accent-emerald' },
   { value: 'lost', label: 'Lost', color: 'text-accent-rose' },
   { value: 'disqualified', label: 'Disqualified', color: 'text-accent-rose' },
@@ -23,11 +23,11 @@ const STATUS_OPTIONS = [
 const statusColors: Record<string, string> = {
   new: 'bg-accent-cyan/10 text-accent-cyan',
   contacted: 'bg-accent-cyan/10 text-accent-cyan',
-  site_visit_scheduled: 'bg-purple-500/10 text-purple-400',
-  site_visit_done: 'bg-purple-500/25 text-purple-300',
+  site_visit_scheduled: 'bg-accent-cyan/10 text-accent-cyan',
+  site_visit_done: 'bg-accent-cyan/25 text-accent-cyan/80',
   qualified: 'bg-accent-emerald/10 text-accent-emerald',
-  quote_sent: 'bg-blue-500/15 text-blue-400',
-  negotiating: 'bg-amber-500/15 text-amber-400',
+  quote_sent: 'bg-accent-blue/15 text-accent-blue',
+  negotiating: 'bg-accent-amber/15 text-accent-amber',
   won: 'bg-accent-emerald/20 text-accent-emerald font-semibold',
   lost: 'bg-accent-rose/15 text-accent-rose',
   disqualified: 'bg-accent-rose/10 text-accent-rose',
@@ -241,7 +241,7 @@ export default function LeadDetailClient({
           </div>
         )}
         <div className="flex items-center gap-2 text-sm text-foreground-950/40">
-          <Building className="w-4 h-4 text-purple-400" />
+          <Building className="w-4 h-4 text-accent-cyan" />
           <span>{formatMoney(lead.monthlyBill)}/mo est.</span>
         </div>
       </div>

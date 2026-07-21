@@ -309,7 +309,7 @@ export default function LoginPage() {
               <p className="text-sm font-semibold text-foreground-950 group-hover:text-primary-500 transition-colors">Customer Portal</p>
               <p className="text-xs text-foreground-500">View your system data and bills</p>
             </div>
-            <ArrowRight className="w-4 h-4 text-foreground-400 ml-auto group-hover:text-primary-500 transition-colors" />
+            <ArrowRight className="w-4 h-4 text-foreground-950/40 ml-auto group-hover:text-primary-500 transition-colors" />
           </Link>
           <Link
             href="/partner"
@@ -322,7 +322,7 @@ export default function LoginPage() {
               <p className="text-sm font-semibold text-foreground-950 group-hover:text-accent-500 transition-colors">Partner Portal</p>
               <p className="text-xs text-foreground-500">Manage leads and installations</p>
             </div>
-            <ArrowRight className="w-4 h-4 text-foreground-400 ml-auto group-hover:text-accent-500 transition-colors" />
+            <ArrowRight className="w-4 h-4 text-foreground-950/40 ml-auto group-hover:text-accent-500 transition-colors" />
           </Link>
         </div>
       </div>

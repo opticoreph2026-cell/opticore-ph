@@ -86,7 +86,7 @@ export default function SignupPage() {
                   required
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="appearance-none block w-full px-3 py-2.5 border border-foreground-950/10 dark:border-white/10 rounded-lg bg-background-100 dark:bg-background-800 text-foreground-950 dark:text-white placeholder:text-foreground-400 dark:placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-transparent transition-shadow"
+                  className="appearance-none block w-full px-3 py-2.5 border border-foreground-950/10 dark:border-white/10 rounded-lg bg-background-100 dark:bg-background-800 text-foreground-950 dark:text-white placeholder:text-foreground-950/40 dark:placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-transparent transition-shadow"
                 />
               </div>
             </div>
@@ -104,7 +104,7 @@ export default function SignupPage() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="appearance-none block w-full px-3 py-2.5 border border-foreground-950/10 dark:border-white/10 rounded-lg bg-background-100 dark:bg-background-800 text-foreground-950 dark:text-white placeholder:text-foreground-400 dark:placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-transparent transition-shadow"
+                  className="appearance-none block w-full px-3 py-2.5 border border-foreground-950/10 dark:border-white/10 rounded-lg bg-background-100 dark:bg-background-800 text-foreground-950 dark:text-white placeholder:text-foreground-950/40 dark:placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-transparent transition-shadow"
                 />
               </div>
             </div>

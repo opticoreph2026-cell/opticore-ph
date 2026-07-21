@@ -15,7 +15,7 @@ export default async function AdminAlertsPage() {
   const getIcon = (type: string) => {
     switch(type) {
       case 'SECURITY': return <ShieldAlert className="w-5 h-5 text-accent-rose" />;
-      case 'SYSTEM': return <AlertTriangle className="w-5 h-5 text-amber-500" />;
+      case 'SYSTEM': return <AlertTriangle className="w-5 h-5 text-accent-amber" />;
       case 'BILLING': return <CheckCircle2 className="w-5 h-5 text-accent-emerald" />;
       default: return <Info className="w-5 h-5 text-accent-cyan" />;
     }
@@ -24,7 +24,7 @@ export default async function AdminAlertsPage() {
   const getBg = (type: string) => {
     switch(type) {
       case 'SECURITY': return 'bg-accent-rose/10 border-accent-rose/20';
-      case 'SYSTEM': return 'bg-amber-500/10 border-amber-500/20';
+      case 'SYSTEM': return 'bg-accent-amber/10 border-accent-amber/20';
       case 'BILLING': return 'bg-accent-emerald/10 border-accent-emerald/20';
       default: return 'bg-accent-cyan/10 border-accent-cyan/20';
     }
@@ -35,7 +35,7 @@ export default async function AdminAlertsPage() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-display font-bold text-foreground-950 tracking-tight flex items-center gap-3">
-            <Bell className="w-8 h-8 text-amber-500" />
+            <Bell className="w-8 h-8 text-accent-amber" />
             Global Alerts
           </h1>
           <p className="text-foreground-950/60 mt-1">System notifications, security events, and platform telemetry.</p>

@@ -72,7 +72,7 @@ export default function OnboardingPage() {
           {step === 1 && (
             <div className="space-y-6">
               <h2 className="text-2xl font-bold text-foreground-950 font-display">Welcome to OptiCore</h2>
-              <p className="text-foreground-400 font-body">Let's set up your energy profile.</p>
+              <p className="text-foreground-950/40 font-body">Let's set up your energy profile.</p>
               
               <div>
                 <label className="block text-sm font-medium text-foreground-950/80 mb-2">Site Address</label>
@@ -89,7 +89,7 @@ export default function OnboardingPage() {
               <button
                 onClick={handleNext}
                 disabled={!formData.siteAddress}
-                className="w-full py-3 bg-primary-500 text-foreground-950 font-semibold rounded-xl disabled:opacity-50"
+                className="w-full py-3 bg-primary-500 text-background-50 font-semibold rounded-xl disabled:opacity-50"
               >
                 Continue
               </button>
@@ -99,7 +99,7 @@ export default function OnboardingPage() {
           {step === 2 && (
             <div className="space-y-6">
               <h2 className="text-2xl font-bold text-foreground-950 font-display">Utility Provider</h2>
-              <p className="text-foreground-400 font-body">Who provides your electricity?</p>
+              <p className="text-foreground-950/40 font-body">Who provides your electricity?</p>
               
               <div className="space-y-3">
                 {['MERALCO', 'MORE_POWER', 'VECO', 'DLPC'].map((provider) => (
@@ -119,7 +119,7 @@ export default function OnboardingPage() {
 
               <div className="flex gap-4">
                 <button onClick={handleBack} className="px-6 py-3 text-foreground-950 bg-background-800 border border-foreground-950/10 rounded-xl">Back</button>
-                <button onClick={handleNext} className="flex-1 py-3 bg-primary-500 text-foreground-950 font-semibold rounded-xl">Continue</button>
+                <button onClick={handleNext} className="flex-1 py-3 bg-primary-500 text-background-50 font-semibold rounded-xl">Continue</button>
               </div>
             </div>
           )}
@@ -127,7 +127,7 @@ export default function OnboardingPage() {
           {step === 3 && (
             <div className="space-y-6">
               <h2 className="text-2xl font-bold text-foreground-950 font-display">Energy Usage</h2>
-              <p className="text-foreground-400 font-body">What is your average monthly bill?</p>
+              <p className="text-foreground-950/40 font-body">What is your average monthly bill?</p>
               
               <div className="py-8">
                 <div className="text-center text-4xl font-bold text-accent-emerald mb-6">

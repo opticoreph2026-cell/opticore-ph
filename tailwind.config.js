@@ -28,7 +28,8 @@ module.exports = {
           800: 'oklch(var(--background-800) / <alpha-value>)',
           900: 'oklch(var(--background-900) / <alpha-value>)',
           950: 'oklch(var(--background-950) / <alpha-value>)',
-        },
+          1000: 'oklch(var(--background-1000) / <alpha-value>)',
+         },
         foreground: {
           50:  'oklch(var(--foreground-50) / <alpha-value>)',
           100: 'oklch(var(--foreground-100) / <alpha-value>)',

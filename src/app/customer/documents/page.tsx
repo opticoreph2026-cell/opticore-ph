@@ -20,7 +20,7 @@ const docTypeIcons: Record<string, string> = {
   proposal_pdf: 'text-accent-cyan',
   contract: 'text-accent-emerald',
   sld: 'text-accent-cyan',
-  coc: 'text-purple-400',
+  coc: 'text-accent-cyan',
   warranty_cert: 'text-accent-rose',
   invoice: 'text-accent-cyan',
   receipt: 'text-foreground-400',

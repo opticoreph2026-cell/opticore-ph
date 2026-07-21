@@ -61,11 +61,11 @@ export default async function AdminReportsPage() {
   ]);
 
   const statusColor: Record<string, string> = {
-    new: 'text-accent-cyan', contacted: 'text-blue-400', site_visit_scheduled: 'text-yellow-400',
-    qualified: 'text-accent-emerald', quote_sent: 'text-purple-400', negotiating: 'text-orange-400',
+    new: 'text-accent-cyan',     contacted: 'text-accent-cyan', site_visit_scheduled: 'text-accent-amber',
+    qualified: 'text-accent-emerald', quote_sent: 'text-accent-cyan', negotiating: 'text-accent-amber',
     won: 'text-accent-emerald', lost: 'text-accent-rose', disqualified: 'text-foreground-950/40',
     draft: 'text-foreground-950/40', finalized: 'text-accent-cyan', approved_by_customer: 'text-accent-emerald',
-    scheduled: 'text-accent-cyan', in_progress: 'text-blue-400', commissioned: 'text-accent-emerald',
+    scheduled: 'text-accent-cyan', in_progress: 'text-accent-cyan', commissioned: 'text-accent-emerald',
     closed: 'text-foreground-950/40',
   };
 
@@ -86,9 +86,9 @@ export default async function AdminReportsPage() {
         {[
           { label: 'Leads', value: leadCount, icon: Users, color: 'text-accent-cyan' },
           { label: 'Projects', value: projectCount, icon: Zap, color: 'text-accent-emerald' },
-          { label: 'Designs', value: designCount, icon: ClipboardList, color: 'text-purple-400' },
-          { label: 'Clients', value: clientCount, icon: Users, color: 'text-blue-400' },
-          { label: 'Customers', value: customerCount, icon: Users, color: 'text-orange-400' },
+          { label: 'Designs', value: designCount, icon: ClipboardList, color: 'text-accent-cyan' },
+          { label: 'Clients', value: clientCount, icon: Users, color: 'text-accent-cyan' },
+          { label: 'Customers', value: customerCount, icon: Users, color: 'text-accent-amber' },
           { label: 'Quotations', value: quoteCount, icon: TrendingUp, color: 'text-accent-cyan' },
         ].map((stat) => (
           <SpotlightCard key={stat.label} className="p-4">
@@ -245,7 +245,7 @@ export default async function AdminReportsPage() {
           {/* Recent client signups */}
           <SpotlightCard className="p-6">
             <h2 className="text-lg font-medium text-foreground-950 mb-4 flex items-center gap-2">
-              <Users className="w-5 h-5 text-blue-400" /> New Signups
+              <Users className="w-5 h-5 text-accent-cyan" /> New Signups
             </h2>
             <div className="space-y-3">
               {clients.map((client) => (

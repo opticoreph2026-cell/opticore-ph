@@ -32,7 +32,7 @@ export function QuotationAdminClient({ quotations }: { quotations: Quotation[] }
           sent: 'bg-accent-cyan/10 text-accent-cyan',
           accepted: 'bg-accent-emerald/10 text-accent-emerald',
           rejected: 'bg-accent-rose/10 text-accent-rose',
-          expired: 'bg-amber-500/10 text-amber-400',
+          expired: 'bg-accent-amber/10 text-accent-amber',
         };
         return (
           <span className={`inline-flex px-2 py-0.5 rounded text-xs font-medium capitalize ${colors[q.status] ?? 'bg-foreground-950/5 text-foreground-950/60'}`}>
