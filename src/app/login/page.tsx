@@ -3,13 +3,15 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import dynamic from 'next/dynamic';
 import { signIn } from 'next-auth/react';
 import { Logo } from '@/components/ui/Logo';
 import { Spinner } from '@/components/ui/Spinner';
 import { useToast } from '@/components/ui/Toast';
-import { Turnstile } from '@marsidev/react-turnstile';
 import { getPostLoginRedirect } from '@/lib/energy-auth';
 import { PasswordInput } from '@/components/ui/PasswordInput';
+
+const Turnstile = dynamic(() => import('@marsidev/react-turnstile').then((m) => m.Turnstile), { ssr: false });
 import { ArrowRight, Shield, User } from 'lucide-react';
 
 export default function LoginPage() {
@@ -183,18 +185,21 @@ export default function LoginPage() {
                 />
               </div>
 
-              {hasTurnstile && !turnstileFailed ? (
-                <div className="flex justify-center">
-                  <Turnstile
-                    siteKey={turnstileSiteKey!}
-                    onSuccess={(token) => setTurnstileToken(token)}
-                    onError={() => { console.warn('[login:otp] Turnstile error'); setTurnstileFailed(true); setTurnstileToken('bypass'); }}
-                    onExpire={() => setTurnstileToken('bypass')}
-                  />
+              {hasTurnstile && (
+                <div>
+                  <div className="flex justify-center">
+                    <Turnstile
+                      siteKey={turnstileSiteKey!}
+                      onSuccess={(token) => setTurnstileToken(token)}
+                      onError={() => { console.warn('[login:otp] Turnstile error'); setTurnstileFailed(true); setTurnstileToken('bypass'); }}
+                      onExpire={() => setTurnstileToken('bypass')}
+                    />
+                  </div>
+                  {turnstileFailed && (
+                    <p className="text-xs text-foreground-950/40 text-center pt-1">Security check unavailable — you can still proceed</p>
+                  )}
                 </div>
-              ) : hasTurnstile && turnstileFailed ? (
-                <p className="text-xs text-foreground-950/40 text-center py-2">Security check unavailable — you can still proceed</p>
-              ) : null}
+              )}
 
               <button
                 type="button"
@@ -260,18 +265,21 @@ export default function LoginPage() {
                 />
               </div>
 
-              {hasTurnstile && !turnstileFailed ? (
-                <div className="flex justify-center">
-                  <Turnstile
-                    siteKey={turnstileSiteKey!}
-                    onSuccess={(token) => setTurnstileToken(token)}
-                    onError={() => { console.warn('[login:password] Turnstile error'); setTurnstileFailed(true); setTurnstileToken('bypass'); }}
-                    onExpire={() => setTurnstileToken('bypass')}
-                  />
+              {hasTurnstile && (
+                <div>
+                  <div className="flex justify-center">
+                    <Turnstile
+                      siteKey={turnstileSiteKey!}
+                      onSuccess={(token) => setTurnstileToken(token)}
+                      onError={() => { console.warn('[login:password] Turnstile error'); setTurnstileFailed(true); setTurnstileToken('bypass'); }}
+                      onExpire={() => setTurnstileToken('bypass')}
+                    />
+                  </div>
+                  {turnstileFailed && (
+                    <p className="text-xs text-foreground-950/40 text-center pt-1">Security check unavailable — you can still proceed</p>
+                  )}
                 </div>
-              ) : hasTurnstile && turnstileFailed ? (
-                <p className="text-xs text-foreground-950/40 text-center py-2">Security check unavailable — you can still proceed</p>
-              ) : null}
+              )}
 
               <button
                 type="submit"

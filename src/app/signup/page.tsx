@@ -3,11 +3,13 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import dynamic from 'next/dynamic';
 import { Logo } from '@/components/ui/Logo';
 import { Spinner } from '@/components/ui/Spinner';
 import { useToast } from '@/components/ui/Toast';
-import { Turnstile } from '@marsidev/react-turnstile';
 import { PasswordInput } from '@/components/ui/PasswordInput';
+
+const Turnstile = dynamic(() => import('@marsidev/react-turnstile').then((m) => m.Turnstile), { ssr: false });
 
 export default function SignupPage() {
   const [name, setName] = useState('');
@@ -118,18 +120,21 @@ export default function SignupPage() {
               required
             />
 
-            {hasTurnstile && !turnstileFailed ? (
-              <div className="flex justify-center">
-                <Turnstile
-                  siteKey={turnstileSiteKey!}
-                  onSuccess={(token) => setTurnstileToken(token)}
-                  onError={() => { console.warn('[signup] Turnstile error'); setTurnstileFailed(true); setTurnstileToken('bypass'); }}
-                  onExpire={() => setTurnstileToken('bypass')}
-                />
+            {hasTurnstile && (
+              <div>
+                <div className="flex justify-center">
+                  <Turnstile
+                    siteKey={turnstileSiteKey!}
+                    onSuccess={(token) => setTurnstileToken(token)}
+                    onError={() => { console.warn('[signup] Turnstile error'); setTurnstileFailed(true); setTurnstileToken('bypass'); }}
+                    onExpire={() => setTurnstileToken('bypass')}
+                  />
+                </div>
+                {turnstileFailed && (
+                  <p className="text-xs text-foreground-950/40 text-center pt-1">Security check unavailable — you can still submit</p>
+                )}
               </div>
-            ) : hasTurnstile && turnstileFailed ? (
-              <p className="text-xs text-foreground-950/40 text-center py-2">Security check unavailable — you can still submit</p>
-            ) : null}
+            )}
 
             <div>
               <button
