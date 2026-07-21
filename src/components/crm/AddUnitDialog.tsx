@@ -73,7 +73,7 @@ export function AddUnitDialog() {
       {open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setOpen(false)} />
-          <div className="relative bg-surface-900 border border-border-subtle rounded-2xl p-6 w-full max-w-lg mx-4 shadow-2xl">
+          <div className="relative bg-background-100 border border-foreground-950/10 rounded-2xl p-6 w-full max-w-lg mx-4 shadow-2xl">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-lg font-bold text-foreground-950">Add Inventory Unit</h2>
               <button onClick={() => setOpen(false)} className="p-1 text-foreground-950/40 hover:text-foreground-950 rounded-lg hover:bg-foreground-950/5">
@@ -89,7 +89,7 @@ export function AddUnitDialog() {
                   required
                   value={form.serialNumber}
                   onChange={(e) => setForm({ ...form, serialNumber: e.target.value })}
-                  className="w-full px-3 py-2 bg-surface-800 border border-border-subtle rounded-lg text-foreground-950 text-sm focus:outline-none focus:ring-2 focus:ring-accent-blue"
+                  className="w-full px-3 py-2 bg-background-50 border border-foreground-950/10 rounded-lg text-foreground-950 text-sm focus:outline-none focus:ring-2 focus:ring-accent-blue"
                 />
               </div>
 
@@ -98,7 +98,7 @@ export function AddUnitDialog() {
                 <select
                   value={form.type}
                   onChange={(e) => setForm({ ...form, type: e.target.value })}
-                  className="w-full px-3 py-2 bg-surface-800 border border-border-subtle rounded-lg text-foreground-950 text-sm focus:outline-none focus:ring-2 focus:ring-accent-blue"
+                  className="w-full px-3 py-2 bg-background-50 border border-foreground-950/10 rounded-lg text-foreground-950 text-sm focus:outline-none focus:ring-2 focus:ring-accent-blue"
                 >
                   <option value="inverter">Inverter</option>
                   <option value="battery">Battery</option>
@@ -110,7 +110,7 @@ export function AddUnitDialog() {
                 <select
                   value={form.ownershipStatus}
                   onChange={(e) => setForm({ ...form, ownershipStatus: e.target.value })}
-                  className="w-full px-3 py-2 bg-surface-800 border border-border-subtle rounded-lg text-foreground-950 text-sm focus:outline-none focus:ring-2 focus:ring-accent-blue"
+                  className="w-full px-3 py-2 bg-background-50 border border-foreground-950/10 rounded-lg text-foreground-950 text-sm focus:outline-none focus:ring-2 focus:ring-accent-blue"
                 >
                   <option value="consigned_bytewatt">Consigned (Bytewatt)</option>
                   <option value="consigned_partner">Consigned (Partner)</option>
@@ -126,7 +126,7 @@ export function AddUnitDialog() {
                   type="text"
                   value={form.storageLocation}
                   onChange={(e) => setForm({ ...form, storageLocation: e.target.value })}
-                  className="w-full px-3 py-2 bg-surface-800 border border-border-subtle rounded-lg text-foreground-950 text-sm focus:outline-none focus:ring-2 focus:ring-accent-blue"
+                  className="w-full px-3 py-2 bg-background-50 border border-foreground-950/10 rounded-lg text-foreground-950 text-sm focus:outline-none focus:ring-2 focus:ring-accent-blue"
                   placeholder="e.g. Cebu Warehouse"
                 />
               </div>
@@ -137,7 +137,7 @@ export function AddUnitDialog() {
                   type="date"
                   value={form.receivedDate}
                   onChange={(e) => setForm({ ...form, receivedDate: e.target.value })}
-                  className="w-full px-3 py-2 bg-surface-800 border border-border-subtle rounded-lg text-foreground-950 text-sm focus:outline-none focus:ring-2 focus:ring-accent-blue"
+                  className="w-full px-3 py-2 bg-background-50 border border-foreground-950/10 rounded-lg text-foreground-950 text-sm focus:outline-none focus:ring-2 focus:ring-accent-blue"
                 />
               </div>
 
@@ -147,7 +147,7 @@ export function AddUnitDialog() {
                   value={form.notes}
                   onChange={(e) => setForm({ ...form, notes: e.target.value })}
                   rows={2}
-                  className="w-full px-3 py-2 bg-surface-800 border border-border-subtle rounded-lg text-foreground-950 text-sm focus:outline-none focus:ring-2 focus:ring-accent-blue"
+                  className="w-full px-3 py-2 bg-background-50 border border-foreground-950/10 rounded-lg text-foreground-950 text-sm focus:outline-none focus:ring-2 focus:ring-accent-blue"
                 />
               </div>
 

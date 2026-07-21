@@ -40,7 +40,7 @@ export function DeleteClientButton({ clientId, clientEmail }: DeleteClientButton
 
       {confirming && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-          <div className="bg-surface-900 border border-border-subtle rounded-2xl p-6 w-full max-w-sm mx-4 shadow-2xl">
+          <div className="bg-background-100 border border-foreground-950/10 rounded-2xl p-6 w-full max-w-sm mx-4 shadow-2xl">
             <h3 className="text-lg font-semibold text-foreground-950 mb-2">Delete User</h3>
             <p className="text-sm text-foreground-950/60 mb-6">
               Are you sure you want to delete <strong className="text-foreground-950">{clientEmail}</strong>?

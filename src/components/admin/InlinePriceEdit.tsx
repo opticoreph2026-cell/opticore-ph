@@ -46,7 +46,7 @@ export function InlinePriceEdit({ id, category, currentPrice, isConfirmed, apiPa
           type="number"
           value={price}
           onChange={(e) => setPrice(e.target.value)}
-          className="w-24 bg-surface-1000 border border-border-subtle rounded px-2 py-1 text-sm text-foreground-950 font-mono"
+          className="w-24 bg-background-50 border border-foreground-950/10 rounded px-2 py-1 text-sm text-foreground-950 font-mono"
           step="0.01"
           min="0"
         />

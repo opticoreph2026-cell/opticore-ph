@@ -66,7 +66,7 @@ export function EditRateDialog({ utilityId, utilityName, currentAllInRateRu, cur
 
       {open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-          <div className="bg-surface-900 border border-border-subtle rounded-2xl p-6 w-full max-w-md mx-4 shadow-2xl">
+          <div className="bg-background-100 border border-foreground-950/10 rounded-2xl p-6 w-full max-w-md mx-4 shadow-2xl">
             <h3 className="text-lg font-semibold text-foreground-950 mb-1">Edit Rate — {utilityName}</h3>
             <p className="text-xs text-foreground-950/40 mb-6">Creates a new rate schedule effective today. Previous rates are preserved.</p>
 
@@ -79,7 +79,7 @@ export function EditRateDialog({ utilityId, utilityName, currentAllInRateRu, cur
                   min="0"
                   value={allInRatePhp}
                   onChange={(e) => setAllInRatePhp(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl bg-surface-800 border border-border-subtle text-foreground-950 focus:outline-none focus:ring-2 focus:ring-accent-cyan"
+                  className="w-full px-4 py-2.5 rounded-xl bg-background-50 border border-foreground-950/10 text-foreground-950 focus:outline-none focus:ring-2 focus:ring-accent-cyan"
                 />
               </div>
 
@@ -91,7 +91,7 @@ export function EditRateDialog({ utilityId, utilityName, currentAllInRateRu, cur
                   min="0"
                   value={bgcRatePhp}
                   onChange={(e) => setBgcRatePhp(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl bg-surface-800 border border-border-subtle text-foreground-950 focus:outline-none focus:ring-2 focus:ring-accent-cyan"
+                  className="w-full px-4 py-2.5 rounded-xl bg-background-50 border border-foreground-950/10 text-foreground-950 focus:outline-none focus:ring-2 focus:ring-accent-cyan"
                 />
               </div>
 
@@ -100,7 +100,7 @@ export function EditRateDialog({ utilityId, utilityName, currentAllInRateRu, cur
                 <select
                   value={customerClass}
                   onChange={(e) => setCustomerClass(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl bg-surface-800 border border-border-subtle text-foreground-950 focus:outline-none focus:ring-2 focus:ring-accent-cyan"
+                  className="w-full px-4 py-2.5 rounded-xl bg-background-50 border border-foreground-950/10 text-foreground-950 focus:outline-none focus:ring-2 focus:ring-accent-cyan"
                 >
                   <option value="residential">Residential</option>
                   <option value="commercial">Commercial</option>

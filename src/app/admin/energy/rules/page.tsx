@@ -36,9 +36,10 @@ export default async function AdminEnergyRules() {
         <AddUtilityDialog />
       </div>
 
-      <div className="bg-surface-800 border border-border-subtle rounded-xl overflow-hidden">
-        <table className="w-full text-left text-sm">
-          <thead className="bg-surface-900 border-b border-border-subtle text-foreground-950/60">
+      <div className="bg-background-100 border border-foreground-950/10 rounded-xl overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-sm">
+          <thead className="bg-foreground-950/5 border-b border-foreground-950/10 text-foreground-950/60">
             <tr>
               <th className="px-6 py-4 font-medium">Code</th>
               <th className="px-6 py-4 font-medium">Name</th>
@@ -47,39 +48,48 @@ export default async function AdminEnergyRules() {
               <th className="px-6 py-4 font-medium"></th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-border-subtle text-foreground-950/80">
-            {utilities.map((u: EnergyUtilityCompany & { rateSchedules: UtilityRateSchedule[] }) => (
-              <tr key={u.id} className="hover:bg-foreground-950/5 transition-colors">
-                <td className="px-6 py-4 font-bold text-accent-cyan">{u.code}</td>
-                <td className="px-6 py-4">{u.name}</td>
-                <td className="px-6 py-4">
-                  {u.rateSchedules[0]
-                    ? formatUnitsToRatePHP(u.rateSchedules[0].allInRateRu)
-                    : '—'}
-                </td>
-                <td className="px-6 py-4">
-                  {u.netMeteringApplicationUrl ? (
-                    <span className="inline-flex px-2 py-1 rounded text-xs bg-green-500/20 text-green-500">
-                      Supported
-                    </span>
-                  ) : (
-                    <span className="inline-flex px-2 py-1 rounded text-xs bg-red-500/20 text-red-500">
-                      Coming Soon
-                    </span>
-                  )}
-                </td>
-                <td className="px-6 py-4 text-right">
-                  <EditRateDialog
-                    utilityId={u.id}
-                    utilityName={u.name}
-                    currentAllInRateRu={u.rateSchedules[0]?.allInRateRu ?? 0}
-                    currentBgcRateRu={u.rateSchedules[0]?.blendedGenerationRateRu ?? 0}
-                  />
+          <tbody className="divide-y divide-foreground-950/10 text-foreground-950/80">
+            {utilities.length === 0 ? (
+              <tr>
+                <td colSpan={5} className="px-6 py-12 text-center text-foreground-950/40">
+                  No utility companies found.
                 </td>
               </tr>
-            ))}
+            ) : (
+              utilities.map((u: EnergyUtilityCompany & { rateSchedules: UtilityRateSchedule[] }) => (
+                <tr key={u.id} className="hover:bg-foreground-950/5 transition-colors">
+                  <td className="px-6 py-4 font-bold text-accent-cyan">{u.code}</td>
+                  <td className="px-6 py-4">{u.name}</td>
+                  <td className="px-6 py-4">
+                    {u.rateSchedules[0]
+                      ? formatUnitsToRatePHP(u.rateSchedules[0].allInRateRu)
+                      : '—'}
+                  </td>
+                  <td className="px-6 py-4">
+                    {u.netMeteringApplicationUrl ? (
+                      <span className="inline-flex px-2 py-1 rounded text-xs bg-accent-emerald/15 text-accent-emerald">
+                        Supported
+                      </span>
+                    ) : (
+                      <span className="inline-flex px-2 py-1 rounded text-xs bg-accent-rose/15 text-accent-rose">
+                        Coming Soon
+                      </span>
+                    )}
+                  </td>
+                  <td className="px-6 py-4 text-right">
+                    <EditRateDialog
+                      utilityId={u.id}
+                      utilityName={u.name}
+                      currentAllInRateRu={u.rateSchedules[0]?.allInRateRu ?? 0}
+                      currentBgcRateRu={u.rateSchedules[0]?.blendedGenerationRateRu ?? 0}
+                    />
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
+        </div>
       </div>
     </div>
   );

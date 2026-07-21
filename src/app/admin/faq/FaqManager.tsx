@@ -116,7 +116,7 @@ export function FaqManager({ initialEntries }: { initialEntries: FaqRow[] }) {
               key={f}
               onClick={() => setFilter(f)}
               className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
-                filter === f ? 'bg-primary-500/20 text-primary-400 border border-primary-500/30' : 'text-foreground-950/50 hover:text-foreground-950/70 bg-foreground-950/5 border border-foreground-950/10'
+                 filter === f ? 'bg-accent-blue/10 text-accent-blue border border-accent-blue/30' : 'text-foreground-950/50 hover:text-foreground-950/70 bg-foreground-950/5 border border-foreground-950/10'
               }`}
             >
               {f === 'all' ? 'All' : f === 'en' ? 'English' : 'Filipino'}
@@ -133,7 +133,7 @@ export function FaqManager({ initialEntries }: { initialEntries: FaqRow[] }) {
       </div>
 
       {showNew && (
-        <div className="bg-surface-800 border border-border-subtle rounded-xl p-6 space-y-4">
+        <div className="bg-background-100 border border-foreground-950/10 rounded-xl p-6 space-y-4">
           <h3 className="text-lg font-semibold text-foreground-950">New FAQ Entry</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-1.5">
@@ -175,7 +175,7 @@ export function FaqManager({ initialEntries }: { initialEntries: FaqRow[] }) {
                 type="text"
                 value={newForm.category}
                 onChange={(e) => setNewForm({ ...newForm, category: e.target.value })}
-                className="w-full bg-surface-900 border border-border-subtle rounded-lg px-3 py-2 text-sm text-foreground-950 focus:outline-none focus:border-primary-500/50"
+                className="w-full bg-background-50 border border-foreground-950/10 rounded-lg px-3 py-2 text-sm text-foreground-950 focus:outline-none focus:border-accent-blue/50"
                 placeholder="e.g. billing, installation"
               />
             </div>
@@ -206,9 +206,10 @@ export function FaqManager({ initialEntries }: { initialEntries: FaqRow[] }) {
         </div>
       )}
 
-      <div className="bg-surface-800 border border-border-subtle rounded-xl overflow-hidden">
-        <table className="w-full text-left text-sm">
-          <thead className="bg-surface-900 border-b border-border-subtle text-foreground-950/60">
+        <div className="bg-background-100 border border-foreground-950/10 rounded-xl overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-sm">
+          <thead className="bg-foreground-950/5 border-b border-foreground-950/10 text-foreground-950/60">
             <tr>
               <th className="px-6 py-4 font-medium">Question</th>
               <th className="px-6 py-4 font-medium">Locale</th>
@@ -218,7 +219,7 @@ export function FaqManager({ initialEntries }: { initialEntries: FaqRow[] }) {
               <th className="px-6 py-4 font-medium">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-border-subtle">
+          <tbody className="divide-y divide-foreground-950/10">
             {filteredEntries.length === 0 && (
               <tr>
                 <td colSpan={6} className="px-6 py-12 text-center text-foreground-950/30">
@@ -227,7 +228,7 @@ export function FaqManager({ initialEntries }: { initialEntries: FaqRow[] }) {
               </tr>
             )}
             {filteredEntries.map((entry) => (
-              <tr key={entry.id} className="hover:bg-surface-900/50 transition-colors">
+              <tr key={entry.id} className="hover:bg-foreground-950/3 transition-colors">
                 <td className="px-6 py-4">
                   {editingId === entry.id ? (
                     <input
@@ -272,8 +273,8 @@ export function FaqManager({ initialEntries }: { initialEntries: FaqRow[] }) {
                     onClick={() => toggleActive(entry)}
                     className={`px-2.5 py-1 text-xs font-medium rounded-lg transition-colors ${
                       entry.active
-                        ? 'bg-secondary-500/20 text-secondary-400 border border-secondary-500/30'
-                        : 'bg-rose-500/20 text-rose-400 border border-rose-500/30'
+                        ? 'bg-accent-cyan/10 text-accent-cyan border border-accent-cyan/30'
+                        : 'bg-accent-rose/10 text-accent-rose border border-accent-rose/30'
                     }`}
                   >
                     {entry.active ? 'Active' : 'Inactive'}
@@ -285,14 +286,14 @@ export function FaqManager({ initialEntries }: { initialEntries: FaqRow[] }) {
                       <>
                         <button
                           onClick={() => saveEdit(entry)}
-                          className="p-1.5 text-secondary-400 hover:bg-secondary-500/10 rounded-lg transition-colors"
+                          className="p-1.5 text-accent-cyan hover:bg-accent-cyan/10 rounded-lg transition-colors"
                           title="Save"
                         >
                           <Check className="w-4 h-4" />
                         </button>
                         <button
                           onClick={cancelEdit}
-                          className="p-1.5 text-rose-400 hover:bg-rose-500/10 rounded-lg transition-colors"
+                          className="p-1.5 text-accent-rose hover:bg-accent-rose/10 rounded-lg transition-colors"
                           title="Cancel"
                         >
                           <X className="w-4 h-4" />
@@ -302,7 +303,7 @@ export function FaqManager({ initialEntries }: { initialEntries: FaqRow[] }) {
                       <>
                         <button
                           onClick={() => startEdit(entry)}
-                          className="p-1.5 text-foreground-950/40 hover:text-primary-400 hover:bg-primary-500/10 rounded-lg transition-colors"
+                          className="p-1.5 text-foreground-950/40 hover:text-accent-blue hover:bg-accent-blue/10 rounded-lg transition-colors"
                           title="Edit"
                         >
                           <Edit2 className="w-4 h-4" />
@@ -312,7 +313,7 @@ export function FaqManager({ initialEntries }: { initialEntries: FaqRow[] }) {
                             <button
                               onClick={() => handleDelete(entry)}
                               disabled={deleting === entry.id}
-                              className="p-1.5 text-rose-400 hover:bg-rose-500/10 rounded-lg transition-colors"
+                              className="p-1.5 text-accent-rose hover:bg-accent-rose/10 rounded-lg transition-colors"
                               title="Confirm delete"
                             >
                               {deleting === entry.id ? '...' : <Check className="w-4 h-4" />}
@@ -328,7 +329,7 @@ export function FaqManager({ initialEntries }: { initialEntries: FaqRow[] }) {
                         ) : (
                           <button
                             onClick={() => setConfirmDelete(entry.id)}
-                            className="p-1.5 text-foreground-950/40 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-colors"
+                            className="p-1.5 text-foreground-950/40 hover:text-accent-rose hover:bg-accent-rose/10 rounded-lg transition-colors"
                             title="Delete"
                           >
                             <Trash2 className="w-4 h-4" />
@@ -342,6 +343,7 @@ export function FaqManager({ initialEntries }: { initialEntries: FaqRow[] }) {
             ))}
           </tbody>
         </table>
+        </div>
       </div>
     </div>
   );

@@ -27,9 +27,10 @@ export default async function AdminOrganizationsPage() {
         </div>
       </div>
 
-      <div className="bg-surface-800 border border-border-subtle rounded-xl overflow-hidden">
-        <table className="w-full text-left text-sm">
-          <thead className="bg-surface-900 border-b border-border-subtle text-foreground-950/60">
+      <div className="bg-background-100 border border-foreground-950/10 rounded-xl overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-sm">
+          <thead className="bg-foreground-950/5 border-b border-foreground-950/10 text-foreground-950/60">
             <tr>
               <th className="px-6 py-4 font-medium">Name</th>
               <th className="px-6 py-4 font-medium">Type</th>
@@ -37,7 +38,7 @@ export default async function AdminOrganizationsPage() {
               <th className="px-6 py-4 font-medium">Created</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-border-subtle text-foreground-950/80">
+          <tbody className="divide-y divide-foreground-950/10 text-foreground-950/80">
             {organizations.length === 0 ? (
               <tr>
                 <td colSpan={4} className="px-6 py-8 text-center text-foreground-950/40">
@@ -69,6 +70,7 @@ export default async function AdminOrganizationsPage() {
             )}
           </tbody>
         </table>
+        </div>
       </div>
     </div>
   );

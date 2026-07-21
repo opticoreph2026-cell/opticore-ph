@@ -70,9 +70,10 @@ export function CatalogTable({ initialProducts }: { initialProducts: ProductRow[
         <AddProductDialog />
       </div>
 
-      <div className="bg-surface-800 border border-border-subtle rounded-xl overflow-hidden">
-        <table className="w-full text-left text-sm">
-          <thead className="bg-surface-900 border-b border-border-subtle text-foreground-950/60">
+      <div className="bg-background-100 border border-foreground-950/10 rounded-xl overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-sm">
+          <thead className="bg-foreground-950/5 border-b border-foreground-950/10 text-foreground-950/60">
             <tr>
               <th className="px-6 py-4 font-medium">Model</th>
               <th className="px-6 py-4 font-medium">SKU</th>
@@ -82,7 +83,7 @@ export function CatalogTable({ initialProducts }: { initialProducts: ProductRow[
               <th className="px-6 py-4 font-medium">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-border-subtle text-foreground-950/80">
+          <tbody className="divide-y divide-foreground-950/10 text-foreground-950/80">
             {products.map((p) => (
               <tr key={p.id} className="hover:bg-foreground-950/5 transition-colors">
                 <td className="px-6 py-4">
@@ -91,7 +92,7 @@ export function CatalogTable({ initialProducts }: { initialProducts: ProductRow[
                       type="text"
                       value={editForm.modelName}
                       onChange={(e) => setEditForm({ ...editForm, modelName: e.target.value })}
-                      className="w-full bg-surface-1000 border border-border-subtle rounded px-2 py-1 text-sm text-foreground-950"
+                      className="w-full bg-background-50 border border-foreground-950/10 rounded px-2 py-1 text-sm text-foreground-950"
                     />
                   ) : (
                     <span className="font-medium text-foreground-950">{p.modelName}</span>
@@ -103,7 +104,7 @@ export function CatalogTable({ initialProducts }: { initialProducts: ProductRow[
                       type="text"
                       value={editForm.sku}
                       onChange={(e) => setEditForm({ ...editForm, sku: e.target.value })}
-                      className="w-full bg-surface-1000 border border-border-subtle rounded px-2 py-1 text-sm text-foreground-950 font-mono"
+                      className="w-full bg-background-50 border border-foreground-950/10 rounded px-2 py-1 text-sm text-foreground-950 font-mono"
                     />
                   ) : (
                     p.sku
@@ -170,6 +171,7 @@ export function CatalogTable({ initialProducts }: { initialProducts: ProductRow[
             )}
           </tbody>
         </table>
+        </div>
       </div>
     </div>
   );

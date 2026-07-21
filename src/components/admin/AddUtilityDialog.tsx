@@ -56,7 +56,7 @@ export function AddUtilityDialog() {
       {open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setOpen(false)} />
-          <div className="relative bg-surface-900 border border-border-subtle rounded-2xl p-6 w-full max-w-lg mx-4 shadow-2xl">
+          <div className="relative bg-background-100 border border-foreground-950/10 rounded-2xl p-6 w-full max-w-lg mx-4 shadow-2xl">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-lg font-bold text-foreground-950">Add Utility Company</h2>
               <button onClick={() => setOpen(false)} className="p-1 text-foreground-950/40 hover:text-foreground-950 rounded-lg hover:bg-foreground-950/5">
@@ -73,7 +73,7 @@ export function AddUtilityDialog() {
                   value={form.code}
                   onChange={(e) => setForm({ ...form, code: e.target.value })}
                   placeholder="e.g. VECO, CEBECO_I"
-                  className="w-full px-3 py-2 bg-surface-800 border border-border-subtle rounded-lg text-foreground-950 text-sm focus:outline-none focus:ring-2 focus:ring-accent-blue"
+                  className="w-full px-3 py-2 bg-background-50 border border-foreground-950/10 rounded-lg text-foreground-950 text-sm focus:outline-none focus:ring-2 focus:ring-accent-blue"
                 />
               </div>
 
@@ -85,7 +85,7 @@ export function AddUtilityDialog() {
                   value={form.name}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
                   placeholder="e.g. Visayan Electric Company"
-                  className="w-full px-3 py-2 bg-surface-800 border border-border-subtle rounded-lg text-foreground-950 text-sm focus:outline-none focus:ring-2 focus:ring-accent-blue"
+                  className="w-full px-3 py-2 bg-background-50 border border-foreground-950/10 rounded-lg text-foreground-950 text-sm focus:outline-none focus:ring-2 focus:ring-accent-blue"
                 />
               </div>
 
@@ -96,7 +96,7 @@ export function AddUtilityDialog() {
                   value={form.territory}
                   onChange={(e) => setForm({ ...form, territory: e.target.value })}
                   placeholder="e.g. Cebu"
-                  className="w-full px-3 py-2 bg-surface-800 border border-border-subtle rounded-lg text-foreground-950 text-sm focus:outline-none focus:ring-2 focus:ring-accent-blue"
+                  className="w-full px-3 py-2 bg-background-50 border border-foreground-950/10 rounded-lg text-foreground-950 text-sm focus:outline-none focus:ring-2 focus:ring-accent-blue"
                 />
               </div>
 
@@ -107,7 +107,7 @@ export function AddUtilityDialog() {
                   value={form.netMeteringApplicationUrl}
                   onChange={(e) => setForm({ ...form, netMeteringApplicationUrl: e.target.value })}
                   placeholder="https://..."
-                  className="w-full px-3 py-2 bg-surface-800 border border-border-subtle rounded-lg text-foreground-950 text-sm focus:outline-none focus:ring-2 focus:ring-accent-blue"
+                  className="w-full px-3 py-2 bg-background-50 border border-foreground-950/10 rounded-lg text-foreground-950 text-sm focus:outline-none focus:ring-2 focus:ring-accent-blue"
                 />
               </div>
 
