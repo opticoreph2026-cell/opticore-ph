@@ -15,6 +15,7 @@ export default function SignupPage() {
   const [password, setPassword] = useState('');
   const [turnstileToken, setTurnstileToken] = useState('');
   const [loading, setLoading] = useState(false);
+  const [turnstileFailed, setTurnstileFailed] = useState(false);
   const router = useRouter();
   const { error, success } = useToast();
   const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
@@ -117,16 +118,16 @@ export default function SignupPage() {
               required
             />
 
-            <div className="flex justify-center">
-                {hasTurnstile && (
-                  <Turnstile
-                    siteKey={turnstileSiteKey!}
-                    onSuccess={(token) => setTurnstileToken(token)}
-                    onError={() => { console.warn('[signup] Turnstile error — allowing form to proceed'); setTurnstileToken('bypass'); }}
-                    onExpire={() => setTurnstileToken('bypass')}
-                  />
-                )}
-            </div>
+            {hasTurnstile && !turnstileFailed && (
+              <div className="flex justify-center">
+                <Turnstile
+                  siteKey={turnstileSiteKey!}
+                  onSuccess={(token) => setTurnstileToken(token)}
+                  onError={() => { console.warn('[signup] Turnstile error — hiding widget'); setTurnstileFailed(true); setTurnstileToken('bypass'); }}
+                  onExpire={() => setTurnstileToken('bypass')}
+                />
+              </div>
+            )}
 
             <div>
               <button

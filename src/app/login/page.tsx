@@ -20,6 +20,7 @@ export default function LoginPage() {
   const [showOtpInput, setShowOtpInput] = useState(false);
   const [otpCode, setOtpCode] = useState('');
   const [otpSent, setOtpSent] = useState(false);
+  const [turnstileFailed, setTurnstileFailed] = useState(false);
   const router = useRouter();
   const { error, success } = useToast();
 
@@ -182,13 +183,13 @@ export default function LoginPage() {
                 />
               </div>
 
-              {hasTurnstile && (
+              {hasTurnstile && !turnstileFailed && (
                 <div className="flex justify-center">
                   <Turnstile
                     siteKey={turnstileSiteKey!}
                     onSuccess={(token) => setTurnstileToken(token)}
-                    onError={() => { console.warn('[login:otp] Turnstile error — allowing'); setTurnstileToken('bypass'); }}
-                    onExpire={() => setTurnstileToken('')}
+                    onError={() => { console.warn('[login:otp] Turnstile error — hiding widget'); setTurnstileFailed(true); setTurnstileToken('bypass'); }}
+                    onExpire={() => setTurnstileToken('bypass')}
                   />
                 </div>
               )}
@@ -257,12 +258,12 @@ export default function LoginPage() {
                 />
               </div>
 
-              {hasTurnstile && (
+              {hasTurnstile && !turnstileFailed && (
                 <div className="flex justify-center">
                   <Turnstile
                     siteKey={turnstileSiteKey!}
                     onSuccess={(token) => setTurnstileToken(token)}
-                    onError={() => { console.warn('[login:password] Turnstile error — allowing'); setTurnstileToken('bypass'); }}
+                    onError={() => { console.warn('[login:password] Turnstile error — hiding widget'); setTurnstileFailed(true); setTurnstileToken('bypass'); }}
                     onExpire={() => setTurnstileToken('bypass')}
                   />
                 </div>
