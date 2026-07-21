@@ -118,16 +118,18 @@ export default function SignupPage() {
               required
             />
 
-            {hasTurnstile && !turnstileFailed && (
+            {hasTurnstile && !turnstileFailed ? (
               <div className="flex justify-center">
                 <Turnstile
                   siteKey={turnstileSiteKey!}
                   onSuccess={(token) => setTurnstileToken(token)}
-                  onError={() => { console.warn('[signup] Turnstile error — hiding widget'); setTurnstileFailed(true); setTurnstileToken('bypass'); }}
+                  onError={() => { console.warn('[signup] Turnstile error'); setTurnstileFailed(true); setTurnstileToken('bypass'); }}
                   onExpire={() => setTurnstileToken('bypass')}
                 />
               </div>
-            )}
+            ) : hasTurnstile && turnstileFailed ? (
+              <p className="text-xs text-foreground-950/40 text-center py-2">Security check unavailable — you can still submit</p>
+            ) : null}
 
             <div>
               <button

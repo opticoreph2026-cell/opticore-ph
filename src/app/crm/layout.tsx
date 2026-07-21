@@ -34,9 +34,9 @@ export default async function CrmLayout({
       <CrmSidebarWrapper role={role} email={email} name={name} />
 
       {/* Main content */}
-      <main className="flex-1 flex flex-col min-w-0 overflow-hidden">
+        <main className="flex-1 flex flex-col min-w-0">
         {/* Desktop top header */}
-        <header className="hidden md:flex h-14 items-center justify-between px-8 bg-background-100/60 backdrop-blur border-b border-foreground-950/10 flex-shrink-0">
+        <header className="hidden md:flex h-14 items-center justify-between px-8 bg-background-100/60 backdrop-blur border-b border-foreground-950/10 flex-shrink-0 relative z-10">
           <div className="text-sm text-foreground-950/40 font-medium">
             OptiCore Energy Solutions — Internal CRM
           </div>
