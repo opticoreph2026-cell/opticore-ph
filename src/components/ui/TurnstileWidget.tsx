@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useId } from 'react';
+import { useEffect, useRef } from 'react';
 
 declare global {
   interface Window {
@@ -10,10 +10,10 @@ declare global {
         callback?: (token: string) => void;
         'error-callback'?: () => void;
         'expired-callback'?: () => void;
-        theme?: 'light' | 'auto';
       }) => string | undefined;
       remove: (widgetId: string) => void;
     };
+    __cfTurnstileQueue?: Array<() => void>;
   }
 }
 
@@ -24,30 +24,14 @@ interface TurnstileWidgetProps {
   onExpire: () => void;
 }
 
+const SCRIPT_ID = '__cf_turnstile_script';
+
 export function TurnstileWidget({ siteKey, onSuccess, onError, onExpire }: TurnstileWidgetProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const widgetId = useRef<string | undefined>();
-  const readyFired = useRef(false);
-  const id = useId();
 
   useEffect(() => {
-    if (!containerRef.current) return;
-
-    if (window.turnstile) {
-      widgetId.current = window.turnstile.render(containerRef.current, {
-        sitekey: siteKey,
-        callback: onSuccess,
-        'error-callback': onError,
-        'expired-callback': onExpire,
-      });
-      return;
-    }
-
-    const script = document.createElement('script');
-    script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?onload=cfTurnstileOnLoad';
-    script.async = true;
-    script.defer = true;
-    (window as any).cfTurnstileOnLoad = () => {
+    const renderWidget = () => {
       if (containerRef.current && window.turnstile) {
         widgetId.current = window.turnstile.render(containerRef.current, {
           sitekey: siteKey,
@@ -57,7 +41,30 @@ export function TurnstileWidget({ siteKey, onSuccess, onError, onExpire }: Turns
         });
       }
     };
-    document.head.appendChild(script);
+
+    if (window.turnstile) {
+      renderWidget();
+      return;
+    }
+
+    if (!window.__cfTurnstileQueue) {
+      window.__cfTurnstileQueue = [];
+    }
+    window.__cfTurnstileQueue.push(renderWidget);
+
+    if (!document.getElementById(SCRIPT_ID)) {
+      (window as any).cfTurnstileOnLoad = () => {
+        const q = window.__cfTurnstileQueue || [];
+        window.__cfTurnstileQueue = [];
+        q.forEach((fn) => fn());
+      };
+      const script = document.createElement('script');
+      script.id = SCRIPT_ID;
+      script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?onload=cfTurnstileOnLoad';
+      script.async = true;
+      script.defer = true;
+      document.head.appendChild(script);
+    }
 
     return () => {
       if (widgetId.current && window.turnstile) {
