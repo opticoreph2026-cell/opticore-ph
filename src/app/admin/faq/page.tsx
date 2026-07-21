@@ -26,8 +26,8 @@ export default async function AdminFaqPage() {
     <div className="space-y-6">
       <div className="flex justify-between items-center mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-foreground-950 mb-2">FAQ Management</h1>
-          <p className="text-foreground-400">Manage frequently asked questions across locales.</p>
+          <h1 className="text-3xl font-display font-bold text-foreground-950 mb-2">FAQ Management</h1>
+          <p className="text-foreground-950/40">Manage frequently asked questions across locales.</p>
         </div>
       </div>
       <FaqManager initialEntries={serialized} />

@@ -71,21 +71,21 @@ export function PartnerLeadDetailClient({ lead, userId }: { lead: Lead; userId?:
         Back to Leads
       </button>
 
-      <div className="bg-background-800 border border-foreground-950/5 rounded-2xl overflow-hidden">
+      <div className="bg-background-800 border border-foreground-950/10 rounded-2xl overflow-hidden">
         <div className="p-6">
           <div className="flex items-start justify-between mb-6">
             <div>
-              <h1 className="text-2xl font-bold text-foreground-950">{lead.fullName}</h1>
+              <h1 className="text-2xl font-display font-bold text-foreground-950">{lead.fullName}</h1>
               <p className="text-sm text-foreground-950/50 mt-1 capitalize">{lead.customerType.replace(/_/g, ' ')} prospect</p>
             </div>
-            <span className={`inline-flex px-3 py-1 rounded-full text-xs font-medium capitalize ${statusColors[lead.status] ?? 'bg-foreground-950/5 text-foreground-400'}`}>
+            <span className={`inline-flex px-3 py-1 rounded-full text-xs font-medium capitalize ${statusColors[lead.status] ?? 'bg-foreground-950/5 text-foreground-950/40'}`}>
               {lead.status.replace(/_/g, ' ')}
             </span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-4">
-              <h3 className="text-sm font-semibold text-foreground-950/60 uppercase tracking-wider">Contact</h3>
+              <h3 className="text-sm font-display font-semibold text-foreground-950/60 uppercase tracking-wider">Contact</h3>
               {lead.email && (
                 <div className="flex items-center gap-3 text-sm text-foreground-950/70">
                   <Mail className="w-4 h-4 text-accent-cyan" />
@@ -107,7 +107,7 @@ export function PartnerLeadDetailClient({ lead, userId }: { lead: Lead; userId?:
             </div>
 
             <div className="space-y-4">
-              <h3 className="text-sm font-semibold text-foreground-950/60 uppercase tracking-wider">Details</h3>
+              <h3 className="text-sm font-display font-semibold text-foreground-950/60 uppercase tracking-wider">Details</h3>
               <div className="flex items-center gap-3 text-sm text-foreground-950/70">
                 <Zap className="w-4 h-4 text-accent-rose" />
                 Est. bill: {formatPHP(lead.monthlyBill)}/mo
@@ -126,24 +126,24 @@ export function PartnerLeadDetailClient({ lead, userId }: { lead: Lead; userId?:
           </div>
 
           {lead.notes && (
-            <div className="mt-6 pt-6 border-t border-foreground-950/5">
-              <h3 className="text-sm font-semibold text-foreground-950/60 uppercase tracking-wider mb-2">Notes</h3>
+            <div className="mt-6 pt-6 border-t border-foreground-950/10">
+              <h3 className="text-sm font-display font-semibold text-foreground-950/60 uppercase tracking-wider mb-2">Notes</h3>
               <p className="text-sm text-foreground-950/70">{lead.notes}</p>
             </div>
           )}
 
           {lead.assignedOrg && (
-            <div className="mt-6 pt-6 border-t border-foreground-950/5">
-              <h3 className="text-sm font-semibold text-foreground-950/60 uppercase tracking-wider mb-2">Assigned Partner</h3>
+            <div className="mt-6 pt-6 border-t border-foreground-950/10">
+              <h3 className="text-sm font-display font-semibold text-foreground-950/60 uppercase tracking-wider mb-2">Assigned Partner</h3>
               <p className="text-sm text-foreground-950/70">{lead.assignedOrg.name}</p>
             </div>
           )}
 
-          <div className="mt-6 pt-6 border-t border-foreground-950/5 flex gap-3">
+          <div className="mt-6 pt-6 border-t border-foreground-950/10 flex gap-3">
             <button
               onClick={handleClaim}
               disabled={claiming}
-              className="px-6 py-2.5 bg-accent-emerald text-foreground-950 font-medium rounded-lg hover:bg-accent-emerald/90 disabled:opacity-50 transition-colors text-sm"
+              className="px-6 py-2.5 bg-primary-500 text-background-50 font-semibold rounded-lg hover:bg-primary-600 shadow-lg shadow-primary-500/20 disabled:opacity-50 transition-colors text-sm"
             >
               {claiming ? 'Claiming...' : 'Claim & Start Contacting'}
             </button>

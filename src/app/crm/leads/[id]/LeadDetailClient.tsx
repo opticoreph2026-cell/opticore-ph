@@ -211,11 +211,11 @@ export default function LeadDetailClient({
             <ArrowLeft className="w-5 h-5" />
           </Link>
           <div>
-            <h1 className="text-2xl font-bold text-foreground-950">{lead.fullName}</h1>
-            <p className="text-sm text-foreground-400 capitalize">{lead.customerType.replace(/_/g, ' ')} Prospect</p>
+            <h1 className="text-2xl font-display font-bold text-foreground-950">{lead.fullName}</h1>
+            <p className="text-sm text-foreground-950/40 capitalize">{lead.customerType.replace(/_/g, ' ')} Prospect</p>
           </div>
         </div>
-        <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium capitalize ${statusColors[lead.status] ?? 'bg-foreground-950/5 text-foreground-400'}`}>
+        <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium capitalize ${statusColors[lead.status] ?? 'bg-foreground-950/5 text-foreground-950/40'}`}>
           {lead.status.replace(/_/g, ' ')}
         </span>
       </div>
@@ -223,31 +223,31 @@ export default function LeadDetailClient({
       {/* Quick Info Bar */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {lead.email && (
-          <div className="flex items-center gap-2 text-sm text-foreground-400">
+          <div className="flex items-center gap-2 text-sm text-foreground-950/40">
             <Mail className="w-4 h-4 text-accent-cyan" />
             <span>{lead.email}</span>
           </div>
         )}
         {lead.phone && (
-          <div className="flex items-center gap-2 text-sm text-foreground-400">
+          <div className="flex items-center gap-2 text-sm text-foreground-950/40">
             <Phone className="w-4 h-4 text-accent-emerald" />
             <span>{lead.phone}</span>
           </div>
         )}
         {lead.city && (
-          <div className="flex items-center gap-2 text-sm text-foreground-400">
+          <div className="flex items-center gap-2 text-sm text-foreground-950/40">
             <MapPin className="w-4 h-4 text-accent-cyan" />
             <span>{lead.city}{lead.province ? `, ${lead.province}` : ''}</span>
           </div>
         )}
-        <div className="flex items-center gap-2 text-sm text-foreground-400">
+        <div className="flex items-center gap-2 text-sm text-foreground-950/40">
           <Building className="w-4 h-4 text-purple-400" />
           <span>{formatMoney(lead.monthlyBill)}/mo est.</span>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 border-b border-foreground-950/5">
+      <div className="flex gap-1 border-b border-foreground-950/10">
         {tabs.map((t) => {
           const Icon = t.icon;
           return (
@@ -257,7 +257,7 @@ export default function LeadDetailClient({
               className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
                 tab === t.key
                   ? 'text-accent-cyan border-accent-cyan'
-                  : 'text-foreground-500 border-transparent hover:text-foreground-300'
+                  : 'text-foreground-950/50 border-transparent hover:text-foreground-950/70'
               }`}
             >
               <Icon className="w-4 h-4" />
@@ -272,37 +272,37 @@ export default function LeadDetailClient({
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left: Details */}
           <div className="lg:col-span-2 space-y-6">
-            <div className="bg-background-800 border border-foreground-950/5 rounded-xl p-6 space-y-4">
-              <h3 className="text-sm font-semibold text-foreground-950/60 uppercase tracking-wider">Lead Details</h3>
+            <div className="bg-background-800 border border-foreground-950/10 rounded-xl p-6 space-y-4">
+              <h3 className="text-sm font-display font-semibold text-foreground-950/60 uppercase tracking-wider">Lead Details</h3>
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
-                  <span className="text-foreground-500">Source</span>
+                  <span className="text-foreground-950/50">Source</span>
                   <p className="text-foreground-950 capitalize mt-0.5">{lead.source.replace(/_/g, ' ')}</p>
                 </div>
                 <div>
-                  <span className="text-foreground-500">Created</span>
+                  <span className="text-foreground-950/50">Created</span>
                   <p className="text-foreground-950 mt-0.5">{formatDate(lead.createdAt)}</p>
                 </div>
                 <div>
-                  <span className="text-foreground-500">Address</span>
+                  <span className="text-foreground-950/50">Address</span>
                   <p className="text-foreground-950 mt-0.5">{[lead.addressLine, lead.barangay, lead.city, lead.province].filter(Boolean).join(', ') || '—'}</p>
                 </div>
                 <div>
-                  <span className="text-foreground-500">Utility</span>
+                  <span className="text-foreground-950/50">Utility</span>
                   <p className="text-foreground-950 mt-0.5">{lead.utilityCompany?.name || '—'}</p>
                 </div>
               </div>
             </div>
 
             {/* Pipeline Status */}
-            <div className="bg-background-800 border border-foreground-950/5 rounded-xl p-6 space-y-4">
-              <h3 className="text-sm font-semibold text-foreground-950/60 uppercase tracking-wider">Pipeline Status</h3>
+            <div className="bg-background-800 border border-foreground-950/10 rounded-xl p-6 space-y-4">
+              <h3 className="text-sm font-display font-semibold text-foreground-950/60 uppercase tracking-wider">Pipeline Status</h3>
               <div className="space-y-3">
                 {/* Current status badge */}
                 <div className="flex items-center gap-2">
-                  <span className="text-xs text-foreground-500 uppercase tracking-wider">Current</span>
+                  <span className="text-xs text-foreground-950/50 uppercase tracking-wider">Current</span>
                   <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium capitalize border ${
-                    statusColors[lead.status] ?? 'bg-foreground-950/5 text-foreground-400 border-foreground-950/5'
+                    statusColors[lead.status] ?? 'bg-foreground-950/5 text-foreground-950/40 border-foreground-950/10'
                   }`}>
                     {STATUS_OPTIONS.find((s) => s.value === lead.status)?.label || lead.status.replace(/_/g, ' ')}
                   </span>
@@ -312,11 +312,11 @@ export default function LeadDetailClient({
                 {(() => {
                   const validNext = LEAD_STATUS_TRANSITIONS[lead.status] ?? [];
                   if (validNext.length === 0) {
-                    return <p className="text-xs text-foreground-500">This lead has reached a terminal stage.</p>;
+                    return <p className="text-xs text-foreground-950/50">This lead has reached a terminal stage.</p>;
                   }
                   return (
                     <div>
-                      <span className="text-xs text-foreground-500 uppercase tracking-wider">Next Step</span>
+                      <span className="text-xs text-foreground-950/50 uppercase tracking-wider">Next Step</span>
                       <div className="flex flex-wrap gap-2 mt-2">
                         {validNext.map((value) => {
                           const opt = STATUS_OPTIONS.find((s) => s.value === value);
@@ -328,7 +328,7 @@ export default function LeadDetailClient({
                               onClick={() => handleStatusChange(value)}
                               className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${
                                 saving === 'status'
-                                  ? 'opacity-50 cursor-not-allowed border-foreground-950/5 text-foreground-500'
+                                  ? 'opacity-50 cursor-not-allowed border-foreground-950/10 text-foreground-950/50'
                                   : 'border-accent-cyan/30 text-accent-cyan hover:bg-accent-cyan/10 hover:border-accent-cyan'
                               }`}
                             >
@@ -345,14 +345,14 @@ export default function LeadDetailClient({
             </div>
 
             {/* Assignment */}
-            <div className="bg-background-800 border border-foreground-950/5 rounded-xl p-6 space-y-4">
-              <h3 className="text-sm font-semibold text-foreground-950/60 uppercase tracking-wider">Assignment</h3>
+            <div className="bg-background-800 border border-foreground-950/10 rounded-xl p-6 space-y-4">
+              <h3 className="text-sm font-display font-semibold text-foreground-950/60 uppercase tracking-wider">Assignment</h3>
               <div className="flex items-center gap-3">
                 <select
                   value={lead.assignedOrgId || ''}
                   onChange={(e) => handleAssignOrg(e.target.value)}
                   disabled={saving === 'org'}
-                  className="bg-background-900 border border-foreground-950/5 rounded-lg px-3 py-2 text-sm text-foreground-950 focus:outline-none focus:border-accent-blue/50"
+                  className="bg-background-100/40 border border-foreground-950/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
                 >
                   <option value="">Unassigned</option>
                   {organizations.map((org) => (
@@ -360,26 +360,26 @@ export default function LeadDetailClient({
                   ))}
                 </select>
                 {lead.assignedOrg && (
-                  <span className="text-xs text-foreground-400">Currently: {lead.assignedOrg.name}</span>
+                  <span className="text-xs text-foreground-950/40">Currently: {lead.assignedOrg.name}</span>
                 )}
               </div>
             </div>
 
             {/* Notes */}
-            <div className="bg-background-800 border border-foreground-950/5 rounded-xl p-6 space-y-4">
-              <h3 className="text-sm font-semibold text-foreground-950/60 uppercase tracking-wider">Notes</h3>
-              <p className="text-sm text-foreground-300 whitespace-pre-wrap">{lead.notes || 'No notes yet.'}</p>
+            <div className="bg-background-800 border border-foreground-950/10 rounded-xl p-6 space-y-4">
+              <h3 className="text-sm font-display font-semibold text-foreground-950/60 uppercase tracking-wider">Notes</h3>
+              <p className="text-sm text-foreground-950/70 whitespace-pre-wrap">{lead.notes || 'No notes yet.'}</p>
               <div className="flex gap-2">
                 <input
                   value={noteInput}
                   onChange={(e) => setNoteInput(e.target.value)}
                   placeholder="Add a note..."
-                  className="flex-1 bg-background-900 border border-foreground-950/5 rounded-lg px-3 py-2 text-sm text-foreground-950 placeholder-white/20 focus:outline-none focus:border-accent-blue/50"
+                  className="flex-1 bg-background-100/40 border border-foreground-950/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
                 />
                 <button
                   onClick={handleAddNote}
                   disabled={savingNote || !noteInput.trim()}
-                  className="px-4 py-2 rounded-lg bg-accent-blue text-foreground-950 text-sm font-semibold hover:bg-accent-blue/90 transition-colors disabled:opacity-50"
+                  className="px-4 py-2 rounded-lg bg-primary-500 text-background-50 font-semibold hover:bg-primary-600 shadow-lg shadow-primary-500/20 transition-colors disabled:opacity-50"
                 >
                   {savingNote ? <><Loader2 className="w-4 h-4 animate-spin inline mr-1" />Saving...</> : 'Save'}
                 </button>
@@ -389,8 +389,8 @@ export default function LeadDetailClient({
 
           {/* Right: Quick Actions */}
           <div className="space-y-4">
-            <div className="bg-background-800 border border-foreground-950/5 rounded-xl p-5">
-              <h3 className="text-sm font-semibold text-foreground-950/60 uppercase tracking-wider mb-3">Actions</h3>
+            <div className="bg-background-800 border border-foreground-950/10 rounded-xl p-5">
+              <h3 className="text-sm font-display font-semibold text-foreground-950/60 uppercase tracking-wider mb-3">Actions</h3>
               <div className="space-y-2">
                 <Link
                   href={`/crm/roi/${lead.id}`}
@@ -413,23 +413,23 @@ export default function LeadDetailClient({
       )}
 
       {tab === 'activity' && (
-        <div className="bg-background-800 border border-foreground-950/5 rounded-xl p-6">
+        <div className="bg-background-800 border border-foreground-950/10 rounded-xl p-6">
           {activities.length === 0 ? (
-            <div className="text-center py-8 text-foreground-500">
-              <Activity className="w-8 h-8 mx-auto mb-2 text-foreground-600" />
+            <div className="text-center py-8 text-foreground-950/50">
+              <Activity className="w-8 h-8 mx-auto mb-2 text-foreground-950/60" />
               <p className="text-sm">No activity recorded yet.</p>
             </div>
           ) : (
             <div className="space-y-0">
               {activities.map((act, i) => (
-                <div key={act.id} className="flex gap-4 pb-4 border-l-2 border-foreground-950/5 ml-2 pl-4 relative">
+                <div key={act.id} className="flex gap-4 pb-4 border-l-2 border-foreground-950/10 ml-2 pl-4 relative">
                   <div className="absolute -left-[9px] top-1 w-4 h-4 rounded-full bg-background-800 border-2 border-accent-cyan" />
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-foreground-950">
                       {ACTION_LABELS[act.action] || act.action.replace(/_/g, ' ')}
                     </p>
-                    <p className="text-xs text-foreground-400 mt-0.5">{act.description}</p>
-                    <p className="text-xs text-foreground-600 mt-1">{formatDate(act.createdAt)}</p>
+                    <p className="text-xs text-foreground-950/40 mt-0.5">{act.description}</p>
+                    <p className="text-xs text-foreground-950/60 mt-1">{formatDate(act.createdAt)}</p>
                   </div>
                 </div>
               ))}
@@ -439,21 +439,21 @@ export default function LeadDetailClient({
       )}
 
       {tab === 'customers' && (
-        <div className="bg-background-800 border border-foreground-950/5 rounded-xl p-6">
+        <div className="bg-background-800 border border-foreground-950/10 rounded-xl p-6">
           {lead.customers.length === 0 ? (
-            <div className="text-center py-8 text-foreground-500">
-              <Users className="w-8 h-8 mx-auto mb-2 text-foreground-600" />
+            <div className="text-center py-8 text-foreground-950/50">
+              <Users className="w-8 h-8 mx-auto mb-2 text-foreground-950/60" />
               <p className="text-sm">No customers converted from this lead yet.</p>
               {lead.status === 'qualified' && (
-                <p className="text-xs text-foreground-600 mt-1">Change status to "Converted" to create a customer record.</p>
+                <p className="text-xs text-foreground-950/60 mt-1">Change status to "Converted" to create a customer record.</p>
               )}
             </div>
           ) : (
             <div className="space-y-3">
               {lead.customers.map((c) => (
-                <div key={c.id} className="p-4 bg-background-900 rounded-xl border border-foreground-950/5">
+                <div key={c.id} className="p-4 bg-background-900 rounded-xl border border-foreground-950/10">
                   <p className="font-medium text-foreground-950">{c.fullName}</p>
-                  <div className="flex gap-4 mt-2 text-sm text-foreground-400">
+                  <div className="flex gap-4 mt-2 text-sm text-foreground-950/40">
                     <span>{c.contactPhone || '—'}</span>
                     <span>{c.contactEmail || '—'}</span>
                     <span className="capitalize">{c.customerType.replace(/_/g, ' ')}</span>

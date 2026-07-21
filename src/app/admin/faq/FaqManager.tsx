@@ -125,7 +125,7 @@ export function FaqManager({ initialEntries }: { initialEntries: FaqRow[] }) {
         </div>
         <button
           onClick={() => setShowNew(!showNew)}
-          className="flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-xl bg-primary-500 text-foreground-950 hover:bg-primary-600 transition-all"
+          className="flex items-center gap-2 px-4 py-2 text-sm bg-primary-500 text-background-50 font-semibold rounded-lg hover:bg-primary-600 shadow-lg shadow-primary-500/20"
         >
           <Plus className="w-4 h-4" />
           New FAQ
@@ -142,7 +142,7 @@ export function FaqManager({ initialEntries }: { initialEntries: FaqRow[] }) {
                 type="text"
                 value={newForm.question}
                 onChange={(e) => setNewForm({ ...newForm, question: e.target.value })}
-                className="w-full bg-surface-900 border border-border-subtle rounded-lg px-3 py-2 text-sm text-foreground-950 focus:outline-none focus:border-primary-500/50"
+                className="w-full bg-background-100/40 border border-foreground-950/10 rounded-lg px-3 py-2 text-sm text-foreground-950 focus:outline-none focus:ring-2 focus:ring-primary-500"
                 placeholder="Enter question"
               />
             </div>
@@ -151,7 +151,7 @@ export function FaqManager({ initialEntries }: { initialEntries: FaqRow[] }) {
               <select
                 value={newForm.locale}
                 onChange={(e) => setNewForm({ ...newForm, locale: e.target.value })}
-                className="w-full bg-surface-900 border border-border-subtle rounded-lg px-3 py-2 text-sm text-foreground-950 focus:outline-none focus:border-primary-500/50"
+                className="w-full bg-background-100/40 border border-foreground-950/10 rounded-lg px-3 py-2 text-sm text-foreground-950 focus:outline-none focus:ring-2 focus:ring-primary-500"
               >
                 <option value="en">English</option>
                 <option value="fil">Filipino</option>
@@ -164,7 +164,7 @@ export function FaqManager({ initialEntries }: { initialEntries: FaqRow[] }) {
               value={newForm.answer}
               onChange={(e) => setNewForm({ ...newForm, answer: e.target.value })}
               rows={3}
-              className="w-full bg-surface-900 border border-border-subtle rounded-lg px-3 py-2 text-sm text-foreground-950 focus:outline-none focus:border-primary-500/50 resize-none"
+              className="w-full bg-background-100/40 border border-foreground-950/10 rounded-lg px-3 py-2 text-sm text-foreground-950 focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none"
               placeholder="Enter answer"
             />
           </div>
@@ -185,14 +185,14 @@ export function FaqManager({ initialEntries }: { initialEntries: FaqRow[] }) {
                 type="number"
                 value={newForm.sortOrder}
                 onChange={(e) => setNewForm({ ...newForm, sortOrder: parseInt(e.target.value) || 0 })}
-                className="w-full bg-surface-900 border border-border-subtle rounded-lg px-3 py-2 text-sm text-foreground-950 focus:outline-none focus:border-primary-500/50"
+                className="w-full bg-background-100/40 border border-foreground-950/10 rounded-lg px-3 py-2 text-sm text-foreground-950 focus:outline-none focus:ring-2 focus:ring-primary-500"
               />
             </div>
           </div>
           <div className="flex gap-2 pt-2">
             <button
               onClick={createEntry}
-              className="px-4 py-2 text-sm font-semibold rounded-xl bg-primary-500 text-foreground-950 hover:bg-primary-600 transition-all"
+              className="px-4 py-2 text-sm bg-primary-500 text-background-50 font-semibold rounded-lg hover:bg-primary-600 shadow-lg shadow-primary-500/20"
             >
               Create
             </button>
@@ -234,7 +234,7 @@ export function FaqManager({ initialEntries }: { initialEntries: FaqRow[] }) {
                       type="text"
                       value={editForm.question}
                       onChange={(e) => setEditForm({ ...editForm, question: e.target.value })}
-                      className="w-full bg-surface-900 border border-border-subtle rounded px-2 py-1 text-sm text-foreground-950"
+                      className="w-full bg-background-100/40 border border-foreground-950/10 rounded px-2 py-1 text-sm text-foreground-950 focus:outline-none focus:ring-2 focus:ring-primary-500"
                     />
                   ) : (
                     <span className="text-foreground-950 font-medium line-clamp-1">{entry.question}</span>
@@ -249,7 +249,7 @@ export function FaqManager({ initialEntries }: { initialEntries: FaqRow[] }) {
                       type="text"
                       value={editForm.category}
                       onChange={(e) => setEditForm({ ...editForm, category: e.target.value })}
-                      className="w-full bg-surface-900 border border-border-subtle rounded px-2 py-1 text-sm text-foreground-950"
+                      className="w-full bg-background-100/40 border border-foreground-950/10 rounded px-2 py-1 text-sm text-foreground-950 focus:outline-none focus:ring-2 focus:ring-primary-500"
                     />
                   ) : (
                     <span className="text-foreground-950/60">{entry.category || '—'}</span>
@@ -261,7 +261,7 @@ export function FaqManager({ initialEntries }: { initialEntries: FaqRow[] }) {
                       type="number"
                       value={editForm.sortOrder}
                       onChange={(e) => setEditForm({ ...editForm, sortOrder: parseInt(e.target.value) || 0 })}
-                      className="w-20 bg-surface-900 border border-border-subtle rounded px-2 py-1 text-sm text-foreground-950"
+                      className="w-20 bg-background-100/40 border border-foreground-950/10 rounded px-2 py-1 text-sm text-foreground-950 focus:outline-none focus:ring-2 focus:ring-primary-500"
                     />
                   ) : (
                     <span className="text-foreground-950/60">{entry.sortOrder}</span>

@@ -57,29 +57,29 @@ export default async function DesignsPage() {
         </div>
         <Link
           href="/crm/designs/new"
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-accent-blue text-foreground-950 text-sm font-semibold hover:bg-accent-blue/90 transition-colors shadow-lg shadow-accent-blue/20"
+          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-primary-500 text-background-50 text-sm font-semibold hover:bg-primary-600 transition-colors shadow-lg shadow-primary-500/20"
         >
           <PlusCircle className="w-4 h-4" />
           New Design
         </Link>
       </div>
 
-      <div className="bg-background-900 border border-foreground-950/5 rounded-2xl overflow-hidden">
+      <div className="bg-background-900 border border-foreground-950/10 rounded-2xl overflow-hidden">
         {/* Toolbar */}
-        <div className="flex items-center px-6 py-4 border-b border-foreground-950/5 gap-4">
+        <div className="flex items-center px-6 py-4 border-b border-foreground-950/10 gap-4">
           <div className="flex-1 relative">
             <Search className="w-4 h-4 text-foreground-950/20 absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               placeholder="Search designs or customers..."
-              className="w-full bg-background-800 border border-foreground-950/5 rounded-xl pl-9 pr-4 py-2 text-sm text-foreground-950 placeholder-white/20 focus:outline-none focus:border-accent-blue/50 focus:ring-1 focus:ring-accent-blue/50 transition-all"
+              className="w-full bg-background-100/40 border border-foreground-950/10 rounded-lg pl-9 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all"
             />
           </div>
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm whitespace-nowrap">
-            <thead className="bg-background-800 text-xs uppercase text-foreground-950/30 border-b border-foreground-950/5">
+            <thead className="bg-background-800 text-xs uppercase text-foreground-950/30 border-b border-foreground-950/10">
               <tr>
                 <th className="px-6 py-4 font-medium tracking-wider">Customer</th>
                 <th className="px-6 py-4 font-medium tracking-wider">System Size</th>
@@ -89,7 +89,7 @@ export default async function DesignsPage() {
                 <th className="px-6 py-4 font-medium tracking-wider text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/5 text-foreground-950/70">
+            <tbody className="divide-y divide-foreground-950/10 text-foreground-950/70">
               {designs.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="px-6 py-16 text-center">

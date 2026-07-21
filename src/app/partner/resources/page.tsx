@@ -47,15 +47,15 @@ function typeColor(type: string): string {
   if (type === 'PDF') return 'text-accent-rose';
   if (type === 'ZIP') return 'text-accent-cyan';
   if (type === 'PPTX') return 'text-accent-cyan';
-  return 'text-foreground-400';
+  return 'text-foreground-950/40';
 }
 
 export default function PartnerResourcesPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold text-foreground-950 mb-2">Marketing Resources</h1>
-        <p className="text-foreground-400">
+        <h1 className="text-3xl font-display font-bold text-foreground-950 mb-2">Marketing Resources</h1>
+        <p className="text-foreground-950/40">
           Brand assets, training guides, and technical documentation for OptiCore partners.
         </p>
       </div>
@@ -64,22 +64,22 @@ export default function PartnerResourcesPage() {
         {resources.map((section) => {
           const SectionIcon = section.icon;
           return (
-            <div key={section.section} className="bg-background-800 border border-foreground-950/5 rounded-2xl overflow-hidden">
-              <div className="px-6 py-4 border-b border-foreground-950/5 bg-foreground-950/5 flex items-center gap-3">
+            <div key={section.section} className="bg-background-800 border border-foreground-950/10 rounded-2xl overflow-hidden">
+              <div className="px-6 py-4 border-b border-foreground-950/10 bg-foreground-950/5 flex items-center gap-3">
                 <SectionIcon className="w-5 h-5 text-accent-emerald" />
-                <h2 className="text-lg font-bold text-foreground-950">{section.section}</h2>
+                <h2 className="text-lg font-display font-bold text-foreground-950">{section.section}</h2>
               </div>
-              <div className="divide-y divide-white/5">
+              <div className="divide-y divide-foreground-950/10">
                 {section.items.map((item) => (
                   <div
                     key={item.name}
                     className="flex items-center justify-between px-6 py-4 hover:bg-foreground-950/5 transition-colors"
                   >
                     <div className="flex items-center gap-3">
-                      <FileText className="w-4 h-4 text-foreground-500 flex-shrink-0" />
+                      <FileText className="w-4 h-4 text-foreground-950/50 flex-shrink-0" />
                       <div>
                         <p className="text-sm font-medium text-foreground-950">{item.name}</p>
-                        <p className="text-xs text-foreground-500">
+                        <p className="text-xs text-foreground-950/50">
                           <span className={typeColor(item.type)}>{item.type}</span>
                           {' · '}{item.size}
                         </p>
@@ -87,7 +87,7 @@ export default function PartnerResourcesPage() {
                     </div>
                     <a
                       href={item.url}
-                      className="p-2 rounded-lg hover:bg-foreground-950/5 text-foreground-400 hover:text-accent-cyan transition-colors"
+                      className="p-2 rounded-lg hover:bg-foreground-950/5 text-foreground-950/40 hover:text-accent-cyan transition-colors"
                       title={`Download ${item.name}`}
                     >
                       <Download className="w-4 h-4" />

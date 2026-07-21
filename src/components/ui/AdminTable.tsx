@@ -210,17 +210,17 @@ export function AdminTable<T extends { [key: string]: any }>({
               </div>
             ))}
           </div>
-          <div className="flex justify-end gap-3 px-6 py-4 border-t border-foreground-950/5">
+          <div className="flex justify-end gap-3 px-6 py-4 border-t border-foreground-950/10">
             <button
               onClick={onClose}
-              className="px-4 py-2 text-sm text-foreground-950/60 hover:text-foreground-950 transition-colors"
+              className="px-5 py-2 text-sm text-foreground-950/60 hover:text-foreground-950 transition-colors"
             >
               Cancel
             </button>
             <button
               onClick={onSubmit}
               disabled={saving}
-              className="px-5 py-2 text-sm font-medium text-foreground-950 bg-accent-blue rounded-lg hover:bg-accent-blue/90 disabled:opacity-50 transition-colors"
+              className="px-5 py-2 text-sm font-semibold text-background-50 bg-primary-500 rounded-lg hover:bg-primary-600 disabled:opacity-50 transition-all duration-200 shadow-lg shadow-primary-500/20"
             >
               {saving ? 'Saving...' : submitLabel}
             </button>
@@ -260,14 +260,14 @@ export function AdminTable<T extends { [key: string]: any }>({
                 value={search}
                 onChange={(e) => { setSearch(e.target.value); setPage(0); }}
                 placeholder="Search..."
-                className="pl-9 pr-3 py-2 text-sm bg-background-900 border border-foreground-950/10 rounded-lg text-foreground-950 placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-accent-cyan w-48"
+                className="pl-9 pr-3 py-2 text-sm bg-background-100/40 border border-foreground-950/10 rounded-lg text-foreground-950 placeholder:text-foreground-400 focus:outline-none focus:ring-2 focus:ring-primary-500 w-48"
               />
             </div>
           )}
           {createFields && onSave && (
             <button
               onClick={openCreate}
-              className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-foreground-950 bg-accent-blue rounded-lg hover:bg-accent-blue/90 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-background-50 bg-primary-500 rounded-lg hover:bg-primary-600 transition-all duration-200 shadow-lg shadow-primary-500/20"
             >
               <Plus className="w-4 h-4" />
               Create
@@ -284,20 +284,20 @@ export function AdminTable<T extends { [key: string]: any }>({
       )}
 
       {/* Table */}
-      <div className="bg-background-800 border border-foreground-950/5 rounded-xl overflow-hidden">
+      <div className="bg-background-900 border border-foreground-950/10 rounded-xl overflow-hidden hover:border-foreground-950/20 transition-all duration-200">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
             <thead className="bg-foreground-950/5 text-xs uppercase text-foreground-950/40">
               <tr>
                 {columns.map((col) => (
-                  <th key={col.key} className="px-5 py-4 font-medium" style={{ width: col.width }}>
+                  <th key={col.key} className="px-5 py-4 font-semibold" style={{ width: col.width }}>
                     {col.label}
                   </th>
                 ))}
-                {(onSave || onDelete) && <th className="px-5 py-4 font-medium w-20">Actions</th>}
+                {(onSave || onDelete) && <th className="px-5 py-4 font-semibold w-20">Actions</th>}
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/5">
+            <tbody className="divide-y divide-foreground-950/10">
               {loading ? (
                 Array.from({ length: 5 }).map((_, i) => <SkeletonRow key={i} />)
               ) : paginated.length === 0 ? (
@@ -350,7 +350,7 @@ export function AdminTable<T extends { [key: string]: any }>({
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="flex items-center justify-between px-5 py-3 border-t border-foreground-950/5">
+          <div className="flex items-center justify-between px-5 py-3 border-t border-foreground-950/10">
             <p className="text-xs text-foreground-950/40">
               Showing {(page * pageSize) + 1}–{Math.min((page + 1) * pageSize, filtered.length)} of {filtered.length}
             </p>
@@ -403,7 +403,7 @@ export function AdminTable<T extends { [key: string]: any }>({
                 <button
                   onClick={handleDelete}
                   disabled={saving}
-                  className="px-5 py-2 text-sm font-medium text-foreground-950 bg-accent-rose rounded-lg hover:bg-accent-rose/90 disabled:opacity-50 transition-colors"
+                  className="px-5 py-2 text-sm font-semibold text-background-50 bg-accent-rose rounded-lg hover:bg-accent-rose/90 disabled:opacity-50 transition-all duration-200 shadow-lg shadow-accent-rose/20"
                 >
                   {saving ? 'Deleting...' : 'Delete'}
                 </button>

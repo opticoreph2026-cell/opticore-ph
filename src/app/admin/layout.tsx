@@ -161,9 +161,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       </aside>
 
       {/* Main */}
-      <main className="flex-1 overflow-x-hidden flex flex-col">
+      <main className="flex-1 flex flex-col min-w-0">
         {/* Top header */}
-        <header className="hidden md:flex h-14 items-center justify-between px-8 bg-background-900/60 backdrop-blur border-b border-foreground-950/5 flex-shrink-0">
+        <header className="hidden md:flex h-14 items-center justify-between px-8 bg-background-900/60 backdrop-blur border-b border-foreground-950/10 flex-shrink-0">
           <div className="flex items-center gap-2 text-sm text-foreground-950/40">
             <ShieldCheck className="w-4 h-4 text-accent-rose" />
             <span>Admin Command Center</span>
@@ -171,8 +171,12 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           <NotificationBell />
         </header>
 
-        <div className="p-6 md:p-10 max-w-7xl mx-auto w-full pt-20 md:pt-6">
-          {children}
+        <div className="flex-1 overflow-auto relative">
+          <div className="absolute top-0 left-1/3 w-80 h-80 rounded-full bg-accent-rose/5 blur-3xl pointer-events-none" />
+          <div className="absolute bottom-0 right-1/4 w-60 h-60 rounded-full bg-accent-cyan/5 blur-3xl pointer-events-none" />
+          <div className="relative p-6 md:p-10 max-w-7xl mx-auto w-full pt-20 md:pt-6">
+            {children}
+          </div>
         </div>
       </main>
     </div>

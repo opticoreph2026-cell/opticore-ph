@@ -43,7 +43,7 @@ export default async function AdminClientsPage() {
           <input
             type="text"
             placeholder="Search by email..."
-            className="w-full md:w-64 bg-surface-1000 border border-border-subtle rounded-xl pl-10 pr-4 py-2 text-sm text-foreground-950 focus:outline-none focus:border-accent-cyan transition-colors"
+            className="w-full md:w-64 bg-background-100/40 border border-foreground-950/10 rounded-lg pl-10 pr-4 py-2 text-sm text-foreground-950 focus:outline-none focus:ring-2 focus:ring-primary-500"
           />
         </div>
       </div>

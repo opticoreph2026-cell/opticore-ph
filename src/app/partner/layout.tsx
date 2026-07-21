@@ -113,15 +113,19 @@ export default async function PartnerLayout({
 
       {/* Main content */}
       <main className="flex-1 flex flex-col min-w-0">
-        <header className="hidden md:flex h-14 items-center justify-between px-6 bg-background-900/60 backdrop-blur border-b border-foreground-950/5 flex-shrink-0">
+        <header className="hidden md:flex h-14 items-center justify-between px-6 bg-background-900/60 backdrop-blur border-b border-foreground-950/10 flex-shrink-0">
           <div className="text-sm text-foreground-950/40 font-medium">
             Partner Portal
           </div>
           <NotificationBell />
         </header>
 
-        <div className="flex-1 overflow-auto p-6 md:p-8 pt-20 md:pt-6">
-          {children}
+        <div className="flex-1 overflow-auto relative">
+          <div className="absolute top-0 right-1/4 w-72 h-72 rounded-full bg-accent-emerald/5 blur-3xl pointer-events-none" />
+          <div className="absolute bottom-0 left-1/4 w-56 h-56 rounded-full bg-accent-cyan/5 blur-3xl pointer-events-none" />
+          <div className="relative p-6 md:p-8 pt-20 md:pt-6 max-w-7xl mx-auto">
+            {children}
+          </div>
         </div>
       </main>
     </div>
