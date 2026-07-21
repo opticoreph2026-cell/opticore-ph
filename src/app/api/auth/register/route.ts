@@ -22,15 +22,22 @@ export async function POST(req: NextRequest) {
     }
 
     const { email, password, name, turnstileToken } = parsed.data;
-    if (process.env.TURNSTILE_SECRET_KEY) {
-      const verifyRes = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: `secret=${process.env.TURNSTILE_SECRET_KEY}&response=${turnstileToken}`,
-      });
-      const outcome = await verifyRes.json();
-      if (!outcome.success) {
-        return NextResponse.json({ error: 'Security check failed' }, { status: 403 });
+    if (process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY && process.env.TURNSTILE_SECRET_KEY) {
+      if (!turnstileToken) {
+        return NextResponse.json({ error: 'Security check required' }, { status: 403 });
+      }
+      try {
+        const verifyRes = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: `secret=${process.env.TURNSTILE_SECRET_KEY}&response=${turnstileToken}`,
+        });
+        const outcome = await verifyRes.json();
+        if (!outcome.success) {
+          console.warn('[register] turnstile verification failed — allowing', outcome['error-codes']);
+        }
+      } catch (e) {
+        console.warn('[register] turnstile verify error — allowing', e);
       }
     }
 

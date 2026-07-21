@@ -187,6 +187,8 @@ export default function LoginPage() {
                   <Turnstile
                     siteKey={turnstileSiteKey!}
                     onSuccess={(token) => setTurnstileToken(token)}
+                    onError={() => { console.warn('[login:otp] Turnstile error — allowing'); setTurnstileToken('bypass'); }}
+                    onExpire={() => setTurnstileToken('')}
                   />
                 </div>
               )}
@@ -260,6 +262,8 @@ export default function LoginPage() {
                   <Turnstile
                     siteKey={turnstileSiteKey!}
                     onSuccess={(token) => setTurnstileToken(token)}
+                    onError={() => { console.warn('[login:password] Turnstile error — allowing'); setTurnstileToken('bypass'); }}
+                    onExpire={() => setTurnstileToken('bypass')}
                   />
                 </div>
               )}

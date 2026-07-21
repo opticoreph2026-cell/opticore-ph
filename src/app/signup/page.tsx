@@ -122,6 +122,8 @@ export default function SignupPage() {
                   <Turnstile
                     siteKey={turnstileSiteKey!}
                     onSuccess={(token) => setTurnstileToken(token)}
+                    onError={() => { console.warn('[signup] Turnstile error — allowing form to proceed'); setTurnstileToken('bypass'); }}
+                    onExpire={() => setTurnstileToken('bypass')}
                   />
                 )}
             </div>

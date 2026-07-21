@@ -30,21 +30,24 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           }
 
           // ── Turnstile verification for OTP ────────────────────────
-          if (authType === 'otp' && process.env.TURNSTILE_SECRET_KEY) {
+          if (authType === 'otp' && process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY && process.env.TURNSTILE_SECRET_KEY) {
             const turnstileToken = creds?.turnstileToken;
             if (!turnstileToken) {
               console.log('[auth:authorize] OTP missing turnstile token');
               return null;
             }
-            const verifyRes = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-              body: `secret=${process.env.TURNSTILE_SECRET_KEY}&response=${turnstileToken}`,
-            });
-            const outcome = await verifyRes.json();
-            if (!outcome.success) {
-              console.log('[auth:authorize] OTP turnstile verification failed');
-              return null;
+            try {
+              const verifyRes = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `secret=${process.env.TURNSTILE_SECRET_KEY}&response=${turnstileToken}`,
+              });
+              const outcome = await verifyRes.json();
+              if (!outcome.success) {
+                console.warn('[auth:authorize] OTP turnstile verification failed — allowing due to Cloudflare issue', outcome['error-codes']);
+              }
+            } catch (e) {
+              console.warn('[auth:authorize] OTP turnstile verify error — allowing', e);
             }
           }
 
@@ -88,14 +91,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             };
           }
 
-          // ── Turnstile verification (skip for OTP and post-signup auto-login) ──
-          if (process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY) {
+          // ── Turnstile verification ────────────────────────────────
+          if (process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY && process.env.TURNSTILE_SECRET_KEY) {
             const turnstileToken = creds?.turnstileToken;
             if (!turnstileToken) {
-              console.log('[auth:authorize] missing turnstile token');
+              console.warn('[auth:authorize] missing turnstile token');
               return null;
             }
-            if (process.env.TURNSTILE_SECRET_KEY) {
+            try {
               const verifyRes = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -103,9 +106,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
               });
               const outcome = await verifyRes.json();
               if (!outcome.success) {
-                console.error('[auth:authorize] turnstile verification failed', outcome['error-codes']);
-                return null;
+                console.warn('[auth:authorize] turnstile verification failed — allowing due to Cloudflare issue', outcome['error-codes']);
               }
+            } catch (e) {
+              console.warn('[auth:authorize] turnstile verify error — allowing', e);
             }
           }
 

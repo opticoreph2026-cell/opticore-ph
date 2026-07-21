@@ -115,7 +115,7 @@ export const registerSchema = z.object({
   email: emailSchema,
   password: z.string().min(8, 'Password must be at least 8 characters').max(128),
   name: z.string().min(1, 'Name is required').max(255),
-  turnstileToken: z.string().min(1, 'Security check required'),
+  turnstileToken: z.string().optional(),
 });
 
 export const changePasswordSchema = z.object({
