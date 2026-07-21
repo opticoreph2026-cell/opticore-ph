@@ -116,8 +116,11 @@ export default async function CustomerLayout({
           <NotificationBell />
         </header>
 
-        <div className="flex-1 overflow-auto p-6 md:p-8 pt-20 md:pt-6">
-          {children}
+        <div className="flex-1 overflow-auto relative">
+          <div className="absolute top-0 left-1/3 w-72 h-72 rounded-full bg-accent-cyan/5 blur-3xl pointer-events-none" />
+          <div className="relative p-6 md:p-8 pt-20 md:pt-6 max-w-7xl mx-auto">
+            {children}
+          </div>
         </div>
       </main>
     </div>

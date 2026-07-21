@@ -82,36 +82,31 @@ export default async function LeadsPage() {
                 </tr>
               ) : (
                 leads.map((lead: any) => (
-                  <tr
-                    key={lead.id}
-                    className="hover:bg-foreground-950/5 transition-colors cursor-pointer"
-                  >
-                    <td colSpan={8} className="p-0">
-                      <Link href={`/crm/leads/${lead.id}`} className="contents">
-                        <div className="flex items-center px-6 py-4">
-                          <div className="flex-1 min-w-0 grid grid-cols-7 gap-4 items-center">
-                            <div className="font-medium text-foreground-950">
-                              <div>{lead.fullName}</div>
-                              <div className="text-xs text-foreground-950/50 capitalize">{lead.customerType.replace(/_/g, ' ')}</div>
-                            </div>
-                            <div>
-                              <div>{lead.email || '—'}</div>
-                              <div className="text-xs text-foreground-950/50">{lead.phone || '—'}</div>
-                            </div>
-                            <div className="text-foreground-950/40">{lead.city || '—'}</div>
-                            <div>₱{Number(lead.monthlyBill).toLocaleString('en-PH', { minimumFractionDigits: 2 })}</div>
-                            <div className="text-foreground-950/40 capitalize">{lead.source.replace(/_/g, ' ')}</div>
-                            <div>
-                              <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium capitalize ${statusColors[lead.status] ?? 'bg-foreground-950/5 text-foreground-950/40'}`}>
-                                {lead.status.replace(/_/g, ' ')}
-                              </span>
-                            </div>
-                            <div className="text-foreground-950/50">
-                              {new Date(lead.createdAt).toLocaleDateString('en-PH', { month: 'short', day: 'numeric', year: 'numeric' })}
-                            </div>
-                          </div>
-                            <ChevronRight className="w-4 h-4 text-foreground-950/60 ml-2 flex-shrink-0" />
-                        </div>
+                  <tr key={lead.id} className="hover:bg-foreground-950/5 transition-colors cursor-pointer">
+                    <td className="px-6 py-4">
+                      <Link href={`/crm/leads/${lead.id}`} className="block font-medium text-foreground-950 hover:text-accent-blue transition-colors">
+                        {lead.fullName}
+                      </Link>
+                      <div className="text-xs text-foreground-950/50 capitalize mt-0.5">{lead.customerType.replace(/_/g, ' ')}</div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div>{lead.email || '—'}</div>
+                      <div className="text-xs text-foreground-950/50 mt-0.5">{lead.phone || '—'}</div>
+                    </td>
+                    <td className="px-6 py-4 text-foreground-950/40">{lead.city || '—'}</td>
+                    <td className="px-6 py-4">₱{Number(lead.monthlyBill).toLocaleString('en-PH', { minimumFractionDigits: 2 })}</td>
+                    <td className="px-6 py-4 text-foreground-950/40 capitalize">{lead.source.replace(/_/g, ' ')}</td>
+                    <td className="px-6 py-4">
+                      <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium capitalize ${statusColors[lead.status] ?? 'bg-foreground-950/5 text-foreground-950/40'}`}>
+                        {lead.status.replace(/_/g, ' ')}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-foreground-950/50">
+                      {new Date(lead.createdAt).toLocaleDateString('en-PH', { month: 'short', day: 'numeric', year: 'numeric' })}
+                    </td>
+                    <td className="px-6 py-4">
+                      <Link href={`/crm/leads/${lead.id}`} className="p-1 rounded-lg hover:bg-foreground-950/5 text-foreground-950/30 hover:text-foreground-950/70 transition-colors inline-block">
+                        <ChevronRight className="w-4 h-4" />
                       </Link>
                     </td>
                   </tr>
