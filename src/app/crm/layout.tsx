@@ -29,7 +29,7 @@ export default async function CrmLayout({
   const name = (session as any).name as string | undefined;
 
   return (
-    <div className="flex min-h-screen bg-background-950 text-foreground-950">
+    <div className="flex min-h-screen bg-background-950 text-foreground-50">
       {/* Sidebar (desktop) + mobile topbar */}
       <CrmSidebarWrapper role={role} email={email} name={name} />
 

@@ -57,7 +57,7 @@ export default function CustomerSupportPage() {
               value={subject}
               onChange={(e) => setSubject(e.target.value)}
               placeholder="Brief description of your issue"
-              className="w-full bg-background-900 border border-foreground-950/5 rounded-lg px-3 py-2 text-sm text-foreground-950 placeholder-white/20 focus:outline-none focus:border-accent-cyan/50 focus:ring-1 focus:ring-accent-cyan/50"
+              className="w-full bg-background-900 border border-foreground-950/5 rounded-lg px-3 py-2 text-sm text-foreground-950 placeholder:text-foreground-950/40 focus:outline-none focus:border-accent-cyan/50 focus:ring-1 focus:ring-accent-cyan/50"
             />
           </div>
           <div>
@@ -67,7 +67,7 @@ export default function CustomerSupportPage() {
               onChange={(e) => setMessage(e.target.value)}
               rows={6}
               placeholder="Describe your concern in detail..."
-              className="w-full bg-background-900 border border-foreground-950/5 rounded-lg px-3 py-2 text-sm text-foreground-950 placeholder-white/20 focus:outline-none focus:border-accent-cyan/50 focus:ring-1 focus:ring-accent-cyan/50 resize-none"
+              className="w-full bg-background-900 border border-foreground-950/5 rounded-lg px-3 py-2 text-sm text-foreground-950 placeholder:text-foreground-950/40 focus:outline-none focus:border-accent-cyan/50 focus:ring-1 focus:ring-accent-cyan/50 resize-none"
             />
           </div>
         </div>

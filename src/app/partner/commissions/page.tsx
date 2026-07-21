@@ -49,26 +49,26 @@ export default async function PartnerCommissionsPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-background-800 p-6 rounded-2xl border border-foreground-950/10">
-          <div className="text-sm font-medium text-foreground-950/40 mb-1">Total Earned</div>
+          <div className="text-sm font-medium text-foreground-50/40 mb-1">Total Earned</div>
           <div className="text-4xl font-bold text-accent-emerald">₱{Number(totalEarned).toLocaleString()}</div>
         </div>
         <div className="bg-background-800 p-6 rounded-2xl border border-foreground-950/10">
-          <div className="text-sm font-medium text-foreground-950/40 mb-1">Pending Payouts</div>
+          <div className="text-sm font-medium text-foreground-50/40 mb-1">Pending Payouts</div>
           <div className="text-4xl font-bold text-accent-cyan">₱{Number(pendingEarned).toLocaleString()}</div>
         </div>
         <div className="bg-background-800 p-6 rounded-2xl border border-foreground-950/10">
-          <div className="text-sm font-medium text-foreground-950/40 mb-1">Paid This Month</div>
+          <div className="text-sm font-medium text-foreground-50/40 mb-1">Paid This Month</div>
           <div className="text-4xl font-bold text-accent-cyan">₱{Number(paidThisMonth).toLocaleString()}</div>
         </div>
       </div>
 
       <div className="bg-background-800 border border-foreground-950/10 rounded-xl overflow-hidden">
         <div className="px-6 py-5 border-b border-foreground-950/10 bg-foreground-950/5">
-          <h2 className="text-lg font-display font-bold text-foreground-950">Commission History</h2>
+          <h2 className="text-lg font-display font-bold text-foreground-50">Commission History</h2>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm text-foreground-300">
-            <thead className="bg-background-900 text-xs uppercase text-foreground-950/40">
+            <thead className="bg-background-900 text-xs uppercase text-foreground-50/40">
               <tr>
                 <th className="px-6 py-4 font-medium">Customer</th>
                 <th className="px-6 py-4 font-medium">Type</th>
@@ -80,16 +80,16 @@ export default async function PartnerCommissionsPage() {
             <tbody className="divide-y divide-foreground-950/10">
               {commissions.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center text-foreground-950/50">
-                    <DollarSign className="w-8 h-8 mx-auto mb-2 text-foreground-950/60" />
-                    <p className="font-medium text-foreground-950/40">No commissions found</p>
-                    <p className="text-xs text-foreground-950/60 mt-1">Commissions will appear when projects are completed.</p>
+                  <td colSpan={5} className="px-6 py-12 text-center text-foreground-50/50">
+                    <DollarSign className="w-8 h-8 mx-auto mb-2 text-foreground-50/60" />
+                    <p className="font-medium text-foreground-50/40">No commissions found</p>
+                    <p className="text-xs text-foreground-50/60 mt-1">Commissions will appear when projects are completed.</p>
                   </td>
                 </tr>
               ) : (
                 commissions.map((comm: any) => (
                   <tr key={comm.id} className="hover:bg-foreground-950/5 transition-colors">
-                    <td className="px-6 py-4 font-medium text-foreground-950">
+                    <td className="px-6 py-4 font-medium text-foreground-50">
                       {comm.project?.contract?.quotation?.customer?.fullName || 'Unknown'}
                     </td>
                     <td className="px-6 py-4 capitalize">{comm.roleInProject.replace(/_/g, ' ')}</td>
@@ -103,7 +103,7 @@ export default async function PartnerCommissionsPage() {
                         {comm.status.toUpperCase()}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-foreground-950/50">
+                    <td className="px-6 py-4 text-foreground-50/50">
                       {new Date(comm.createdAt).toLocaleDateString('en-PH', {
                         month: 'short', day: 'numeric', year: 'numeric',
                       })}

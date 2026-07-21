@@ -22,8 +22,8 @@ interface Lead {
 export function AdminPageClient({ leads, orgs }: { leads: Lead[]; orgs: { id: string; name: string }[] }) {
   const columns: Column<Lead>[] = [
     { key: 'fullName', label: 'Customer' },
-    { key: 'email', label: 'Email', render: (l) => <span className="text-foreground-950/60">{l.email || '—'}</span> },
-    { key: 'phone', label: 'Phone', render: (l) => <span className="text-foreground-950/60">{l.phone || '—'}</span> },
+    { key: 'email', label: 'Email', render: (l) => <span className="text-foreground-50/60">{l.email || '—'}</span> },
+    { key: 'phone', label: 'Phone', render: (l) => <span className="text-foreground-50/60">{l.phone || '—'}</span> },
     { key: 'city', label: 'Location', render: (l) => <span>{[l.city, l.province].filter(Boolean).join(', ') || '—'}</span> },
     {
       key: 'monthlyBill', label: 'Est. Bill',
@@ -47,7 +47,7 @@ export function AdminPageClient({ leads, orgs }: { leads: Lead[]; orgs: { id: st
           converted: 'bg-green-500/10 text-green-400',
         };
         return (
-          <span className={`inline-flex px-2 py-0.5 rounded text-xs font-medium capitalize ${colors[l.status] ?? 'bg-foreground-950/5 text-foreground-950/60'}`}>
+          <span className={`inline-flex px-2 py-0.5 rounded text-xs font-medium capitalize ${colors[l.status] ?? 'bg-foreground-950/5 text-foreground-50/60'}`}>
             {l.status.replace(/_/g, ' ')}
           </span>
         );
@@ -55,7 +55,7 @@ export function AdminPageClient({ leads, orgs }: { leads: Lead[]; orgs: { id: st
     },
     {
       key: 'assignedOrg', label: 'Assigned Org',
-      render: (l) => <span className="text-foreground-950/60">{l.assignedOrg?.name || '—'}</span>,
+      render: (l) => <span className="text-foreground-50/60">{l.assignedOrg?.name || '—'}</span>,
     },
   ];
 

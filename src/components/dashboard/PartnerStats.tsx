@@ -44,26 +44,26 @@ export function PartnerStats({ initialData }: { initialData: PartnerData }) {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="group bg-background-900 p-6 rounded-2xl border border-foreground-950/10 hover:border-foreground-950/20 hover:bg-background-800 transition-all duration-200">
-          <div className="text-sm font-medium text-foreground-950/50 mb-1">Active Projects</div>
+          <div className="text-sm font-medium text-foreground-50/50 mb-1">Active Projects</div>
           <div className="text-4xl font-bold text-accent-cyan font-display">{activeCount}</div>
         </div>
         <div className="group bg-background-900 p-6 rounded-2xl border border-foreground-950/10 hover:border-foreground-950/20 hover:bg-background-800 transition-all duration-200">
-          <div className="text-sm font-medium text-foreground-950/50 mb-1">Completed</div>
+          <div className="text-sm font-medium text-foreground-50/50 mb-1">Completed</div>
           <div className="text-4xl font-bold text-accent-emerald font-display">{completedCount}</div>
         </div>
         <div className="group bg-background-900 p-6 rounded-2xl border border-foreground-950/10 hover:border-foreground-950/20 hover:bg-background-800 transition-all duration-200">
-          <div className="text-sm font-medium text-foreground-950/50 mb-1">Scheduled</div>
+          <div className="text-sm font-medium text-foreground-50/50 mb-1">Scheduled</div>
           <div className="text-4xl font-bold text-accent-cyan font-display">{scheduledCount}</div>
         </div>
       </div>
 
       <div className="bg-background-900 border border-foreground-950/10 rounded-xl overflow-hidden">
         <div className="px-6 py-5 border-b border-foreground-950/10">
-          <h2 className="text-lg font-bold text-foreground-950 font-display">Installation Projects</h2>
+          <h2 className="text-lg font-bold text-foreground-50 font-display">Installation Projects</h2>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
-            <thead className="bg-foreground-950/5 text-xs uppercase text-foreground-950/40">
+            <thead className="bg-foreground-950/5 text-xs uppercase text-foreground-50/40">
               <tr>
                 <th className="px-6 py-4 font-semibold">Customer</th>
                 <th className="px-6 py-4 font-semibold">Status</th>
@@ -75,24 +75,24 @@ export function PartnerStats({ initialData }: { initialData: PartnerData }) {
             <tbody className="divide-y divide-foreground-950/10">
               {projects.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center text-foreground-950/40">
-                    <Briefcase className="w-8 h-8 mx-auto mb-2 text-foreground-950/20" />
-                    <p className="font-medium text-foreground-950/60">No projects yet</p>
-                    <p className="text-xs text-foreground-950/40 mt-1">Projects will appear once a contract is signed.</p>
+                  <td colSpan={5} className="px-6 py-12 text-center text-foreground-50/40">
+                    <Briefcase className="w-8 h-8 mx-auto mb-2 text-foreground-50/20" />
+                    <p className="font-medium text-foreground-50/60">No projects yet</p>
+                    <p className="text-xs text-foreground-50/40 mt-1">Projects will appear once a contract is signed.</p>
                   </td>
                 </tr>
               ) : (
                 projects.map((proj) => (
                   <tr key={proj.id} className="hover:bg-foreground-950/3 transition-colors">
-                    <td className="px-6 py-4 font-medium text-foreground-950">
+                    <td className="px-6 py-4 font-medium text-foreground-50">
                       {proj.contract?.quotation?.customer?.fullName || 'Unknown'}
                     </td>
                     <td className="px-6 py-4">
                       <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-medium capitalize ${
-                        statusColors[proj.status] ?? 'bg-foreground-950/5 text-foreground-950/40'
+                        statusColors[proj.status] ?? 'bg-foreground-950/5 text-foreground-50/40'
                       }`}>{proj.status.replace(/_/g, ' ')}</span>
                     </td>
-                    <td className="px-6 py-4 text-foreground-950/50">
+                    <td className="px-6 py-4 text-foreground-50/50">
                       {proj.scheduledInstallDate
                         ? new Date(proj.scheduledInstallDate).toLocaleDateString('en-PH', { month: 'short', day: 'numeric', year: 'numeric' })
                         : '\u2014'}
@@ -101,12 +101,12 @@ export function PartnerStats({ initialData }: { initialData: PartnerData }) {
                       <div className="flex flex-col gap-0.5">
                         {proj.milestones.length > 0
                           ? proj.milestones.map((m, i) => (
-                              <span key={i} className="text-xs text-foreground-950/50 capitalize">{m.milestone.replace(/_/g, ' ')}</span>
+                              <span key={i} className="text-xs text-foreground-50/50 capitalize">{m.milestone.replace(/_/g, ' ')}</span>
                             ))
-                          : <span className="text-xs text-foreground-950/40">None yet</span>}
+                          : <span className="text-xs text-foreground-50/40">None yet</span>}
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-foreground-950/50">
+                    <td className="px-6 py-4 text-foreground-50/50">
                       {new Date(proj.createdAt).toLocaleDateString('en-PH', { month: 'short', day: 'numeric', year: 'numeric' })}
                     </td>
                   </tr>

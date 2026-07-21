@@ -94,8 +94,8 @@ module.exports = {
          },
        },
        borderColor: {
-         subtle: 'rgba(255,255,255,0.06)',
-         glow: 'rgba(255,255,255,0.12)',
+         subtle: 'oklch(var(--foreground-950) / 0.08)',
+         glow: 'oklch(var(--foreground-950) / 0.15)',
        },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',

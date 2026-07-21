@@ -41,7 +41,7 @@ export function MobileDashboardNav({
           <NotificationBell />
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="p-2 text-foreground-950/60 hover:text-foreground-950 rounded-lg hover:bg-foreground-950/5 transition-colors"
+            className="p-2 text-foreground-50/60 hover:text-foreground-50 rounded-lg hover:bg-foreground-950/5 transition-colors"
             aria-label="Toggle menu"
           >
             {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -71,8 +71,8 @@ export function MobileDashboardNav({
                     onClick={() => setMobileOpen(false)}
                     className={`block px-4 py-3 rounded-xl text-sm font-medium transition-all duration-150 ${
                       isActive
-                        ? 'bg-foreground-950/10 text-foreground-950'
-                        : 'text-foreground-950/50 hover:text-foreground-950 hover:bg-foreground-950/5'
+                        ? 'bg-foreground-950/10 text-foreground-50'
+                        : 'text-foreground-50/50 hover:text-foreground-50 hover:bg-foreground-950/5'
                     }`}
                   >
                     {item.label}
@@ -83,18 +83,18 @@ export function MobileDashboardNav({
 
             <div className="p-3 border-t border-foreground-950/5 flex-shrink-0">
               <div className="flex items-center gap-3 px-2 py-2 rounded-xl">
-                <div className="w-8 h-8 rounded-xl bg-foreground-950/10 flex items-center justify-center text-foreground-950 text-xs font-bold flex-shrink-0">
+                <div className="w-8 h-8 rounded-xl bg-foreground-950/10 flex items-center justify-center text-foreground-50 text-xs font-bold flex-shrink-0">
                   {initials}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs font-semibold text-foreground-950 truncate">{name || email}</p>
-                  <p className="text-[10px] text-foreground-950/50 truncate">{displayRole}</p>
+                  <p className="text-xs font-semibold text-foreground-50 truncate">{name || email}</p>
+                  <p className="text-[10px] text-foreground-50/50 truncate">{displayRole}</p>
                 </div>
                 <form action="/api/auth/logout" method="POST">
                   <button
                     type="submit"
                     title="Sign out"
-                    className="p-1.5 text-foreground-950/30 hover:text-accent-rose transition-colors rounded-lg hover:bg-accent-rose/10"
+                    className="p-1.5 text-foreground-50/30 hover:text-accent-rose transition-colors rounded-lg hover:bg-accent-rose/10"
                   >
                     <LogOut className="w-4 h-4" />
                   </button>

@@ -46,7 +46,7 @@ export default async function CustomerLayout({
   const initials = (name || email || 'C').slice(0, 2).toUpperCase();
 
   return (
-    <div className="flex min-h-screen bg-background-950 text-foreground-950">
+    <div className="flex min-h-screen bg-background-950 text-foreground-50">
       <MobileDashboardNav
         navItems={navItems.map(({ label, href }) => ({ label, href }))}
         initials={initials}
@@ -63,7 +63,7 @@ export default async function CustomerLayout({
         </div>
 
         <div className="px-4 pt-5 pb-2">
-          <p className="text-[10px] font-semibold text-foreground-950/25 uppercase tracking-widest font-mono px-3">
+          <p className="text-[10px] font-semibold text-foreground-50/25 uppercase tracking-widest font-mono px-3">
             Customer Portal
           </p>
         </div>
@@ -75,9 +75,9 @@ export default async function CustomerLayout({
               <Link
                 key={item.href}
                 href={item.href}
-                className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-foreground-950/50 hover:text-foreground-950 hover:bg-foreground-950/5 transition-all duration-150 group"
+                className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-foreground-50/50 hover:text-foreground-50 hover:bg-foreground-950/5 transition-all duration-150 group"
               >
-                <Icon className="w-4 h-4 flex-shrink-0 text-foreground-950/40 group-hover:text-accent-cyan transition-colors" />
+                <Icon className="w-4 h-4 flex-shrink-0 text-foreground-50/40 group-hover:text-accent-cyan transition-colors" />
                 {item.label}
               </Link>
             );
@@ -90,14 +90,14 @@ export default async function CustomerLayout({
               {initials}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-xs font-semibold text-foreground-950 truncate">{name || email}</p>
+              <p className="text-xs font-semibold text-foreground-50 truncate">{name || email}</p>
               <p className="text-[10px] text-accent-cyan/70 truncate">Customer</p>
             </div>
             <form action="/api/auth/logout" method="POST">
               <button
                 type="submit"
                 title="Sign out"
-                className="p-1.5 text-foreground-950/30 hover:text-accent-rose transition-colors rounded-lg hover:bg-accent-rose/10"
+                className="p-1.5 text-foreground-50/30 hover:text-accent-rose transition-colors rounded-lg hover:bg-accent-rose/10"
               >
                 <LogOut className="w-4 h-4" />
               </button>
@@ -109,7 +109,7 @@ export default async function CustomerLayout({
       {/* Main content */}
       <main className="flex-1 flex flex-col min-w-0">
         <header className="hidden md:flex h-14 items-center justify-between px-6 bg-background-900/60 backdrop-blur border-b border-foreground-950/5 flex-shrink-0">
-          <div className="flex items-center gap-2 text-sm text-foreground-950/40">
+          <div className="flex items-center gap-2 text-sm text-foreground-50/40">
               <Sun className="w-4 h-4 text-accent-cyan" />
             <span className="font-medium">My OptiCore System</span>
           </div>

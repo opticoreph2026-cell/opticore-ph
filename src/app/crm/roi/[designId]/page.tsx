@@ -107,7 +107,7 @@ export default function ROIConsultationPage() {
                   tickFormatter={(v) => `₱${(v / 1000).toFixed(0)}k`}
                 />
                 <Tooltip
-                  contentStyle={{ backgroundColor: 'var(--surface-900)', borderColor: '#333', color: '#fff' }}
+                  contentStyle={{ backgroundColor: 'var(--surface-900)', borderColor: 'var(--border-subtle)', color: 'var(--foreground-950)' }}
                   formatter={(value: number) => [formatPhp(value * 100), '']}
                 />
                 <Line

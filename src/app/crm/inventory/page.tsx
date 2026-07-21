@@ -39,7 +39,7 @@ export default async function InventoryPage() {
       <div className="bg-background-800 border border-foreground-950/10 rounded-xl overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm text-foreground-300">
-            <thead className="bg-foreground-950/5 text-xs uppercase text-foreground-950/40">
+            <thead className="bg-foreground-950/5 text-xs uppercase text-foreground-50/40">
               <tr>
                 <th className="px-6 py-4 font-medium">Serial / Model</th>
                 <th className="px-6 py-4 font-medium">Type</th>
@@ -51,7 +51,7 @@ export default async function InventoryPage() {
             <tbody className="divide-y divide-foreground-950/10">
               {inventory.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-8 text-center text-foreground-950/50">
+                  <td colSpan={5} className="px-6 py-8 text-center text-foreground-50/50">
                     No inventory units found.
                   </td>
                 </tr>
@@ -59,8 +59,8 @@ export default async function InventoryPage() {
                 inventory.map((item) => (
                   <tr key={item.id} className="hover:bg-foreground-950/5 transition-colors cursor-pointer">
                     <td className="px-6 py-4">
-                      <div className="font-medium text-foreground-950">{item.serialNumber}</div>
-                      <div className="text-xs text-foreground-950/50">
+                      <div className="font-medium text-foreground-50">{item.serialNumber}</div>
+                      <div className="text-xs text-foreground-50/50">
                         {item.inverter?.modelName || item.battery?.modelName || '—'}
                       </div>
                     </td>
@@ -73,7 +73,7 @@ export default async function InventoryPage() {
                           ? 'bg-accent-emerald/10 text-accent-emerald'
                           : item.ownershipStatus === 'reserved'
                           ? 'bg-accent-cyan/10 text-accent-cyan'
-                          : 'bg-foreground-950/5 text-foreground-950/40'
+                          : 'bg-foreground-950/5 text-foreground-50/40'
                       }`}>
                         {item.ownershipStatus.replace(/_/g, ' ')}
                       </span>
@@ -81,7 +81,7 @@ export default async function InventoryPage() {
                     <td className="px-6 py-4 text-xs">
                       {item.consignmentRemitStatus.replace(/_/g, ' ')}
                     </td>
-                    <td className="px-6 py-4 text-foreground-950/50">
+                    <td className="px-6 py-4 text-foreground-50/50">
                       {item.receivedDate.toLocaleDateString()}
                     </td>
                   </tr>
