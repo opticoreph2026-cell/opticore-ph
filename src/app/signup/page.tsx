@@ -3,13 +3,11 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import dynamic from 'next/dynamic';
 import { Logo } from '@/components/ui/Logo';
 import { Spinner } from '@/components/ui/Spinner';
 import { useToast } from '@/components/ui/Toast';
 import { PasswordInput } from '@/components/ui/PasswordInput';
-
-const Turnstile = dynamic(() => import('@marsidev/react-turnstile').then((m) => m.Turnstile), { ssr: false });
+import { TurnstileWidget } from '@/components/ui/TurnstileWidget';
 
 export default function SignupPage() {
   const [name, setName] = useState('');
@@ -123,7 +121,7 @@ export default function SignupPage() {
             {hasTurnstile && (
               <div>
                 <div className="flex justify-center">
-                  <Turnstile
+                  <TurnstileWidget
                     siteKey={turnstileSiteKey!}
                     onSuccess={(token) => setTurnstileToken(token)}
                     onError={() => { console.warn('[signup] Turnstile error'); setTurnstileFailed(true); setTurnstileToken('bypass'); }}

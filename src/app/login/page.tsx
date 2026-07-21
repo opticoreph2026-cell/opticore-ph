@@ -3,15 +3,13 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import dynamic from 'next/dynamic';
 import { signIn } from 'next-auth/react';
 import { Logo } from '@/components/ui/Logo';
 import { Spinner } from '@/components/ui/Spinner';
 import { useToast } from '@/components/ui/Toast';
 import { getPostLoginRedirect } from '@/lib/energy-auth';
 import { PasswordInput } from '@/components/ui/PasswordInput';
-
-const Turnstile = dynamic(() => import('@marsidev/react-turnstile').then((m) => m.Turnstile), { ssr: false });
+import { TurnstileWidget } from '@/components/ui/TurnstileWidget';
 import { ArrowRight, Shield, User } from 'lucide-react';
 
 export default function LoginPage() {
@@ -188,7 +186,7 @@ export default function LoginPage() {
               {hasTurnstile && (
                 <div>
                   <div className="flex justify-center">
-                    <Turnstile
+                    <TurnstileWidget
                       siteKey={turnstileSiteKey!}
                       onSuccess={(token) => setTurnstileToken(token)}
                       onError={() => { console.warn('[login:otp] Turnstile error'); setTurnstileFailed(true); setTurnstileToken('bypass'); }}
@@ -268,7 +266,7 @@ export default function LoginPage() {
               {hasTurnstile && (
                 <div>
                   <div className="flex justify-center">
-                    <Turnstile
+                    <TurnstileWidget
                       siteKey={turnstileSiteKey!}
                       onSuccess={(token) => setTurnstileToken(token)}
                       onError={() => { console.warn('[login:password] Turnstile error'); setTurnstileFailed(true); setTurnstileToken('bypass'); }}

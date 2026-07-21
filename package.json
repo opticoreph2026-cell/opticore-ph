@@ -18,7 +18,6 @@
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.2",
     "@google/genai": "^1.50.1",
-    "@marsidev/react-turnstile": "^1.5.3",
     "@prisma/client": "6.2.1",
     "@react-pdf/renderer": "^4.5.1",
     "@supabase/ssr": "^0.12.0",
