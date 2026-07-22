@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, Save } from 'lucide-react';
+import { PhilippineAddressSelect } from '@/components/ui/PhilippineAddressSelect';
 
 const CUSTOMER_TYPES = [
   { value: 'residential', label: 'Residential' },
@@ -29,6 +30,7 @@ export default function NewLeadPage() {
     phone: '',
     email: '',
     addressLine: '',
+    barangay: '',
     city: '',
     province: '',
     customerType: 'residential',
@@ -41,6 +43,10 @@ export default function NewLeadPage() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const handleAddressChange = (data: { province: string; city: string; barangay: string }) => {
+    setForm((prev) => ({ ...prev, ...data }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -127,33 +133,24 @@ export default function NewLeadPage() {
               />
             </div>
             <div className="sm:col-span-2">
-              <label className="block text-sm font-medium text-foreground-950/70 mb-1.5">Address</label>
-              <input
-                name="addressLine"
-                value={form.addressLine}
-                onChange={handleChange}
-                placeholder="123 Rizal St, Barangay Poblacion"
-                className="w-full bg-background-100 border border-foreground-950/5 rounded-lg px-3 py-2 text-sm text-foreground-950 placeholder:text-foreground-950/40 focus:outline-none focus:border-accent-blue/50 focus:ring-1 focus:ring-accent-blue/50"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-foreground-950/70 mb-1.5">City</label>
-              <input
-                name="city"
-                value={form.city}
-                onChange={handleChange}
-                placeholder="Cebu City"
-                className="w-full bg-background-100 border border-foreground-950/5 rounded-lg px-3 py-2 text-sm text-foreground-950 placeholder:text-foreground-950/40 focus:outline-none focus:border-accent-blue/50 focus:ring-1 focus:ring-accent-blue/50"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-foreground-950/70 mb-1.5">Province</label>
-              <input
-                name="province"
-                value={form.province}
-                onChange={handleChange}
-                placeholder="Cebu"
-                className="w-full bg-background-100 border border-foreground-950/5 rounded-lg px-3 py-2 text-sm text-foreground-950 placeholder:text-foreground-950/40 focus:outline-none focus:border-accent-blue/50 focus:ring-1 focus:ring-accent-blue/50"
+              <label className="block text-sm font-medium text-foreground-950/70 mb-1.5">Location</label>
+              <PhilippineAddressSelect
+                province={form.province}
+                city={form.city}
+                barangay={form.barangay}
+                onChange={handleAddressChange}
+                streetSlot={
+                  <div className="relative">
+                    <label className="block text-sm font-medium text-foreground-950/70 mb-1.5 sr-only">Street / Unit No.</label>
+                    <input
+                      name="addressLine"
+                      value={form.addressLine}
+                      onChange={handleChange}
+                      placeholder="House/Street No."
+                      className="w-full bg-background-100 border border-foreground-950/5 rounded-lg px-3 py-1.5 text-sm text-foreground-950 placeholder:text-foreground-950/40 focus:outline-none focus:border-accent-blue/50 focus:ring-1 focus:ring-accent-blue/50"
+                    />
+                  </div>
+                }
               />
             </div>
             <div>
