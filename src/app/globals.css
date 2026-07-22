@@ -69,9 +69,6 @@
     --font-body: 'Inter', 'ui-sans-serif', system-ui, sans-serif;
     --font-mono: 'JetBrains Mono', ui-monospace, monospace;
 
-    --surface-1000: var(--background-1000);
-    --surface-900: var(--background-900);
-    --surface-800: var(--background-800);
     --border-subtle: oklch(var(--foreground-950) / 0.08);
     --border-glow: oklch(var(--foreground-950) / 0.15);
   }

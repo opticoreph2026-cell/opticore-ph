@@ -18,7 +18,7 @@ export default function AdminSettingsPage() {
         </div>
       </div>
 
-      <div className="bg-surface-900/60 backdrop-blur-sm border border-border-subtle rounded-2xl p-6 space-y-6">
+      <div className="bg-background-100/60 backdrop-blur-sm border border-foreground-950/10 rounded-2xl p-6 space-y-6">
         <div className="flex items-center gap-3 pb-4 border-b border-border-subtle">
           <Shield className="w-5 h-5 text-accent-emerald" />
           <h2 className="text-base font-semibold text-foreground-950">Change Password</h2>

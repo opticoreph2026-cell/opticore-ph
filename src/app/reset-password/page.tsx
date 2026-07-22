@@ -126,7 +126,7 @@ function ResetPasswordForm() {
 
 export default function ResetPasswordPage() {
   return (
-    <div className="min-h-screen bg-surface-1000 flex flex-col justify-center py-12 sm:px-6 lg:px-8 relative overflow-hidden">
+    <div className="min-h-screen bg-background-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8 relative overflow-hidden">
       <div className="absolute top-1/4 right-0 w-[400px] h-[400px] bg-accent-emerald/10 rounded-full blur-[100px] pointer-events-none translate-x-1/2" />
 
       <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10 flex flex-col items-center">
@@ -138,7 +138,7 @@ export default function ResetPasswordPage() {
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md relative z-10">
-        <div className="bg-surface-900/80 backdrop-blur-md py-8 px-4 shadow-2xl border border-border-subtle sm:rounded-2xl sm:px-10">
+        <div className="bg-background-100/60 backdrop-blur-md py-8 px-4 shadow-2xl border border-foreground-950/10 sm:rounded-2xl sm:px-10">
           <Suspense fallback={<Spinner className="w-6 h-6 text-foreground-950/40 mx-auto" />}>
             <ResetPasswordForm />
           </Suspense>

@@ -114,7 +114,7 @@ export default async function AdminReportsPage() {
             </div>
             <div className="space-y-3">
               {activities.map((log) => (
-                <div key={log.id} className="flex items-start gap-3 p-3 rounded-xl border border-border-subtle bg-surface-1000">
+                <div key={log.id} className="flex items-start gap-3 p-3 rounded-xl border border-border-subtle bg-background-100">
                   <div className="w-2 h-2 mt-2 rounded-full bg-accent-cyan flex-shrink-0" />
                   <div className="flex-1 min-w-0">
                     <p className="text-sm text-foreground-950 truncate">{log.description}</p>
@@ -144,7 +144,7 @@ export default async function AdminReportsPage() {
             </div>
             <div className="space-y-4">
               {leads.map((lead) => (
-                <div key={lead.id} className="p-4 rounded-xl border border-border-subtle bg-surface-1000">
+                <div key={lead.id} className="p-4 rounded-xl border border-border-subtle bg-background-100">
                   <div className="flex items-start justify-between mb-2">
                     <div>
                       <p className="text-sm font-medium text-foreground-950">{lead.fullName}</p>
@@ -179,7 +179,7 @@ export default async function AdminReportsPage() {
             </div>
             <div className="space-y-4">
               {designs.map((design) => (
-                <div key={design.id} className="p-4 rounded-xl border border-border-subtle bg-surface-1000">
+                <div key={design.id} className="p-4 rounded-xl border border-border-subtle bg-background-100">
                   <div className="flex items-start justify-between mb-2">
                     <div>
                       <p className="text-sm font-medium text-foreground-950">
@@ -218,7 +218,7 @@ export default async function AdminReportsPage() {
             </h2>
             <div className="space-y-3">
               {projects.map((project) => (
-                <div key={project.id} className="p-3 rounded-xl border border-border-subtle bg-surface-1000">
+                <div key={project.id} className="p-3 rounded-xl border border-border-subtle bg-background-100">
                   <div className="flex items-center justify-between">
                     <p className="text-xs font-medium text-foreground-950">
                       {project.contract?.quotation?.quoteNumber ?? 'No quote'}
@@ -249,7 +249,7 @@ export default async function AdminReportsPage() {
             </h2>
             <div className="space-y-3">
               {clients.map((client) => (
-                <div key={client.id} className="p-3 rounded-xl border border-border-subtle bg-surface-1000">
+                <div key={client.id} className="p-3 rounded-xl border border-border-subtle bg-background-100">
                   <p className="text-sm font-medium text-foreground-950 truncate">{client.name ?? client.email}</p>
                   <div className="flex items-center justify-between mt-1">
                     <span className="text-xs text-foreground-950/40">{client.email}</span>
@@ -271,14 +271,14 @@ export default async function AdminReportsPage() {
           <SpotlightCard className="p-6">
             <h2 className="text-lg font-medium text-foreground-950 mb-4">Export Data</h2>
             <div className="space-y-3">
-              <button className="w-full flex items-center justify-between p-3 rounded-xl border border-border-subtle bg-surface-1000 hover:bg-foreground-950/5 transition-colors">
+              <button className="w-full flex items-center justify-between p-3 rounded-xl border border-border-subtle bg-background-100 hover:bg-foreground-950/5 transition-colors">
                 <div className="flex items-center gap-2">
                   <Users className="w-4 h-4 text-foreground-950/60" />
                   <span className="text-sm text-foreground-950">Leads (CSV)</span>
                 </div>
                 <Download className="w-4 h-4 text-foreground-950/40" />
               </button>
-              <button className="w-full flex items-center justify-between p-3 rounded-xl border border-border-subtle bg-surface-1000 hover:bg-foreground-950/5 transition-colors">
+              <button className="w-full flex items-center justify-between p-3 rounded-xl border border-border-subtle bg-background-100 hover:bg-foreground-950/5 transition-colors">
                 <div className="flex items-center gap-2">
                   <TrendingUp className="w-4 h-4 text-foreground-950/60" />
                   <span className="text-sm text-foreground-950">Project Metrics</span>

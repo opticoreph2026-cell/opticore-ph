@@ -70,7 +70,7 @@ export function UtilityTable({ initialUtilities }: { initialUtilities: UtilityRo
         <AddUtilityDialog />
       </div>
 
-      <div className="bg-surface-900 border border-border-subtle rounded-xl overflow-hidden">
+      <div className="bg-background-100 border border-border-subtle rounded-xl overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
@@ -90,7 +90,7 @@ export function UtilityTable({ initialUtilities }: { initialUtilities: UtilityRo
                   <tr key={u.id} className="hover:bg-foreground-950/[0.02] transition-colors">
                     <td className="p-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-surface-1000 border border-border-subtle flex items-center justify-center text-xs font-bold text-accent-emerald">
+                        <div className="w-8 h-8 rounded-full bg-background-100 border border-border-subtle flex items-center justify-center text-xs font-bold text-accent-emerald">
                           {u.name.charAt(0).toUpperCase()}
                         </div>
                         {editingId === u.id ? (
@@ -98,7 +98,7 @@ export function UtilityTable({ initialUtilities }: { initialUtilities: UtilityRo
                             type="text"
                             value={editForm.name}
                             onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
-                            className="bg-surface-800 border border-border-subtle rounded px-2 py-1 text-sm text-foreground-950 w-48"
+                            className="bg-background-100 border border-foreground-950/10 rounded px-2 py-1 text-sm text-foreground-950 w-48"
                           />
                         ) : (
                           <p className="text-sm font-medium text-foreground-950">{u.name}</p>
@@ -111,7 +111,7 @@ export function UtilityTable({ initialUtilities }: { initialUtilities: UtilityRo
                           type="text"
                           value={editForm.code}
                           onChange={(e) => setEditForm({ ...editForm, code: e.target.value })}
-                          className="bg-surface-800 border border-border-subtle rounded px-2 py-1 text-sm text-foreground-950 font-mono w-24"
+                          className="bg-background-100 border border-foreground-950/10 rounded px-2 py-1 text-sm text-foreground-950 font-mono w-24"
                         />
                       ) : (
                         <span className="text-xs font-mono text-accent-cyan">{u.code}</span>
@@ -123,7 +123,7 @@ export function UtilityTable({ initialUtilities }: { initialUtilities: UtilityRo
                           type="text"
                           value={editForm.territory}
                           onChange={(e) => setEditForm({ ...editForm, territory: e.target.value })}
-                          className="bg-surface-800 border border-border-subtle rounded px-2 py-1 text-sm text-foreground-950 w-32"
+                          className="bg-background-100 border border-foreground-950/10 rounded px-2 py-1 text-sm text-foreground-950 w-32"
                         />
                       ) : (
                         <span className="text-sm text-foreground-950/60">{u.territory || '—'}</span>

@@ -65,7 +65,7 @@ export default async function AdminClientsPage() {
                 <tr key={client.id} className="hover:bg-foreground-950/[0.02] transition-colors">
                   <td className="p-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-surface-1000 border border-border-subtle flex items-center justify-center text-xs font-bold text-accent-cyan">
+                      <div className="w-8 h-8 rounded-full bg-background-100 border border-border-subtle flex items-center justify-center text-xs font-bold text-accent-cyan">
                         {client.email.charAt(0).toUpperCase()}
                       </div>
                       <div>

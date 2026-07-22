@@ -54,7 +54,7 @@ export default async function AdminAlertsPage() {
         ) : (
           <div className="space-y-4">
             {notifications.map((notif: any) => (
-              <div key={notif.id} className={`p-4 rounded-xl border flex gap-4 ${notif.isRead ? 'bg-surface-1000 border-border-subtle opacity-70' : 'bg-surface-900 border-foreground-950/10'}`}>
+              <div key={notif.id} className={`p-4 rounded-xl border flex gap-4 ${notif.isRead ? 'bg-background-100 border-border-subtle opacity-70' : 'bg-background-100 border-foreground-950/10'}`}>
                 <div className={`w-10 h-10 rounded-xl shrink-0 flex items-center justify-center border ${getBg(notif.type)}`}>
                   {getIcon(notif.type)}
                 </div>

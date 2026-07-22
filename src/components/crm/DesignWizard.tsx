@@ -456,7 +456,7 @@ export function DesignWizard({ basePath = '/crm' }: { basePath?: string }) {
                   className="w-full bg-background-800 border border-foreground-950/10 rounded-xl px-4 py-3 text-foreground-950 text-sm"
                 />
                 {showUtilitySuggestions && utilitySuggestions.length > 0 && !selectedUtility && (
-                  <div className="absolute z-20 mt-1 w-full bg-surface-900 border border-border-subtle rounded-xl max-h-48 overflow-y-auto shadow-xl">
+                  <div className="absolute z-20 mt-1 w-full bg-background-100 border border-foreground-950/10 rounded-xl max-h-48 overflow-y-auto shadow-xl">
                     {utilitySuggestions.map((u) => (
                       <button
                         key={u.id}
